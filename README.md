@@ -15,6 +15,14 @@ Install the CLI:
 3scale help
 ```
 
+### Copy a service
+
+Will create a new service, copy existing methods, metrics, application plans and their usage limits.
+
+```shell
+3scale copy service NUMBER --endpoint=https://foo-admin.3scale.net --provider-key=your-key
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment. Run `bundle exec threescale_toolbox` to use the gem in this directory, ignoring other installed copies of this gem.
