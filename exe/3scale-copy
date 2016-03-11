@@ -45,15 +45,49 @@ case (command = ARGV.shift)
                                    end_user_registration_required: service['end_user_registration_required'])
     service_copy_id = copy.fetch('id')
 
+    puts "new service id #{service_copy_id}"
+
     metrics = client.list_metrics(service_id)
     metrics_copies = client.list_metrics(service_copy_id)
 
-    missing = metrics.reject { |metric| metrics_copies.find{|copy| metric['system_name'] == copy['system_name'] }}
+    hits = metrics.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
+    hits_copy = metrics_copies.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
 
-    missing.each do |metric|
+    methods = client.list_methods(service_id, hits['id'])
+    methods_copies = client.list_methods(service_copy_id, hits_copy['id'])
+
+    puts "original service hits metric #{hits['id']} has #{methods.size} methods"
+    puts "copied service hits metric #{hits_copy['id']} has #{methods_copies.size} methods"
+
+    missing_methods = methods.reject { |method|  methods_copies.find{|copy| method['system_name'] == copy['system_name'] } }
+
+    puts "creating #{missing_methods.size} missing methods on copied service"
+
+    missing_methods.each do |method|
+      copy = { friendly_name: method['friendly_name'], system_name: method['system_name'] }
+      client.create_method(service_copy_id, hits_copy['id'], copy)
+    end
+
+    metrics_copies = client.list_metrics(service_copy_id)
+
+    puts "original service has #{metrics.size} metrics"
+    puts "copied service has #{metrics.size} metrics"
+
+    missing_metrics = metrics.reject { |metric| metrics_copies.find{|copy| metric['system_name'] == copy['system_name'] } }
+
+    missing_metrics.map do |metric|
       metric.delete('links')
       client.create_metric(service_copy_id, metric)
     end
+
+    puts "created #{missing_metrics.size} metrics on the copied service"
+
+    metrics_mapping = client.list_metrics(service_copy_id).map do |copy|
+      metric = metrics.find{|metric| metric['system_name'] == copy['system_name'] }
+
+      [metric['id'], copy['id']]
+    end.to_h
+
   else
 
 end
