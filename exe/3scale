@@ -2,5 +2,13 @@
 
 require '3scale_toolbox/cli'
 
+options, argv = ThreeScaleToolbox::CLI.parse
 
-ThreeScaleToolbox::CLI.help
+unless options.command
+  puts 'Available subcommands: '
+  puts ThreeScaleToolbox::CLI.subcommands
+  puts
+  ThreeScaleToolbox::CLI.print_help!
+end
+
+exec options.command.full_path, *ARGV
