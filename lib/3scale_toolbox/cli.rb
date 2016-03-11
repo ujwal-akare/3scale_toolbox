@@ -18,7 +18,11 @@ module ThreeScaleToolbox
           end
         end
 
-        opt_parser.parse!(options)
+        begin
+          opt_parser.order!(options)
+        rescue OptionParser::InvalidOption => e
+          p e
+        end
 
         return args
       end

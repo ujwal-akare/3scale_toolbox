@@ -1,0 +1,136 @@
+#!/usr/bin/env ruby
+
+require '3scale_toolbox/cli'
+
+require 'optparse'
+
+options = {}
+OptionParser.new do |parser|
+  parser.banner = '3scale copy <command> [options]'
+
+  parser.on('-e', '--endpoint ENDPOINT', "Endpoint") do |domain|
+    options[:endpoint] = domain
+  end
+
+  parser.on('-p', '--provider-key PROVIDER_KEY', "Provider Key") do |provider_key|
+    options[:provider_key] = provider_key
+  end
+
+  parser.on('-h', '--help', 'Prints this help') do
+    puts parser
+    exit
+  end
+end.parse!
+
+endpoint = options.fetch(:endpoint) { raise OptionParser::MissingArgument, 'endpoint' }
+provider_key = options.fetch(:provider_key) { raise OptionParser::MissingArgument, 'provider_key' }
+
+require '3scale/api'
+
+client = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
+
+case (command = ARGV.shift)
+  when 'service'
+    service_id = ARGV.shift or raise OptionParser::MissingArgument, 'service_id'
+
+    service = client.show_service(service_id)
+
+    name = "#{service['name']} (copy)"
+
+    copy = client.list_services.find do |service|
+      service['name'] == name
+    end
+
+    copy ||= client.create_service(name: name,
+                                   end_user_registration_required: service['end_user_registration_required'])
+    service_copy_id = copy.fetch('id')
+
+    puts "new service id #{service_copy_id}"
+
+    metrics = client.list_metrics(service_id)
+    metrics_copies = client.list_metrics(service_copy_id)
+
+    hits = metrics.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
+    hits_copy = metrics_copies.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
+
+    methods = client.list_methods(service_id, hits['id'])
+    methods_copies = client.list_methods(service_copy_id, hits_copy['id'])
+
+    puts "original service hits metric #{hits['id']} has #{methods.size} methods"
+    puts "copied service hits metric #{hits_copy['id']} has #{methods_copies.size} methods"
+
+    missing_methods = methods.reject { |method|  methods_copies.find{|copy| method.fetch('system_name') == copy.fetch('system_name') } }
+
+    puts "creating #{missing_methods.size} missing methods on copied service"
+
+    missing_methods.each do |method|
+      copy = { friendly_name: method['friendly_name'], system_name: method['system_name'] }
+      client.create_method(service_copy_id, hits_copy['id'], copy)
+    end
+
+    metrics_copies = client.list_metrics(service_copy_id)
+
+    puts "original service has #{metrics.size} metrics"
+    puts "copied service has #{metrics.size} metrics"
+
+    missing_metrics = metrics.reject { |metric| metrics_copies.find{|copy| metric.fetch('system_name') == copy.fetch('system_name') } }
+
+    missing_metrics.map do |metric|
+      metric.delete('links')
+      client.create_metric(service_copy_id, metric)
+    end
+
+    puts "created #{missing_metrics.size} metrics on the copied service"
+
+    plans = client.list_service_application_plans(service_id)
+    plan_copies = client.list_service_application_plans(service_copy_id)
+
+    puts "original service has #{plans.size} application plans "
+    puts "copied service has #{plan_copies.size} application plans"
+
+    missing_application_plans = plans.reject { |plan| plan_copies.find{|copy| plan.fetch('system_name') == copy.fetch('system_name') } }
+
+    puts "copied service missing #{missing_application_plans.size} application plans"
+
+    missing_application_plans.each do |plan|
+      plan.delete('links')
+      plan.delete('default') # TODO: handle default plan
+
+      if plan.delete('custom') # TODO: what to do with custom plans?
+        puts "skipping custom plan #{plan}"
+      else
+        client.create_application_plan(service_copy_id, plan)
+      end
+    end
+
+    application_plan_mapping = client.list_service_application_plans(service_copy_id).map do |plan_copy|
+      plan = plans.find{|plan| plan.fetch('system_name') == plan_copy.fetch('system_name') }
+
+      [plan['id'], plan_copy['id']]
+    end
+
+
+    metrics_mapping = client.list_metrics(service_copy_id).map do |copy|
+      metric = metrics.find{|metric| metric.fetch('system_name') == copy.fetch('system_name') }
+
+      [metric['id'], copy['id']]
+    end.to_h
+
+    application_plan_mapping.each do |original_id, copy_id|
+      limits = client.list_application_plan_limits(original_id)
+      limits_copy = client.list_application_plan_limits(copy_id)
+
+      missing_limits = limits.reject { |limit| limits_copy.find{|limit_copy| limit.fetch('period') == limit_copy.fetch('period') } }
+
+      missing_limits.each do |limit|
+        limit.delete('links')
+        client.create_application_plan_limit(copy_id, metrics_mapping.fetch(limit.fetch('metric_id')), limit)
+      end
+      puts "copied application plan #{copy_id} is missing #{missing_limits.size} from the original plan #{original_id}"
+    end
+
+
+
+  else
+
+end
