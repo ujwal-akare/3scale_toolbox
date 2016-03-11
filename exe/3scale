@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require '3scale_toolbox/cli'
+
+
+ThreeScaleToolbox::CLI.help
