@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+
+require '3scale_toolbox/cli'
+
+require 'optparse'
+
+options = {}
+OptionParser.new do |parser|
+  parser.banner = '3scale copy <command> [options]'
+
+  parser.on('-e', '--endpoint ENDPOINT', "Endpoint") do |domain|
+    options[:endpoint] = domain
+  end
+
+  parser.on('-p', '--provider-key PROVIDER_KEY', "Provider Key") do |provider_key|
+    options[:provider_key] = provider_key
+  end
+
+  parser.on('-h', '--help', 'Prints this help') do
+    puts parser
+    exit
+  end
+end.parse!
+
+endpoint = options.fetch(:endpoint) { raise OptionParser::MissingArgument, 'endpoint' }
+provider_key = options.fetch(:provider_key) { raise OptionParser::MissingArgument, 'provider_key' }
+
+require '3scale/api'
+
+client = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
+
+case (command = ARGV.shift)
+  when 'service'
+    service_id = ARGV.shift or raise OptionParser::MissingArgument, 'service_id'
+
+    service = client.show_service(service_id)
+
+    name = "#{service['name']} (copy)"
+
+    copy = client.list_services.find do |service|
+      service['name'] == name
+    end
+
+    copy ||= client.create_service(name: name,
+                                   end_user_registration_required: service['end_user_registration_required'])
+    service_copy_id = copy.fetch('id')
+
+    metrics = client.list_metrics(service_id)
+    metrics_copies = client.list_metrics(service_copy_id)
+
+    missing = metrics.reject { |metric| metrics_copies.find{|copy| metric['system_name'] == copy['system_name'] }}
+
+    missing.each do |metric|
+      metric.delete('links')
+      client.create_metric(service_copy_id, metric)
+    end
+  else
+
+end
