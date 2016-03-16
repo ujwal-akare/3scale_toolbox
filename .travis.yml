@@ -14,3 +14,4 @@ matrix:
 script:
 - rake install
 - 3scale help
+- 3scale copy help

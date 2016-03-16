@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 ### Changed
+### Fixed
+- `3cale copy help` now prints correct help
 
 ## [0.1.1] - 2016-03-16
 ### Added
