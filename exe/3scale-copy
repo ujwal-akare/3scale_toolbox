@@ -29,6 +29,10 @@ require '3scale/api'
 
 client = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
 
+def compare_hashes(first, second, keys)
+  keys.map{ |key| first.fetch(key) } == keys.map{ |key| second.fetch(key) }
+end
+
 case (command = ARGV.shift)
   when 'service'
     service_id = ARGV.shift or raise OptionParser::MissingArgument, 'service_id'
@@ -47,6 +51,10 @@ case (command = ARGV.shift)
 
     puts "new service id #{service_copy_id}"
 
+    proxy = client.show_proxy(service_id)
+    client.update_proxy(service_copy_id, proxy)
+    puts "updated proxy of #{service_copy_id} to match the original"
+
     metrics = client.list_metrics(service_id)
     metrics_copies = client.list_metrics(service_copy_id)
 
@@ -59,7 +67,7 @@ case (command = ARGV.shift)
     puts "original service hits metric #{hits['id']} has #{methods.size} methods"
     puts "copied service hits metric #{hits_copy['id']} has #{methods_copies.size} methods"
 
-    missing_methods = methods.reject { |method|  methods_copies.find{|copy| method.fetch('system_name') == copy.fetch('system_name') } }
+    missing_methods = methods.reject { |method|  methods_copies.find{|copy| compare_hashes(method, copy, ['system_name']) } }
 
     puts "creating #{missing_methods.size} missing methods on copied service"
 
@@ -73,7 +81,7 @@ case (command = ARGV.shift)
     puts "original service has #{metrics.size} metrics"
     puts "copied service has #{metrics.size} metrics"
 
-    missing_metrics = metrics.reject { |metric| metrics_copies.find{|copy| metric.fetch('system_name') == copy.fetch('system_name') } }
+    missing_metrics = metrics.reject { |metric| metrics_copies.find{|copy| compare_hashes(metric, copy, ['system_name']) } }
 
     missing_metrics.map do |metric|
       metric.delete('links')
@@ -116,6 +124,36 @@ case (command = ARGV.shift)
       [metric['id'], copy['id']]
     end.to_h
 
+
+    mapping_rules = client.list_mapping_rules(service_id)
+    mapping_rules_copy = client.list_mapping_rules(service_copy_id)
+
+    puts "the original service has #{mapping_rules.size} mapping rules"
+    puts "the copy has #{mapping_rules_copy.size} mapping rules"
+
+    unique_mapping_rules_copy = mapping_rules_copy.dup
+
+    missing_mapping_rules = mapping_rules.reject do |mapping_rule|
+      matching_metric = unique_mapping_rules_copy.find do |copy|
+        compare_hashes(mapping_rule, copy, %w(pattern http_method delta)) &&
+            metrics_mapping.fetch(mapping_rule.fetch('metric_id')) == copy.fetch('metric_id')
+      end
+
+      unique_mapping_rules_copy.delete(matching_metric)
+    end
+
+    puts "missing #{missing_mapping_rules.size} mapping rules"
+
+    missing_mapping_rules.each do |mapping_rule|
+      mapping_rule.delete('links')
+      mapping_rule['metric_id'] = metrics_mapping.fetch(mapping_rule.delete('metric_id'))
+      client.create_mapping_rule(service_copy_id, mapping_rule)
+    end
+    puts "created #{missing_mapping_rules.size} mapping rules"
+
+    puts "extra #{unique_mapping_rules_copy.size} mapping rules"
+    puts unique_mapping_rules_copy.each{|rule| rule.delete('links') }
+
     application_plan_mapping.each do |original_id, copy_id|
       limits = client.list_application_plan_limits(original_id)
       limits_copy = client.list_application_plan_limits(copy_id)
@@ -128,9 +166,8 @@ case (command = ARGV.shift)
       end
       puts "copied application plan #{copy_id} is missing #{missing_limits.size} from the original plan #{original_id}"
     end
-
-
-
+  when nil
+    puts "missing subcommand"
   else
-
+    puts "unknown command #{command}"
 end
