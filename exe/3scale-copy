@@ -5,7 +5,8 @@ require '3scale_toolbox/cli'
 require 'optparse'
 
 options = {}
-OptionParser.new do |parser|
+
+parser = OptionParser.new do |parser|
   parser.banner = '3scale copy <command> [options]'
 
   parser.on('-e', '--endpoint ENDPOINT', "Endpoint") do |domain|
@@ -18,16 +19,22 @@ OptionParser.new do |parser|
 
   parser.on('-h', '--help', 'Prints this help') do
     puts parser
+    puts
+    puts 'Available Commands:', ['service <service_id>', 'help']
     exit
   end
-end.parse!
+end
 
-endpoint = options.fetch(:endpoint) { raise OptionParser::MissingArgument, 'endpoint' }
-provider_key = options.fetch(:provider_key) { raise OptionParser::MissingArgument, 'provider_key' }
+print_help = ->(error = nil) do
+  if error
+    puts "Error: #{error}"
+    puts
+  end
+  parser.parse(['--help'])
+end
 
-require '3scale/api'
 
-client = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
+parser.parse!
 
 def compare_hashes(first, second, keys)
   keys.map{ |key| first.fetch(key) } == keys.map{ |key| second.fetch(key) }
@@ -35,6 +42,11 @@ end
 
 case (command = ARGV.shift)
   when 'service'
+    endpoint = options.fetch(:endpoint) { raise OptionParser::MissingArgument, 'endpoint' }
+    provider_key = options.fetch(:provider_key) { raise OptionParser::MissingArgument, 'provider_key' }
+    require '3scale/api'
+    client = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
+
     service_id = ARGV.shift or raise OptionParser::MissingArgument, 'service_id'
 
     service = client.show_service(service_id)
@@ -166,8 +178,10 @@ case (command = ARGV.shift)
       end
       puts "copied application plan #{copy_id} is missing #{missing_limits.size} from the original plan #{original_id}"
     end
+  when 'help'
+    print_help.call
   when nil
-    puts "missing subcommand"
+    print_help.call("missing subcommand")
   else
-    puts "unknown command #{command}"
+    print_help.call("unknown command #{command}")
 end
