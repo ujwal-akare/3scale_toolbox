@@ -83,17 +83,17 @@ case (command = ARGV.shift)
 
     puts "new service id #{service_copy_id}"
 
-    proxy = client.show_proxy(service_id)
+    proxy = source_client.show_proxy(service_id)
     client.update_proxy(service_copy_id, proxy)
     puts "updated proxy of #{service_copy_id} to match the original"
 
-    metrics = client.list_metrics(service_id)
+    metrics = source_client.list_metrics(service_id)
     metrics_copies = client.list_metrics(service_copy_id)
 
     hits = metrics.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
     hits_copy = metrics_copies.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
 
-    methods = client.list_methods(service_id, hits['id'])
+    methods = source_client.list_methods(service_id, hits['id'])
     methods_copies = client.list_methods(service_copy_id, hits_copy['id'])
 
     puts "original service hits metric #{hits['id']} has #{methods.size} methods"
@@ -122,7 +122,7 @@ case (command = ARGV.shift)
 
     puts "created #{missing_metrics.size} metrics on the copied service"
 
-    plans = client.list_service_application_plans(service_id)
+    plans = source_client.list_service_application_plans(service_id)
     plan_copies = client.list_service_application_plans(service_copy_id)
 
     puts "original service has #{plans.size} application plans "
@@ -157,7 +157,7 @@ case (command = ARGV.shift)
     end.to_h
 
 
-    mapping_rules = client.list_mapping_rules(service_id)
+    mapping_rules = source_client.list_mapping_rules(service_id)
     mapping_rules_copy = client.list_mapping_rules(service_copy_id)
 
     puts "the original service has #{mapping_rules.size} mapping rules"
