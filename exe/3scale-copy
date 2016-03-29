@@ -9,12 +9,12 @@ options = {}
 parser = OptionParser.new do |parser|
   parser.banner = '3scale copy <command> [options]'
 
-  parser.on('-e', '--endpoint ENDPOINT', "Endpoint") do |domain|
-    options[:endpoint] = domain
+  parser.on('-source', '--source SOURCE', "Source") do |domain|
+    options[:source] = domain
   end
 
-  parser.on('-p', '--provider-key PROVIDER_KEY', "Provider Key") do |provider_key|
-    options[:provider_key] = provider_key
+  parser.on('-destination', '--destination DESTINATION', "Destination") do |domain|
+    options[:destination] = domain
   end
 
   parser.on('-h', '--help', 'Prints this help') do
@@ -40,18 +40,38 @@ def compare_hashes(first, second, keys)
   keys.map{ |key| first.fetch(key) } == keys.map{ |key| second.fetch(key) }
 end
 
+def fetch_option(options, key)
+  options.fetch(key) { raise OptionParser::MissingArgument, key }
+end
+
+def provider_key_from_url(url)
+  url[/\w*@{1}/][0..-2]
+end
+
+def endpoint_from_url(url)
+  url.sub /\w*@{1}/, ''
+end
+
 case (command = ARGV.shift)
   when 'service'
-    endpoint = options.fetch(:endpoint) { raise OptionParser::MissingArgument, 'endpoint' }
-    provider_key = options.fetch(:provider_key) { raise OptionParser::MissingArgument, 'provider_key' }
+    source      = fetch_option options, :source
+    destination = fetch_option options, :destination
+    
     require '3scale/api'
-    client = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
 
     service_id = ARGV.shift or raise OptionParser::MissingArgument, 'service_id'
 
-    service = client.show_service(service_id)
-
-    name = "#{service['name']} (copy)"
+    source_client = ThreeScale::API.new(
+      endpoint:     endpoint_from_url(source), 
+      provider_key: provider_key_from_url(source)
+    )
+    client        = ThreeScale::API.new(
+      endpoint:     endpoint_from_url(destination), 
+      provider_key: provider_key_from_url(destination)
+    )
+    
+    service = source_client.show_service(service_id)
+    name    = "#{service['name']} (copy)"
 
     copy = client.list_services.find do |service|
       service['name'] == name
