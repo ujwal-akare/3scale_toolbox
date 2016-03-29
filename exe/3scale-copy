@@ -111,7 +111,7 @@ case (command = ARGV.shift)
     metrics_copies = client.list_metrics(service_copy_id)
 
     puts "original service has #{metrics.size} metrics"
-    puts "copied service has #{metrics.size} metrics"
+    puts "copied service has #{metrics_copies.size} metrics"
 
     missing_metrics = metrics.reject { |metric| metrics_copies.find{|copy| compare_hashes(metric, copy, ['system_name']) } }
 
@@ -152,6 +152,7 @@ case (command = ARGV.shift)
 
     metrics_mapping = client.list_metrics(service_copy_id).map do |copy|
       metric = metrics.find{|metric| metric.fetch('system_name') == copy.fetch('system_name') }
+      metric ||= {}
 
       [metric['id'], copy['id']]
     end.to_h
@@ -187,7 +188,7 @@ case (command = ARGV.shift)
     puts unique_mapping_rules_copy.each{|rule| rule.delete('links') }
 
     application_plan_mapping.each do |original_id, copy_id|
-      limits = client.list_application_plan_limits(original_id)
+      limits = source_client.list_application_plan_limits(original_id)
       limits_copy = client.list_application_plan_limits(copy_id)
 
       missing_limits = limits.reject { |limit| limits_copy.find{|limit_copy| limit.fetch('period') == limit_copy.fetch('period') } }
