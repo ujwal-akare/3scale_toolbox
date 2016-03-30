@@ -45,11 +45,11 @@ def fetch_option(options, key)
 end
 
 def provider_key_from_url(url)
-  url[/\w*@{1}/][0..-2]
+  url[/\w*@/][0..-2]
 end
 
 def endpoint_from_url(url)
-  url.sub /\w*@{1}/, ''
+  url.sub /\w*@/, ''
 end
 
 case (command = ARGV.shift)
