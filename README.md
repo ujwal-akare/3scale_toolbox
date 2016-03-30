@@ -20,7 +20,7 @@ Install the CLI:
 Will create a new service, copy existing methods, metrics, application plans and their usage limits.
 
 ```shell
-3scale copy service NUMBER --endpoint=https://foo-admin.3scale.net --provider-key=your-key
+3scale copy service NUMBER --source=https://provider_key@foo-admin.3scale.net --destination=https://provider_key@foo2-admin.3scale.net
 ```
 
 ## Development
