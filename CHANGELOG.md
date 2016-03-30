@@ -10,8 +10,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.2.0] - 2016-03-30
 ### Added
 - `3scale copy service` can copy between different accounts
+
 ### Changed
 - `3scale copy` changed arguments (from endpoint & provider key to source, see --help)
+
 ### Fixed
 - `3cale copy help` now prints correct help
 
