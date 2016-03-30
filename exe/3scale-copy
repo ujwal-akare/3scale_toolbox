@@ -71,14 +71,13 @@ case (command = ARGV.shift)
     )
     
     service = source_client.show_service(service_id)
-    name    = "#{service['name']} (copy)"
+    copy    = client.create_service(
+      name: service['name'],
+      end_user_registration_required: service['end_user_registration_required']
+    )
 
-    copy = client.list_services.find do |service|
-      service['name'] == name
-    end
+    raise "Service has not been saved. Errors: #{copy['errors']}" if copy['errors'].any?
 
-    copy ||= client.create_service(name: name,
-                                   end_user_registration_required: service['end_user_registration_required'])
     service_copy_id = copy.fetch('id')
 
     puts "new service id #{service_copy_id}"
