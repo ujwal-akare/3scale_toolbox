@@ -76,7 +76,7 @@ case (command = ARGV.shift)
       end_user_registration_required: service['end_user_registration_required']
     )
 
-    raise "Service has not been saved. Errors: #{copy['errors']}" if copy['errors'].any?
+    raise "Service has not been saved. Errors: #{copy['errors']}" unless copy['errors'].nil?
 
     service_copy_id = copy.fetch('id')
 
@@ -156,6 +156,10 @@ case (command = ARGV.shift)
       [metric['id'], copy['id']]
     end.to_h
 
+    puts "destroying all mapping rules of the copy which have been created by default"
+    client.list_mapping_rules(service_copy_id).each do |mapping_rule|
+      client.delete_mapping_rule(service_copy_id, mapping_rule['id'])
+    end
 
     mapping_rules = source_client.list_mapping_rules(service_id)
     mapping_rules_copy = client.list_mapping_rules(service_copy_id)
