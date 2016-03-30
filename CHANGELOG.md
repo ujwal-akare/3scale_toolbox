@@ -6,6 +6,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Changed
 ### Fixed
+
+## [0.2.0] - 2016-03-30
+### Added
+- `3scale copy service` can copy between different accounts
+### Changed
+- `3scale copy` changed arguments (from endpoint & provider key to source, see --help)
+### Fixed
 - `3cale copy help` now prints correct help
 
 ## [0.1.1] - 2016-03-16
@@ -18,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.2.0
 [0.1.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.1.1
 [0.1.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.1.0
