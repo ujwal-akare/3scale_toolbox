@@ -1,0 +1,7 @@
+service_name,endpoint_name,endpoint_http_method,endpoint_path,auth_mode,endpoint_system_name,type
+Movies ,Movies (Biography),GET,/movies/biography/,api_key,movies_biography,metric
+Movies ,Movies (Drama),GET,/movies/drama/,api_key,movies_drama,method
+Movies ,Movies (adventure),GET,/movies/adventure/,api_key,movies_adventure,metric
+Music,Music (Biography),GET,/music/biography/,api_key,music_biography,metric
+Music,Music (Post punk),GET,/music/postpunk/,api_key,music_postpunk,metric
+Music,Music (Sludge),GET,/music/sludge/,api_key,music_sludge,metric
