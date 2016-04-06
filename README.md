@@ -23,6 +23,14 @@ Will create a new service, copy existing methods, metrics, application plans and
 3scale copy service NUMBER --source=https://provider_key@foo-admin.3scale.net --destination=https://provider_key@foo2-admin.3scale.net
 ```
 
+### Import from CSV
+
+Will create a new services, metrics, methods and mapping rules.
+
+```shell
+3scale import csv --destination=https://provider_key@user-admin.3scale.net --file=examples/import_example.csv
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment. Run `bundle exec threescale_toolbox` to use the gem in this directory, ignoring other installed copies of this gem.
