@@ -9,12 +9,16 @@ options = {}
 parser = OptionParser.new do |parser|
   parser.banner = '3scale copy <command> [options]'
 
-  parser.on('-source', '--source SOURCE', "Source") do |domain|
+  parser.on('-s', '--source SOURCE', "Source") do |domain|
     options[:source] = domain
   end
 
-  parser.on('-destination', '--destination DESTINATION', "Destination") do |domain|
+  parser.on('-d', '--destination DESTINATION', "Destination") do |domain|
     options[:destination] = domain
+  end
+
+  parser.on('-t', '--target-system-name TARGET_SYSTEM_NAME', 'Target system name') do |name|
+    options[:target_system_name] = name
   end
 
   parser.on('-h', '--help', 'Prints this help') do
@@ -52,10 +56,19 @@ def endpoint_from_url(url)
   url.sub /\w*@/, ''
 end
 
+def copy_service_params(original, system_name)
+  {
+    name:        original['name'],
+    system_name: system_name,
+    end_user_registration_required: original['end_user_registration_required']
+  }.reject { |key, value| !value }
+end
+
 case (command = ARGV.shift)
   when 'service'
     source      = fetch_option options, :source
     destination = fetch_option options, :destination
+    system_name = options[:target_system_name]
     
     require '3scale/api'
 
@@ -71,10 +84,7 @@ case (command = ARGV.shift)
     )
     
     service = source_client.show_service(service_id)
-    copy    = client.create_service(
-      name: service['name'],
-      end_user_registration_required: service['end_user_registration_required']
-    )
+    copy    = client.create_service(copy_service_params(service, system_name))
 
     raise "Service has not been saved. Errors: #{copy['errors']}" unless copy['errors'].nil?
 
