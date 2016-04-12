@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 ### Fixed
 
+## [0.2.1] - 2016-04-12
+### Added
+- `3scale copy` added new argument --target-system-name
+
 ## [0.2.0] - 2016-03-30
 ### Added
 - `3scale copy service` can copy between different accounts
