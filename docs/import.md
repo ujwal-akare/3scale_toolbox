@@ -17,7 +17,7 @@ $ git pull origin branch_foo
 ```
 
 ```shell
-$ bundle exec exe/3scale-import --destination=https://provider_key@user-admin.3scale.net --file=examples/import_example.csv
+$ bundle exec exe/3scale-import csv --destination=https://provider_key@user-admin.3scale.net --file=examples/import_example.csv
 ```
 
 ### API
