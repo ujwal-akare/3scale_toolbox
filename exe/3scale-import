@@ -143,7 +143,7 @@ when 'csv'
       end
 
       # create a mapping rule
-      if (metric_id = metric ? metric['id'] : (method ? method['id'] : nil))
+      if (metric_id = metric['id'] || method['id'])
         mapping_rule = client.create_mapping_rule(service['id'], {
           metric_id:          metric_id,
           pattern:            item['endpoint_path'],
