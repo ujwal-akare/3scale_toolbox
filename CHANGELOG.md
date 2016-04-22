@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 ### Fixed
 
+## [0.2.2] - 2016-04-21
+### Fixed
+- `3scale import csv` importing mapping rules
+
 ## [0.2.1] - 2016-04-12
 ### Added
 - `3scale copy` added new argument --target-system-name
