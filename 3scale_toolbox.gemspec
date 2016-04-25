@@ -6,6 +6,7 @@ require '3scale_toolbox/version'
 Gem::Specification.new do |spec|
   spec.name          = '3scale_toolbox'
   spec.version       = ThreeScaleToolbox::VERSION
+  spec.licenses      = ['MIT']
   spec.authors       = ['Michal Cichra']
   spec.email         = ['michal@3scale.net']
 
