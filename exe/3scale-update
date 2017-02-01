@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 
 require '3scale_toolbox/cli'
-
 require 'optparse'
-require 'pry'
 
 options = {}
 
@@ -166,11 +164,6 @@ case (command = ARGV.shift)
 
       [metric['id'], target['id']]
     end.to_h
-
-    puts "destroying all mapping rules of the target which have been created by default"
-    client.list_mapping_rules(service_target_id).each do |mapping_rule|
-      client.delete_mapping_rule(service_target_id, mapping_rule['id'])
-    end
 
     mapping_rules = source_client.list_mapping_rules(service_id)
     mapping_rules_target = client.list_mapping_rules(service_target_id)
