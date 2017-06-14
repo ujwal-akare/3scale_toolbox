@@ -7,9 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- Require Ruby >= 2.1 in the gemspec
 
 ### Fixed
+
+## [0.3.0]
+
+### Changed
+- Require Ruby >= 2.1 in the gemspec
 
 ## [0.2.2] - 2016-04-21
 ### Fixed
@@ -39,7 +43,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.3.0
 [0.2.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.2.0
 [0.1.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.1.1
 [0.1.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.1.0
