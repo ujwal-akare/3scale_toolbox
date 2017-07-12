@@ -2,6 +2,7 @@
 
 require '3scale_toolbox/cli'
 require 'optparse'
+require 'uri'
 
 options = {}
 
@@ -48,11 +49,14 @@ def fetch_option(options, key)
 end
 
 def provider_key_from_url(url)
-  url[/\w*@/][0..-2]
+  URI(url).user
 end
 
 def endpoint_from_url(url)
-  url.sub /\w*@/, ''
+  uri      = URI(url)
+  uri.user = nil
+  
+  uri.to_s
 end
 
 def target_service_params(source, system_name)
@@ -210,6 +214,8 @@ case (command = ARGV.shift)
     print_help.call
   when nil
     print_help.call("missing subcommand")
+    exit 1
   else
     print_help.call("unknown command #{command}")
+    exit 1
 end
