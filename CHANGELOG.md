@@ -10,6 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [0.4.0]
+
+### Added
+
+- `3scale update` that updates existing service
+- `3scale copy` copies `backend_version`
+
 ## [0.3.0]
 
 ### Changed
