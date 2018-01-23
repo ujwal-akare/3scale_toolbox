@@ -60,6 +60,7 @@ def copy_service_params(original, system_name)
   {
     name:        original['name'],
     system_name: system_name,
+    backend_version: original['backend_version'],
     end_user_registration_required: original['end_user_registration_required']
   }.reject { |key, value| !value }
 end
