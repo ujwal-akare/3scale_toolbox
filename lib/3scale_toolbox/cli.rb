@@ -1,4 +1,5 @@
 require 'optparse'
+require '3scale_toolbox/version'
 
 module ThreeScaleToolbox
   module CLI
@@ -16,6 +17,12 @@ module ThreeScaleToolbox
             puts opts
             exit
           end
+
+          opts.on("-v", "--version", "Prints the version of this command") do
+            puts ThreeScaleToolbox::VERSION
+            exit
+          end
+
         end
 
         begin
