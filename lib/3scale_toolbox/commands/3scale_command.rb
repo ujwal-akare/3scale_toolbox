@@ -6,7 +6,7 @@ module ThreeScaleToolbox
   module Commands
     module ThreeScaleCommand
       extend ThreeScaleToolbox::Command
-      def self.basic_command
+      def self.command
         Cri::Command.define do
           name        '3scale'
           usage       '3scale <command> [options]'
@@ -17,10 +17,6 @@ module ThreeScaleToolbox
             exit
           end
         end
-      end
-
-      def self.command
-        basic_command.tap { |command| command.add_command Cri::Command.new_basic_help }
       end
     end
   end
