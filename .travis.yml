@@ -10,5 +10,5 @@ rvm:
 script:
 - rake install
 - 3scale help
-- 3scale copy help
-- 3scale import help
+- 3scale help copy
+- 3scale help import
