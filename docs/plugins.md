@@ -11,6 +11,8 @@ Subcommands may be added to main commands or other subcommands as children.
 
 Nothing better than few examples to illustrate .
 
+## Plugin command
+
 Let's create a plugin to add a main `simple hello world` command.
 
 ```
@@ -65,6 +67,42 @@ OPTIONS
 OPTIONS FOR 3SCALE
     -v --version      Prints the version of this command
 ```
+
+Using [cri](https://github.com/ddfreyne/cri) library's `Cri::CommandRunner`, plugin command can be defined as *command runner class*.
+Slightly different command definition, yet easier to break up large run blocks into manageable pieces.
+
+```ruby
+$ cat lib/3scale_toolbox_plugin.rb
+require '3scale_toolbox/cli'
+
+class FooCommand < Cri::CommandRunner
+  extend ThreeScaleToolbox::Command
+
+  def self.command
+    Cri::Command.define do
+      name        'foo'
+      usage       'foo [options]'
+      summary     '3scale foo'
+      description '3scale foo command'
+      runner FooCommand
+    end
+  end
+
+  def run
+    puts "opts: #{options}"
+    puts "args: #{arguments}"
+    puts "cmd: #{command}"
+  end
+end
+ThreeScaleToolbox::CLI.add_command(FooCommand)
+
+$ RUBYOPT=-Ilib 3scale foo myarg1 myarg2
+opts: {}
+args: ["myarg1", "myarg2"]
+cmd: #<Cri::Command:0x0000000001674bd8>
+```
+
+## Plugin subcommand
 
 Let's create a plugin to add a `simple hello world` subcommand for the builtin *copy* command.
 
