@@ -3,6 +3,7 @@ require '3scale_toolbox/commands/help_command'
 require '3scale_toolbox/commands/copy_command'
 require '3scale_toolbox/commands/import_command'
 require '3scale_toolbox/commands/update_command'
+require '3scale_toolbox/commands/remote_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -10,7 +11,8 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::HelpCommand,
       ThreeScaleToolbox::Commands::CopyCommand,
       ThreeScaleToolbox::Commands::ImportCommand,
-      ThreeScaleToolbox::Commands::UpdateCommand
+      ThreeScaleToolbox::Commands::UpdateCommand,
+      ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand
     ].freeze
 
     def self.service_valid_params
