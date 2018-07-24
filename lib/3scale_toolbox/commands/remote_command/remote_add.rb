@@ -17,7 +17,36 @@ module ThreeScaleToolbox
         end
 
         def run
-          puts "remote add"
+          validate_input_params
+          begin
+            add_remote(*arguments[0..1])
+          rescue StandardError => e
+            warn e.message
+            exit 1
+          end
+        end
+
+        def validate_input_params
+          return unless arguments.size != 2
+          puts command.help
+          exit 0
+        end
+
+        def validate_remote_name(name)
+          remotes = ThreeScaleToolbox.configuration.remotes
+          raise 'fatal: remote name already exists.' if remotes.key? name
+        end
+
+        def validate_remote_url(remote_url)
+          # TODO
+        end
+
+        def add_remote(remote_name, remote_url)
+          validate_remote_name remote_name
+          validate_remote_url remote_url
+          ThreeScaleToolbox.configuration.update_remotes do |remotes|
+            remotes[remote_name] = remote_url
+          end
         end
       end
     end
