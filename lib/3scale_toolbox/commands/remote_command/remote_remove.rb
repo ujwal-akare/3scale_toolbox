@@ -17,7 +17,27 @@ module ThreeScaleToolbox
         end
 
         def run
-          puts "remote remove"
+          validate_input_params
+          begin
+            remove_remote(arguments[0])
+          rescue StandardError => e
+            warn e.message
+            exit 1
+          end
+        end
+
+        def validate_input_params
+          return unless arguments.size != 1
+          puts command.help
+          exit 0
+        end
+
+        def remove_remote(remote_name)
+          ThreeScaleToolbox.configuration.update_remotes do |remotes|
+            remotes.delete(remote_name) do |el|
+              raise "Could not remove remote #{el}"
+            end
+          end
         end
       end
     end
