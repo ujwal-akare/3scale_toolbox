@@ -19,9 +19,16 @@ module ThreeScaleToolbox
           end
         end
 
+        # list remotes
         def run
-          # list remotes
-          puts "list remotes"
+          if ThreeScaleToolbox.configuration.remotes.empty?
+            puts 'Emtpy remote list.'
+            exit 0
+          end
+
+          ThreeScaleToolbox.configuration.remotes.each do |name, remote|
+            puts "#{name} #{remote}"
+          end
         end
 
         add_subcommand(RemoteAddSubcommand)
