@@ -9,12 +9,14 @@ module ThreeScaleToolbox
       @store = YAML::Store.new(config_file)
     end
 
-    def remotes
-      data.fetch(:remotes) || {}
-    end
+    ATTRIBUTES.each do |attr|
+      define_method attr do
+        data.fetch(attr) || {}
+      end
 
-    def update_remotes
-      update(:remotes, &Proc.new)
+      define_method "update_#{attr}" do |&block|
+        update(attr, &block)
+      end
     end
 
     private
