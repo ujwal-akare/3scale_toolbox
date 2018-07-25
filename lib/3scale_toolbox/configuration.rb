@@ -5,8 +5,8 @@ module ThreeScaleToolbox
     ATTRIBUTES = %i[remotes].freeze
     private_constant :ATTRIBUTES
 
-    def initialize
-      @store = YAML::Store.new(ThreeScaleToolbox.config_file)
+    def initialize(config_file)
+      @store = YAML::Store.new(config_file)
     end
 
     def remotes

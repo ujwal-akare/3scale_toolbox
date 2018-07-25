@@ -23,7 +23,7 @@ module ThreeScaleToolbox
   end
 
   def self.configuration
-    @configuration ||= Configuration.new
+    @configuration ||= Configuration.new(config_file)
   end
 
   def self.configuration=(config)
