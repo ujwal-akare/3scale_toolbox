@@ -2,43 +2,34 @@ require 'yaml/store'
 
 module ThreeScaleToolbox
   class Configuration
-    ATTRIBUTES = %i[remotes].freeze
-    private_constant :ATTRIBUTES
-
     def initialize(config_file)
+      @store_data = nil
       @store = YAML::Store.new(config_file)
     end
 
-    ATTRIBUTES.each do |attr|
-      define_method attr do
-        data.fetch(attr) || {}
-      end
+    def data(key)
+      store_data[key]
+    end
 
-      define_method "update_#{attr}" do |&block|
-        update(attr, &block)
+    def update(key)
+      return if key.nil?
+      # invalidate cache
+      @store_data = nil
+      @store.transaction do
+        @store[key] = yield @store[key]
       end
     end
 
     private
 
-    def data
+    def store_data
       @store_data ||= read
-    end
-
-    def update(key)
-      # clear dirty cache
-      @store_data = nil
-      @store.transaction do
-        val = @store.fetch(key, {})
-        yield val
-        @store[key] = val
-      end
     end
 
     # returns copy of data stored
     def read
       @store.transaction(true) do
-        ATTRIBUTES.each_with_object({}) do |key, obj|
+        @store.roots.each_with_object({}) do |key, obj|
           obj[key] = @store[key]
         end
       end
