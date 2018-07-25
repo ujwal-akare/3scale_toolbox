@@ -19,16 +19,28 @@ module ThreeScaleToolbox
           end
         end
 
-        # list remotes
         def run
+          list_remotes
+        rescue StandardError => e
+          warn e.message
+          exit 1
+        end
+
+        def validate_remotes(remotes)
+          # TODO
+        end
+
+        def list_remotes
           remotes = ThreeScaleToolbox.configuration.data :remotes
           if remotes.nil? || remotes.empty?
             puts 'Emtpy remote list.'
             exit 0
           end
 
+          validate_remotes(remotes)
+
           remotes.each do |name, remote|
-            puts "#{name} #{remote}"
+            puts "#{name} #{remote[:endpoint]} #{remote[:provider_key]}"
           end
         end
 
