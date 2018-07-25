@@ -14,7 +14,7 @@ module ThreeScaleToolbox
 
   def self.config_file
     # 3SCALERC env var has priority over $HOME/.3scalerc.yaml file
-    @config_file ||= ENV['THREESCALERC']
+    @config_file ||= ENV['THREESCALE_CLI_CONFIG']
     @config_file ||= File.join Gem.user_home, '.3scalerc.yaml'
   end
 
