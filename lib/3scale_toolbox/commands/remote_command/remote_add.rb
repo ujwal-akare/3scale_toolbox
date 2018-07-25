@@ -33,8 +33,8 @@ module ThreeScaleToolbox
         end
 
         def validate_remote_name(name)
-          remotes = ThreeScaleToolbox.configuration.remotes
-          raise 'fatal: remote name already exists.' if remotes.key? name
+          remotes = ThreeScaleToolbox.configuration.data :remotes
+          raise 'fatal: remote name already exists.' if !remotes.nil? && remotes.key?(name)
         end
 
         def validate_remote_url(remote_url)
@@ -44,8 +44,9 @@ module ThreeScaleToolbox
         def add_remote(remote_name, remote_url)
           validate_remote_name remote_name
           validate_remote_url remote_url
-          ThreeScaleToolbox.configuration.update_remotes do |remotes|
-            remotes[remote_name] = remote_url
+          ThreeScaleToolbox.configuration.update(:remotes) do |remotes|
+            remotes = {} if remotes.nil?
+            remotes.tap { |r| r[remote_name] = remote_url }
           end
         end
       end

@@ -33,20 +33,23 @@ module ThreeScaleToolbox
         end
 
         def validate_remote_old_name(name)
-          remotes = ThreeScaleToolbox.configuration.remotes
-          raise "Could not rename, old name '#{name}' does not exist." unless remotes.key? name
+          remotes = ThreeScaleToolbox.configuration.data :remotes
+          raise "Could not rename, old name '#{name}' does not exist." unless !remotes.nil? && remotes.key?(name)
         end
 
         def validate_remote_new_name(name)
-          remotes = ThreeScaleToolbox.configuration.remotes
-          raise "Could not rename, new name '#{name}' already exists." if remotes.key? name
+          remotes = ThreeScaleToolbox.configuration.data :remotes
+          raise "Could not rename, new name '#{name}' already exists." if !remotes.nil? && remotes.key?(name)
         end
 
         def rename_remote(remote_old_name, remote_new_name)
           validate_remote_old_name remote_old_name
           validate_remote_new_name remote_new_name
-          ThreeScaleToolbox.configuration.update_remotes do |remotes|
-            remotes[remote_new_name] = remotes.delete remote_old_name
+          ThreeScaleToolbox.configuration.update(:remotes) do |remotes|
+            # remotes cannot be nil, already verified
+            remotes.tap do |r|
+              r[remote_new_name] = r.delete remote_old_name
+            end
           end
         end
       end

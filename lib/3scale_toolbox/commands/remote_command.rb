@@ -21,12 +21,13 @@ module ThreeScaleToolbox
 
         # list remotes
         def run
-          if ThreeScaleToolbox.configuration.remotes.empty?
+          remotes = ThreeScaleToolbox.configuration.data :remotes
+          if remotes.nil? || remotes.empty?
             puts 'Emtpy remote list.'
             exit 0
           end
 
-          ThreeScaleToolbox.configuration.remotes.each do |name, remote|
+          remotes.each do |name, remote|
             puts "#{name} #{remote}"
           end
         end

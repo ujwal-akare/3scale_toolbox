@@ -33,9 +33,12 @@ module ThreeScaleToolbox
         end
 
         def remove_remote(remote_name)
-          ThreeScaleToolbox.configuration.update_remotes do |remotes|
-            remotes.delete(remote_name) do |el|
-              raise "Could not remove remote #{el}"
+          ThreeScaleToolbox.configuration.update(:remotes) do |remotes|
+            remotes = {} if remotes.nil?
+            remotes.tap do |r|
+              r.delete(remote_name) do |el|
+                raise "Could not remove remote '#{el}'"
+              end
             end
           end
         end
