@@ -12,7 +12,7 @@ module ThreeScaleToolbox
           usage       '3scale <command> [options]'
           summary     '3scale CLI Toolbox'
           description '3scale CLI tools to manage your API from the terminal.'
-          required :c, 'config-file', '3scale CLI configuration file' do |val, _cmd|
+          option :c, 'config-file', '3scale CLI configuration file', argument: :required do |val, _cmd|
             ThreeScaleToolbox.config_file = val
           end
           flag :v, :version, 'Prints the version of this command' do |_, _|

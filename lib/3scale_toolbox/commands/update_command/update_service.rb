@@ -13,8 +13,8 @@ module ThreeScaleToolbox
             summary     'Update service'
             description 'Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
 
-            required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
-            required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
+            option  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
+            option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
             option    :t, 'target_system_name', 'Target system name', argument: :required
             flag      :f, :force, 'Overwrites the mapping rules by deleting all rules from target service first'
             flag      :r, 'rules-only', 'Updates only the mapping rules'
