@@ -26,18 +26,27 @@ module ThreeScaleToolbox
           exit 1
         end
 
+        def invalid_remote
+          raise "invalid remote configuration from config file #{ThreeScaleToolbox.config_file}"
+        end
+
         def validate_remotes(remotes)
-          # TODO
+          return if remotes.nil?
+          invalid_remote unless remotes.class == Hash
+          remotes.each_value do |remote|
+            invalid_remote unless remote.key?(:endpoint) && remote.key?(:provider_key)
+          end
         end
 
         def list_remotes
           remotes = ThreeScaleToolbox.configuration.data :remotes
+
+          validate_remotes(remotes)
+
           if remotes.nil? || remotes.empty?
             puts 'Emtpy remote list.'
             exit 0
           end
-
-          validate_remotes(remotes)
 
           remotes.each do |name, remote|
             puts "#{name} #{remote[:endpoint]} #{remote[:provider_key]}"
