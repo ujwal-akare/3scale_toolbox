@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [0.5.0]
+
+### Added
+
+- Plugin framework [#51](https://github.com/3scale/3scale_toolbox/pull/51)
+
 ## [0.4.0]
 
 ### Added
