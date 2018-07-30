@@ -1,3 +1,4 @@
+require '3scale_toolbox'
 require '3scale_toolbox/commands'
 
 module ThreeScaleToolbox::CLI
