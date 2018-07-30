@@ -7,8 +7,3 @@ rvm:
 - 2.3.1
 - 2.2.5
 - 2.1.9
-script:
-- rake install
-- 3scale help
-- 3scale help copy
-- 3scale help import
