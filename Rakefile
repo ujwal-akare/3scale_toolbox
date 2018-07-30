@@ -17,4 +17,4 @@ rescue LoadError
   warn 'RSpec is not installed!'
 end
 
-task default: 'spec:unit'
+task default: 'spec:all'
