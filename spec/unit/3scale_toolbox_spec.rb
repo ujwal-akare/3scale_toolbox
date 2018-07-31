@@ -1,5 +1,3 @@
-require 'fileutils'
-require 'shared_contexts'
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox do

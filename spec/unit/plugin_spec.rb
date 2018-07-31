@@ -1,4 +1,3 @@
-require 'shared_contexts'
 require '3scale_toolbox/cli'
 
 RSpec::Matchers.define_negated_matcher :not_raise_error, :raise_error
