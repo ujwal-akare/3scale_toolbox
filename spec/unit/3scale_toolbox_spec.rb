@@ -8,15 +8,13 @@ RSpec.describe ThreeScaleToolbox do
   let(:name) { random_lowercase_name }
   let(:dest_plugin_file) { File.join(tmp_dir, '3scale_toolbox_plugin.rb') }
 
-  before(:each) do
+  around(:each) do |example|
     plugin = get_plugin_content(name.capitalize, name)
     File.open(dest_plugin_file, 'w') do |file|
       file.write(plugin)
     end
     $LOAD_PATH.unshift(tmp_dir) unless $LOAD_PATH.include?(tmp_dir)
-  end
-
-  after(:each) do
+    example.run
     $LOAD_PATH.delete(tmp_dir)
   end
 
