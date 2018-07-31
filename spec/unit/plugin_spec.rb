@@ -1,7 +1,5 @@
 require '3scale_toolbox/cli'
 
-RSpec::Matchers.define_negated_matcher :not_raise_error, :raise_error
-
 RSpec.describe 'Plugin command' do
   include_context :temp_dir
   include_context :plugin
@@ -16,7 +14,7 @@ RSpec.describe 'Plugin command' do
   it 'is not loaded when not in load path' do
     expect do
       ThreeScaleToolbox::CLI.run(%w[simple])
-    end.to raise_error.and output(/unknown command/).to_stderr
+    end.to raise_error(SystemExit).and output(/unknown command/).to_stderr
   end
 
   it 'is loaded when expected' do
@@ -28,6 +26,6 @@ RSpec.describe 'Plugin command' do
 
     expect do
       ThreeScaleToolbox::CLI.run([name])
-    end.to not_raise_error.and output("this is #{name} command\n").to_stdout
+    end.to output("this is #{name} command\n").to_stdout
   end
 end
