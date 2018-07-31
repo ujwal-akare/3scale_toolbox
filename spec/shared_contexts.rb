@@ -15,7 +15,7 @@ RSpec.shared_context :temp_dir do
     end
   end
 
-  attr_reader :tmp_dir
+  let(:tmp_dir) { @tmp_dir }
 end
 
 class PluginRenderer
