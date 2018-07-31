@@ -1,3 +1,4 @@
+require 'erb'
 require 'tmpdir'
 
 RSpec.shared_context :temp_dir do
@@ -9,4 +10,28 @@ RSpec.shared_context :temp_dir do
   end
 
   attr_reader :tmp_dir
+end
+
+class PluginRenderer
+  attr_accessor :command_class_name, :command_name
+
+  def initialize(template)
+    @renderer = ERB.new(template)
+  end
+
+  def render
+    @renderer.result(binding)
+  end
+end
+
+RSpec.shared_context :plugin do
+  def get_plugin_content(command_class_name, command_name)
+    plugin_template = File.read(
+      File.join(File.dirname(__FILE__), 'resources', '3scale_toolbox_plugin_template.erb')
+    )
+    plugin_renderer = PluginRenderer.new(plugin_template)
+    plugin_renderer.command_class_name = command_class_name
+    plugin_renderer.command_name = command_name
+    plugin_renderer.render
+  end
 end
