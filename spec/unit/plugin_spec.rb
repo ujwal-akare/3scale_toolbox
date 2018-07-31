@@ -14,7 +14,10 @@ RSpec.describe 'Plugin command' do
   it 'is not loaded when not in load path' do
     expect do
       ThreeScaleToolbox::CLI.run(%w[simple])
-    end.to raise_error(SystemExit).and output(/unknown command/).to_stderr
+    end.to output(/unknown command/).to_stderr.and raise_error(SystemExit) do |e|
+      expect(e.status).to eq 1
+      expect(e.success?).to be_falsey
+    end
   end
 
   it 'is loaded when expected' do
