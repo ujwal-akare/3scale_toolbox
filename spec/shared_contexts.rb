@@ -1,6 +1,12 @@
 require 'erb'
 require 'tmpdir'
 
+RSpec.shared_context :random_name do
+  def random_lowercase_name
+    [*('a'..'z')].sample(8).join
+  end
+end
+
 RSpec.shared_context :temp_dir do
   around(:each) do |example|
     Dir.mktmpdir('3scale_toolbox_rspec-') do |dir|
