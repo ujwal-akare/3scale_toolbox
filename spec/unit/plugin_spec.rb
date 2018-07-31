@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'shared_contexts'
 require '3scale_toolbox/cli'
 
@@ -6,12 +5,12 @@ RSpec::Matchers.define_negated_matcher :not_raise_error, :raise_error
 
 RSpec.describe 'Plugin command' do
   include_context :temp_dir
+  include_context :plugin
+  include_context :random_name
 
-  before(:each) do
+  around(:each) do |example|
     $LOAD_PATH.unshift(tmp_dir) unless $LOAD_PATH.include?(tmp_dir)
-  end
-
-  after(:each) do
+    example.run
     $LOAD_PATH.delete(tmp_dir)
   end
 
@@ -22,11 +21,14 @@ RSpec.describe 'Plugin command' do
   end
 
   it 'is loaded when expected' do
-    plugin_file = File.join(File.dirname(__FILE__), 'resources', '3scale_toolbox_plugin_simple.rb')
-    FileUtils.cp plugin_file, File.join(tmp_dir, '3scale_toolbox_plugin.rb')
+    name = random_lowercase_name
+    plugin = get_plugin_content(name.capitalize, name)
+    File.open(File.join(tmp_dir, '3scale_toolbox_plugin.rb'), 'w') do |file|
+      file.write(plugin)
+    end
 
     expect do
-      ThreeScaleToolbox::CLI.run(%w[simple])
-    end.to not_raise_error.and output("this is simple command\n").to_stdout
+      ThreeScaleToolbox::CLI.run([name])
+    end.to not_raise_error.and output("this is #{name} command\n").to_stdout
   end
 end
