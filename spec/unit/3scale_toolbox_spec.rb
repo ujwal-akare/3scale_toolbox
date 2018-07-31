@@ -9,6 +9,7 @@ RSpec.describe ThreeScaleToolbox do
   let(:dest_plugin_file) { tmp_dir.join('3scale_toolbox_plugin.rb') }
 
   around(:each) do |example|
+    described_class.config_file = nil
     plugin = get_plugin_content(name.capitalize, name)
     dest_plugin_file.write(plugin)
     $LOAD_PATH.unshift(tmp_dir) unless $LOAD_PATH.include?(tmp_dir)
@@ -23,5 +24,23 @@ RSpec.describe ThreeScaleToolbox do
   it '.load_plugins loads plugin' do
     expect { described_class.load_plugins }.not_to raise_error
     expect(Object.const_get(name.capitalize.to_sym)).to be_a_kind_of(ThreeScaleToolbox::Command)
+  end
+
+  it '.config_file set' do
+    filename = 'some_file_name'
+    described_class.config_file = filename
+    expect(described_class.config_file).to eq filename
+  end
+
+  it '.config_file using ENV var' do
+    filename = 'some_file_name'
+    env_copy = ENV.to_h
+    env_copy['THREESCALE_CLI_CONFIG'] = filename
+    stub_const('ENV', env_copy)
+    expect(described_class.config_file).to eq filename
+  end
+
+  it '.config_file default' do
+    expect(described_class.config_file).to eq File.join Gem.user_home, '.3scalerc.yaml'
   end
 end
