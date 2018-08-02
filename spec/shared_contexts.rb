@@ -1,5 +1,6 @@
 require 'erb'
 require 'tmpdir'
+require 'pathname'
 
 RSpec.shared_context :random_name do
   def random_lowercase_name
@@ -10,7 +11,7 @@ end
 RSpec.shared_context :temp_dir do
   around(:each) do |example|
     Dir.mktmpdir('3scale_toolbox_rspec-') do |dir|
-      @tmp_dir = dir
+      @tmp_dir = Pathname.new(dir)
       example.run
     end
   end
