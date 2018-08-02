@@ -3,7 +3,7 @@ require '3scale_toolbox/cli'
 RSpec.describe 'Plugin Command Hierarchy' do
   include_context :random_name
 
-  def create_command(command_name)
+  def create_command(command_name:, message:)
     Class.new(Cri::CommandRunner) do
       extend ThreeScaleToolbox::Command
 
@@ -11,41 +11,63 @@ RSpec.describe 'Plugin Command Hierarchy' do
       define_singleton_method :command do
         Cri::Command.define do
           name        command_name
-          usage       command_name
           runner      this_class
         end
       end
 
       define_method :run do
-        puts "command #{command_name}"
+        puts message
       end
     end
   end
 
-  it 'sibling commands loaded with add command' do
-    10.times.each do |cmd_idx|
-      cmd = create_command("cmd_#{cmd_idx}")
-      ThreeScaleToolbox::CLI.add_command(cmd)
+  it '.add_command' do
+    commands = [
+      {
+        command_name: random_lowercase_name,
+        message: 'Lorem ipsum dolor sit amet'
+      },
+      {
+        command_name: random_lowercase_name,
+        message: 'One upon a time'
+      }
+    ]
+
+    commands.each do |command|
+      ThreeScaleToolbox::CLI.add_command(create_command(command))
     end
 
-    10.times.each do |cmd_idx|
+    commands.each do |command|
       expect do
-        ThreeScaleToolbox::CLI.run(["cmd_#{cmd_idx}"])
-      end.to output("command cmd_#{cmd_idx}\n").to_stdout
+        ThreeScaleToolbox::CLI.run([command[:command_name]])
+      end.to output("#{command[:message]}\n").to_stdout
     end
   end
 
   it '.add_subcommand' do
-    base_name = random_lowercase_name
-    base_cmd = create_command(base_name)
-    ThreeScaleToolbox::CLI.add_command(base_cmd)
+    base_command_info = {
+      command_name: random_lowercase_name,
+      message: 'Excepteur sint occaecat cupidatat non proident'
+    }
 
-    subcmd_name = random_lowercase_name
-    subcmd = create_command(subcmd_name)
-    base_cmd.add_subcommand(subcmd)
+    base_cmd = create_command(base_command_info)
+    ThreeScaleToolbox::CLI.add_command base_cmd
 
+    subcmd_info = {
+      command_name: random_lowercase_name,
+      message: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco'
+    }
+
+    base_cmd.add_subcommand(create_command(subcmd_info))
+
+    # Calling subcommand
     expect do
-      ThreeScaleToolbox::CLI.run([base_name, subcmd_name])
-    end.to output("command #{subcmd_name}\n").to_stdout
+      ThreeScaleToolbox::CLI.run([base_command_info[:command_name], subcmd_info[:command_name]])
+    end.to output("#{subcmd_info[:message]}\n").to_stdout
+
+    # Calling base command
+    expect do
+      ThreeScaleToolbox::CLI.run([base_command_info[:command_name]])
+    end.to output("#{base_command_info[:message]}\n").to_stdout
   end
 end
