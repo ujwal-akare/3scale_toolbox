@@ -23,10 +23,7 @@ RSpec.describe 'Plugin command' do
   it 'is loaded when expected' do
     name = random_lowercase_name
     plugin = get_plugin_content(name.capitalize, name)
-    File.open(File.join(tmp_dir, '3scale_toolbox_plugin.rb'), 'w') do |file|
-      file.write(plugin)
-    end
-
+    tmp_dir.join('3scale_toolbox_plugin.rb').write(plugin)
     expect do
       ThreeScaleToolbox::CLI.run([name])
     end.to output("this is #{name} command\n").to_stdout
