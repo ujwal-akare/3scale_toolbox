@@ -8,7 +8,7 @@ rvm:
 - 2.2.5
 - 2.1.9
 script:
-- rake install
-- 3scale help
-- 3scale help copy
-- 3scale help import
+  - bundle exec rake spec:all
+  - bundle exec 3scale help
+  - bundle exec 3scale help copy
+  - bundle exec 3scale help import
