@@ -21,30 +21,22 @@ RSpec.describe 'Plugin Command Hierarchy' do
     end
   end
 
-  it '.add_command' do
-    commands = [
-      {
-        command_name: random_lowercase_name,
-        message: 'Lorem ipsum dolor sit amet'
-      },
-      {
-        command_name: random_lowercase_name,
-        message: 'One upon a time'
-      }
-    ]
+  it '.add_command to add multiple commands at the same hierarchy level' do
+    command01 = { command_name: random_lowercase_name, message: 'Lorem ipsum dolor sit amet' }
+    ThreeScaleToolbox::CLI.add_command(create_command(command01))
+    command02 = { command_name: random_lowercase_name, message: 'One upon a time' }
+    ThreeScaleToolbox::CLI.add_command(create_command(command02))
 
-    commands.each do |command|
-      ThreeScaleToolbox::CLI.add_command(create_command(command))
-    end
+    expect do
+      ThreeScaleToolbox::CLI.run([command01[:command_name]])
+    end.to output("#{command01[:message]}\n").to_stdout
 
-    commands.each do |command|
-      expect do
-        ThreeScaleToolbox::CLI.run([command[:command_name]])
-      end.to output("#{command[:message]}\n").to_stdout
-    end
+    expect do
+      ThreeScaleToolbox::CLI.run([command02[:command_name]])
+    end.to output("#{command02[:message]}\n").to_stdout
   end
 
-  it '.add_subcommand' do
+  it '.add_subcommand to add commands in parent child hierarchy' do
     base_command_info = {
       command_name: random_lowercase_name,
       message: 'Excepteur sint occaecat cupidatat non proident'
