@@ -42,14 +42,16 @@ module ThreeScaleToolbox
         class ServiceUpdater
           attr_reader :source_client, :target_client, :source_service_id, :target_service_id
 
-          def initialize (source, source_service_id, destination, target_service_id)
+          def initialize (source, source_service_id, destination, target_service_id, insecure)
             @source_client = ThreeScale::API.new(
               endpoint:     endpoint_from_url(source),
-              provider_key: provider_key_from_url(source)
+              provider_key: provider_key_from_url(source),
+              verify_ssl: !insecure
             )
             @target_client = ThreeScale::API.new(
               endpoint:     endpoint_from_url(destination),
-              provider_key: provider_key_from_url(destination)
+              provider_key: provider_key_from_url(destination),
+              verify_ssl: !insecure
             )
             @source_service_id = source_service_id
             @target_service_id = target_service_id
@@ -232,13 +234,14 @@ module ThreeScaleToolbox
         def self.run(opts, args)
           source      = fetch_required_option(opts, :source)
           destination = fetch_required_option(opts, :destination)
+          insecure    = opts[:insecure] || false
           exit_with_message 'error: missing source_service_id argument' if args.empty?
           exit_with_message 'error: missing target_service_id argument' if args.size < 2
           source_service_id = args[0]
           target_service_id = args[1]
           force_update = opts[:force] || false
           rules_only = opts[:'rules-only'] || false
-          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id)
+          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, insecure)
 
           if rules_only
             updater.copy_mapping_rules force_update
