@@ -16,6 +16,7 @@ module ThreeScaleToolbox
             puts ThreeScaleToolbox::VERSION
             exit
           end
+          flag :k, :insecure, 'Proceed and operate even for server connections otherwise considered insecure'
         end
       end
     end
