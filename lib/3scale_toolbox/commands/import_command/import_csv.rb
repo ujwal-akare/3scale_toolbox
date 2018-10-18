@@ -61,11 +61,14 @@ module ThreeScaleToolbox
           end
         end
 
-        def self.import_csv(destination, file_path)
+        def self.import_csv(destination, file_path, insecure)
           endpoint     = endpoint_from_url destination
           provider_key = provider_key_from_url destination
 
-          client   = ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key)
+          client   = ThreeScale::API.new(endpoint: endpoint,
+                                         provider_key: provider_key,
+                                         verify_ssl: !insecure
+                                        )
           data     = CSV.read file_path
           headings = data.shift
           services = {}
@@ -168,7 +171,8 @@ module ThreeScaleToolbox
         def self.run(opts, _)
           destination = fetch_required_option(opts, :destination)
           file_path = fetch_required_option(opts, :file)
-          import_csv(destination, file_path)
+          insecure = opts[:insecure] || false
+          import_csv(destination, file_path, insecure)
         end
       end
     end
