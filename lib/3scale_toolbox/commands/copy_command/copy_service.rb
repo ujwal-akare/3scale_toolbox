@@ -32,9 +32,10 @@ module ThreeScaleToolbox
           source      = fetch_required_option(opts, :source)
           destination = fetch_required_option(opts, :destination)
           system_name = fetch_required_option(opts, :target_system_name)
+          insecure    = opts[:insecure] || false
           exit_with_message 'error: missing service_id argument' if args.empty?
           service_id = args[0]
-          copy_service(service_id, source, destination, system_name)
+          copy_service(service_id, source, destination, system_name, insecure)
         end
 
         def self.exit_with_message(message)
@@ -67,16 +68,18 @@ module ThreeScaleToolbox
           }.reject { |key, value| !value }
         end
 
-        def self.copy_service(service_id, source, destination, system_name)
+        def self.copy_service(service_id, source, destination, system_name, insecure)
           require '3scale/api'
 
           source_client = ThreeScale::API.new(
             endpoint:     endpoint_from_url(source),
-            provider_key: provider_key_from_url(source)
+            provider_key: provider_key_from_url(source),
+            verify_ssl: !insecure
           )
-          client        = ThreeScale::API.new(
+          client = ThreeScale::API.new(
             endpoint:     endpoint_from_url(destination),
-            provider_key: provider_key_from_url(destination)
+            provider_key: provider_key_from_url(destination),
+            verify_ssl: !insecure
           )
 
           service = source_client.show_service(service_id)

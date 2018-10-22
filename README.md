@@ -44,6 +44,10 @@ Install, uninstall and update plugins using tools like [RubyGems](https://guides
 
 [Make your own plugin](docs/plugins.md)
 
+## Troubleshooting
+
+* [SSL errors](docs/ssl_errors.md): If you run into SSL issues with the toolbox, you can take actions to resolve them.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/3scale/3scale_toolbox.
