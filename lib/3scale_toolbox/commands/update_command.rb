@@ -10,8 +10,8 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'update'
           usage       'update <command> [options]'
-          summary     '3scale update super command'
-          description '3scale update super command.'
+          summary     '3scale update command'
+          description '3scale update command.'
         end
       end
       add_subcommand(UpdateServiceSubcommand)

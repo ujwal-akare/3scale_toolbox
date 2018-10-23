@@ -23,10 +23,10 @@ DESCRIPTION
     3scale CLI tools to manage your API from the terminal.
 
 COMMANDS
-    copy       3scale copy super command
+    copy       3scale copy command
     help       show help
-    import     3scale import super command
-    update     3scale update super command
+    import     3scale import command
+    update     3scale update command
 
 OPTIONS
     -k --insecure      Proceed and operate even for server connections
@@ -108,7 +108,7 @@ OPTIONS FOR UPDATE
 Example:
 
 ```shell
-$ 3scale update service -s https://234239874598743@3scaleinstance_source.com -d https://2342342342342@3scaleinstance_destination.com 3 2
+$ 3scale update service -s https://9874598743@source.example.com -d https://2342342342342@destination.example.com 3 2
 ```
 
 ### Import from CSV

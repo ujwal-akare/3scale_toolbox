@@ -10,8 +10,8 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'copy'
           usage       'copy <command> [options]'
-          summary     '3scale copy super command'
-          description '3scale copy super command.'
+          summary     '3scale copy command'
+          description '3scale copy command.'
         end
       end
       add_subcommand(CopyServiceSubcommand)
