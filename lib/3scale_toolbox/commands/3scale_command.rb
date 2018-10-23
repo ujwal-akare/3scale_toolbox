@@ -17,6 +17,10 @@ module ThreeScaleToolbox
             exit
           end
           flag :k, :insecure, 'Proceed and operate even for server connections otherwise considered insecure'
+          flag :h, :help, 'show help for this command' do |_, cmd|
+            puts cmd.help
+            exit 0
+          end
         end
       end
     end

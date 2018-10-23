@@ -13,11 +13,6 @@ module ThreeScaleToolbox
             summary     'Update service'
             description 'Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
 
-            flag :h, :help, 'show help for this command' do |_, cmd|
-              puts cmd.help
-              exit 0
-            end
-
             required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
             required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
             flag      :f, :force, 'Overwrites the mapping rules by deleting all rules from target service first'

@@ -12,10 +12,6 @@ module ThreeScaleToolbox
           usage       'copy <command> [options]'
           summary     '3scale copy super command'
           description '3scale copy super command.'
-          flag :h, :help, 'show help for this command' do |_, cmd|
-            puts cmd.help
-            exit 0
-          end
         end
       end
       add_subcommand(CopyServiceSubcommand)

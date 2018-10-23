@@ -13,11 +13,6 @@ module ThreeScaleToolbox
             summary     'Copy service'
             description 'Will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.'
 
-            flag :h, :help, 'show help for this command' do |_, cmd|
-              puts cmd.help
-              exit 0
-            end
-
             required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
             required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
             required  :t, 'target_system_name', 'Target system name'
