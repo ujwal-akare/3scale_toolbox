@@ -37,7 +37,7 @@ OPTIONS
 ### Copy a service
 Will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.
 
-Help docstring
+Help message:
 
 ```shell
 $ 3scale copy service --help
@@ -75,7 +75,7 @@ OPTIONS FOR COPY
 
 Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.
 
-Help docstring
+Help message:
 
 ```shell
 NAME
@@ -129,7 +129,7 @@ Movies ,Movies (Biography),GET,/movies/biography/,api_key,movies_biography,metri
 Movies ,Movies (Drama),GET,/movies/drama/,api_key,movies_drama,method
 ```
 
-Help docstring
+Help message:
 
 ```shell
 $ 3scale import csv -h
