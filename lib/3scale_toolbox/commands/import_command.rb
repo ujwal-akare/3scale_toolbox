@@ -10,8 +10,8 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'import'
           usage       'import <command> [options]'
-          summary     '3scale CLI import'
-          description '3scale CLI import tools to manage your API from the terminal.'
+          summary     '3scale import super command'
+          description '3scale import super command.'
 
           flag :h, :help, 'show help for this command' do |_, cmd|
             puts cmd.help

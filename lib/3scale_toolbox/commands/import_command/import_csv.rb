@@ -12,17 +12,17 @@ module ThreeScaleToolbox
         def self.command
           Cri::Command.define do
             name        'csv'
-            usage       'csv [options]'
-            summary     '3scale CLI import csv'
-            description '3scale CLI import csv tool'
+            usage       'csv [opts] -d <dst> -f <file>'
+            summary     'Import csv file'
+            description 'Create new services, metrics, methods and mapping rules from CSV formatted file'
 
             flag :h, :help, 'show help for this command' do |_, cmd|
               puts cmd.help
               exit 0
             end
 
-            required  :d, :destination, 'Destination'
-            required  :f, 'file', 'File'
+            required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
+            required  :f, 'file', 'CSV formatted file'
 
             run do |opts, args, _|
               ImportCsvSubcommand.run opts, args

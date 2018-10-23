@@ -10,8 +10,8 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'copy'
           usage       'copy <command> [options]'
-          summary     '3scale CLI copy'
-          description '3scale CLI copy tools to manage your API from the terminal.'
+          summary     '3scale copy super command'
+          description '3scale copy super command.'
           flag :h, :help, 'show help for this command' do |_, cmd|
             puts cmd.help
             exit 0

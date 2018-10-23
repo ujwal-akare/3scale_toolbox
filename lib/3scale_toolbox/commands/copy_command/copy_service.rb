@@ -9,17 +9,17 @@ module ThreeScaleToolbox
         def self.command
           Cri::Command.define do
             name        'service'
-            usage       'service [options] <service_id>'
-            summary     '3scale CLI copy service'
-            description '3scale CLI copy service tool'
+            usage       'service [opts] -s <src> -d <dst> <service_id>'
+            summary     'Copy service'
+            description 'Will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.'
 
             flag :h, :help, 'show help for this command' do |_, cmd|
               puts cmd.help
               exit 0
             end
 
-            required  :s, :source, 'Source'
-            required  :d, :destination, 'Destination'
+            required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
+            required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
             required  :t, 'target_system_name', 'Target system name'
 
             run do |opts, args, _|
