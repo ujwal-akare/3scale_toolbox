@@ -23,6 +23,47 @@ Will create a new service, copy existing methods, metrics, application plans and
 3scale copy service NUMBER --source=https://provider_key@foo-admin.3scale.net --destination=https://provider_key@foo2-admin.3scale.net
 ```
 
+### Update a service
+
+Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.
+
+Help docstring
+
+```shell
+NAME
+    service - Update service
+
+USAGE
+    3scale update service [opts] -s <src> -d <dst>
+    <src_service_id> <dst_service_id>
+
+DESCRIPTION
+    Will update existing service, update proxy settings, metrics, methods,
+    application plans and mapping rules.
+
+OPTIONS
+    -d --destination=<value>      3scale target instance. Format:
+                                  "http[s]://<provider_key>@3scale_url"
+    -f --force                    Overwrites the mapping rules by deleting
+                                  all rules from target service first
+    -h --help                     show help for this command
+    -r --rules-only               Updates only the mapping rules
+    -s --source=<value>           3scale source instance. Format:
+                                  "http[s]://<provider_key>@3scale_url"
+
+OPTIONS FOR UPDATE
+    -h --help                     show help for this command
+    -k --insecure                 Proceed and operate even for server
+                                  connections otherwise considered insecure
+    -v --version                  Prints the version of this command
+```
+
+Example:
+
+```shell
+$ 3scale update service -s https://234239874598743@3scaleinstance_source.com -d https://2342342342342@3scaleinstance_destination.com 3 2
+```
+
 ### Import from CSV
 
 Will create a new services, metrics, methods and mapping rules.
