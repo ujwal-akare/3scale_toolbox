@@ -2,9 +2,18 @@
 
 3scale toolbox is a set of tools to help you manage your 3scale product. Using the [3scale API Ruby Client](https://github.com/3scale/3scale-api-ruby).
 
+## Table of contents
+* [Installation](#installation)
+* [Usage](#usage)
+   * [Copy a service](#copy-a-service)
+   * [Update a service](#update-a-service)
+   * [Import from CSV](#import-from-csv)
+* [Development](#development)
+* [Plugins](#plugins)
+* [Troubleshooting](#troubleshooting)
+* [Contributing](#contributing)
+
 ## Installation
-
-
 Install the CLI:
 
     $ gem install 3scale_toolbox
