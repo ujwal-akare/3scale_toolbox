@@ -9,19 +9,13 @@ module ThreeScaleToolbox
         def self.command
           Cri::Command.define do
             name        'service'
-            usage       'service [options] <service_id>'
-            summary     '3scale CLI update service'
-            description '3scale CLI update service tool'
+            usage       'service [opts] -s <src> -d <dst> <src_service_id> <dst_service_id>'
+            summary     'Update service'
+            description 'Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
 
-            flag :h, :help, 'show help for this command' do |_, cmd|
-              puts cmd.help
-              exit 0
-            end
-
-            required  :s, :source, 'Source'
-            required  :d, :destination, 'Destination'
+            required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
+            required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
             flag      :f, :force, 'Overwrites the mapping rules by deleting all rules from target service first'
-            # TODO: parametrize what parts of service need to be copied
             flag      :r, 'rules-only', 'Updates only the mapping rules'
 
             run do |opts, args, _|

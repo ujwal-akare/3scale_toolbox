@@ -10,13 +10,8 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'update'
           usage       'update <command> [options]'
-          summary     '3scale CLI update'
-          description '3scale CLI update tools to manage your API from the terminal.'
-
-          flag :h, :help, 'show help for this command' do |_, cmd|
-            puts cmd.help
-            exit 0
-          end
+          summary     '3scale update command'
+          description '3scale update command.'
         end
       end
       add_subcommand(UpdateServiceSubcommand)
