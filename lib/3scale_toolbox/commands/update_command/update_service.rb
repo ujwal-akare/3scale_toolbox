@@ -67,8 +67,11 @@ module ThreeScaleToolbox
           end
 
           def target_service_params(source)
-            # NOTE: backend_version and deployment_option are not yet returned by show_service method
-            params = %w(name backend_version deployment_option end_user_registration_required)
+            params = %w[
+              name backend_version deployment_option description
+              system_name end_user_registration_required
+              support_email tech_support_email admin_support_email
+            ]
             source.select { |k,v| params.include?(k) && v }
           end
 
