@@ -12,5 +12,13 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::ImportCommand,
       ThreeScaleToolbox::Commands::UpdateCommand
     ].freeze
+
+    def self.service_valid_params
+      %w[
+        name backend_version deployment_option description
+        system_name end_user_registration_required
+        support_email tech_support_email admin_support_email
+      ]
+    end
   end
 end

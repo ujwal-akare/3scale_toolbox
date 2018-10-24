@@ -54,13 +54,6 @@ module ThreeScaleToolbox
           url.sub /\w*@/, ''
         end
 
-        def self.service_valid_params
-          %w[
-            name backend_version deployment_option description
-            system_name end_user_registration_required
-            support_email tech_support_email admin_support_email
-          ]
-        end
 
         # Returns new hash object with not nil valid params
         def self.filter_params(valid_params, source)
@@ -70,7 +63,7 @@ module ThreeScaleToolbox
         end
 
         def self.copy_service_params(original, system_name)
-          service_params = filter_params(service_valid_params, original)
+          service_params = filter_params(Commands.service_valid_params, original)
           service_params.tap do |hash|
             hash['system_name'] = system_name if system_name
           end

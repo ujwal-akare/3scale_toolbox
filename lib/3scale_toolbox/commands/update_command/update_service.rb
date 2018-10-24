@@ -67,12 +67,7 @@ module ThreeScaleToolbox
           end
 
           def target_service_params(source)
-            params = %w[
-              name backend_version deployment_option description
-              system_name end_user_registration_required
-              support_email tech_support_email admin_support_email
-            ]
-            source.select { |k,v| params.include?(k) && v }
+            source.select { |k, v| Commands.service_valid_params.include?(k) && v }
           end
 
           def source_metrics
