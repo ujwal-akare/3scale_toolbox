@@ -1,7 +1,7 @@
 require '3scale_toolbox/cli'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
-  include_context :random_name
+  include_context :source_service_data
 
   context '#run' do
     it 'with insecure flag' do
@@ -35,24 +35,10 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
   end
 
   context '#copy_service_params' do
-    let(:params) do
-      %w[
-        name backend_version deployment_option description
-        system_name end_user_registration_required
-        support_email tech_support_email admin_support_email
-      ]
-    end
-
-    let(:source_service_params) do
-      params.each_with_object({}) do |key, target|
-        target[key] = random_lowercase_name
-      end
-    end
-
     it 'all expected params are copied' do
-      new_service_params = described_class.copy_service_params(source_service_params, nil)
+      new_service_params = described_class.copy_service_params(source_service_obj, nil)
 
-      expect(new_service_params).to include(*params)
+      expect(new_service_params).to include(*source_service_params)
     end
 
     it 'extra params are not copied' do
@@ -61,19 +47,19 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
         'some_other_weird_param' => 'value1'
       }
       new_service_params = described_class.copy_service_params(
-        source_service_params.merge(extra_params), nil
+        source_service_obj.merge(extra_params), nil
       )
-      expect(new_service_params).to include(*params)
+      expect(new_service_params).to include(*source_service_params)
       expect(new_service_params).not_to include(*extra_params)
     end
 
     it 'missing params are not copied' do
       missing_params = %w[description backend_version]
       missing_params.each do |key|
-        source_service_params.delete(key)
+        source_service_obj.delete(key)
       end
-      new_service_params = described_class.copy_service_params(source_service_params, nil)
-      expect(new_service_params).to include(*source_service_params.keys)
+      new_service_params = described_class.copy_service_params(source_service_obj, nil)
+      expect(new_service_params).to include(*source_service_obj.keys)
       expect(new_service_params).not_to include(*missing_params)
     end
   end
