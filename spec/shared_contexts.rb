@@ -8,6 +8,24 @@ RSpec.shared_context :random_name do
   end
 end
 
+RSpec.shared_context :source_service_data do
+  include_context :random_name
+
+  let(:source_service_params) do
+    %w[
+      name backend_version deployment_option description
+      system_name end_user_registration_required
+      support_email tech_support_email admin_support_email
+    ]
+  end
+
+  let(:source_service_obj) do
+    source_service_params.each_with_object({}) do |key, target|
+      target[key] = random_lowercase_name
+    end
+  end
+end
+
 RSpec.shared_context :temp_dir do
   around(:each) do |example|
     Dir.mktmpdir('3scale_toolbox_rspec-') do |dir|

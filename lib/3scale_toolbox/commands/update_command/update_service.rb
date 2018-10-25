@@ -67,9 +67,7 @@ module ThreeScaleToolbox
           end
 
           def target_service_params(source)
-            # NOTE: backend_version and deployment_option are not yet returned by show_service method
-            params = %w(name backend_version deployment_option end_user_registration_required)
-            source.select { |k,v| params.include?(k) && v }
+            source.select { |k, v| Commands.service_valid_params.include?(k) && v }
           end
 
           def source_metrics

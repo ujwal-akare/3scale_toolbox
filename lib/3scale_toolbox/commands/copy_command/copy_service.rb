@@ -54,13 +54,19 @@ module ThreeScaleToolbox
           url.sub /\w*@/, ''
         end
 
+
+        # Returns new hash object with not nil valid params
+        def self.filter_params(valid_params, source)
+          valid_params.each_with_object({}) do |key, target|
+            target[key] = source[key] unless source[key].nil?
+          end
+        end
+
         def self.copy_service_params(original, system_name)
-          {
-            name:        original['name'],
-            system_name: system_name,
-            backend_version: original['backend_version'],
-            end_user_registration_required: original['end_user_registration_required']
-          }.reject { |key, value| !value }
+          service_params = filter_params(Commands.service_valid_params, original)
+          service_params.tap do |hash|
+            hash['system_name'] = system_name if system_name
+          end
         end
 
         def self.copy_service(service_id, source, destination, system_name, insecure)
