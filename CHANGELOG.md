@@ -4,11 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0]
+
 ### Added
+- Plugin framework. [#51](https://github.com/3scale/3scale_toolbox/pull/51)
+- Enable insecure connections with a flag for all commands. [#62](https://github.com/3scale/3scale_toolbox/pull/62)
+- Documentation enhacement. [#63](https://github.com/3scale/3scale_toolbox/pull/63)
 
 ### Changed
+- Remove bundler development dependency specific version. [#61](https://github.com/3scale/3scale_toolbox/pull/61)
 
 ### Fixed
+- Include all available attributes on copy/update service. [#64](https://github.com/3scale/3scale_toolbox/pull/64)
 
 ## [0.4.0]
 
@@ -50,7 +57,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.5.0
 [0.4.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.4.0
 [0.3.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.3.0
 [0.2.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.2.0
