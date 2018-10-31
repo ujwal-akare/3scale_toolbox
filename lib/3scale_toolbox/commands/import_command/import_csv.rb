@@ -7,8 +7,8 @@ require '3scale_toolbox/base_command'
 module ThreeScaleToolbox
   module Commands
     module ImportCommand
-      module ImportCsvSubcommand
-        extend ThreeScaleToolbox::Command
+      class ImportCsvSubcommand < Cri::CommandRunner
+        include ThreeScaleToolbox::Command
         def self.command
           Cri::Command.define do
             name        'csv'
@@ -19,33 +19,22 @@ module ThreeScaleToolbox
             option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
             option  :f, 'file', 'CSV formatted file', argument: :required
 
-            run do |opts, args, _|
-              ImportCsvSubcommand.run opts, args
-            end
+            runner ImportCsvSubcommand
           end
         end
 
-        def self.exit_with_message(message)
-          puts message
-          exit 1
-        end
-
-        def self.fetch_required_option(options, key)
-          options.fetch(key) { exit_with_message "error: Missing argument #{key}" }
-        end
-
-        def self.provider_key_from_url(url)
+        def provider_key_from_url(url)
           URI(url).user
         end
 
-        def self.endpoint_from_url(url)
+        def endpoint_from_url(url)
           uri      = URI(url)
           uri.user = nil
 
           uri.to_s
         end
 
-        def self.auth_app_key_according_service(service)
+        def auth_app_key_according_service(service)
           case service['backend_version']
           when '1'
             'user_key'
@@ -56,13 +45,13 @@ module ThreeScaleToolbox
           end
         end
 
-        def self.import_csv(destination, file_path, insecure)
+        def import_csv(destination, file_path)
           endpoint     = endpoint_from_url destination
           provider_key = provider_key_from_url destination
 
           client   = ThreeScale::API.new(endpoint: endpoint,
                                          provider_key: provider_key,
-                                         verify_ssl: !insecure
+                                         verify_ssl: verify_ssl
                                         )
           data     = CSV.read file_path
           headings = data.shift
@@ -163,11 +152,10 @@ module ThreeScaleToolbox
           puts "#{stats[:mapping_rules]} mapping rules have been created"
         end
 
-        def self.run(opts, _)
-          destination = fetch_required_option(opts, :destination)
-          file_path = fetch_required_option(opts, :file)
-          insecure = opts[:insecure] || false
-          import_csv(destination, file_path, insecure)
+        def run
+          destination = fetch_required_option(:destination)
+          file_path = fetch_required_option(:file)
+          import_csv(destination, file_path)
         end
       end
     end

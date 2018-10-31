@@ -4,8 +4,8 @@ require '3scale_toolbox/base_command'
 module ThreeScaleToolbox
   module Commands
     module CopyCommand
-      module CopyServiceSubcommand
-        extend ThreeScaleToolbox::Command
+      class CopyServiceSubcommand < Cri::CommandRunner
+        include ThreeScaleToolbox::Command
         def self.command
           Cri::Command.define do
             name        'service'
@@ -16,71 +16,58 @@ module ThreeScaleToolbox
             option  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
             option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
             option  :t, 'target_system_name', 'Target system name', argument: :required
+            param   :service_id
 
-            run do |opts, args, _|
-              CopyServiceSubcommand.run opts, args
-            end
+            runner CopyServiceSubcommand
           end
         end
 
-        def self.run(opts, args)
-          source      = fetch_required_option(opts, :source)
-          destination = fetch_required_option(opts, :destination)
-          system_name = fetch_required_option(opts, :target_system_name)
-          insecure    = opts[:insecure] || false
-          exit_with_message 'error: missing service_id argument' if args.empty?
-          service_id = args[0]
-          copy_service(service_id, source, destination, system_name, insecure)
+        def run
+          source      = fetch_required_option(:source)
+          destination = fetch_required_option(:destination)
+          system_name = fetch_required_option(:target_system_name)
+          copy_service(arguments[:service_id], source, destination, system_name)
         end
 
-        def self.exit_with_message(message)
-          puts message
-          exit 1
-        end
-
-        def self.fetch_required_option(options, key)
-          options.fetch(key) { exit_with_message "error: Missing argument #{key}" }
-        end
-
-        def self.compare_hashes(first, second, keys)
+        def compare_hashes(first, second, keys)
           keys.map{ |key| first.fetch(key) } == keys.map{ |key| second.fetch(key) }
         end
 
-        def self.provider_key_from_url(url)
+        def provider_key_from_url(url)
           url[/\w*@/][0..-2]
         end
 
-        def self.endpoint_from_url(url)
+        def endpoint_from_url(url)
           url.sub /\w*@/, ''
         end
 
 
         # Returns new hash object with not nil valid params
-        def self.filter_params(valid_params, source)
+        def filter_params(valid_params, source)
           valid_params.each_with_object({}) do |key, target|
             target[key] = source[key] unless source[key].nil?
           end
         end
 
-        def self.copy_service_params(original, system_name)
+        def copy_service_params(original, system_name)
           service_params = filter_params(Commands.service_valid_params, original)
           service_params.tap do |hash|
             hash['system_name'] = system_name if system_name
           end
         end
 
-        def self.copy_service(service_id, source, destination, system_name, insecure)
+        def copy_service(service_id, source, destination, system_name)
           require '3scale/api'
 
           source_client = ThreeScale::API.new(
             endpoint:     endpoint_from_url(source),
             provider_key: provider_key_from_url(source),
-            verify_ssl: !insecure
+            verify_ssl: verify_ssl
           )
           client = ThreeScale::API.new(
             endpoint:     endpoint_from_url(destination),
             provider_key: provider_key_from_url(destination),
-            verify_ssl: !insecure
+            verify_ssl: verify_ssl
           )
 
           service = source_client.show_service(service_id)

@@ -6,36 +6,30 @@ module ThreeScaleToolbox
   module Commands
     module RemoteCommand
       class RemoteAddSubcommand < Cri::CommandRunner
-        extend ThreeScaleToolbox::Command
+        include ThreeScaleToolbox::Command
         def self.command
           Cri::Command.define do
             name        'add'
             usage       'add <remote_name> <remote_url>'
             summary     '3scale CLI remote add'
             description '3scale CLI command to add new remote'
+            param       :remote_name
+            param       :remote_url
             runner RemoteAddSubcommand
           end
         end
 
         def run
-          validate_input_params
-          begin
-            add_remote(*arguments[0..1])
-          rescue StandardError => e
-            warn e.message
-            #warn e.backtrace
-            exit 1
-          end
-        end
-
-        def validate_input_params
-          return unless arguments.size != 2
-          puts command.help
-          exit 0
+          # 'arguments' cannot be converted to Hash
+          add_remote arguments[:remote_name], arguments[:remote_url]
+        rescue StandardError => e
+          warn e.message
+          warn e.backtrace
+          exit 1
         end
 
         def validate_remote_name(name)
-          remotes = ThreeScaleToolbox.configuration.data :remotes
+          remotes = config.data :remotes
           raise 'fatal: remote name already exists.' if !remotes.nil? && remotes.key?(name)
         end
 
@@ -51,7 +45,8 @@ module ThreeScaleToolbox
         def validate_remote_authentication(endpoint:, provider_key:)
           client = ThreeScale::API.new(
             endpoint: endpoint,
-            provider_key: provider_key
+            provider_key: provider_key,
+            verify_ssl: verify_ssl
           )
           begin
             client.list_services
@@ -69,7 +64,7 @@ module ThreeScaleToolbox
         def add_remote(remote_name, remote_url)
           validate_remote_name remote_name
           remote = validate_remote_url remote_url
-          ThreeScaleToolbox.configuration.update(:remotes) do |remotes|
+          config.update(:remotes) do |remotes|
             remotes = {} if remotes.nil?
             remotes.tap { |r| r[remote_name] = remote }
           end

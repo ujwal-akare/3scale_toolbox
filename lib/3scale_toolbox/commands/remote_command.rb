@@ -8,7 +8,7 @@ module ThreeScaleToolbox
   module Commands
     module RemoteCommand
       class RemoteCommand < Cri::CommandRunner
-        extend ThreeScaleToolbox::Command
+        include ThreeScaleToolbox::Command
         def self.command
           Cri::Command.define do
             name        'remote'
@@ -27,7 +27,7 @@ module ThreeScaleToolbox
         end
 
         def invalid_remote
-          raise "invalid remote configuration from config file #{ThreeScaleToolbox.config_file}"
+          raise "invalid remote configuration from config file #{config_file}"
         end
 
         def validate_remotes(remotes)
@@ -39,7 +39,7 @@ module ThreeScaleToolbox
         end
 
         def list_remotes
-          remotes = ThreeScaleToolbox.configuration.data :remotes
+          remotes = config.data :remotes
 
           validate_remotes(remotes)
 
