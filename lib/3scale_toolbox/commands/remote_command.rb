@@ -45,11 +45,10 @@ module ThreeScaleToolbox
 
           if remotes.nil? || remotes.empty?
             puts 'Emtpy remote list.'
-            exit 0
-          end
-
-          remotes.each do |name, remote|
-            puts "#{name} #{remote[:endpoint]} #{remote[:provider_key]}"
+          else
+            remotes.each do |name, remote|
+              puts "#{name} #{remote[:endpoint]} #{remote[:provider_key]}"
+            end
           end
         end
 
