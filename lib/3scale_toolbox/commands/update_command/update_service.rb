@@ -15,6 +15,7 @@ module ThreeScaleToolbox
 
             required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
             required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
+            option    :t, 'target_system_name', 'Target system name', argument: :required
             flag      :f, :force, 'Overwrites the mapping rules by deleting all rules from target service first'
             flag      :r, 'rules-only', 'Updates only the mapping rules'
 
@@ -34,9 +35,9 @@ module ThreeScaleToolbox
         end
 
         class ServiceUpdater
-          attr_reader :source_client, :target_client, :source_service_id, :target_service_id
+          attr_reader :source_client, :target_client, :source_service_id, :target_service_id, :target_system_name
 
-          def initialize (source, source_service_id, destination, target_service_id, insecure)
+          def initialize (source, source_service_id, destination, target_service_id, insecure, system_name)
             @source_client = ThreeScale::API.new(
               endpoint:     endpoint_from_url(source),
               provider_key: provider_key_from_url(source),
@@ -49,6 +50,7 @@ module ThreeScaleToolbox
             )
             @source_service_id = source_service_id
             @target_service_id = target_service_id
+            @target_system_name = system_name
           end
 
           def compare_hashes(first, second, keys)
@@ -66,8 +68,16 @@ module ThreeScaleToolbox
             uri.to_s
           end
 
+          # system name only included when specified from options
           def target_service_params(source)
-            source.select { |k, v| Commands.service_valid_params.include?(k) && v }
+            target_service = source.select do |k, v|
+              Commands.service_valid_params.include?(k) \
+                && k != 'system_name' \
+                && v
+            end
+            target_service.tap do |hash|
+              hash['system_name'] = target_system_name unless target_system_name.nil?
+            end
           end
 
           def source_metrics
@@ -233,7 +243,8 @@ module ThreeScaleToolbox
           target_service_id = args[1]
           force_update = opts[:force] || false
           rules_only = opts[:'rules-only'] || false
-          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, insecure)
+          system_name = opts[:target_system_name]
+          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, insecure, system_name)
 
           if rules_only
             updater.copy_mapping_rules force_update

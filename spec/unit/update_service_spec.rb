@@ -10,7 +10,8 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
                                                                     'source_service_id',
                                                                     'destination_id',
                                                                     'target_service_id',
-                                                                    true).and_return(updater)
+                                                                    true,
+                                                                    nil).and_return(updater)
       opts = {
         source: 'source_id',
         destination: 'destination_id',
@@ -27,7 +28,8 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
                                                                     'source_service_id',
                                                                     'destination_id',
                                                                     'target_service_id',
-                                                                    false).and_return(updater)
+                                                                    false,
+                                                                    nil).and_return(updater)
       opts = {
         source: 'source_id',
         destination: 'destination_id'
@@ -38,42 +40,37 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
 end
 
 RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcommand::ServiceUpdater do
-  include_context :source_service_data
-
-  subject do
-    described_class.new(
-      'https://provider_key_a@example.com',
-      'source_service_id',
-      'https://provider_key_a@example.com',
-      'destination_service_id',
-      true
-    )
-  end
-
   context '#target_service_params' do
-    it 'all expected params are copied' do
-      target_service_obj = subject.target_service_params(source_service_obj)
-      expect(target_service_obj).to include(*source_service_params)
-    end
-    it 'extra params are not copied' do
-      extra_params = {
-        'some_weird_param' => 'value0',
-        'some_other_weird_param' => 'value1'
-      }
-      target_service_obj = subject.target_service_params(
-        source_service_obj.merge(extra_params)
-      )
-      expect(target_service_obj).to include(*source_service_params)
-      expect(target_service_obj).not_to include(*extra_params)
-    end
-    it 'missing params are not copied' do
-      missing_params = %w[description backend_version]
-      missing_params.each do |key|
-        source_service_obj.delete(key)
+    context 'with target system name' do
+      subject do
+        described_class.new(
+          'https://provider_key_a@example.com',
+          'source_service_id',
+          'https://provider_key_a@example.com',
+          'destination_service_id',
+          true,
+          'some_target_system_name'
+        )
       end
-      target_service_obj = subject.target_service_params(source_service_obj)
-      expect(target_service_obj).to include(*source_service_obj.keys)
-      expect(target_service_obj).not_to include(*missing_params)
+      let(:target_service_params) { source_service_params }
+      include_examples 'target service params'
+    end
+
+    context 'without target system name' do
+      subject do
+        described_class.new(
+          'https://provider_key_a@example.com',
+          'source_service_id',
+          'https://provider_key_a@example.com',
+          'destination_service_id',
+          true,
+          nil
+        )
+      end
+      let(:target_service_params) do
+        source_service_params.reject { |k| k == 'system_name' }
+      end
+      include_examples 'target service params'
     end
   end
 end
