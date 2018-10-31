@@ -5,7 +5,7 @@ RSpec.describe 'Plugin Command Hierarchy' do
 
   def create_command(command_name:, message:)
     Class.new(Cri::CommandRunner) do
-      extend ThreeScaleToolbox::Command
+      include ThreeScaleToolbox::Command
 
       this_class = self
       define_singleton_method :command do

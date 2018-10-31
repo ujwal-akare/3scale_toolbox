@@ -1,7 +1,7 @@
 require '3scale_toolbox/cli'
 
 class <%= command_class_name %> < Cri::CommandRunner
-  extend ThreeScaleToolbox::Command
+  include ThreeScaleToolbox::Command
 
   def self.command
     Cri::Command.define do
