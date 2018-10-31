@@ -3,10 +3,9 @@ cache: bundler
 before_install:
 - gem install bundler -v 1.15.1
 rvm:
+- 2.5.1
 - 2.4.1
 - 2.3.1
-- 2.2.5
-- 2.1.9
 script:
   - bundle exec rake spec:all
   - bundle exec 3scale help
