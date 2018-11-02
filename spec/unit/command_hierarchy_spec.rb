@@ -1,4 +1,4 @@
-require '3scale_toolbox/cli'
+require '3scale_toolbox'
 
 RSpec.describe 'Plugin Command Hierarchy' do
   include_context :random_name

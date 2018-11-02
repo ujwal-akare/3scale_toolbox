@@ -20,17 +20,16 @@ module ThreeScaleToolbox
         def run
           # 'arguments' cannot be converted to Hash
           remove_remote arguments[:remote_name]
-        rescue StandardError => e
-          warn e.message
-          exit 1
         end
+
+        private
 
         def remove_remote(remote_name)
           config.update(:remotes) do |remotes|
             remotes = {} if remotes.nil?
             remotes.tap do |r|
               r.delete(remote_name) do |el|
-                raise "Could not remove remote '#{el}'"
+                raise ThreeScaleToolbox::Error, "could not remove remote '#{el}'"
               end
             end
           end

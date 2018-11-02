@@ -1,5 +1,4 @@
 require '3scale_toolbox'
-require '3scale_toolbox/commands'
 
 RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcommand::ServiceUpdater do
   context '#target_service_params' do

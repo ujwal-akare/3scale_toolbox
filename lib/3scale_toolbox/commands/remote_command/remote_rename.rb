@@ -21,19 +21,18 @@ module ThreeScaleToolbox
         def run
           # 'arguments' cannot be converted to Hash
           rename_remote arguments[:remote_old_name], arguments[:remote_new_name]
-        rescue StandardError => e
-          warn e.message
-          exit 1
         end
+
+        private
 
         def validate_remote_old_name(name)
           remotes = config.data :remotes
-          raise "Could not rename, old name '#{name}' does not exist." unless !remotes.nil? && remotes.key?(name)
+          raise ThreeScaleToolbox::Error, "Could not rename, old name '#{name}' does not exist." unless !remotes.nil? && remotes.key?(name)
         end
 
         def validate_remote_new_name(name)
           remotes = config.data :remotes
-          raise "Could not rename, new name '#{name}' already exists." if !remotes.nil? && remotes.key?(name)
+          raise ThreeScaleToolbox::Error, "Could not rename, new name '#{name}' already exists." if !remotes.nil? && remotes.key?(name)
         end
 
         def rename_remote(remote_old_name, remote_new_name)

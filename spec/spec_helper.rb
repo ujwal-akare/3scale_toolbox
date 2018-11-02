@@ -12,6 +12,8 @@
 # the additional setup, and require it from the spec files that actually need
 # it.
 
+require 'webmock/rspec'
+WebMock.disable_net_connect!
 require_relative 'shared_contexts'
 require_relative 'shared_examples'
 

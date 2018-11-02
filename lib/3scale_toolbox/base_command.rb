@@ -45,8 +45,7 @@ module ThreeScaleToolbox
     end
 
     def exit_with_message(message)
-      puts message
-      exit 1
+      raise ThreeScaleToolbox::Error, message
     end
 
     def fetch_required_option(key)

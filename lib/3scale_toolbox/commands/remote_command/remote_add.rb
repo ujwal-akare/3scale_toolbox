@@ -22,15 +22,13 @@ module ThreeScaleToolbox
         def run
           # 'arguments' cannot be converted to Hash
           add_remote arguments[:remote_name], arguments[:remote_url]
-        rescue StandardError => e
-          warn e.message
-          warn e.backtrace
-          exit 1
         end
+
+        private
 
         def validate_remote_name(name)
           remotes = config.data :remotes
-          raise 'fatal: remote name already exists.' if !remotes.nil? && remotes.key?(name)
+          raise ThreeScaleToolbox::Error, 'remote name already exists.' if !remotes.nil? && remotes.key?(name)
         end
 
         def parse_remote_uri(remote_url_str)
@@ -51,7 +49,7 @@ module ThreeScaleToolbox
           begin
             client.list_services
           rescue ThreeScale::API::HttpClient::ForbiddenError
-            raise 'fatal: remote authorization failed.'
+            raise ThreeScaleToolbox::Error, 'remote not valid'
           end
         end
 

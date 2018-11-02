@@ -1,0 +1,17 @@
+---
+:remotes:
+  remote_1:
+    :endpoint: https://1.example.com
+    :provider_key: '1'
+  remote_2:
+    :endpoint: https://2.example.com
+    :provider_key: '2'
+  remote_3:
+    :endpoint: https://3.example.com
+    :provider_key: '3'
+  remote_4:
+    :endpoint: https://4.example.com
+    :provider_key: '4'
+  remote_5:
+    :endpoint: https://5.example.com
+    :provider_key: '5'

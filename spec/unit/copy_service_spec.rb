@@ -1,5 +1,4 @@
 require '3scale_toolbox'
-require '3scale_toolbox/commands'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
   include_context :source_service_data
