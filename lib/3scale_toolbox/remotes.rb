@@ -12,7 +12,7 @@ module ThreeScaleToolbox
     #
     def remotes
       rmts = config.data :remotes
-      return invalid_remote unless validate_remotes?(rmts)
+      raise_invalid_remote unless validate_remotes?(rmts)
 
       rmts || {}
     end
@@ -47,7 +47,7 @@ module ThreeScaleToolbox
 
     private
 
-    def invalid_remote
+    def raise_invalid_remote
       raise ThreeScaleToolbox::Error, "invalid remote configuration from config file #{config_file}"
     end
 
