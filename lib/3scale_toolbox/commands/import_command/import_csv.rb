@@ -155,6 +155,7 @@ module ThreeScaleToolbox
         def run
           destination = fetch_required_option(:destination)
           file_path = fetch_required_option(:file)
+
           import_csv(destination, file_path)
         end
       end

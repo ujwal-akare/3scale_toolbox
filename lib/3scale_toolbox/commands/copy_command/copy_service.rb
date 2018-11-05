@@ -26,6 +26,7 @@ module ThreeScaleToolbox
           source      = fetch_required_option(:source)
           destination = fetch_required_option(:destination)
           system_name = fetch_required_option(:target_system_name)
+
           copy_service(arguments[:service_id], source, destination, system_name)
         end
 
