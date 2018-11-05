@@ -1,19 +1,20 @@
 # Developing 3scale Toolbox CLI plugins
 
-3scale Toolbox CLI is based on [cri](https://github.com/ddfreyne/cri) library for building command line tools.
-Plugin system also uses [cri](https://github.com/ddfreyne/cri) to leverage easy to develop, flexible and extensible plugin system.
+3scale Toolbox CLI is based on the [cri](https://github.com/ddfreyne/cri) library for building command line tools.
 
-3scale Toolbox will load plugins installed in gems or $LOAD_PATH. Plugins are discovered via *Gem::find_files*, then loaded.
-Plugins must be named ‘3scale_toolbox_plugin’ (.rb, .so, etc) and placed at the root of your gem’s #require_path.
+The plugin system also uses [cri](https://github.com/ddfreyne/cri) to leverage its easy to develop, flexible and extensible plugin system.
+
+The  3scale Toolbox will load plugins installed in gems or $LOAD_PATH. Plugins are discovered via *Gem::find_files*, then loaded.
+Plugins must be named ‘3scale_toolbox_plugin’ (.rb, .so, etc) and placed in the root of your gem’s #require_path.
 
 Plugins may add commands to *3scale* CLI or may add *subcommands* to any existing command.
 Subcommands may be added to main commands or other subcommands as children.
 
-Nothing better than few examples to illustrate .
+Nothing better than few examples to illustrate.
 
 ## Plugin command
 
-Let's create a plugin to add a main `simple hello world` command.
+Let's create a plugin to add a `simple hello world` command.
 
 ```
 $ cat lib/3scale_toolbox_plugin.rb
@@ -43,12 +44,12 @@ ThreeScaleToolbox::CLI.add_command(FooCommand)
 $ RUBYOPT=-Ilib 3scale foo
 Hello World
 ```
-Few things worth to highlight.
-- Your module must be extended by *ThreeScaleToolbox::Command* module. It allows your command to be added to CLI command tree.
-- Must implement `command` module function and return instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
+A few things worth highlighting:
+- Your module must be extend the *ThreeScaleToolbox::Command* module. It allows your command to be added to the CLI command tree.
+- You must implement the `command` module function and return an instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
 - Add your command to `3scale` CLI command tree by calling `ThreeScaleToolbox::CLI.add_command`
 
-Your plugin help is also available using builtin *help* command
+Help for your plugin is also available using builtin *help* command
 
 ```
 $ RUBYOPT=-Ilib 3scale help foo
@@ -68,8 +69,8 @@ OPTIONS FOR 3SCALE
     -v --version      Prints the version of this command
 ```
 
-Using [cri](https://github.com/ddfreyne/cri) library's `Cri::CommandRunner`, plugin command can be defined as *command runner class*.
-Slightly different command definition, yet easier to break up large run blocks into manageable pieces.
+Using [cri](https://github.com/ddfreyne/cri) library's `Cri::CommandRunner`, the plugin command can be defined as *command runner class*.
+This has a slightly different command definition, but makes it easier to break up large run blocks into manageable pieces.
 
 ```ruby
 $ cat lib/3scale_toolbox_plugin.rb
@@ -137,12 +138,12 @@ $ RUBYOPT=-Ilib 3scale copy foo
 foo done
 ```
 
-Few things worth to highlight.
-- Your module must be extended by *ThreeScaleToolbox::Command* module. It allows your command to be added to CLI command tree.
-- Must implement `command` module function and return instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
-- Add your subcommand to `3scale` CLI command tree by calling parent command's module's `add_subcommand` method.
+A few things worth highlighting:
+- Your module must be extend the *ThreeScaleToolbox::Command* module. It allows your command to be added to the CLI command tree.
+- You must implement the `command` module function and return an instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
+- Add your subcommand to `3scale` CLI command tree by calling the parent command's module's `add_subcommand` method.
 
-Checking `copy` command help, it can be verified the new subcommand `foo` is added.
+Checking the `copy` command's help, we can verify the new subcommand `foo` has been added.
 
 ```
 $ RUBYOPT=-Ilib 3scale help copy
