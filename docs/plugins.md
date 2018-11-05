@@ -18,8 +18,6 @@ Let's create a plugin to add a `simple hello world` command.
 
 ```
 $ cat lib/3scale_toolbox_plugin.rb
-require '3scale_toolbox/cli'
-
 module FooCommand
   include ThreeScaleToolbox::Command
 
@@ -45,7 +43,7 @@ $ RUBYOPT=-Ilib 3scale foo
 Hello World
 ```
 A few things worth highlighting:
-- Your module must be included the *ThreeScaleToolbox::Command* module. It allows your command to be added to the CLI command tree.
+- Your module must include the *ThreeScaleToolbox::Command* module. It allows your command to be added to the CLI command tree.
 - You must implement the `command` module function and return an instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
 - Add your command to `3scale` CLI command tree by calling `ThreeScaleToolbox::CLI.add_command`
 
@@ -74,8 +72,6 @@ This has a slightly different command definition, but makes it easier to break u
 
 ```ruby
 $ cat lib/3scale_toolbox_plugin.rb
-require '3scale_toolbox/cli'
-
 class FooCommand < Cri::CommandRunner
   include ThreeScaleToolbox::Command
 
@@ -109,9 +105,6 @@ Let's create a plugin to add a `simple hello world` subcommand for the builtin *
 
 ```
 $ cat lib/3scale_toolbox_plugin.rb
-require '3scale_toolbox/base_command'
-require '3scale_toolbox/commands/copy_command'
-
 module FooCommand
   include ThreeScaleToolbox::Command
 
