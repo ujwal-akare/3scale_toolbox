@@ -1,11 +1,14 @@
 require 'cri'
 require '3scale_toolbox/base_command'
+require '3scale_toolbox/remotes'
 
 module ThreeScaleToolbox
   module Commands
     module RemoteCommand
       class RemoteRenameSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
+        include ThreeScaleToolbox::Remotes
+
         def self.command
           Cri::Command.define do
             name        'rename'
@@ -26,21 +29,18 @@ module ThreeScaleToolbox
         private
 
         def validate_remote_old_name(name)
-          remotes = config.data :remotes
-          raise ThreeScaleToolbox::Error, "Could not rename, old name '#{name}' does not exist." unless !remotes.nil? && remotes.key?(name)
+          raise ThreeScaleToolbox::Error, "Could not rename, old name '#{name}' does not exist." unless remotes.key?(name)
         end
 
         def validate_remote_new_name(name)
-          remotes = config.data :remotes
-          raise ThreeScaleToolbox::Error, "Could not rename, new name '#{name}' already exists." if !remotes.nil? && remotes.key?(name)
+          raise ThreeScaleToolbox::Error, "Could not rename, new name '#{name}' already exists." if remotes.key?(name)
         end
 
         def rename_remote(remote_old_name, remote_new_name)
           validate_remote_old_name remote_old_name
           validate_remote_new_name remote_new_name
-          config.update(:remotes) do |remotes|
-            # remotes cannot be nil, already verified
-            remotes.tap do |r|
+          update_remotes do |rmts|
+            rmts.tap do |r|
               r[remote_new_name] = r.delete remote_old_name
             end
           end

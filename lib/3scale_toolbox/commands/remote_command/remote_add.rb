@@ -1,12 +1,15 @@
 require 'cri'
 require '3scale/api'
 require '3scale_toolbox/base_command'
+require '3scale_toolbox/remotes'
 
 module ThreeScaleToolbox
   module Commands
     module RemoteCommand
       class RemoteAddSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
+        include ThreeScaleToolbox::Remotes
+
         def self.command
           Cri::Command.define do
             name        'add'
@@ -27,44 +30,15 @@ module ThreeScaleToolbox
         private
 
         def validate_remote_name(name)
-          remotes = config.data :remotes
-          raise ThreeScaleToolbox::Error, 'remote name already exists.' if !remotes.nil? && remotes.key?(name)
-        end
-
-        def parse_remote_uri(remote_url_str)
-          # should raise error on invalid urls
-          remote_uri_obj = URI(remote_url_str)
-          auth_key = remote_uri_obj.user
-          remote_uri_obj.user = ''
-          endpoint = remote_uri_obj.to_s
-          { auth_key: auth_key, endpoint: endpoint }
-        end
-
-        def validate_remote_authentication(endpoint:, auth_key:)
-          client = ThreeScale::API.new(
-            endpoint: endpoint,
-            provider_key: auth_key,
-            verify_ssl: verify_ssl
-          )
-          begin
-            client.list_services
-          rescue ThreeScale::API::HttpClient::ForbiddenError
-            raise ThreeScaleToolbox::Error, 'remote not valid'
-          end
-        end
-
-        def validate_remote_url(remote_url)
-          parse_remote_uri(remote_url).tap do |remote|
-            validate_remote_authentication(remote)
-          end
+          raise ThreeScaleToolbox::Error, 'remote name already exists.' if remotes.key?(name)
         end
 
         def add_remote(remote_name, remote_url)
           validate_remote_name remote_name
-          remote = validate_remote_url remote_url
-          config.update(:remotes) do |remotes|
-            remotes = {} if remotes.nil?
-            remotes.tap { |r| r[remote_name] = remote }
+          remote = parse_remote_uri remote_url
+          validate_remote remote
+          update_remotes do |rmts|
+            rmts.tap { |r| r[remote_name] = remote }
           end
         end
       end
