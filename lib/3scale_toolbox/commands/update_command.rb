@@ -5,7 +5,7 @@ require '3scale_toolbox/commands/update_command/update_service'
 module ThreeScaleToolbox
   module Commands
     module UpdateCommand
-      extend ThreeScaleToolbox::Command
+      include ThreeScaleToolbox::Command
       def self.command
         Cri::Command.define do
           name        'update'

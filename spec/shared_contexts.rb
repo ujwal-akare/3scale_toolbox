@@ -8,6 +8,10 @@ RSpec.shared_context :random_name do
   end
 end
 
+RSpec.shared_context :resources do
+  let(:resources_path) { File.join(File.dirname(__FILE__), 'resources') }
+end
+
 RSpec.shared_context :source_service_data do
   include_context :random_name
 
@@ -50,9 +54,11 @@ class PluginRenderer
 end
 
 RSpec.shared_context :plugin do
+  include_context :resources
+
   def get_plugin_content(command_class_name, command_name)
     plugin_template = File.read(
-      File.join(File.dirname(__FILE__), 'resources', '3scale_toolbox_plugin_template.erb')
+      File.join(resources_path, '3scale_toolbox_plugin_template.erb')
     )
     plugin_renderer = PluginRenderer.new(plugin_template)
     plugin_renderer.command_class_name = command_class_name

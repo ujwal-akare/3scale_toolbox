@@ -16,12 +16,30 @@ RSpec.describe ThreeScaleToolbox do
     $LOAD_PATH.delete(tmp_dir)
   end
 
-  it '.plugin_paths finds plugin' do
-    expect(described_class.plugin_paths).to include(dest_plugin_file.to_s)
+  context '#plugin_paths' do
+    it 'finds plugin' do
+      expect(described_class.plugin_paths).to include(dest_plugin_file.to_s)
+    end
   end
 
-  it '.load_plugins loads plugin' do
-    expect { described_class.load_plugins }.not_to raise_error
-    expect(Object.const_get(name.capitalize.to_sym)).to be_a_kind_of(ThreeScaleToolbox::Command)
+  context '#load_plugins' do
+    it 'loads plugin' do
+      expect { described_class.load_plugins }.not_to raise_error
+      expect(Object.const_get(name.capitalize.to_sym)).to be_truthy
+    end
+  end
+
+  context '#default_config_file' do
+    it 'using ENV var' do
+      filename = 'some_file_name'
+      env_copy = ENV.to_h
+      env_copy['THREESCALE_CLI_CONFIG'] = filename
+      stub_const('ENV', env_copy)
+      expect(described_class.default_config_file).to eq filename
+    end
+
+    it 'default' do
+      expect(described_class.default_config_file).to eq File.join Gem.user_home, '.3scalerc.yaml'
+    end
   end
 end

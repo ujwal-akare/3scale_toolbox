@@ -4,8 +4,8 @@ require '3scale_toolbox/base_command'
 module ThreeScaleToolbox
   module Commands
     module UpdateCommand
-      module UpdateServiceSubcommand
-        extend ThreeScaleToolbox::Command
+      class UpdateServiceSubcommand < Cri::CommandRunner
+        include ThreeScaleToolbox::Command
         def self.command
           Cri::Command.define do
             name        'service'
@@ -13,40 +13,31 @@ module ThreeScaleToolbox
             summary     'Update service'
             description 'Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
 
-            required  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"'
-            required  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"'
-            option    :t, 'target_system_name', 'Target system name', argument: :required
-            flag      :f, :force, 'Overwrites the mapping rules by deleting all rules from target service first'
-            flag      :r, 'rules-only', 'Updates only the mapping rules'
+            option  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
+            option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
+            option  :t, 'target_system_name', 'Target system name', argument: :required
+            flag    :f, :force, 'Overwrites the mapping rules by deleting all rules from target service first'
+            flag    :r, 'rules-only', 'Updates only the mapping rules'
+            param   :src_service_id
+            param   :dst_service_id
 
-            run do |opts, args, _|
-              UpdateServiceSubcommand.run opts, args
-            end
+            runner UpdateServiceSubcommand
           end
-        end
-
-        def self.exit_with_message(message)
-          puts message
-          exit 1
-        end
-
-        def self.fetch_required_option(options, key)
-          options.fetch(key) { exit_with_message "error: Missing argument #{key}" }
         end
 
         class ServiceUpdater
           attr_reader :source_client, :target_client, :source_service_id, :target_service_id, :target_system_name
 
-          def initialize (source, source_service_id, destination, target_service_id, insecure, system_name)
+          def initialize (source, source_service_id, destination, target_service_id, system_name, verify_ssl)
             @source_client = ThreeScale::API.new(
               endpoint:     endpoint_from_url(source),
               provider_key: provider_key_from_url(source),
-              verify_ssl: !insecure
+              verify_ssl: verify_ssl
             )
             @target_client = ThreeScale::API.new(
               endpoint:     endpoint_from_url(destination),
               provider_key: provider_key_from_url(destination),
-              verify_ssl: !insecure
+              verify_ssl: verify_ssl
             )
             @source_service_id = source_service_id
             @target_service_id = target_service_id
@@ -233,20 +224,16 @@ module ThreeScaleToolbox
           end
         end
 
-        def self.run(opts, args)
-          source      = fetch_required_option(opts, :source)
-          destination = fetch_required_option(opts, :destination)
-          insecure    = opts[:insecure] || false
-          exit_with_message 'error: missing source_service_id argument' if args.empty?
-          exit_with_message 'error: missing target_service_id argument' if args.size < 2
-          source_service_id = args[0]
-          target_service_id = args[1]
-          force_update = opts[:force] || false
-          rules_only = opts[:'rules-only'] || false
+        def run
+          source      = fetch_required_option(:source)
+          destination = fetch_required_option(:destination)
+          source_service_id = arguments[:src_service_id]
+          target_service_id = arguments[:dst_service_id]
           system_name = opts[:target_system_name]
-          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, insecure, system_name)
+          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, system_name, verify_ssl)
 
-          if rules_only
+          force_update = options[:force]
+          if options[:'rules-only']
             updater.copy_mapping_rules force_update
           else
             updater.update_service force_update

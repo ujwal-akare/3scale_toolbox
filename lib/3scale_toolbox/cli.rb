@@ -1,6 +1,3 @@
-require '3scale_toolbox'
-require '3scale_toolbox/commands'
-
 module ThreeScaleToolbox::CLI
   def self.root_command
     ThreeScaleToolbox::Commands::ThreeScaleCommand
@@ -17,6 +14,7 @@ module ThreeScaleToolbox::CLI
   def self.run(args)
     load_builtin_commands
     ThreeScaleToolbox.load_plugins
+    # TODO handle error
     root_command.build_command.run args
   end
 end

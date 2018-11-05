@@ -5,16 +5,18 @@ require '3scale_toolbox/base_command'
 module ThreeScaleToolbox
   module Commands
     module ThreeScaleCommand
-      extend ThreeScaleToolbox::Command
+      include ThreeScaleToolbox::Command
       def self.command
         Cri::Command.define do
           name        '3scale'
           usage       '3scale <command> [options]'
           summary     '3scale CLI Toolbox'
           description '3scale CLI tools to manage your API from the terminal.'
-          flag :v, :version, 'Prints the version of this command' do |_, _|
+          option :c, 'config-file', '3scale CLI configuration file',
+            argument: :required, default: ThreeScaleToolbox.default_config_file
+          flag :v, :version, 'Prints the version of this command' do
             puts ThreeScaleToolbox::VERSION
-            exit
+            exit 0
           end
           flag :k, :insecure, 'Proceed and operate even for server connections otherwise considered insecure'
           flag :h, :help, 'show help for this command' do |_, cmd|

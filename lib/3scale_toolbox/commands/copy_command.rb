@@ -5,7 +5,7 @@ require '3scale_toolbox/commands/copy_command/copy_service'
 module ThreeScaleToolbox
   module Commands
     module CopyCommand
-      extend ThreeScaleToolbox::Command
+      include ThreeScaleToolbox::Command
       def self.command
         Cri::Command.define do
           name        'copy'

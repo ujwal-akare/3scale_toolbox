@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require '3scale_toolbox'
-require '3scale_toolbox/cli'
 
 args = ARGV.clone
 

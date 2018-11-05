@@ -5,7 +5,7 @@ require '3scale_toolbox/commands/import_command/import_csv'
 module ThreeScaleToolbox
   module Commands
     module ImportCommand
-      extend ThreeScaleToolbox::Command
+      include ThreeScaleToolbox::Command
       def self.command
         Cri::Command.define do
           name        'import'

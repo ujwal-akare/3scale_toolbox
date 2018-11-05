@@ -1,4 +1,4 @@
-require '3scale_toolbox/cli'
+require '3scale_toolbox'
 
 RSpec.describe 'Plugin command' do
   include_context :temp_dir
