@@ -37,8 +37,8 @@ module ThreeScaleToolbox
           validate_remote_name remote_name
           remote = parse_remote_uri remote_url
           validate_remote remote
-          update_remotes do |rmts|
-            rmts.tap { |r| r[remote_name] = remote }
+          update_remotes do |remotes|
+            remotes.tap { |r| r[remote_name] = remote }
           end
         end
       end

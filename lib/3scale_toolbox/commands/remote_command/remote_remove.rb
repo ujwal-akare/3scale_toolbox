@@ -28,8 +28,8 @@ module ThreeScaleToolbox
         private
 
         def remove_remote(remote_name)
-          update_remotes do |rmts|
-            rmts.tap do |r|
+          update_remotes do |remotes|
+            remotes.tap do |r|
               r.delete(remote_name) do |el|
                 raise ThreeScaleToolbox::Error, "could not remove remote '#{el}'"
               end

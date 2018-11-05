@@ -39,8 +39,8 @@ module ThreeScaleToolbox
         def rename_remote(remote_old_name, remote_new_name)
           validate_remote_old_name remote_old_name
           validate_remote_new_name remote_new_name
-          update_remotes do |rmts|
-            rmts.tap do |r|
+          update_remotes do |remotes|
+            remotes.tap do |r|
               r[remote_new_name] = r.delete remote_old_name
             end
           end
