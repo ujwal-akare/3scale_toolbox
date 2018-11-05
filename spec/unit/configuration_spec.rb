@@ -57,7 +57,7 @@ RSpec.describe ThreeScaleToolbox::Configuration do
         config.update(:some_key) { 'some_data' }
       end
 
-      it 'cache gets invalidated' do
+      it 'updates gets persisted' do
         expect(subject.data(:some_key)).to eq('some_data')
         subject.update(:some_key) { 'other_data' }
         expect(subject.data(:some_key)).to eq('other_data')
