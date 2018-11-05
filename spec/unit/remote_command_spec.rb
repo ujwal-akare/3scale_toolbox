@@ -31,12 +31,12 @@ RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand do
       context 'data lacks remote attrs' do
         before :each do
           File.open(config_file, 'w') do |f|
-            f.write(<<~PROVIDER_KEY_MISSING)
+            f.write(<<~AUTHENTICATION_KEY_MISSING)
               ---
               :remotes:
                 ecorp:
                   :endpoint: https://e-corporation-admin.amp24.127.0.0.1.nip.io
-            PROVIDER_KEY_MISSING
+            AUTHENTICATION_KEY_MISSING
           end
         end
 

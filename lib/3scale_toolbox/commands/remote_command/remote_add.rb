@@ -34,16 +34,16 @@ module ThreeScaleToolbox
         def parse_remote_uri(remote_url_str)
           # should raise error on invalid urls
           remote_uri_obj = URI(remote_url_str)
-          provider_key = remote_uri_obj.user
+          auth_key = remote_uri_obj.user
           remote_uri_obj.user = ''
           endpoint = remote_uri_obj.to_s
-          { provider_key: provider_key, endpoint: endpoint }
+          { auth_key: auth_key, endpoint: endpoint }
         end
 
-        def validate_remote_authentication(endpoint:, provider_key:)
+        def validate_remote_authentication(endpoint:, auth_key:)
           client = ThreeScale::API.new(
             endpoint: endpoint,
-            provider_key: provider_key,
+            provider_key: auth_key,
             verify_ssl: verify_ssl
           )
           begin
