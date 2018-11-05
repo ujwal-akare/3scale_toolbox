@@ -29,25 +29,28 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::Error, "invalid remote configuration from config file #{config_file}"
         end
 
-        def validate_remotes(remotes)
-          return if remotes.nil?
+        def valid_remote?(remote)
+          remote.key?(:endpoint) && remote.key?(:auth_key)
+        end
 
-          invalid_remote unless remotes.class == Hash
-          remotes.each_value do |remote|
-            invalid_remote unless remote.key?(:endpoint) && remote.key?(:provider_key)
+        def validate_remotes?(remotes)
+          case remotes
+          when nil then true
+          when Hash then remotes.values.all?(&method(:valid_remote?))
+          else false
           end
         end
 
         def list_remotes
           remotes = config.data :remotes
 
-          validate_remotes(remotes)
+          return invalid_remote unless validate_remotes?(remotes)
 
           if remotes.nil? || remotes.empty?
             puts 'Empty remote list.'
           else
             remotes.each do |name, remote|
-              puts "#{name} #{remote[:endpoint]} #{remote[:provider_key]}"
+              puts "#{name} #{remote[:endpoint]} #{remote[:auth_key]}"
             end
           end
         end
