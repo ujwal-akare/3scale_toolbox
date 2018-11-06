@@ -229,7 +229,7 @@ module ThreeScaleToolbox
           destination = fetch_required_option(:destination)
           source_service_id = arguments[:src_service_id]
           target_service_id = arguments[:dst_service_id]
-          system_name = opts[:target_system_name]
+          system_name = options[:target_system_name]
           updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, system_name, verify_ssl)
 
           force_update = options[:force]
