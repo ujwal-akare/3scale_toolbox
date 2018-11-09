@@ -1,3 +1,5 @@
+require '3scale_toolbox/cli/error_handler'
+
 module ThreeScaleToolbox::CLI
   def self.root_command
     ThreeScaleToolbox::Commands::ThreeScaleCommand
@@ -12,9 +14,10 @@ module ThreeScaleToolbox::CLI
   end
 
   def self.run(args)
-    load_builtin_commands
-    ThreeScaleToolbox.load_plugins
-    # TODO handle error
-    root_command.build_command.run args
+    ErrorHandler.error_watchdog do
+      load_builtin_commands
+      ThreeScaleToolbox.load_plugins
+      root_command.build_command.run args
+    end
   end
 end
