@@ -55,7 +55,7 @@ module ThreeScaleToolbox::CLI
     def handle_error(error, exit_on_error:)
       if expected_error?(error)
         warn
-        warn "Error: #{error.message}"
+        warn "\e[1m\e[31mError: #{error.message}\e[0m"
       else
         print_error(error)
       end
