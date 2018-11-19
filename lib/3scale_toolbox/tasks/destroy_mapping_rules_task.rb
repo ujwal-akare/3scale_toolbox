@@ -1,8 +1,6 @@
 module ThreeScaleToolbox
   module Tasks
     class DestroyMappingRulesTask
-      include CallableTask
-
       attr_reader :copy_service
 
       def initialize(copy_service:, **_other)

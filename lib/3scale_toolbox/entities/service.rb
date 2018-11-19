@@ -6,7 +6,7 @@ module ThreeScaleToolbox
         system_name end_user_registration_required
         support_email tech_support_email admin_support_email
       ].freeze
-      private_constant :VALID_PARAMS
+      public_constant :VALID_PARAMS
 
       class << self
         def create(remote:, service:, system_name:)
@@ -100,6 +100,10 @@ module ThreeScaleToolbox
 
       def create_mapping_rule(mapping_rule)
         remote.create_mapping_rule id, mapping_rule
+      end
+
+      def update_service(params)
+        remote.update_service(id, params)
       end
     end
   end

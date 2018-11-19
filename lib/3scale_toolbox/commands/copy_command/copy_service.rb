@@ -29,7 +29,18 @@ module ThreeScaleToolbox
           destination = fetch_required_option(:destination)
           system_name = fetch_required_option(:target_system_name)
 
-          copy_service(arguments[:service_id], source, destination, system_name)
+          source_service = Entities::Service.new(id: arguments[:service_id],
+                                                 remote: remote(source))
+          copy_service = create_new_service(source_service.show_service, destination, system_name)
+          context = create_context(source_service, copy_service)
+          tasks = [Tasks::CopyServiceProxyTask.new(context),
+                   Tasks::CopyMethodsTask.new(context),
+                   Tasks::CopyMetricsTask.new(context),
+                   Tasks::CopyApplicationPlansTask.new(context),
+                   Tasks::CopyLimitsTask.new(context),
+                   Tasks::DestroyMappingRulesTask.new(context),
+                   Tasks::CopyMappingRulesTask.new(context)]
+          tasks.each(&:call)
         end
 
         private
@@ -45,18 +56,6 @@ module ThreeScaleToolbox
           Entities::Service.create(remote: remote(destination),
                                    service: service,
                                    system_name: system_name)
-        end
-
-        def copy_service(service_id, source, destination, system_name)
-          source_service = Entities::Service.new(id: service_id, remote: remote(source))
-          copy_service = create_new_service(source_service.show_service, destination, system_name)
-          context = create_context(source_service, copy_service)
-          tasks = [Tasks::CopyServiceProxyTask, Tasks::CopyMetricsTask, Tasks::CopyMethodsTask,
-                   Tasks::CopyApplicationPlansTask, Tasks::CopyLimitsTask,
-                   Tasks::DestroyMappingRulesTask, Tasks::CopyMappingRulesTask]
-          tasks.each do |task_class|
-            task_class.call(context)
-          end
         end
       end
     end

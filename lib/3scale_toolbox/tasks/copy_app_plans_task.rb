@@ -1,7 +1,6 @@
 module ThreeScaleToolbox
   module Tasks
     class CopyApplicationPlansTask
-      include CallableTask
       include CopyTask
 
       def call

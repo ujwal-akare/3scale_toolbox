@@ -1,7 +1,6 @@
 module ThreeScaleToolbox
   module Tasks
     class CopyMetricsTask
-      include CallableTask
       include CopyTask
 
       def call

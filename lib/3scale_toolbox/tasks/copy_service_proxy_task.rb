@@ -1,7 +1,6 @@
 module ThreeScaleToolbox
   module Tasks
     class CopyServiceProxyTask
-      include CallableTask
       include CopyTask
 
       def call

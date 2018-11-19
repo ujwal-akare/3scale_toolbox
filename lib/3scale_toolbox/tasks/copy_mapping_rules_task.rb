@@ -1,7 +1,6 @@
 module ThreeScaleToolbox
   module Tasks
     class CopyMappingRulesTask
-      include CallableTask
       include CopyTask
       include Helper
 
@@ -22,7 +21,7 @@ module ThreeScaleToolbox
       def missing_mapping_rules(source_mp, copy_mp, metrics_map)
         ThreeScaleToolbox::Helper.array_difference(source_mp, copy_mp) do |mp, copy|
           ThreeScaleToolbox::Helper.compare_hashes(mp, copy, %w[pattern http_method delta]) &&
-            metrics_map.fetch(mapping_rule.fetch('metric_id')) == copy.fetch('metric_id')
+            metrics_map.fetch(mp.fetch('metric_id')) == copy.fetch('metric_id')
         end
       end
     end

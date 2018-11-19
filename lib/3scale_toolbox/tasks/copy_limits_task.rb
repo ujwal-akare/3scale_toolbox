@@ -1,7 +1,6 @@
 module ThreeScaleToolbox
   module Tasks
     class CopyLimitsTask
-      include CallableTask
       include CopyTask
       include Helper
 
