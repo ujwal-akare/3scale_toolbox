@@ -1,10 +1,10 @@
 require '3scale_toolbox'
 
-RSpec.describe ThreeScaleToolbox::CLI::ErrorHandler do
+RSpec.describe ThreeScaleToolbox::CLI do
   include_context :temp_dir
 
   let(:exit_on_error) { false }
-  context '#run' do
+  context '#error_watchdog' do
     context 'exit_on_error: true' do
       let(:exit_on_error) { true }
       it 'raises SystemExit' do
@@ -28,12 +28,14 @@ RSpec.describe ThreeScaleToolbox::CLI::ErrorHandler do
 
     context 'raises expected error' do
       it 'error is shown on stderr' do
-        expect do
-          subject.error_watchdog(exit_on_error: exit_on_error) do
-            raise ThreeScaleToolbox::Error, 'some error'
-          end
-        end.to output(/some error/).to_stderr
-        expect(File).not_to exist('crash.log')
+        Dir.chdir(tmp_dir) do
+          expect do
+            subject.error_watchdog(exit_on_error: exit_on_error) do
+              raise ThreeScaleToolbox::Error, 'some error'
+            end
+          end.to output(/some error/).to_stderr
+          expect(File).not_to exist('crash.log')
+        end
       end
     end
 
