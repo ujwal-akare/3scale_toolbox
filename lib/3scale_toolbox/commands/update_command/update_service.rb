@@ -57,10 +57,10 @@ module ThreeScaleToolbox
 
         private
 
-        def create_context(source_service, copy_service)
+        def create_context(source, target)
           {
-            source_service: source_service,
-            copy_service: copy_service
+            source: source,
+            target: target
           }
         end
       end

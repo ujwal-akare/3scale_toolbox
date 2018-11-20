@@ -31,24 +31,26 @@ module ThreeScaleToolbox
 
           source_service = Entities::Service.new(id: arguments[:service_id],
                                                  remote: remote(source))
-          copy_service = create_new_service(source_service.show_service, destination, system_name)
-          context = create_context(source_service, copy_service)
-          tasks = [Tasks::CopyServiceProxyTask.new(context),
-                   Tasks::CopyMethodsTask.new(context),
-                   Tasks::CopyMetricsTask.new(context),
-                   Tasks::CopyApplicationPlansTask.new(context),
-                   Tasks::CopyLimitsTask.new(context),
-                   Tasks::DestroyMappingRulesTask.new(context),
-                   Tasks::CopyMappingRulesTask.new(context)]
+          target_service = create_new_service(source_service.show_service, destination, system_name)
+          context = create_context(source_service, target_service)
+          tasks = [
+            Tasks::CopyServiceProxyTask.new(context),
+            Tasks::CopyMethodsTask.new(context),
+            Tasks::CopyMetricsTask.new(context),
+            Tasks::CopyApplicationPlansTask.new(context),
+            Tasks::CopyLimitsTask.new(context),
+            Tasks::DestroyMappingRulesTask.new(context),
+            Tasks::CopyMappingRulesTask.new(context)
+          ]
           tasks.each(&:call)
         end
 
         private
 
-        def create_context(source_service, copy_service)
+        def create_context(source, target)
           {
-            source_service: source_service,
-            copy_service: copy_service
+            source: source,
+            target: target
           }
         end
 

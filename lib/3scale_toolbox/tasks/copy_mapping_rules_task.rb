@@ -5,13 +5,13 @@ module ThreeScaleToolbox
       include Helper
 
       def call
-        metrics_map = metrics_mapping(source_service.metrics, copy_service.metrics)
-        missing_rules = missing_mapping_rules(source_service.mapping_rules,
-                                              copy_service.mapping_rules, metrics_map)
+        metrics_map = metrics_mapping(source.metrics, target.metrics)
+        missing_rules = missing_mapping_rules(source.mapping_rules,
+                                              target.mapping_rules, metrics_map)
         missing_rules.each do |mapping_rule|
           mapping_rule.delete('links')
           mapping_rule['metric_id'] = metrics_map.fetch(mapping_rule.delete('metric_id'))
-          copy_service.create_mapping_rule mapping_rule
+          target.create_mapping_rule mapping_rule
         end
         puts "created #{missing_rules.size} mapping rules"
       end

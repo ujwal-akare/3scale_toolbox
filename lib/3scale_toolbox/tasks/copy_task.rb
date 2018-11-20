@@ -8,11 +8,11 @@ module ThreeScaleToolbox
       module ClassMethods
       end
 
-      attr_reader :source_service, :copy_service
+      attr_reader :source, :target
 
-      def initialize(source_service:, copy_service:)
-        @source_service = source_service
-        @copy_service = copy_service
+      def initialize(source:, target:)
+        @source = source
+        @target = target
       end
     end
   end

@@ -4,20 +4,20 @@ module ThreeScaleToolbox
       include CopyTask
 
       def call
-        source_metrics = source_service.metrics
-        copy_metrics = copy_service.metrics
+        source_metrics = source.metrics
+        copy_metrics = target.metrics
 
         puts "original service has #{source_metrics.size} metrics"
         puts "copied service has #{copy_metrics.size} metrics"
 
-        m_m = missing_metrics(source_metrics, copy_metrics)
+        missing_metrics = missing_metrics(source_metrics, copy_metrics)
 
-        m_m.each do |metric|
+        missing_metrics.each do |metric|
           metric.delete('links')
-          copy_service.create_metric(metric)
+          target.create_metric(metric)
         end
 
-        puts "created #{m_m.size} metrics on the copied service"
+        puts "created #{missing_metrics.size} metrics on the copied service"
       end
 
       private

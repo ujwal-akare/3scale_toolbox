@@ -1,18 +1,18 @@
 module ThreeScaleToolbox
   module Tasks
     class UpdateServiceSettingsTask
-      attr_reader :source_service, :copy_service, :target_system_name
+      attr_reader :source, :target, :target_system_name
 
-      def initialize(source_service:, copy_service:, target_name:)
-        @source_service = source_service
-        @copy_service = copy_service
+      def initialize(source:, target:, target_name:)
+        @source = source
+        @target = target
         @target_system_name = target_name
       end
 
       def call
-        puts "updating service settings for service id #{source_service.id}..."
-        source_service_obj = source_service.show_service
-        response = copy_service.update_service(target_service_params(source_service_obj))
+        puts "updating service settings for service id #{source.id}..."
+        source_obj = source.show_service
+        response = target.update_service(target_service_params(source_obj))
         raise Error, "Service has not been saved. Errors: #{response['errors']}" unless response['errors'].nil?
       end
 

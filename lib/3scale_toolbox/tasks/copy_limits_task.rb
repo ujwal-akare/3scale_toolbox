@@ -5,21 +5,21 @@ module ThreeScaleToolbox
       include Helper
 
       def call
-        metrics_map = metrics_mapping(source_service.metrics, copy_service.metrics)
-        plan_mapping = application_plan_mapping(source_service.plans, copy_service.plans)
+        metrics_map = metrics_mapping(source.metrics, target.metrics)
+        plan_mapping = application_plan_mapping(source.plans, target.plans)
         plan_mapping.each do |plan_id, copy_id|
-          limits = source_service.plan_limits(plan_id)
-          limits_copy = copy_service.plan_limits(copy_id)
-          m_l = missing_limits(limits, limits_copy)
-          m_l.each do |limit|
+          limits = source.plan_limits(plan_id)
+          limits_copy = target.plan_limits(copy_id)
+          missing_limits = missing_limits(limits, limits_copy)
+          missing_limits.each do |limit|
             limit.delete('links')
-            copy_service.create_application_plan_limit(
+            target.create_application_plan_limit(
               copy_id,
               metrics_map.fetch(limit.fetch('metric_id')),
               limit
             )
           end
-          puts "copied application plan #{copy_id} is missing #{m_l.size} " \
+          puts "copied application plan #{copy_id} is missing #{missing_limits.size} " \
                "from the original plan #{plan_id}"
         end
       end
