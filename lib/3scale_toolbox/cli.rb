@@ -33,10 +33,11 @@ module ThreeScaleToolbox::CLI
 
   def self.run(args)
     install_signal_handlers
-    ErrorHandler.error_watchdog do
+    err = ErrorHandler.error_watchdog do
       load_builtin_commands
       ThreeScaleToolbox.load_plugins
       root_command.build_command.run args
     end
+    err.nil? ? 0 : 1
   end
 end

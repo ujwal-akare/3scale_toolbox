@@ -22,10 +22,10 @@ RSpec.describe ThreeScaleToolbox::CLI::ErrorHandler do
         end
       end
 
-      it 'returns true' do
+      it 'returns error' do
         expect(
           subject.error_watchdog { raise_toolbox_error }
-        ).to be_truthy
+        ).to be
       end
     end
 
@@ -39,16 +39,16 @@ RSpec.describe ThreeScaleToolbox::CLI::ErrorHandler do
         end
       end
 
-      it 'returns true' do
+      it 'returns error' do
         expect(
           subject.error_watchdog { raise_runtime_error }
-        ).to be_truthy
+        ).to be
       end
     end
 
     context 'Does not raise error' do
       it 'returns true' do
-        expect(subject.error_watchdog {}).to be_falsey
+        expect(subject.error_watchdog {}).to be_nil
       end
     end
   end

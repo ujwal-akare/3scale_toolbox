@@ -9,15 +9,13 @@ module ThreeScaleToolbox
 
       # Catches errors and prints nice diagnostic messages
       def error_watchdog
-        error = false
-        begin
-          # Run
-          yield
-        rescue StandardError, ScriptError => e
-          handle_error e
-          error = true
-        end
-        error
+        # Run
+        yield
+      rescue StandardError, ScriptError => e
+        handle_error e
+        e
+      else
+        nil
       end
 
       private

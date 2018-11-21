@@ -4,4 +4,4 @@ require '3scale_toolbox'
 
 args = ARGV.clone
 
-exit(ThreeScaleToolbox::CLI.run(args) ? 1 : 0)
+exit(ThreeScaleToolbox::CLI.run(args))
