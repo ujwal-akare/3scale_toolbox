@@ -45,7 +45,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
       let(:target_plans) { [plan_0, plan_1] }
 
       it 'does not call create_application_plan method' do
-        subject.call
+        expect { subject.call }.to output(/copied service missing 0 application plans/).to_stdout
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
 
       it 'call create_application_plan method' do
         expect(target).to receive(:create_application_plan).with(plan_0)
-        subject.call
+        expect { subject.call }.to output(/copied service missing 1 application plans/).to_stdout
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
       let(:target_plans) { [plan_0] }
 
       it 'does not call create_application_plan method' do
-        subject.call
+        expect { subject.call }.to output(/skipping custom plan/).to_stdout
       end
     end
   end
