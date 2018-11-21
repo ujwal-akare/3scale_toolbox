@@ -5,8 +5,8 @@ module ThreeScaleToolbox
 
       def call
         source_plans = source.plans
-        copy_plans = target.plans
-        missing_plans = missing_app_plans(source_plans, copy_plans)
+        target_plans = target.plans
+        missing_plans = missing_app_plans(source_plans, target_plans)
         puts "copied service missing #{missing_plans.size} application plans"
 
         missing_plans.each do |plan|
@@ -22,9 +22,9 @@ module ThreeScaleToolbox
 
       private
 
-      def missing_app_plans(source_plans, copy_plans)
-        ThreeScaleToolbox::Helper.array_difference(source_plans, copy_plans) do |plan, copy|
-          ThreeScaleToolbox::Helper.compare_hashes(plan, copy, ['system_name'])
+      def missing_app_plans(source_plans, target_plans)
+        ThreeScaleToolbox::Helper.array_difference(source_plans, target_plans) do |src, target|
+          ThreeScaleToolbox::Helper.compare_hashes(src, target, ['system_name'])
         end
       end
     end
