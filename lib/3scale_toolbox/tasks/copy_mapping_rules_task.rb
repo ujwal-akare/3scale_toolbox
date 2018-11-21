@@ -18,10 +18,10 @@ module ThreeScaleToolbox
 
       private
 
-      def missing_mapping_rules(source_mp, copy_mp, metrics_map)
-        ThreeScaleToolbox::Helper.array_difference(source_mp, copy_mp) do |mp, copy|
-          ThreeScaleToolbox::Helper.compare_hashes(mp, copy, %w[pattern http_method delta]) &&
-            metrics_map.fetch(mp.fetch('metric_id')) == copy.fetch('metric_id')
+      def missing_mapping_rules(source_rules, target_rules, metrics_map)
+        ThreeScaleToolbox::Helper.array_difference(source_rules, target_rules) do |source_rule, target_rule|
+          ThreeScaleToolbox::Helper.compare_hashes(source_rule, target_rule, %w[pattern http_method delta]) &&
+            metrics_map.fetch(source_rule.fetch('metric_id')) == target_rule.fetch('metric_id')
         end
       end
     end
