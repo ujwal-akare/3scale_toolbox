@@ -7,8 +7,6 @@ module ThreeScaleToolbox
         source_plans = source.plans
         target_plans = target.plans
         missing_plans = missing_app_plans(source_plans, target_plans)
-        puts "copied service missing #{missing_plans.size} application plans"
-
         missing_plans.each do |plan|
           plan.delete('links')
           plan.delete('default') # TODO: handle default plan
@@ -18,6 +16,7 @@ module ThreeScaleToolbox
             target.create_application_plan(plan)
           end
         end
+        puts "target service missing #{missing_plans.size} application plans"
       end
 
       private

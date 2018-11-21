@@ -40,12 +40,12 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
     end
 
     context 'no plans to copy' do
-      # missing plans is empty set
+      # missing plans is an empty set
       let(:source_plans) { [plan_0] }
       let(:target_plans) { [plan_0, plan_1] }
 
       it 'does not call create_application_plan method' do
-        expect { subject.call }.to output(/copied service missing 0 application plans/).to_stdout
+        expect { subject.call }.to output(/target service missing 0 application plans/).to_stdout
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
 
       it 'call create_application_plan method' do
         expect(target).to receive(:create_application_plan).with(plan_0)
-        expect { subject.call }.to output(/copied service missing 1 application plans/).to_stdout
+        expect { subject.call }.to output(/target service missing 1 application plans/).to_stdout
       end
     end
 

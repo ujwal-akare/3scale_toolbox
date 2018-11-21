@@ -19,7 +19,7 @@ module ThreeScaleToolbox
               limit
             )
           end
-          puts "copied application plan #{target_plan_id} is missing #{missing_limits.size} " \
+          puts "target application plan #{target_plan_id} is missing #{missing_limits.size} " \
                "from the original plan #{plan_id}"
         end
       end
