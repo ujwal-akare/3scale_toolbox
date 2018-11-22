@@ -1,8 +1,6 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
-  include_context :source_service_data
-
   context '#run' do
     let(:options) do
       {
@@ -12,6 +10,8 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
       }
     end
     let(:arguments) { { 'service_id': 'some_service_id' } }
+    let(:service_obj) { { 'some_key' => 'some_value' } }
+
     subject { described_class.new(options, arguments, nil) }
 
     it 'all required tasks are run' do
@@ -21,12 +21,12 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
 
       # Entities::Service instance stub
       service = double('Entities::Service instance')
-      expect(service).to receive(:show_service).and_return(source_service_obj)
+      expect(service).to receive(:show_service).and_return(service_obj)
 
       # Entities::Service class stub
       service_class = class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const
       expect(service_class).to receive(:new).with(id: 'some_service_id', remote: remote).and_return(service)
-      expect(service_class).to receive(:create).with(remote: remote, service: source_service_obj,
+      expect(service_class).to receive(:create).with(remote: remote, service: service_obj,
                                                      system_name: 'some_system_name').and_return(service)
       # Task stubs
       [
