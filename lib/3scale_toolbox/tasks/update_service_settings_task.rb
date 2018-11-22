@@ -10,10 +10,11 @@ module ThreeScaleToolbox
       end
 
       def call
-        puts "updating service settings for service id #{source.id}..."
         source_obj = source.show_service
         response = target.update_service(target_service_params(source_obj))
         raise Error, "Service has not been saved. Errors: #{response['errors']}" unless response['errors'].nil?
+
+        puts "updated service settings for service id #{source.id}..."
       end
 
       private
