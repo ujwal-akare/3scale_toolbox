@@ -30,7 +30,7 @@ module ThreeScaleToolbox
           system_name = fetch_required_option(:target_system_name)
 
           source_service = Entities::Service.new(id: arguments[:service_id],
-                                                 remote: remote(source))
+                                                 remote: remote(source, verify_ssl))
           target_service = create_new_service(source_service.show_service, destination, system_name)
           context = create_context(source_service, target_service)
           tasks = [
@@ -55,7 +55,7 @@ module ThreeScaleToolbox
         end
 
         def create_new_service(service, destination, system_name)
-          Entities::Service.create(remote: remote(destination),
+          Entities::Service.create(remote: remote(destination, verify_ssl),
                                    service: service,
                                    system_name: system_name)
         end

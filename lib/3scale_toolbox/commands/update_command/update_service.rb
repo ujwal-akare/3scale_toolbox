@@ -30,11 +30,11 @@ module ThreeScaleToolbox
         def run
           source_service = Entities::Service.new(
             id: arguments[:src_service_id],
-            remote: remote(fetch_required_option(:source))
+            remote: remote(fetch_required_option(:source), verify_ssl)
           )
           update_service = Entities::Service.new(
             id: arguments[:dst_service_id],
-            remote: remote(fetch_required_option(:destination))
+            remote: remote(fetch_required_option(:destination), verify_ssl)
           )
           system_name = options[:target_system_name]
           context = create_context(source_service, update_service)
