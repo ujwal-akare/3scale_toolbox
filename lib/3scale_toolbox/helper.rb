@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Helper
     def self.compare_hashes(first, second, keys)
-      keys.map { |key| first.fetch(key) } == keys.map { |key| second.fetch(key) }
+      keys.map { |key| first.fetch(key, nil) } == keys.map { |key| second.fetch(key, nil) }
     end
 
     ##
