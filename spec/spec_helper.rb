@@ -12,9 +12,12 @@
 # the additional setup, and require it from the spec files that actually need
 # it.
 
+require 'dotenv'
+Dotenv.load
 require 'webmock/rspec'
-WebMock.disable_net_connect!
+WebMock.allow_net_connect!
 require_relative 'shared_contexts'
+require_relative 'shared_examples'
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
