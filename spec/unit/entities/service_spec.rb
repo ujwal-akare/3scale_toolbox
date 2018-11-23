@@ -132,7 +132,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     context '#create_application_plan_limit' do
       let(:plan_id) { 3 }
       let(:metric_id) { 4 }
-      let(:limit) { 1000 }
+      let(:limit) do
+        {
+          'period' => 'year',
+          'value' => 10_000
+        }
+      end
 
       it 'calls create_application_plan_limit method' do
         expect(remote).to receive(:create_application_plan_limit).with(plan_id, metric_id, limit)
