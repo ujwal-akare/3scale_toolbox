@@ -4,7 +4,7 @@ require 'pathname'
 
 RSpec.shared_context :random_name do
   def random_lowercase_name
-    [*('a'..'z')].sample(8).join
+    Helpers.random_lowercase_name
   end
 end
 
@@ -50,66 +50,50 @@ RSpec.shared_context :plugin do
 end
 
 RSpec.shared_context :api3scale_client do
-  let(:endpoint) { ENV.fetch('ENDPOINT') }
-  let(:provider_key) { ENV.fetch('PROVIDER_KEY') }
-  let(:verify_ssl) { !(ENV.fetch('VERIFY_SSL', 'true').to_s =~ /(true|t|yes|y|1)$/i).nil? }
-  subject(:client) do
-    ThreeScale::API.new(endpoint: endpoint, provider_key: provider_key, verify_ssl: verify_ssl)
+  def endpoint
+    ENV.fetch('ENDPOINT')
+  end
+
+  def provider_key
+    ENV.fetch('PROVIDER_KEY')
+  end
+
+  def verify_ssl
+    !(ENV.fetch('VERIFY_SSL', 'true').to_s =~ /(true|t|yes|y|1)$/i).nil?
+  end
+
+  def client_url
+    endpoint_uri = URI(endpoint)
+    endpoint_uri.user = provider_key
+    endpoint_uri.to_s
+  end
+
+  def client
+    ThreeScale::API.new(endpoint: endpoint,
+                        provider_key: provider_key,
+                        verify_ssl: verify_ssl)
   end
 end
 
-RSpec.shared_context :source_service do
-  include_context :api3scale_client
-  include_context :random_name
-
-  let(:source_service_name) { "API_TEST_#{Time.now.getutc.to_i}" }
-  let(:source_system_name) { source_service_name.delete("\s").downcase }
-  let(:source_service_obj) { { 'name' => source_service_name } }
-  subject(:source_service) do
-    service = ThreeScaleToolbox::Entities::Service.create(
-      remote: client, service: source_service_obj, system_name: source_system_name
-    )
-    # methods
-    hits_id = service.hits['id']
-    3.times.each do
-      method = { 'system_name' => random_lowercase_name, 'friendly_name' => random_lowercase_name }
-      service.create_method(hits_id, method)
-    end
-
-    # metrics
-    4.times.each do
-      name = random_lowercase_name
-      metric = { 'name' => name, 'system_name' => name, 'unit' => '1' }
-      service.create_metric(metric)
-    end
-
-    # application plans
-    2.times.each do
-      name = random_lowercase_name
-      application_plan = {
-        'name' => name, 'state' => 'published', 'default' => false,
-        'custom' => false, 'system_name' => name
-      }
-      plan = service.create_application_plan(application_plan)
-
-      # limits (only limits for hits metric)
-      %w[day week month year].each do |period|
-        limit = { 'period' => period, 'value' => 10_000 }
-        service.create_application_plan_limit(plan.fetch('id'), hits_id, limit)
-      end
-    end
-
-    # mapping rules (only mapping rules for hits metric)
-    2.times.each do |idx|
-      mapping_rule = {
-        'metric_id' => hits_id, 'pattern' => "/rule#{idx}",
-        'http_method' => 'GET',
-        'delta' => 1
-      }
-
-      service.create_mapping_rule(mapping_rule)
-    end
-
-    service
+RSpec.shared_context :toolbox_tasks_helper do
+  let(:tasks_helper) do
+    Class.new { include ThreeScaleToolbox::Tasks::Helper }.new
   end
+end
+
+RSpec.shared_context :copied_plans do
+  # source and target has to be provided by loader context
+  let(:source_plans) { source.plans }
+  let(:target_plans) { target.plans }
+  let(:plan_keys) { %w[name system_name custom state] }
+  let(:plan_mapping_arr) { tasks_helper.application_plan_mapping(source_plans, target_plans) }
+  let(:plan_mapping) { plan_mapping_arr.to_h }
+end
+
+RSpec.shared_context :copied_metrics do
+  # source and target has to be provided by loader context
+  let(:source_metrics) { source.metrics }
+  let(:target_metrics) { target.metrics }
+  let(:metric_keys) { %w[name system_name unit] }
+  let(:metrics_mapping) { tasks_helper.metrics_mapping(source_metrics, target_metrics) }
 end

@@ -1,27 +1,34 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
-  include_context :source_service
+  include_context :api3scale_client
 
-  let(:service_id) { source_service.id }
-  let(:source_url) do
-    endpoint_uri = URI(endpoint)
-    endpoint_uri.user = provider_key
-    endpoint_uri.to_s
+  # Expensive task only run once for all examples in a group
+  before(:all) do
+    @source_service = Helpers::ServiceFactory.new_service client
+    @target_system_name = "copy_service_spec_#{Time.now.getutc.to_i}"
+    source_url = client_url
+    destination_url = client_url
+    command_line_str = "copy service -t #{@target_system_name} " \
+      " -s #{source_url} -d #{destination_url} #{@source_service.id}"
+    command_line_args = command_line_str.split
+    ThreeScaleToolbox::CLI.run(command_line_args)
   end
-  let(:destination_url) { source_url }
-  let(:system_name) { "copy_service_spec_#{Time.now.getutc.to_i}" }
-  let(:command_line_str) { "copy service -t #{system_name} -s #{source_url} -d #{destination_url} #{service_id}" }
-  let(:command_line_args) { command_line_str.split }
-  let(:run_test) { ThreeScaleToolbox::CLI.run(command_line_args) }
+
+  let(:remote) { client }
   let(:target_service_id) do
-    # create target by invoking command under test
     # figure out target service by system_name
-    run_test
-    client.list_services.find { |service| service['system_name'] == system_name }['id']
+    remote.list_services.find { |service| service['system_name'] == @target_system_name }['id']
   end
-  let(:source) { source_service }
-  let(:target) { ThreeScaleToolbox::Entities::Service.new(id: target_service_id, remote: client) }
+  # Context for shared_example
+  let(:source) { @source_service }
+  let(:target) { ThreeScaleToolbox::Entities::Service.new(id: target_service_id, remote: remote ) }
 
-  it_behaves_like 'a copied service'
+  it_behaves_like 'service settings copied'
+  it_behaves_like 'proxy copied'
+  it_behaves_like 'service methods copied'
+  it_behaves_like 'service metrics copied'
+  it_behaves_like 'service plans copied'
+  it_behaves_like 'service plan limits copied'
+  it_behaves_like 'service mapping rules copied'
 end

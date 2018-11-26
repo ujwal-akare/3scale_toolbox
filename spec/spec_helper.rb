@@ -16,6 +16,7 @@ require 'dotenv'
 Dotenv.load
 require 'webmock/rspec'
 WebMock.allow_net_connect!
+require_relative 'helpers'
 require_relative 'shared_contexts'
 require_relative 'shared_examples'
 

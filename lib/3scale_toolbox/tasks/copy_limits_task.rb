@@ -7,20 +7,20 @@ module ThreeScaleToolbox
       def call
         metrics_map = metrics_mapping(source.metrics, target.metrics)
         plan_mapping = application_plan_mapping(source.plans, target.plans)
-        plan_mapping.each do |plan_id, target_plan_id|
+        plan_mapping.each do |plan_id, target_plan|
           limits = source.plan_limits(plan_id)
-          limits_target = target.plan_limits(target_plan_id)
+          limits_target = target.plan_limits(target_plan['id'])
           missing_limits = missing_limits(limits, limits_target)
           missing_limits.each do |limit|
             limit.delete('links')
             target.create_application_plan_limit(
-              target_plan_id,
+              target_plan['id'],
               metrics_map.fetch(limit.fetch('metric_id')),
               limit
             )
           end
-          puts "target application plan #{target_plan_id} is missing #{missing_limits.size} " \
-               "from the original plan #{plan_id}"
+          puts "target application plan #{target_plan['id']} is missing" \
+            " #{missing_limits.size} from the original plan #{plan_id}"
         end
       end
 
