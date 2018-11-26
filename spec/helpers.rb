@@ -23,7 +23,7 @@ module Helpers
     end
 
     def create_service(client)
-      service_name = "API_TEST_#{Time.now.getutc.to_i}"
+      service_name = "API_TEST_#{Helpers.random_lowercase_name}_#{Time.now.getutc.to_i}"
       system_name = service_name.delete("\s").downcase
       service_obj = { 'name' => service_name }
 

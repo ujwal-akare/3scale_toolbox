@@ -1,12 +1,13 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
+  include_context :random_name
   include_context :api3scale_client
 
   # Expensive task only run once for all examples in a group
   before(:all) do
     @source_service = Helpers::ServiceFactory.new_service client
-    @target_system_name = "copy_service_spec_#{Time.now.getutc.to_i}"
+    @target_system_name = "copy_#{random_lowercase_name}_#{Time.now.getutc.to_i}"
     source_url = client_url
     destination_url = client_url
     command_line_str = "copy service -t #{@target_system_name} " \
