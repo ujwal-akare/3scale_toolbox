@@ -1,6 +1,7 @@
 require 'cri'
 require '3scale_toolbox/base_command'
 require '3scale_toolbox/commands/import_command/import_csv'
+require '3scale_toolbox/commands/import_command/openapi'
 
 module ThreeScaleToolbox
   module Commands
@@ -15,6 +16,7 @@ module ThreeScaleToolbox
         end
       end
       add_subcommand(ImportCsvSubcommand)
+      add_subcommand(OpenAPI::OpenAPISubcommand)
     end
   end
 end
