@@ -26,13 +26,19 @@ module ThreeScaleToolbox
     def parse_remote_uri(remote_url_str)
       # should raise error on invalid urls
       remote_uri_obj = URI(remote_url_str)
+      # URI::HTTP is parent of URI::HTTPS
+      # with single check both types are checked
+      unless remote_uri_obj.kind_of?(URI::HTTP)
+        raise ThreeScaleToolbox::Error, "invalid url: #{remote_url_str}"
+      end
+
       auth_key = remote_uri_obj.user
       remote_uri_obj.user = ''
       endpoint = remote_uri_obj.to_s
       { auth_key: auth_key, endpoint: endpoint }
     end
 
-    def validate_remote(endpoint:, auth_key:)
+    def validate_remote(verify_ssl, endpoint:, auth_key:)
       client = ThreeScale::API.new(
         endpoint: endpoint,
         provider_key: auth_key,
@@ -43,6 +49,15 @@ module ThreeScaleToolbox
       rescue ThreeScale::API::HttpClient::ForbiddenError
         raise ThreeScaleToolbox::Error, 'remote not valid'
       end
+    end
+
+    def remote(origin, verify_ssl)
+      remote = parse_remote_uri origin
+      ThreeScale::API.new(
+        endpoint:     remote[:endpoint],
+        provider_key: remote[:auth_key],
+        verify_ssl: verify_ssl
+      )
     end
 
     private

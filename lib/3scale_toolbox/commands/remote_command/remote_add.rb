@@ -36,7 +36,7 @@ module ThreeScaleToolbox
         def add_remote(remote_name, remote_url)
           validate_remote_name remote_name
           remote = parse_remote_uri remote_url
-          validate_remote remote
+          validate_remote verify_ssl, remote
           update_remotes do |remotes|
             remotes.tap { |r| r[remote_name] = remote }
           end

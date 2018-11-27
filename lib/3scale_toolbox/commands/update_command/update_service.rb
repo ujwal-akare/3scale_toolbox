@@ -6,6 +6,8 @@ module ThreeScaleToolbox
     module UpdateCommand
       class UpdateServiceSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
+        include ThreeScaleToolbox::Remotes
+
         def self.command
           Cri::Command.define do
             name        'service'
@@ -25,219 +27,41 @@ module ThreeScaleToolbox
           end
         end
 
-        class ServiceUpdater
-          attr_reader :source_client, :target_client, :source_service_id, :target_service_id, :target_system_name
+        def run
+          source_service = Entities::Service.new(
+            id: arguments[:src_service_id],
+            remote: remote(fetch_required_option(:source), verify_ssl)
+          )
+          update_service = Entities::Service.new(
+            id: arguments[:dst_service_id],
+            remote: remote(fetch_required_option(:destination), verify_ssl)
+          )
+          system_name = options[:target_system_name]
+          context = create_context(source_service, update_service)
 
-          def initialize (source, source_service_id, destination, target_service_id, system_name, verify_ssl)
-            @source_client = ThreeScale::API.new(
-              endpoint:     endpoint_from_url(source),
-              provider_key: provider_key_from_url(source),
-              verify_ssl: verify_ssl
-            )
-            @target_client = ThreeScale::API.new(
-              endpoint:     endpoint_from_url(destination),
-              provider_key: provider_key_from_url(destination),
-              verify_ssl: verify_ssl
-            )
-            @source_service_id = source_service_id
-            @target_service_id = target_service_id
-            @target_system_name = system_name
+          tasks = []
+          unless options[:'rules-only']
+            tasks << Tasks::UpdateServiceSettingsTask.new(context.merge(target_name: system_name))
+            tasks << Tasks::CopyServiceProxyTask.new(context)
+            tasks << Tasks::CopyMethodsTask.new(context)
+            tasks << Tasks::CopyMetricsTask.new(context)
+            tasks << Tasks::CopyApplicationPlansTask.new(context)
+            tasks << Tasks::CopyLimitsTask.new(context)
           end
+          tasks << Tasks::DestroyMappingRulesTask.new(context) if options[:force]
+          tasks << Tasks::CopyMappingRulesTask.new(context)
 
-          def compare_hashes(first, second, keys)
-            keys.map{ |key| first.fetch(key) } == keys.map{ |key| second.fetch(key) }
-          end
-
-          def provider_key_from_url(url)
-            URI(url).user
-          end
-
-          def endpoint_from_url(url)
-            uri      = URI(url)
-            uri.user = nil
-
-            uri.to_s
-          end
-
-          # system name only included when specified from options
-          def target_service_params(source)
-            target_service = source.select do |k, v|
-              Commands.service_valid_params.include?(k) \
-                && k != 'system_name' \
-                && v
-            end
-            target_service.tap do |hash|
-              hash['system_name'] = target_system_name unless target_system_name.nil?
-            end
-          end
-
-          def source_metrics
-            @source_metrics ||= source_client.list_metrics(source_service_id)
-          end
-
-          def metrics_mapping
-            @metrics_mapping ||= target_client.list_metrics(target_service_id).map do |target|
-              metric = source_metrics.find{|metric| metric.fetch('system_name') == target.fetch('system_name') }
-              metric ||= {}
-
-              [metric['id'], target['id']]
-            end.to_h
-          end
-
-          def copy_service_settings
-            source_service = source_client.show_service(source_service_id)
-            puts "updating service settings for service id #{target_service_id}..."
-            target_update_response = target_client.update_service(target_service_id, target_service_params(source_service))
-            raise "Service has not been saved. Errors: #{target_update_response['errors']}" unless target_update_response['errors'].nil?
-          end
-
-          def copy_proxy_settings
-            puts "updating proxy configuration for service id #{target_service_id}..."
-            proxy = source_client.show_proxy(source_service_id)
-            target_client.update_proxy(target_service_id, proxy)
-            puts "updated proxy of #{target_service_id} to match the source #{source_service_id}"
-          end
-
-          def copy_metrics_and_methods
-            target_metrics = target_client.list_metrics(target_service_id)
-
-            source_hits = source_metrics.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
-            target_hits = target_metrics.find{ |metric| metric['system_name'] == 'hits' } or raise 'missing hits metric'
-
-            source_methods = source_client.list_methods(source_service_id, source_hits['id'])
-            target_methods = target_client.list_methods(target_service_id, target_hits['id'])
-
-            puts "source service hits metric #{source_hits['id']} has #{source_methods.size} methods"
-            puts "target service hits metric #{target_hits['id']} has #{target_methods.size} methods"
-
-            missing_methods = source_methods.reject { |source_method|  target_methods.find{|target_method| compare_hashes(source_method, target_method, ['system_name']) } }
-
-            puts "creating #{missing_methods.size} missing methods on target service..."
-            missing_methods.each do |method|
-              target = { friendly_name: method['friendly_name'], system_name: method['system_name'] }
-              target_client.create_method(target_service_id, target_hits['id'], target)
-            end
-
-            target_metrics = target_client.list_metrics(target_service_id)
-
-            puts "source service has #{source_metrics.size} metrics"
-            puts "target service has #{target_metrics.size} metrics"
-
-            missing_metrics = source_metrics.reject { |source_metric| target_metrics.find{|target_metric| compare_hashes(source_metric, target_metric, ['system_name']) } }
-
-            missing_metrics.map do |metric|
-              metric.delete('links')
-              target_client.create_metric(target_service_id, metric)
-            end
-
-            puts "created #{missing_metrics.size} metrics on the target service"
-          end
-
-          def copy_application_plans
-            source_plans = source_client.list_service_application_plans(source_service_id)
-            target_plans = target_client.list_service_application_plans(target_service_id)
-
-            puts "source service has #{source_plans.size} application plans"
-            puts "target service has #{target_plans.size} application plans"
-
-            missing_application_plans = source_plans.reject { |source_plan| target_plans.find{|target_plan| source_plan.fetch('system_name') == target_plan.fetch('system_name') } }
-
-            puts "creating #{missing_application_plans.size} missing application plans..."
-
-            missing_application_plans.each do |plan|
-              plan.delete('links')
-              plan.delete('default') # TODO: handle default plans
-
-              if plan.delete('custom') # TODO: what to do with custom plans?
-                puts "skipping custom plan #{plan}"
-              else
-                target_client.create_application_plan(target_service_id, plan)
-              end
-            end
-
-            puts "updating limits for application plans..."
-
-            application_plan_mapping = target_client.list_service_application_plans(target_service_id).map do |plan_target|
-              plan = source_plans.find{|plan| plan.fetch('system_name') == plan_target.fetch('system_name') }
-              plan ||= {}
-              [plan['id'], plan_target['id']]
-            end.to_h.reject { |key, value| !key }
-
-            application_plan_mapping.each do |source_id, target_id|
-              source_limits = source_client.list_application_plan_limits(source_id)
-              target_limits = target_client.list_application_plan_limits(target_id)
-
-              missing_limits = source_limits.reject { |limit| target_limits.find{|limit_target| limit.fetch('period') == limit_target.fetch('period') } }
-
-              puts "target application plan #{target_id} is missing #{missing_limits.size} from the source plan #{source_id}"
-
-              missing_limits.each do |limit|
-                limit.delete('links')
-                target_client.create_application_plan_limit(target_id, metrics_mapping.fetch(limit.fetch('metric_id')), limit)
-              end
-
-            end
-          end
-
-          def copy_mapping_rules force_mapping_rules
-            source_mapping_rules = source_client.list_mapping_rules(source_service_id)
-            target_mapping_rules = target_client.list_mapping_rules(target_service_id)
-
-            puts "the source service has #{source_mapping_rules.size} mapping rules"
-            puts "the target has #{target_mapping_rules.size} mapping rules"
-
-            if force_mapping_rules
-              puts "force mode was chosen, deleting existing mapping rules on target service..."
-              target_mapping_rules.each do |rule|
-                target_client.delete_mapping_rule(target_service_id, rule['id'])
-              end
-              missing_mapping_rules = source_mapping_rules
-            else
-              unique_target_mapping_rules = target_mapping_rules.dup
-
-              missing_mapping_rules = source_mapping_rules.reject do |mapping_rule|
-                matching_metric = unique_target_mapping_rules.find do |target|
-                  compare_hashes(mapping_rule, target, %w(pattern http_method delta)) &&
-                    metrics_mapping.fetch(mapping_rule.fetch('metric_id')) == target.fetch('metric_id')
-                end
-
-                unique_target_mapping_rules.delete(matching_metric)
-              end
-            end
-
-            puts "missing #{missing_mapping_rules.size} mapping rules"
-
-            missing_mapping_rules.each do |mapping_rule|
-              mapping_rule.delete('links')
-              mapping_rule['metric_id'] = metrics_mapping.fetch(mapping_rule.delete('metric_id'))
-              target_client.create_mapping_rule(target_service_id, mapping_rule)
-            end
-            puts "created #{missing_mapping_rules.size} mapping rules"
-          end
-
-          def update_service force_mapping_rules=false
-            copy_service_settings
-            copy_proxy_settings
-            copy_metrics_and_methods
-            copy_application_plans
-            copy_mapping_rules force_mapping_rules
-          end
+          # run tasks
+          tasks.each(&:call)
         end
 
-        def run
-          source      = fetch_required_option(:source)
-          destination = fetch_required_option(:destination)
-          source_service_id = arguments[:src_service_id]
-          target_service_id = arguments[:dst_service_id]
-          system_name = options[:target_system_name]
-          updater = ServiceUpdater.new(source, source_service_id, destination, target_service_id, system_name, verify_ssl)
+        private
 
-          force_update = options[:force]
-          if options[:'rules-only']
-            updater.copy_mapping_rules force_update
-          else
-            updater.update_service force_update
-          end
+        def create_context(source, target)
+          {
+            source: source,
+            target: target
+          }
         end
       end
     end

@@ -15,11 +15,9 @@
 require 'webmock/rspec'
 WebMock.disable_net_connect!
 require_relative 'shared_contexts'
-require_relative 'shared_examples'
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
-
   # some methods may rise SystemExit.
   # Unhandled SystemExit causes susbequent tests to silently not run
   config.around do |ex|

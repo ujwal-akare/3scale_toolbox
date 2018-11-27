@@ -1,37 +1,51 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
-  include_context :source_service_data
-
-  context '#copy_service_params' do
-    subject { described_class.new(nil, nil, nil) }
-
-    it 'all expected params are copied' do
-      new_service_params = subject.copy_service_params(source_service_obj, nil)
-
-      expect(new_service_params).to include(*source_service_params)
-    end
-
-    it 'extra params are not copied' do
-      extra_params = {
-        'some_weird_param' => 'value0',
-        'some_other_weird_param' => 'value1'
+  context '#run' do
+    let(:options) do
+      {
+        'source': 'https://source_key@source.example.com',
+        'destination': 'https://destination_key@destination.example.com',
+        'target_system_name': 'some_system_name'
       }
-      new_service_params = subject.copy_service_params(
-        source_service_obj.merge(extra_params), nil
-      )
-      expect(new_service_params).to include(*source_service_params)
-      expect(new_service_params).not_to include(*extra_params)
     end
+    let(:arguments) { { 'service_id': 'some_service_id' } }
+    let(:service_obj) { { 'some_key' => 'some_value' } }
 
-    it 'missing params are not copied' do
-      missing_params = %w[description backend_version]
-      missing_params.each do |key|
-        source_service_obj.delete(key)
+    subject { described_class.new(options, arguments, nil) }
+
+    it 'all required tasks are run' do
+      # Remote stub
+      remote = double('remote')
+      expect_any_instance_of(ThreeScaleToolbox::Remotes).to receive(:remote).twice.and_return(remote)
+
+      # Entities::Service instance stub
+      service = double('Entities::Service instance')
+      expect(service).to receive(:show_service).and_return(service_obj)
+
+      # Entities::Service class stub
+      service_class = class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const
+      expect(service_class).to receive(:new).with(id: 'some_service_id', remote: remote).and_return(service)
+      expect(service_class).to receive(:create).with(remote: remote, service: service_obj,
+                                                     system_name: 'some_system_name').and_return(service)
+      # Task stubs
+      [
+        ThreeScaleToolbox::Tasks::CopyServiceProxyTask,
+        ThreeScaleToolbox::Tasks::CopyMethodsTask,
+        ThreeScaleToolbox::Tasks::CopyMetricsTask,
+        ThreeScaleToolbox::Tasks::CopyApplicationPlansTask,
+        ThreeScaleToolbox::Tasks::CopyLimitsTask,
+        ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
+        ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+      ].each do |task_class|
+        task = double(task_class.to_s)
+        task_class_obj = class_double(task_class).as_stubbed_const
+        expect(task_class_obj).to receive(:new).and_return(task)
+        expect(task).to receive(:call)
       end
-      new_service_params = subject.copy_service_params(source_service_obj, nil)
-      expect(new_service_params).to include(*source_service_obj.keys)
-      expect(new_service_params).not_to include(*missing_params)
+
+      # Run
+      subject.run
     end
   end
 end

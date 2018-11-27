@@ -1,37 +1,125 @@
 require '3scale_toolbox'
 
-RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcommand::ServiceUpdater do
-  context '#target_service_params' do
-    context 'with target system name' do
-      subject do
-        described_class.new(
-          'https://provider_key_a@example.com',
-          'source_service_id',
-          'https://provider_key_a@example.com',
-          'destination_service_id',
-          'some_target_system_name',
-          true
-        )
+RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcommand do
+  RSpec.shared_examples 'check tasks' do
+    it 'all required tasks are run' do
+      # Remote stub
+      remote = double('remote')
+      expect_any_instance_of(ThreeScaleToolbox::Remotes).to receive(:remote).twice.and_return(remote)
+
+      # Entities::Service instance stub
+      service = double('Entities::Service instance')
+
+      # Entities::Service class stub
+      service_class = class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const
+      expect(service_class).to receive(:new).with(id: 'src_id',
+                                                  remote: remote).and_return(service)
+      expect(service_class).to receive(:new).with(id: 'dst_id',
+                                                  remote: remote).and_return(service)
+      # Task stubs
+      tasks.each do |task_class|
+        task = double(task_class.to_s)
+        task_class_obj = class_double(task_class).as_stubbed_const
+        expect(task_class_obj).to receive(:new).and_return(task)
+        expect(task).to receive(:call)
       end
-      let(:target_service_params) { source_service_params }
-      include_examples 'target service params'
+
+      # Run
+      subject.run
+    end
+  end
+
+  context '#run' do
+    let(:source) { 'https://source_key@source.example.com' }
+    let(:destination) { 'https://destination_key@destination.example.com' }
+    let(:target_system_name) { 'some_system_name' }
+    let(:arguments) { { 'src_service_id': 'src_id', 'dst_service_id': 'dst_id' } }
+    subject { described_class.new(options, arguments, nil) }
+
+    context 'rules-only and force mapping rules' do
+      let(:options) do
+        {
+          'source': source,
+          'destination': destination,
+          'target_system_name': target_system_name,
+          'force': true,
+          'rules-only': true
+        }
+      end
+      let(:tasks) do
+        [
+          ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
+          ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+        ]
+      end
+      include_examples 'check tasks'
     end
 
-    context 'without target system name' do
-      subject do
-        described_class.new(
-          'https://provider_key_a@example.com',
-          'source_service_id',
-          'https://provider_key_a@example.com',
-          'destination_service_id',
-          true,
-          nil
-        )
+    context 'rules-only and do not force mapping rules' do
+      let(:options) do
+        {
+          'source': source,
+          'destination': destination,
+          'target_system_name': target_system_name,
+          'force': false,
+          'rules-only': true
+        }
       end
-      let(:target_service_params) do
-        source_service_params.reject { |k| k == 'system_name' }
+      let(:tasks) do
+        [
+          ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+        ]
       end
-      include_examples 'target service params'
+      include_examples 'check tasks'
+    end
+
+    context 'not rules-only and force mapping rules' do
+      let(:options) do
+        {
+          'source': source,
+          'destination': destination,
+          'target_system_name': target_system_name,
+          'force': true,
+          'rules-only': false
+        }
+      end
+      let(:tasks) do
+        [
+          ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask,
+          ThreeScaleToolbox::Tasks::CopyServiceProxyTask,
+          ThreeScaleToolbox::Tasks::CopyMethodsTask,
+          ThreeScaleToolbox::Tasks::CopyMetricsTask,
+          ThreeScaleToolbox::Tasks::CopyApplicationPlansTask,
+          ThreeScaleToolbox::Tasks::CopyLimitsTask,
+          ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
+          ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+        ]
+      end
+      include_examples 'check tasks'
+    end
+
+    context 'not rules-only and do not force mapping rules' do
+      let(:options) do
+        {
+          'source': source,
+          'destination': destination,
+          'target_system_name': target_system_name,
+          'force': false,
+          'rules-only': false
+        }
+      end
+      let(:tasks) do
+        [
+          ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask,
+          ThreeScaleToolbox::Tasks::CopyServiceProxyTask,
+          ThreeScaleToolbox::Tasks::CopyMethodsTask,
+          ThreeScaleToolbox::Tasks::CopyMetricsTask,
+          ThreeScaleToolbox::Tasks::CopyApplicationPlansTask,
+          ThreeScaleToolbox::Tasks::CopyLimitsTask,
+          ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+        ]
+      end
+      include_examples 'check tasks'
     end
   end
 end
