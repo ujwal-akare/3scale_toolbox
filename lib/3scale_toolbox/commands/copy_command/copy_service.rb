@@ -6,7 +6,6 @@ module ThreeScaleToolbox
     module CopyCommand
       class CopyServiceSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
-        include ThreeScaleToolbox::Remotes
 
         def self.command
           Cri::Command.define do
@@ -30,7 +29,7 @@ module ThreeScaleToolbox
           system_name = fetch_required_option(:target_system_name)
 
           source_service = Entities::Service.new(id: arguments[:service_id],
-                                                 remote: remote(source, verify_ssl))
+                                                 remote: threescale_client(source))
           target_service = create_new_service(source_service.show_service, destination, system_name)
           context = create_context(source_service, target_service)
           tasks = [
@@ -55,7 +54,7 @@ module ThreeScaleToolbox
         end
 
         def create_new_service(service, destination, system_name)
-          Entities::Service.create(remote: remote(destination, verify_ssl),
+          Entities::Service.create(remote: threescale_client(destination),
                                    service: service,
                                    system_name: system_name)
         end

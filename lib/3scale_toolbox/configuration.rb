@@ -2,7 +2,10 @@ require 'yaml/store'
 
 module ThreeScaleToolbox
   class Configuration
+    attr_reader :config_file
+
     def initialize(config_file)
+      @config_file = config_file
       @store = YAML::Store.new(config_file)
     end
 
@@ -12,6 +15,7 @@ module ThreeScaleToolbox
 
     def update(key)
       return if key.nil?
+
       @store.transaction do
         @store[key] = yield @store[key]
       end

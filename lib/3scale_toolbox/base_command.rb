@@ -39,6 +39,17 @@ module ThreeScaleToolbox
       options[:'config-file']
     end
 
+    def remotes
+      @remotes ||= Remotes.new(config)
+    end
+
+    ##
+    # Input param can be endpoint url or remote name
+    #
+    def threescale_client(str)
+      ThreeScaleClientFactory.get(remotes, str, verify_ssl)
+    end
+
     def verify_ssl
       # this is flag. It is either true or false. Cannot be nil
       !options[:insecure]

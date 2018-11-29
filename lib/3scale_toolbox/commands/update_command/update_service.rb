@@ -6,7 +6,6 @@ module ThreeScaleToolbox
     module UpdateCommand
       class UpdateServiceSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
-        include ThreeScaleToolbox::Remotes
 
         def self.command
           Cri::Command.define do
@@ -30,11 +29,11 @@ module ThreeScaleToolbox
         def run
           source_service = Entities::Service.new(
             id: arguments[:src_service_id],
-            remote: remote(fetch_required_option(:source), verify_ssl)
+            remote: threescale_client(fetch_required_option(:source))
           )
           update_service = Entities::Service.new(
             id: arguments[:dst_service_id],
-            remote: remote(fetch_required_option(:destination), verify_ssl)
+            remote: threescale_client(fetch_required_option(:destination))
           )
           system_name = options[:target_system_name]
           context = create_context(source_service, update_service)

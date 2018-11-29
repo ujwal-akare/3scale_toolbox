@@ -9,6 +9,7 @@ module ThreeScaleToolbox
     module ImportCommand
       class ImportCsvSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
+
         def self.command
           Cri::Command.define do
             name        'csv'
@@ -23,17 +24,6 @@ module ThreeScaleToolbox
           end
         end
 
-        def provider_key_from_url(url)
-          URI(url).user
-        end
-
-        def endpoint_from_url(url)
-          uri      = URI(url)
-          uri.user = nil
-
-          uri.to_s
-        end
-
         def auth_app_key_according_service(service)
           case service['backend_version']
           when '1'
@@ -46,13 +36,8 @@ module ThreeScaleToolbox
         end
 
         def import_csv(destination, file_path)
-          endpoint     = endpoint_from_url destination
-          provider_key = provider_key_from_url destination
+          client = threescale_client(destination)
 
-          client   = ThreeScale::API.new(endpoint: endpoint,
-                                         provider_key: provider_key,
-                                         verify_ssl: verify_ssl
-                                        )
           data     = CSV.read file_path
           headings = data.shift
           services = {}

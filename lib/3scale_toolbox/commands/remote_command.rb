@@ -10,7 +10,6 @@ module ThreeScaleToolbox
     module RemoteCommand
       class RemoteCommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
-        include ThreeScaleToolbox::Remotes
 
         def self.command
           Cri::Command.define do
@@ -29,10 +28,10 @@ module ThreeScaleToolbox
         private
 
         def list_remotes
-          if remotes.empty?
+          if remotes.all.empty?
             puts 'Empty remote list.'
           else
-            remotes.each do |name, remote|
+            remotes.all.each do |name, remote|
               puts "#{name} #{remote[:endpoint]} #{remote[:auth_key]}"
             end
           end
