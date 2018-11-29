@@ -37,6 +37,16 @@ RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteAddSubcommand d
       end
     end
 
+    context 'remote url is not http' do
+      let(:arguments) do
+        { remote_name: 'remote_1', remote_url: 'some_name' }
+      end
+
+      it 'raises error' do
+        expect { subject.run }.to raise_error(ThreeScaleToolbox::InvalidUrlError)
+      end
+    end
+
     context 'remote is valid' do
       let(:config_file) { File.join(tmp_dir, 'valid_config_file.yaml') }
       let(:arguments) do
