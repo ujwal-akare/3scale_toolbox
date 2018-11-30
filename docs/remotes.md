@@ -25,8 +25,9 @@ where 3scale instances need to be specified.
 
 ## Remote URLS
 
-The 3Scale toolbox access 3Scale instances by an `HTTP[S]` URL.
-Tokens are used for authentication and authorization purposes. 3Scale API supports
+The 3scale toolbox access 3scale instances by an `HTTP[S]` URL.
+Tokens are used for authentication and authorization purposes.
+3scale API supports the following token types:
 * `access_token` (preferred)
 * `provider_key`
 
@@ -52,7 +53,7 @@ instance_b https://example_b.net 987654321
 
 ### Add
 
-Adds a remote named <name> for the 3scale instance at <url>.
+Adds a remote named <name> for the 3scale instance at `<url>`.
 
 Example:
 
@@ -62,7 +63,7 @@ Example:
 
 ### Remove
 
-Remove the remote named <name>.
+Remove the remote named `<name>`.
 
 Example:
 
@@ -72,7 +73,7 @@ Example:
 
 ### Rename
 
-Rename the remote named <old> to <new>.
+Rename the remote named `<old>` to `<new>`.
 
 Example:
 
