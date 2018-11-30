@@ -15,7 +15,7 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'remote'
             usage       'remote <command> [options]'
-            summary     '3scale CLI remote'
+            summary     '3scale CLI remotes'
             description '3scale CLI command to manage your remotes'
             runner RemoteCommand
           end

@@ -14,8 +14,8 @@ module ThreeScaleToolbox
             summary     'Copy service'
             description 'Will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.'
 
-            option  :s, :source, '3scale source instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
-            option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
+            option  :s, :source, '3scale source instance. Url or remote name', argument: :required
+            option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
             option  :t, 'target_system_name', 'Target system name', argument: :required
             param   :service_id
 

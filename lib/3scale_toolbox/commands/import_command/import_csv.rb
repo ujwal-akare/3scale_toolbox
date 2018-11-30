@@ -17,7 +17,7 @@ module ThreeScaleToolbox
             summary     'Import csv file'
             description 'Create new services, metrics, methods and mapping rules from CSV formatted file'
 
-            option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
+            option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
             option  :f, 'file', 'CSV formatted file', argument: :required
 
             runner ImportCsvSubcommand

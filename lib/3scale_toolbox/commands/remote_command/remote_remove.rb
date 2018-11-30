@@ -7,7 +7,7 @@ module ThreeScaleToolbox
         def self.command
           Cri::Command.define do
             name        'remove'
-            usage       'remove <remote_name>'
+            usage       'remove <name>'
             summary     '3scale CLI remote remove'
             description '3scale CLI command to remove remote'
             param       :remote_name

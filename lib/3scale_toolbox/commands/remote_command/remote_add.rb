@@ -7,7 +7,7 @@ module ThreeScaleToolbox
         def self.command
           Cri::Command.define do
             name        'add'
-            usage       'add <remote_name> <remote_url>'
+            usage       'add <name> <url>'
             summary     '3scale CLI remote add'
             description '3scale CLI command to add new remote'
             param       :remote_name
