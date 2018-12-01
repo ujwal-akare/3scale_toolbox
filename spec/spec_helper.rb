@@ -22,15 +22,6 @@ require_relative 'shared_examples'
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
-  # some methods may rise SystemExit.
-  # Unhandled SystemExit causes susbequent tests to silently not run
-  config.around do |ex|
-    begin
-      ex.run
-    rescue SystemExit => e
-      raise "fatal: got system exit: #{e.inspect}"
-    end
-  end
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
