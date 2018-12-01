@@ -97,3 +97,18 @@ RSpec.shared_context :copied_metrics do
   let(:metric_keys) { %w[name system_name unit] }
   let(:metrics_mapping) { tasks_helper.metrics_mapping(source_metrics, target_metrics) }
 end
+
+RSpec.shared_context :allow_net_connect do
+  # cannot use around hook to enable net connect
+  # around hook is per example and context level before hook needs net connect
+  # cannot use configuration level (in spec_helper.rb ) before hook with conditions, like
+  # configure.before type: :net {}
+  # because they are executed after the before hook for context level.
+  before :context do
+    WebMock.allow_net_connect!
+  end
+
+  after :context do
+    WebMock.disable_net_connect!
+  end
+end

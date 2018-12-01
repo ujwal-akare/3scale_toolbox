@@ -1,12 +1,13 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcommand do
+  include_context :allow_net_connect
   include_context :random_name
   include_context :api3scale_client
 
   context 'update all' do
     # Expensive task only run once for all examples in a group
-    before(:all) do
+    before :context do
       @source_service = Helpers::ServiceFactory.new_service client
       @target_service = Helpers::ServiceFactory.new_service client
       @target_system_name = "update_#{random_lowercase_name}_#{Time.now.getutc.to_i}"
