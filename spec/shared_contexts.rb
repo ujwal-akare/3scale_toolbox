@@ -73,7 +73,7 @@ RSpec.shared_context :real_api3scale_clients do
 
   let(:target_service_id) do
     # figure out target service by system_name
-    client.list_services.find { |service| service['system_name'] == target_system_name }['id']
+    target_client.list_services.find { |service| service['system_name'] == target_system_name }['id']
   end
 
   let(:external_client) do
@@ -88,6 +88,13 @@ RSpec.shared_context :real_api3scale_clients do
     endpoint_uri = URI(endpoint)
     endpoint_uri.user = provider_key
     endpoint_uri.to_s
+  end
+
+  ##
+  # clean up on real scenario
+  after :example do
+    source.delete_service
+    target.delete_service
   end
 end
 
