@@ -49,7 +49,7 @@ OPTIONS
 ### Copy a service
 Will create a new service, copy existing proxy settings, metrics, methods, application plans and mapping rules.
 
-3Scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
+3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
 Help message:
 
@@ -89,7 +89,7 @@ OPTIONS FOR COPY
 
 Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.
 
-3Scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
+3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
 Help message:
 
@@ -131,7 +131,7 @@ $ 3scale update service -s https://9874598743@source.example.com -d foo 3 2
 
 Will create new services, metrics, methods, and mapping rules having as source comma separated values (CSV) formatted file.
 
-3Scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
+3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
 CSV header
 
