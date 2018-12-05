@@ -12,21 +12,15 @@ RSpec.describe ThreeScaleToolbox::Remotes do
   end
 
   let(:yaml_content) do
-    <<~HEREDOC
+    <<~YAML
       ---
         :remotes:
           remote_1:
             :endpoint: https://1.example.com
             :auth_key: '123456789'
-    HEREDOC
+    YAML
   end
-  let(:config_file) do
-    File.join(tmp_dir, '.3scalerc').tap do |config_file|
-      File.open config_file, 'w' do |file|
-        file.write(yaml_content)
-      end
-    end
-  end
+  let(:config_file) { tmp_dir.join('.3scalerc').tap { |conf| conf.write(yaml_content) } }
   let(:config) { ThreeScaleToolbox::Configuration.new(config_file) }
   let(:endpoint) { 'https://1.example.com' }
   let(:authkey) { '123456789' }
@@ -43,13 +37,13 @@ RSpec.describe ThreeScaleToolbox::Remotes do
   context '#all' do
     context 'valid yaml, invalid remote' do
       let(:yaml_content) do
-        <<~HEREDOC
+        <<~YAML
           ---
           :remotes:
             remote_1:
               :bla: https://1.example.com
               :boo: '1'
-        HEREDOC
+        YAML
       end
 
       it 'raises invalid error' do

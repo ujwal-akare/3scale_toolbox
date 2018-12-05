@@ -20,7 +20,7 @@ module ThreeScaleToolbox
     #
     def all
       rmts = (config.data :remotes) || {}
-      raise_invalid unless validate?(rmts)
+      raise_invalid unless validate(rmts)
       rmts
     end
 
@@ -66,7 +66,7 @@ module ThreeScaleToolbox
     def update
       config.update(:remotes) do |rmts|
         yield(rmts || {}).tap do |new_rmts|
-          raise_invalid unless validate?(new_rmts)
+          raise_invalid unless validate(new_rmts)
         end
       end
     end
@@ -83,7 +83,7 @@ module ThreeScaleToolbox
       remote.is_a?(Hash) && remote.key?(:endpoint) && remote.key?(:auth_key)
     end
 
-    def validate?(remotes)
+    def validate(remotes)
       case remotes
       when Hash then remotes.values.all?(&method(:valid?))
       else false
