@@ -9,6 +9,7 @@
    * [Update a service](#update-a-service)
    * [Import from CSV](#import-from-csv)
 * [Development](#development)
+   * [Testing](#testing)
 * [Plugins](#plugins)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
@@ -175,6 +176,34 @@ Example:
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment. Run `bundle exec 3scale` to use the gem in this directory, ignoring other installed copies of this gem.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+### Testing
+
+To run all tests run `rake`.
+
+There are two kinds of tests:
+* unit (see [spec/unit](spec/unit))
+```bash
+rake spec:unit
+```
+
+* integration (see [spec/integration](spec/integration)).
+```bash
+rake spec:integration
+```
+
+Integration tests can be run locally or against a real 3scale account.
+When details of the account are set via environment variables,
+integration tests are run agains given account.
+Otherwise, tests are run locally with mocked 3scale clients.
+
+The easiest way to set everything up is it to have a `.env` file in the root of the project with the following environment variables (set your own values):
+
+```
+ENDPOINT=https://your-domain-admin.3scaledomain
+PROVIDER_KEY=abc123
+VERIFY_SSL=true (by default true)
+```
 
 ## Plugins
 
