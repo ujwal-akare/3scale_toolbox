@@ -1,5 +1,5 @@
 module ThreeScaleToolbox
-  class Helper
+  module Helper
     class << self
       def compare_hashes(first, second, keys)
         keys.map { |key| first.fetch(key, nil) } == keys.map { |key| second.fetch(key, nil) }
