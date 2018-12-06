@@ -1,6 +1,6 @@
 require '3scale_toolbox'
 
-RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand do
+RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteListSubcommand do
   include_context :temp_dir
   include_context :resources
 
@@ -31,12 +31,12 @@ RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand do
       context 'data lacks remote attrs' do
         before :each do
           File.open(config_file, 'w') do |f|
-            f.write(<<~AUTHENTICATION_KEY_MISSING)
+            f.write(<<~YAML)
               ---
               :remotes:
                 ecorp:
                   :endpoint: https://e-corporation-admin.amp24.127.0.0.1.nip.io
-            AUTHENTICATION_KEY_MISSING
+            YAML
           end
         end
 
