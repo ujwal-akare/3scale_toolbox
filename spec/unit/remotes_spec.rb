@@ -17,20 +17,20 @@ RSpec.describe ThreeScaleToolbox::Remotes do
         :remotes:
           remote_1:
             :endpoint: https://1.example.com
-            :auth_key: '123456789'
+            :authentication: '123456789'
     YAML
   end
   let(:config_file) { tmp_dir.join('.3scalerc').tap { |conf| conf.write(yaml_content) } }
   let(:config) { ThreeScaleToolbox::Configuration.new(config_file) }
   let(:endpoint) { 'https://1.example.com' }
-  let(:authkey) { '123456789' }
+  let(:authentication) { '123456789' }
   let(:verify_ssl) { true }
   let(:origin) do
     u = URI(endpoint)
-    u.user = authkey
+    u.user = authentication
     u.to_s
   end
-  let(:remote_info) { { endpoint: endpoint, auth_key: authkey } }
+  let(:remote_info) { { endpoint: endpoint, authentication: authentication } }
 
   subject { described_class.new(config) }
 
@@ -61,7 +61,7 @@ RSpec.describe ThreeScaleToolbox::Remotes do
 
       it 'remote 3 available' do
         expect(subject.all).to include('remote_3' => { endpoint: 'https://3.example.com',
-                                                       auth_key: '3' })
+                                                       authentication: '3' })
       end
     end
   end

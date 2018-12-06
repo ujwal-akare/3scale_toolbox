@@ -4,15 +4,15 @@ RSpec.describe ThreeScaleToolbox::ThreeScaleClientFactory do
   let(:remotes) { double('remotes') }
   let(:threescale_api) { class_double('ThreeScale::API').as_stubbed_const }
   let(:endpoint) { 'https://example.com' }
-  let(:authkey) { '123456789' }
+  let(:authentication) { '123456789' }
   let(:verify_ssl) { true }
   let(:origin) do
     u = URI(endpoint)
-    u.user = authkey
+    u.user = authentication
     u.to_s
   end
-  let(:api_info) { { endpoint: endpoint, provider_key: authkey, verify_ssl: verify_ssl } }
-  let(:remote_info) { { endpoint: endpoint, auth_key: authkey } }
+  let(:api_info) { { endpoint: endpoint, provider_key: authentication, verify_ssl: verify_ssl } }
+  let(:remote_info) { { endpoint: endpoint, authentication: authentication } }
   let(:client) { double('client') }
   subject { described_class.get(remotes, remote_str, verify_ssl) }
 

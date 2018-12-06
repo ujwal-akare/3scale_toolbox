@@ -2,16 +2,16 @@
 :remotes:
   remote_1:
     :endpoint: https://1.example.com
-    :auth_key: '1'
+    :authentication: '1'
   remote_2:
     :endpoint: https://2.example.com
-    :auth_key: '2'
+    :authentication: '2'
   remote_3:
     :endpoint: https://3.example.com
-    :auth_key: '3'
+    :authentication: '3'
   remote_4:
     :endpoint: https://4.example.com
-    :auth_key: '4'
+    :authentication: '4'
   remote_5:
     :endpoint: https://5.example.com
-    :auth_key: '5'
+    :authentication: '5'

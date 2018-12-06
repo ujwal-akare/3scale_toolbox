@@ -32,7 +32,7 @@ module ThreeScaleToolbox
             puts 'Empty remote list.'
           else
             remotes.all.each do |name, remote|
-              puts "#{name} #{remote[:endpoint]} #{remote[:auth_key]}"
+              puts "#{name} #{remote[:endpoint]} #{remote[:authentication]}"
             end
           end
         end

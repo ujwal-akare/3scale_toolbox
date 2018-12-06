@@ -65,7 +65,7 @@ RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteAddSubcommand d
       it 'new remote is stored in conf file' do
         subject.run
         expected_remote_value = { endpoint: 'https://example.com',
-                                  auth_key: 'new' }
+                                  authentication: 'new' }
         expect(configuration.data(:remotes)).to include('remote_new' => expected_remote_value)
       end
 

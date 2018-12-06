@@ -4,9 +4,9 @@ module ThreeScaleToolbox
       def from_uri(uri_str)
         uri = Helper.parse_uri(uri_str)
 
-        auth_key = uri.user
+        authentication = uri.user
         uri.user = ''
-        { auth_key: auth_key, endpoint: uri.to_s }
+        { authentication: authentication, endpoint: uri.to_s }
       end
     end
 
@@ -80,7 +80,7 @@ module ThreeScaleToolbox
     end
 
     def valid?(remote)
-      remote.is_a?(Hash) && remote.key?(:endpoint) && remote.key?(:auth_key)
+      remote.is_a?(Hash) && remote.key?(:endpoint) && remote.key?(:authentication)
     end
 
     def validate(remotes)

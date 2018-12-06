@@ -26,8 +26,8 @@ module ThreeScaleToolbox
 
     private
 
-    def remote_client(endpoint:, auth_key:, verify_ssl:)
-      ThreeScale::API.new(endpoint: endpoint, provider_key: auth_key, verify_ssl: verify_ssl)
+    def remote_client(endpoint:, authentication:, verify_ssl:)
+      ThreeScale::API.new(endpoint: endpoint, provider_key: authentication, verify_ssl: verify_ssl)
     end
   end
 end
