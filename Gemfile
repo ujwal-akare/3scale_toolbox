@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
+  gem 'license_finder', '~> 5.5'
   gem 'pry'
 end

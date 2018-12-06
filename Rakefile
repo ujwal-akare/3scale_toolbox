@@ -17,4 +17,22 @@ rescue LoadError
   warn 'RSpec is not installed!'
 end
 
+namespace :license_finder do
+  DECISION_FILE = "#{File.dirname(__FILE__)}/.dependency_decisions.yml".freeze
+
+  desc 'Check license compliance of dependencies'
+  task :check do
+    STDOUT.puts "Checking license compliance\n"
+    unless system("license_finder --decisions-file=#{DECISION_FILE}")
+      STDERR.puts "\n*** License compliance test failed  ***\n"
+      exit 1
+    end
+  end
+
+  desc 'Generate an CSV report for licenses'
+  task :report do
+    system("license_finder report --decisions-file=#{DECISION_FILE} --format=csv")
+  end
+end
+
 task default: 'spec:all'
