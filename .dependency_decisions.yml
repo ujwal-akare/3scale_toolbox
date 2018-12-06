@@ -24,12 +24,6 @@
     :why: Rake uses MIT but it's not automatically detected
     :versions: []
     :when: 2016-08-18 15:16:38.712225384 Z
-- - :approve
-  - 3scale_backend
-  - :who: 3scale Engineering
-    :why: It's this project.
-    :versions: []
-    :when: 2016-08-18 15:18:39.314149125 Z
 - - :whitelist
   - BSD
   - :who: Jeff Kaufmann and Richard Fontana (Red Hat Legal)
@@ -66,3 +60,9 @@
     :why: 
     :versions: []
     :when: 2016-11-23 11:04:37.776089000 Z
+- - :approve
+  - colored
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2018-12-06 16:05:25.674247558 Z
