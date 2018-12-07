@@ -1,6 +1,14 @@
 #!/usr/bin/env ruby
 
-require '3scale_toolbox'
+def suppress_warnings
+  original_verbosity = $VERBOSE
+  $VERBOSE = nil
+  result = yield
+  $VERBOSE = original_verbosity
+  result
+end
+
+suppress_warnings { require '3scale_toolbox' }
 
 args = ARGV.clone
 
