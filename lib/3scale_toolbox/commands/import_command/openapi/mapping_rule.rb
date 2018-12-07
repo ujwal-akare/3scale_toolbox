@@ -2,10 +2,9 @@ module ThreeScaleToolbox
   module Commands
     module ImportCommand
       module OpenAPI
-        class MappingRule
-          include Operation
+        module MappingRule
 
-          def to_h
+          def mapping_rule
             {
               'pattern' => pattern,
               'http_method' => http_method,

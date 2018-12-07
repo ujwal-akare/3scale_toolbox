@@ -15,7 +15,6 @@ module ThreeScaleToolbox
             raise ThreeScaleToolbox::Error, 'Service has not been saved. ' \
               "Errors: #{svc_obj['errors']}"
           end
-          puts "new service id #{svc_obj.fetch('id')}"
 
           new(id: svc_obj.fetch('id'), remote: remote)
         end

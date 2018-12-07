@@ -11,12 +11,12 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'openapi'
-              usage       'openapi [opts] -d <dst> --service <serviceId> <oas resource>'
+              usage       'openapi [opts] -d <dst> <spec>'
               summary     'Import API defintion in OpenAPI specification'
               description 'Using an API definition format like OpenAPI, import to your 3Scale API'
 
-              option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
-              option  :s, :service, 'SERVICE_ID of your 3Scale account', argument: :required
+              option  :d, :destination, '3scale target instance. Format: "http[s]://<authentication>@3scale_domain"', argument: :required
+              option  :s, :service, '<service_id> of your 3Scale account', argument: :required
               param   :openapi_file
 
               runner OpenAPISubcommand
@@ -24,29 +24,32 @@ module ThreeScaleToolbox
           end
 
           def run
-            threescale_api_spec = ThreeScaleApiSpec.generate(parse_openapi)
-            service = remote_service
-            [
-              CreateMethodsStep.new(api_spec: threescale_api_spec, service: service),
-              CreateMappingRulesStep.new(api_spec: threescale_api_spec, service: service)
-            ].each(&:call)
+            context = create_context
+            if options[:service]
+              context[:service] = Entities::Service.new(id: options[:service],
+                                                        remote: context[:threescale_client])
+            end
+
+            tasks = []
+            tasks << CreateServiceStep.new(context) unless options[:service]
+            tasks << CreateMethodsStep.new(context)
+            tasks << CreateMappingRulesStep.new(context)
+
+            # run tasks
+            tasks.each(&:call)
           end
 
           private
 
-          def parse_openapi
-            OpenAPIParser.new(load_openapi)
+          def create_context
+            {
+              api_spec: ThreeScaleApiSpec.parse(load_openapi),
+              threescale_client: remote(fetch_required_option(:destination), verify_ssl)
+            }
           end
 
           def load_openapi
             Swagger.load(arguments[:openapi_file])
-          end
-
-          def remote_service
-            Entities::Service.new(
-              id: fetch_required_option(:service),
-              remote: remote(fetch_required_option(:destination), verify_ssl)
-            )
           end
         end
       end

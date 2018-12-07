@@ -2,10 +2,9 @@ module ThreeScaleToolbox
   module Commands
     module ImportCommand
       module OpenAPI
-        class Method
-          include Operation
+        module Method
 
-          def to_h
+          def method
             {
               'friendly_name' => friendly_name,
               'system_name' => system_name

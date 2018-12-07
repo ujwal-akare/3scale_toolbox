@@ -6,9 +6,10 @@ module ThreeScaleToolbox
           include Step
 
           def call
-            api_spec.mapping_rules.each do |mapping_rule|
-              service.create_mapping_rule(mapping_rule.to_h)
-              puts "Created #{mapping_rule.http_method} #{mapping_rule.pattern} endpoint"
+            # operations from context (should) have metric_id
+            context[:operations].each do |op|
+              service.create_mapping_rule(op.mapping_rule)
+              puts "Created #{op.http_method} #{op.pattern} endpoint"
             end
           end
         end
