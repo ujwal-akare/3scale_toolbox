@@ -25,7 +25,8 @@ module ThreeScaleToolbox
               openapi.operations.map do |op|
                 Operation.new(
                   path: "#{openapi.base_path}#{op.path}",
-                  verb: op.verb
+                  verb: op.verb,
+                  operationId: op.operationId
                 )
               end
             end

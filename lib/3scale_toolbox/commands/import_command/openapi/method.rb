@@ -12,10 +12,7 @@ module ThreeScaleToolbox
           end
 
           def friendly_name
-            "#{operation[:verb].upcase}_#{operation[:path]}"
-              .tr('}', '_')
-              .tr('{', '_')
-              .gsub(%r{/}, '_SLASH_')
+            operation[:operationId]
           end
 
           def system_name
