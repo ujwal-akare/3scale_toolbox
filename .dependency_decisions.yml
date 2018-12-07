@@ -63,6 +63,6 @@
 - - :approve
   - colored
   - :who: 
-    :why: 
+    :why: MIT License https://github.com/defunkt/colored/blob/master/LICENSE
     :versions: []
     :when: 2018-12-06 16:05:25.674247558 Z
