@@ -1,4 +1,6 @@
 require 'swagger'
+require 'uri'
+require 'net/http'
 
 module ThreeScaleToolbox
   module Commands
@@ -17,7 +19,7 @@ module ThreeScaleToolbox
 
               option  :d, :destination, '3scale target instance. Format: "http[s]://<authentication>@3scale_domain"', argument: :required
               option  :s, :service, '<service_id> of your 3Scale account', argument: :required
-              param   :openapi_file
+              param   :openapi_resource
 
               runner OpenAPISubcommand
             end
@@ -48,8 +50,46 @@ module ThreeScaleToolbox
             }
           end
 
+          def openapi_resource
+            openapi_detect_resource.call
+          end
+
+          def openapi_detect_resource
+            case arguments[:openapi_resource]
+            when '-'
+              method(:openapi_stdin_resource)
+            when /\A#{URI::DEFAULT_PARSER.make_regexp}\z/
+              method(:openapi_url_resource)
+            else
+              method(:openapi_file_resource)
+            end
+          end
+
+          # Detect format from file extension
+          def openapi_file_resource
+            ext = File.extname arguments[:openapi_resource]
+            [File.read(arguments[:openapi_resource]), { format: ext }]
+          end
+
+          def openapi_stdin_resource
+            content = STDIN.read
+            # will try parse json, otherwise yaml
+            format = :json
+            begin
+              JSON.parse(content)
+            rescue JSON::ParserError
+              format = :yaml
+            end
+            [content, { format: format }]
+          end
+
+          def openapi_url_resource
+            uri = URI.parse(arguments[:openapi_resource])
+            [Net::HTTP.get(uri), { format: File.extname(uri.path) }]
+          end
+
           def load_openapi
-            Swagger.load(arguments[:openapi_file])
+            Swagger.build(*openapi_resource)
             # Disable validation step because https://petstore.swagger.io/v2/swagger.json
             # does not pass validation. Maybe library's schema is outdated?
             # openapi.tap(&:validate)
