@@ -8,6 +8,7 @@
    * [Copy a service](#copy-a-service)
    * [Update a service](#update-a-service)
    * [Import from CSV](#import-from-csv)
+   * [Import from OpenAPI definition](#import-openapi)
    * [Remotes](#remotes)
 * [Development](#development)
    * [Testing](#testing)
@@ -177,6 +178,14 @@ Example:
 ```shell
 3scale import csv --destination=https://provider_key@user-admin.3scale.net --file=examples/import_example.csv
 ```
+
+### Import OpenAPI
+
+Using an API definition format like OpenAPI, import to your 3scale API
+
+Currently, only OpenAPI __2.0__ specification (f.k.a. __swagger__) is supported.
+
+[Import from OpenAPI](docs/openapi.md)
 
 ### Remotes
 
