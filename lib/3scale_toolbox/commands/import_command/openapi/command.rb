@@ -46,11 +46,10 @@ module ThreeScaleToolbox
 
           def create_context
             {
-              api_spec: ThreeScaleApiSpec.parse(load_openapi),
+              api_spec: ThreeScaleApiSpec.new(load_openapi),
               threescale_client: remote(fetch_required_option(:destination), verify_ssl)
             }
           end
-
 
           def load_openapi
             Swagger.build(*openapi_resource(arguments[:openapi_resource]))
