@@ -57,7 +57,7 @@ RSpec.shared_context :allow_net_connect do
   end
 end
 
-RSpec.shared_context :real_api3scale_clients do
+RSpec.shared_context :real_api3scale_client do
   include_context :allow_net_connect
   include_context :random_name
 
@@ -69,33 +69,12 @@ RSpec.shared_context :real_api3scale_clients do
 
   let(:verify_ssl) { !(ENV.fetch('VERIFY_SSL', 'true').to_s =~ /(true|t|yes|y|1)$/i).nil? }
 
-  let(:target_system_name) { "service_#{random_lowercase_name}_#{Time.now.getutc.to_i}" }
-
-  let(:target_service_id) do
-    # figure out target service by system_name
-    target_client.list_services.find { |service| service['system_name'] == target_system_name }['id']
-  end
-
-  let(:external_client) do
+  let(:http_client) do
     ThreeScale::API::HttpClient.new(endpoint: endpoint,
                                     provider_key: provider_key,
                                     verify_ssl: verify_ssl)
   end
-  let(:source_client) { ThreeScale::API::Client.new(external_client) }
-  let(:target_client) { source_client }
-
-  let(:client_url) do
-    endpoint_uri = URI(endpoint)
-    endpoint_uri.user = provider_key
-    endpoint_uri.to_s
-  end
-
-  ##
-  # clean up on real scenario
-  after :example do
-    source.delete_service
-    target.delete_service
-  end
+  let(:api3scale_client) { ThreeScale::API::Client.new(http_client) }
 end
 
 RSpec.shared_context :toolbox_tasks_helper do

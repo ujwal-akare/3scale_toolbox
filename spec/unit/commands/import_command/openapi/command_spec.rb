@@ -1,15 +1,13 @@
 require '3scale_toolbox'
 
 RSpec.shared_examples 'openapi import' do
-  include_context :resources
-
   let(:api_spec) { double('api_spec') }
   let(:remote) { double('remote') }
 
   before :each do
     expect(subject).to receive(:openapi_resource).and_return(oas_resource)
     threescale_api_spec_stub = class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec).as_stubbed_const
-    expect(threescale_api_spec_stub).to receive(:parse).and_return(api_spec)
+    expect(threescale_api_spec_stub).to receive(:new).and_return(api_spec)
     expect_any_instance_of(ThreeScaleToolbox::Remotes).to receive(:remote).and_return(remote)
   end
 
@@ -28,6 +26,8 @@ RSpec.shared_examples 'openapi import' do
 end
 
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubcommand do
+  include_context :resources
+
   let(:arguments) { { 'openapi_resource': 'some_resource' } }
   subject { described_class.new(options, arguments, nil) }
   let(:oas_resource) { [oas_content, { format: :yaml }] }

@@ -24,7 +24,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleAp
     end
     let(:resource) { tmp_dir.join('petstore.yaml').tap { |conf| conf.write(content) } }
     let(:openapi) { Swagger.load(resource, format: :yaml) }
-    subject { described_class.parse(openapi) }
+    subject { described_class.new(openapi) }
 
     it 'title available' do
       expect(subject.title).to eq(title)

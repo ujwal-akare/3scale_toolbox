@@ -1,6 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServiceStep do
-  let(:service) { double('service') }
-  let(:api_spec) { double('service') }
+  let(:api_spec) { double('api_spec') }
   let(:service_id) { '100' }
   let(:service) { ThreeScaleToolbox::Entities::Service.new(id: service_id, remote: nil) }
   let(:threescale_client) { double('threescale_client') }
