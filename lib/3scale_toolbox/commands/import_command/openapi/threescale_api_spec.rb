@@ -6,20 +6,14 @@ module ThreeScaleToolbox
           class << self
             def parse(openapi)
               parser = Parser.new
-              spec = self
-              parser.on(:title) { spec.parse_title(openapi) }
-              parser.on(:description) { spec.parse_description(openapi) }
-              parser.on(:operations) { spec.parse_operations(openapi) }
+              parse_operations_method = method(:parse_operations)
+              parser.on(:title) { openapi.info.title }
+              parser.on(:description) { openapi.info.description }
+              parser.on(:operations) { parse_operations_method.call(openapi) }
               new(parser)
             end
 
-            def parse_title(openapi)
-              openapi.info.title
-            end
-
-            def parse_description(openapi)
-              openapi.info.description
-            end
+            private
 
             def parse_operations(openapi)
               openapi.operations.map do |op|

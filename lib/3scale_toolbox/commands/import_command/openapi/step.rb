@@ -24,7 +24,10 @@ module ThreeScaleToolbox
           end
 
           def operations
-            context[:operations]
+            # api_spec.operations are readonly
+            # store operations in context
+            # each operation can be extended with extra information to be used later
+            context[:operations] ||= api_spec.operations
           end
         end
       end
