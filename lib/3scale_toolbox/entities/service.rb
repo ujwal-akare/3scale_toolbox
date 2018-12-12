@@ -105,6 +105,10 @@ module ThreeScaleToolbox
       def update_service(params)
         remote.update_service(id, params)
       end
+
+      def delete_service
+        remote.delete_service id
+      end
     end
   end
 end

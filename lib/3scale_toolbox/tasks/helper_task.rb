@@ -16,7 +16,7 @@ module ThreeScaleToolbox
           source = source_app_plans.find do |app_plan|
             ThreeScaleToolbox::Helper.compare_hashes(app_plan, target, ['system_name'])
           end || {}
-          [source['id'], target['id']]
+          [source['id'], target]
         end
         mapping.reject { |key, _| key.nil? }
       end
