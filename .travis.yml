@@ -3,10 +3,11 @@ cache: bundler
 before_install:
 - gem install bundler -v 1.15.1
 rvm:
-- 2.5.1
-- 2.4.1
-- 2.3.1
+- 2.5.3
+- 2.4.5
+- 2.3.8
 script:
+  - bundle exec rake license_finder:check
   - bundle exec rake spec:all
   - bundle exec 3scale help
   - bundle exec 3scale help copy
