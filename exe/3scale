@@ -3,9 +3,9 @@
 def suppress_warnings
   original_verbosity = $VERBOSE
   $VERBOSE = nil
-  result = yield
+  yield
+ensure
   $VERBOSE = original_verbosity
-  result
 end
 
 suppress_warnings { require '3scale_toolbox' }
