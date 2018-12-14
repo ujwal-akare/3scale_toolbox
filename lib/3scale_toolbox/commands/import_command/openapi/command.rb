@@ -16,10 +16,10 @@ module ThreeScaleToolbox
               name        'openapi'
               usage       'openapi [opts] -d <dst> <spec>'
               summary     'Import API defintion in OpenAPI specification'
-              description 'Using an API definition format like OpenAPI, import to your 3Scale API'
+              description 'Using an API definition format like OpenAPI, import to your 3scale API'
 
               option  :d, :destination, '3scale target instance. Format: "http[s]://<authentication>@3scale_domain"', argument: :required
-              option  :s, :service, '<service_id> of your 3Scale account', argument: :required
+              option  :s, :service, '<service_id> of your 3scale account', argument: :required
               param   :openapi_resource
 
               runner OpenAPISubcommand

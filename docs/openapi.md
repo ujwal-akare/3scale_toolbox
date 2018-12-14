@@ -25,12 +25,12 @@ USAGE
     3scale import openapi [opts] -d <dst> <spec>
 
 DESCRIPTION
-    Using an API definition format like OpenAPI, import to your 3Scale API
+    Using an API definition format like OpenAPI, import to your 3scale API
 
 OPTIONS
     -d --destination=<value>      3scale target instance. Url or
                                   remote name
-    -s --service=<value>          <service_id> of your 3Scale account
+    -s --service=<value>          <service_id> of your 3scale account
 
 OPTIONS FOR IMPORT
     -c --config-file=<value>      3scale CLI configuration file (default:
