@@ -41,12 +41,12 @@ http[s]://<provider_key>|<access_token>@<3scale-instance-domain>
 
 ### List
 
-With no arguments, shows a list of existing remotes. Several subcommands are available to perform operations on the remotes.
+Shows the list of existing remotes. Several subcommands are available to perform operations on the remotes.
 
 Example:
 
 ```shell
-$ 3scale remote
+$ 3scale remote list
 instance_a https://example_a.net 123456789
 instance_b https://example_b.net 987654321
 ```

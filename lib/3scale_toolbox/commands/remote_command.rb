@@ -4,6 +4,7 @@ require '3scale_toolbox/remotes'
 require '3scale_toolbox/commands/remote_command/remote_add'
 require '3scale_toolbox/commands/remote_command/remote_remove'
 require '3scale_toolbox/commands/remote_command/remote_rename'
+require '3scale_toolbox/commands/remote_command/remote_list'
 
 module ThreeScaleToolbox
   module Commands
@@ -22,24 +23,13 @@ module ThreeScaleToolbox
         end
 
         def run
-          list_remotes
-        end
-
-        private
-
-        def list_remotes
-          if remotes.all.empty?
-            puts 'Empty remote list.'
-          else
-            remotes.all.each do |name, remote|
-              puts "#{name} #{remote[:endpoint]} #{remote[:authentication]}"
-            end
-          end
+          puts command.help
         end
 
         add_subcommand(RemoteAddSubcommand)
         add_subcommand(RemoteRemoveSubcommand)
         add_subcommand(RemoteRenameSubcommand)
+        add_subcommand(RemoteListSubcommand)
       end
     end
   end
