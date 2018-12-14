@@ -1,81 +1,91 @@
 module ThreeScaleToolbox
-  module Remotes
-    def self.included(base)
-      base.extend(ClassMethods)
+  class Remotes
+    class << self
+      def from_uri(uri_str)
+        uri = Helper.parse_uri(uri_str)
+
+        authentication = uri.user
+        uri.user = ''
+        { authentication: authentication, endpoint: uri.to_s }
+      end
     end
-    module ClassMethods
+
+    def initialize(config)
+      @config = config
     end
 
     ##
-    # Fetch remote list
+    # Fetch remotes
     # Perform validation
     #
-    def remotes
-      rmts = config.data :remotes
-      raise_invalid_remote unless validate_remotes?(rmts)
-
-      rmts || {}
+    def all
+      rmts = (config.data :remotes) || {}
+      raise_invalid unless validate(rmts)
+      rmts
     end
 
-    def update_remotes
-      config.update(:remotes) do |rmts|
-        yield(rmts || {})
+    def add_uri(name, uri)
+      remote = self.class.from_uri(uri)
+      add(name, remote)
+    end
+
+    def add(key, remote)
+      update do |rmts|
+        rmts.tap { |r| r[key] = remote }
       end
     end
 
-    def parse_remote_uri(remote_url_str)
-      # should raise error on invalid urls
-      remote_uri_obj = URI(remote_url_str)
-      # URI::HTTP is parent of URI::HTTPS
-      # with single check both types are checked
-      unless remote_uri_obj.kind_of?(URI::HTTP)
-        raise ThreeScaleToolbox::Error, "invalid url: #{remote_url_str}"
+    def delete(key)
+      value = nil
+      update do |rmts|
+        # block should return rmts
+        # but main method should return deleted value
+        rmts.tap do |r|
+          value = if block_given?
+                    r.delete(key, &Proc.new)
+                  else
+                    r.delete(key)
+                  end
+        end
       end
-
-      auth_key = remote_uri_obj.user
-      remote_uri_obj.user = ''
-      endpoint = remote_uri_obj.to_s
-      { auth_key: auth_key, endpoint: endpoint }
+      value
     end
 
-    def validate_remote(verify_ssl, endpoint:, auth_key:)
-      client = ThreeScale::API.new(
-        endpoint: endpoint,
-        provider_key: auth_key,
-        verify_ssl: verify_ssl
-      )
-      begin
-        client.list_services
-      rescue ThreeScale::API::HttpClient::ForbiddenError
-        raise ThreeScaleToolbox::Error, 'remote not valid'
-      end
-    end
-
-    def remote(origin, verify_ssl)
-      remote = parse_remote_uri origin
-      ThreeScale::API.new(
-        endpoint:     remote[:endpoint],
-        provider_key: remote[:auth_key],
-        verify_ssl: verify_ssl
-      )
+    def fetch(name)
+      all.fetch name
     end
 
     private
 
-    def raise_invalid_remote
-      raise ThreeScaleToolbox::Error, "invalid remote configuration from config file #{config_file}"
+    attr_reader :config
+
+    ##
+    # Update remotes
+    # Perform validation
+    #
+    def update
+      config.update(:remotes) do |rmts|
+        yield(rmts || {}).tap do |new_rmts|
+          raise_invalid unless validate(new_rmts)
+        end
+      end
     end
 
-    def valid_remote?(remote)
-      remote.is_a?(Hash) \
-        && remote.key?(:endpoint) \
-        && remote.key?(:auth_key)
+    def raise_not_found(remote_str)
+      raise ThreeScaleToolbox::Error, "remote '#{remote_str}' not found from config file #{config.config_file}"
     end
 
-    def validate_remotes?(remotes)
+    def raise_invalid
+      raise ThreeScaleToolbox::Error, "invalid remote configuration from config file #{config.config_file}"
+    end
+
+    def valid?(remote)
+      remote.is_a?(Hash) && remote.key?(:endpoint) && remote.key?(:authentication)
+    end
+
+    def validate(remotes)
       case remotes
-      when nil then true
-      when Hash then remotes.values.all?(&method(:valid_remote?))
+      when Hash then remotes.values.all?(&method(:valid?))
       else false
       end
     end

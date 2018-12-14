@@ -9,6 +9,7 @@ module ThreeScaleToolbox
     module ImportCommand
       class ImportCsvSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
+
         def self.command
           Cri::Command.define do
             name        'csv'
@@ -16,22 +17,11 @@ module ThreeScaleToolbox
             summary     'Import csv file'
             description 'Create new services, metrics, methods and mapping rules from CSV formatted file'
 
-            option  :d, :destination, '3scale target instance. Format: "http[s]://<provider_key>@3scale_url"', argument: :required
+            option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
             option  :f, 'file', 'CSV formatted file', argument: :required
 
             runner ImportCsvSubcommand
           end
-        end
-
-        def provider_key_from_url(url)
-          URI(url).user
-        end
-
-        def endpoint_from_url(url)
-          uri      = URI(url)
-          uri.user = nil
-
-          uri.to_s
         end
 
         def auth_app_key_according_service(service)
@@ -46,13 +36,8 @@ module ThreeScaleToolbox
         end
 
         def import_csv(destination, file_path)
-          endpoint     = endpoint_from_url destination
-          provider_key = provider_key_from_url destination
+          client = threescale_client(destination)
 
-          client   = ThreeScale::API.new(endpoint: endpoint,
-                                         provider_key: provider_key,
-                                         verify_ssl: verify_ssl
-                                        )
           data     = CSV.read file_path
           headings = data.shift
           services = {}

@@ -63,7 +63,7 @@ RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteRenameSubcomman
       it 'new remote exists' do
         subject.run
         expected_remote_value = { endpoint: 'https://3.example.com',
-                                  auth_key: '3' }
+                                  authentication: '3' }
         expect(configuration.data(:remotes)).to include('remote_new' => expected_remote_value)
       end
     end

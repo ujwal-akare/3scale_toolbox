@@ -8,6 +8,7 @@
    * [Copy a service](#copy-a-service)
    * [Update a service](#update-a-service)
    * [Import from CSV](#import-from-csv)
+   * [Remotes](#remotes)
 * [Development](#development)
    * [Testing](#testing)
 * [Plugins](#plugins)
@@ -37,6 +38,7 @@ COMMANDS
     help       show help
     import     3scale import command
     update     3scale update command
+    remote     3scale CLI remote
 
 OPTIONS
     -k --insecure      Proceed and operate even for server connections
@@ -45,7 +47,9 @@ OPTIONS
 ```
 
 ### Copy a service
-Will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.
+Will create a new service, copy existing proxy settings, metrics, methods, application plans and mapping rules.
+
+3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
 Help message:
 
@@ -63,10 +67,10 @@ DESCRIPTION
     methods, application plans and mapping rules.
 
 OPTIONS
-    -d --destination=<value>             3scale target instance. Format:
-                                         "http[s]://<provider_key>@3scale_url"
-    -s --source=<value>                  3scale source instance. Format:
-                                         "http[s]://<provider_key>@3scale_url"
+    -d --destination=<value>             3scale target instance. Url or
+                                         remote name
+    -s --source=<value>                  3scale source instance. Url or
+                                         remote name
     -t --target_system_name=<value>      Target system name
 
 OPTIONS FOR COPY
@@ -78,12 +82,14 @@ OPTIONS FOR COPY
 ```
 
 ```shell
-3scale copy service NUMBER --source=https://provider_key@foo-admin.3scale.net --destination=https://provider_key@foo2-admin.3scale.net
+3scale copy service NUMBER --source=foo --destination=https://access_token@foo2-admin.3scale.net
 ```
 
 ### Update a service
 
 Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.
+
+3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
 Help message:
 
@@ -100,13 +106,13 @@ DESCRIPTION
     application plans and mapping rules.
 
 OPTIONS
-    -d --destination=<value>      3scale target instance. Format:
-                                  "http[s]://<provider_key>@3scale_url"
+    -d --destination=<value>      3scale target instance. Url or
+                                  remote name
     -f --force                    Overwrites the mapping rules by deleting
                                   all rules from target service first
     -r --rules-only               Updates only the mapping rules
-    -s --source=<value>           3scale source instance. Format:
-                                  "http[s]://<provider_key>@3scale_url"
+    -s --source=<value>           3scale source instance. Url or
+                                  remote name
 
 OPTIONS FOR UPDATE
     -h --help                     show help for this command
@@ -118,12 +124,14 @@ OPTIONS FOR UPDATE
 Example:
 
 ```shell
-$ 3scale update service -s https://9874598743@source.example.com -d https://2342342342342@destination.example.com 3 2
+$ 3scale update service -s https://9874598743@source.example.com -d foo 3 2
 ```
 
 ### Import from CSV
 
 Will create new services, metrics, methods, and mapping rules having as source comma separated values (CSV) formatted file.
+
+3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
 CSV header
 
@@ -154,8 +162,7 @@ DESCRIPTION
     formatted file
 
 OPTIONS
-    -d --destination=<value>      3scale target instance. Format:
-                                  "http[s]://<provider_key>@3scale_url"
+    -d --destination=<value>      3scale target instance. Url or remote name
     -f --file=<value>             CSV formatted file
 
 OPTIONS FOR IMPORT
@@ -170,6 +177,12 @@ Example:
 ```shell
 3scale import csv --destination=https://provider_key@user-admin.3scale.net --file=examples/import_example.csv
 ```
+
+### Remotes
+
+Manage set of 3scale instances.
+
+[Howto](docs/remotes.md)
 
 ## Development
 

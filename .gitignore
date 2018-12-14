@@ -7,6 +7,8 @@
 /pkg/
 /vendor/
 /spec/reports/
+/spec/examples.txt
 /tmp/
 .DS_Store
 .env
+/crash.log

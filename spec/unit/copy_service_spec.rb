@@ -17,7 +17,7 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
     it 'all required tasks are run' do
       # Remote stub
       remote = double('remote')
-      expect_any_instance_of(ThreeScaleToolbox::Remotes).to receive(:remote).twice.and_return(remote)
+      expect(subject).to receive(:threescale_client).twice.and_return(remote)
 
       # Entities::Service instance stub
       service = double('Entities::Service instance')

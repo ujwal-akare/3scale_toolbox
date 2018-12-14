@@ -1,19 +1,13 @@
-require 'cri'
-require '3scale/api'
-require '3scale_toolbox/base_command'
-require '3scale_toolbox/remotes'
-
 module ThreeScaleToolbox
   module Commands
     module RemoteCommand
       class RemoteAddSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
-        include ThreeScaleToolbox::Remotes
 
         def self.command
           Cri::Command.define do
             name        'add'
-            usage       'add <remote_name> <remote_url>'
+            usage       'add <name> <url>'
             summary     '3scale CLI remote add'
             description '3scale CLI command to add new remote'
             param       :remote_name
@@ -30,16 +24,22 @@ module ThreeScaleToolbox
         private
 
         def validate_remote_name(name)
-          raise ThreeScaleToolbox::Error, 'remote name already exists.' if remotes.key?(name)
+          raise ThreeScaleToolbox::Error, 'remote name already exists.' if remotes.all.key?(name)
+        end
+
+        def validate_remote(remote_url_str)
+          # parsing url before trying to create client
+          # raises Invalid URL when syntax is incorrect
+          ThreeScaleToolbox::Helper.parse_uri(remote_url_str)
+          threescale_client(remote_url_str).list_services
+        rescue ThreeScale::API::HttpClient::ForbiddenError
+          raise ThreeScaleToolbox::Error, 'remote not valid'
         end
 
         def add_remote(remote_name, remote_url)
           validate_remote_name remote_name
-          remote = parse_remote_uri remote_url
-          validate_remote verify_ssl, remote
-          update_remotes do |remotes|
-            remotes.tap { |r| r[remote_name] = remote }
-          end
+          validate_remote remote_url
+          remotes.add_uri(remote_name, remote_url)
         end
       end
     end
