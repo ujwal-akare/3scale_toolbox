@@ -36,6 +36,9 @@ module ThreeScaleToolbox
             tasks = []
             tasks << CreateServiceStep.new(context) unless options[:service]
             tasks << CreateMethodsStep.new(context)
+            tasks << proc do
+              ThreeScaleToolbox::Tasks::DestroyMappingRulesTask.new(target: context[:service]).call
+            end
             tasks << CreateMappingRulesStep.new(context)
 
             # run tasks

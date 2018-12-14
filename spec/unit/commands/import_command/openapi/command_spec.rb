@@ -41,6 +41,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
         [
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServiceStep,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethodsStep,
+          ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep
         ]
       end
@@ -61,6 +62,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
       let(:required_tasks) do
         [
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethodsStep,
+          ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep
         ]
       end
