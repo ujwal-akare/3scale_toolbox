@@ -12,7 +12,11 @@ module ThreeScaleToolbox
           # Can be nil on initialization time and not nil afterwards
           # method to fetch from context required
           def service
-            context[:service]
+            context[:target]
+          end
+
+          def service=(service)
+            context[:target] = service
           end
 
           def api_spec
@@ -28,6 +32,11 @@ module ThreeScaleToolbox
             # store operations in context
             # each operation can be extended with extra information to be used later
             context[:operations] ||= api_spec.operations
+          end
+
+          def target_system_name
+            # could be nil
+            context[:target_system_name]
           end
         end
       end

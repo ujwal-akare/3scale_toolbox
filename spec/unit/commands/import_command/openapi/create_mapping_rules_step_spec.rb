@@ -1,15 +1,14 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep do
-  subject { described_class.new(openapi_context) }
   let(:service) { double('service') }
   let(:op0) { double('op0') }
   let(:op1) { double('op1') }
   let(:operations) { [op0, op1] }
-  let(:openapi_context) { { operations: operations, service: service } }
+  let(:openapi_context) { { operations: operations, target: service } }
   let(:mapping_rule_0) { double('mapping_rule_0') }
   let(:mapping_rule_1) { double('mapping_rule_1') }
+  subject { described_class.new(openapi_context) }
 
   context '#call' do
-
     before :each do
       allow(op0).to receive(:mapping_rule).and_return(mapping_rule_0)
       allow(op0).to receive(:http_method).and_return('http_method_0')

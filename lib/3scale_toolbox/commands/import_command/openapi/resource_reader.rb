@@ -1,3 +1,6 @@
+require 'uri'
+require 'net/http'
+
 module ThreeScaleToolbox
   module Commands
     module ImportCommand

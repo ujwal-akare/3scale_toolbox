@@ -8,11 +8,18 @@ module ThreeScaleToolbox
       module ClassMethods
       end
 
-      attr_reader :source, :target
+      attr_reader :context
 
-      def initialize(source:, target:)
-        @source = source
-        @target = target
+      def initialize(context)
+        @context = context
+      end
+
+      def source
+        context[:source]
+      end
+
+      def target
+        context[:target]
       end
     end
   end

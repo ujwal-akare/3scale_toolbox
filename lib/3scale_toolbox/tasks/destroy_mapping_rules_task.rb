@@ -1,17 +1,21 @@
 module ThreeScaleToolbox
   module Tasks
     class DestroyMappingRulesTask
-      attr_reader :target
+      attr_reader :context
 
-      def initialize(target:, **_other)
-        @target = target
+      def initialize(context)
+        @context = context
       end
 
       def call
-        puts 'destroying all mapping rules of the copy which have been created by default'
+        puts 'destroying all mapping rules'
         target.mapping_rules.each do |mapping_rule|
           target.delete_mapping_rule mapping_rule['id']
         end
+      end
+
+      def target
+        context[:target]
       end
     end
   end

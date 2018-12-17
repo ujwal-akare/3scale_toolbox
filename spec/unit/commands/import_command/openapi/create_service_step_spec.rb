@@ -7,42 +7,61 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
   let(:description) { 'Some Description' }
   let(:openapi_context) do
     {
-      service: service,
+      target: service,
       api_spec: api_spec,
-      threescale_client: threescale_client
-    }
-  end
-  let(:expected_service_attrs) do
-    {
-      'name' => title,
-      'description' => description
+      threescale_client: threescale_client,
+      target_system_name: 'some_system_name'
     }
   end
 
   context '#call' do
     subject { described_class.new(openapi_context).call }
 
-    before :each do
+    before :example do
       allow(api_spec).to receive(:title).and_return(title)
       allow(api_spec).to receive(:description).and_return(description)
     end
 
-    it 'expected remote' do
-      expect(ThreeScaleToolbox::Entities::Service).to receive(:create)
-        .with(hash_including(remote: threescale_client)).and_return(service)
-      expect { subject }.to output(/Created service id: #{service_id}/).to_stdout
+    context 'when service exists' do
+      let(:existing_services) do
+        [
+          { 'id' => service_id, 'system_name' => openapi_context[:target_system_name] }
+        ]
+      end
+
+      let(:expected_settings) do
+        {
+          'name' => title,
+          'description' => description
+        }
+      end
+
+      before :example do
+        expect(ThreeScaleToolbox::Entities::Service).to receive(:create)
+          .with(hash_including(remote: threescale_client))
+          .and_raise(ThreeScaleToolbox::Error, 'Service has not been saved. Errors: {"system_name"=>["has already been taken"]}')
+        expect(threescale_client).to receive(:list_services).and_return(existing_services)
+        expect(ThreeScaleToolbox::Entities::Service).to receive(:new)
+          .with(hash_including(remote: threescale_client))
+          .and_return(service)
+      end
+
+      it 'service is updated' do
+        expect(service).to receive(:update_service).with(expected_settings)
+        expect { subject }.to output(/Updated service id: #{service_id}/).to_stdout
+      end
     end
 
-    it 'expected service attributes' do
-      expect(ThreeScaleToolbox::Entities::Service).to receive(:create)
-        .with(hash_including(service: expected_service_attrs)).and_return(service)
-      expect { subject }.to output(/Created service id: #{service_id}/).to_stdout
-    end
+    context 'when service does not exist' do
+      before :example do
+        expect(ThreeScaleToolbox::Entities::Service).to receive(:create)
+          .with(hash_including(remote: threescale_client))
+          .and_return(service)
+      end
 
-    it 'expected system_name' do
-      expect(ThreeScaleToolbox::Entities::Service).to receive(:create)
-        .with(hash_including(system_name: 'some_title')).and_return(service)
-      expect { subject }.to output(/Created service id: #{service_id}/).to_stdout
+      it 'service is created' do
+        expect { subject }.to output(/Created service id: #{service_id}/).to_stdout
+      end
     end
   end
 end

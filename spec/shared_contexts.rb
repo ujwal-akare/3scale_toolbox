@@ -59,7 +59,6 @@ end
 
 RSpec.shared_context :real_api3scale_client do
   include_context :allow_net_connect
-  include_context :random_name
 
   puts '================ RUNNING REAL 3SCALE API CLIENT ========='
 
