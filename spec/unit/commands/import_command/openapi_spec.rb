@@ -1,21 +1,21 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubcommand do
+  include_context :temp_dir
   include_context :resources
 
-  let(:arguments) { { 'openapi_resource': 'some_resource' } }
+  let(:arguments) { { 'openapi_resource': oas_resource } }
   let(:options) { { 'destination': 'https://destination_key@destination.example.com' } }
   subject { described_class.new(options, arguments, nil) }
-  let(:oas_resource) { [oas_content, { format: :yaml }] }
 
   context 'valid openapi content' do
+    let(:oas_resource) { File.join(resources_path, 'valid_swagger.yaml') }
+
     context '#run' do
-      let(:oas_content) { File.read(File.join(resources_path, 'valid_swagger.yaml')) }
       let(:api_spec) { double('api_spec') }
       let(:remote) { double('remote') }
 
       before :each do
-        expect(subject).to receive(:openapi_resource).and_return(oas_resource)
         threescale_api_spec_stub = class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec).as_stubbed_const
         expect(threescale_api_spec_stub).to receive(:new).and_return(api_spec)
         expect_any_instance_of(ThreeScaleToolbox::Remotes).to receive(:remote).and_return(remote)
@@ -50,10 +50,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
           desSSSSScription: "Invalid description tag"
       YAML
     end
+    let(:oas_resource) { tmp_dir.join('invalid.yaml').tap { |conf| conf.write(oas_content) } }
 
     context '#run' do
       it 'raises error' do
-        expect(subject).to receive(:openapi_resource).and_return(oas_resource)
         expect { subject.run }.to raise_error(ThreeScaleToolbox::Error,
                                               /OpenAPI schema validation failed/)
       end

@@ -7,14 +7,19 @@ module ThreeScaleToolbox
       module OpenAPI
         module ResourceReader
           ##
+          # Load resource from different types of sources.
+          # Supported types are: file, URL, stdin
+          # Loaded content is returned
+          def load_resource(resource)
+            # Json format is parsed as well
+            YAML.safe_load(read_content(resource))
+          end
+
+          ##
           # Reads resources from different types of sources.
           # Supported types are: file, URL, stdin
-          # Return type is
-          # [content, format] where
-          # content: raw content
-          # format: Hash with single key: `format`. Value can be `:json` or `:yaml`
-          # format example: { format: :json }
-          def openapi_resource(resource)
+          # Resource raw content is returned
+          def read_content(resource)
             case resource
             when '-'
               method(:read_stdin)
@@ -27,24 +32,15 @@ module ThreeScaleToolbox
 
           # Detect format from file extension
           def read_file(resource)
-            [File.read(resource), { format: File.extname(resource) }]
+            File.read(resource)
           end
 
           def read_stdin(_resource)
-            content = STDIN.read
-            # will try parse json, otherwise yaml
-            format = :json
-            begin
-              JSON.parse(content)
-            rescue JSON::ParserError
-              format = :yaml
-            end
-            [content, { format: format }]
+            STDIN.read
           end
 
           def read_url(resource)
-            uri = URI.parse(resource)
-            [Net::HTTP.get(uri), { format: File.extname(uri.path) }]
+            Net::HTTP.get(URI.parse(resource))
           end
         end
       end

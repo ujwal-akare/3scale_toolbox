@@ -57,11 +57,11 @@ module ThreeScaleToolbox
           end
 
           def load_openapi
-            Swagger.build(*openapi_resource(arguments[:openapi_resource]))
+            Swagger.build(load_resource(arguments[:openapi_resource]))
             # Disable validation step because https://petstore.swagger.io/v2/swagger.json
             # does not pass validation. Maybe library's schema is outdated?
             # openapi.tap(&:validate)
-          rescue Swagger::InvalidDefinition, Hashie::CoercionError, JSON::ParserError, Psych::SyntaxError => e
+          rescue Swagger::InvalidDefinition, Hashie::CoercionError, Psych::SyntaxError => e
             raise ThreeScaleToolbox::Error, "OpenAPI schema validation failed: #{e.message}"
           end
         end
