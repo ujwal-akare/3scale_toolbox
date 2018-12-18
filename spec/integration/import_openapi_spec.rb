@@ -22,6 +22,7 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
   let(:external_methods) do
     {
       'methods' => [
+        { 'method' => { 'id' => '0', 'friendly_name' => 'old_method', 'system_name' => 'old_method' } },
         { 'method' => { 'id' => '1', 'friendly_name' => 'addPet', 'system_name' => 'addpet' } },
         { 'method' => { 'id' => '2', 'friendly_name' => 'updatePet', 'system_name' => 'updatepet' } },
         { 'method' => { 'id' => '3', 'friendly_name' => 'findPetsByStatus', 'system_name' => 'findpetsbystatus' } }
@@ -108,11 +109,7 @@ RSpec.shared_examples 'oas imported' do
     expect(expected_methods.size).to be > 0
     # test Set(service.methods) includes Set(expected_methods)
     # with a custom identity method for methods
-    expect(
-      ThreeScaleToolbox::Helper.array_difference(expected_methods, service.methods) do |el1, el2|
-        ThreeScaleToolbox::Helper.compare_hashes(el1, el2, method_keys)
-      end
-    ).to be_empty
+    expect(expected_methods).to be_subset_of(service.methods).comparing_keys(method_keys)
   end
 
   it 'mapping rules are created' do
@@ -121,16 +118,8 @@ RSpec.shared_examples 'oas imported' do
     expect(expected_mapping_rules.size).to be > 0
     # expect Set(service.mapping_rules) == Set(expected_mapping_rules)
     # with a custom identity method for mapping_rules
-    expect(
-      ThreeScaleToolbox::Helper.array_difference(expected_mapping_rules, service.mapping_rules) do |el1, el2|
-        ThreeScaleToolbox::Helper.compare_hashes(el1, el2, mapping_rule_keys)
-      end
-    ).to be_empty
-    expect(
-      ThreeScaleToolbox::Helper.array_difference(service.mapping_rules, expected_mapping_rules) do |el1, el2|
-        ThreeScaleToolbox::Helper.compare_hashes(el1, el2, mapping_rule_keys)
-      end
-    ).to be_empty
+    expect(expected_mapping_rules).to be_subset_of(service.mapping_rules).comparing_keys(mapping_rule_keys)
+    expect(service.mapping_rules).to be_subset_of(expected_mapping_rules).comparing_keys(mapping_rule_keys)
   end
 end
 
