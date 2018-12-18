@@ -13,12 +13,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
 
     context '#run' do
       let(:api_spec) { double('api_spec') }
-      let(:remote) { double('remote') }
 
       before :each do
         threescale_api_spec_stub = class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec).as_stubbed_const
         expect(threescale_api_spec_stub).to receive(:new).and_return(api_spec)
-        expect_any_instance_of(ThreeScaleToolbox::Remotes).to receive(:remote).and_return(remote)
+        expect(subject).to receive(:threescale_client)
       end
 
       it 'all required tasks are run' do

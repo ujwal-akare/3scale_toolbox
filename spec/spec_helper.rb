@@ -18,6 +18,7 @@ require 'webmock/rspec'
 WebMock.disable_net_connect!
 require_relative 'helpers'
 require_relative 'shared_contexts'
+require_relative 'shared_examples'
 require_relative 'custom_matchers'
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration

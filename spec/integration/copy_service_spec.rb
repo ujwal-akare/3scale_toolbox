@@ -222,8 +222,6 @@ RSpec.shared_context :copy_service_stubbed_api3scale_clients do
   include_context :copy_service_stubbed_internal_http_client
   include_context :copy_service_stubbed_external_http_client
 
-  puts '============ RUNNING STUBBED 3SCALE API CLIENTS =========='
-
   let(:endpoint) { 'https://example.com' }
   let(:provider_key) { '123456789' }
   let(:verify_ssl) { true }
@@ -239,11 +237,16 @@ RSpec.shared_context :copy_service_stubbed_api3scale_clients do
   end
   let(:source_client) { ThreeScale::API::Client.new(external_source_client) }
   let(:target_client) { ThreeScale::API::Client.new(external_target_client) }
+
+  before :example do
+    puts '============ RUNNING STUBBED 3SCALE API CLIENTS =========='
+  end
 end
 
 RSpec.describe 'Copy Service' do
   if ENV.key?('ENDPOINT')
-    include_context :real_api3scale_clients
+    include_context :real_copy_clients
+    include_context :real_copy_cleanup
   else
     include_context :copy_service_stubbed_api3scale_clients
   end
@@ -252,13 +255,13 @@ RSpec.describe 'Copy Service' do
   let(:destination_url) { client_url }
   let(:command_line_str) do
     "copy service -t #{target_system_name}" \
-      " -s #{source_url} -d #{destination_url} #{source.id}"
+      " -s #{source_url} -d #{destination_url} #{source_service.id}"
   end
   let(:command_line_args) { command_line_str.split }
   subject { ThreeScaleToolbox::CLI.run(command_line_args) }
   # source service is being created for testing
-  let(:source) { Helpers::ServiceFactory.new_service source_client }
-  let(:target) { ThreeScaleToolbox::Entities::Service.new(id: target_service_id, remote: target_client) }
+  let(:source_service) { Helpers::ServiceFactory.new_service source_client }
+  let(:target_service) { ThreeScaleToolbox::Entities::Service.new(id: target_service_id, remote: target_client) }
 
   it_behaves_like 'service settings'
   it_behaves_like 'proxy settings'

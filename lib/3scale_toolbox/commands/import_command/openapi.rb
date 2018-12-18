@@ -15,7 +15,6 @@ module ThreeScaleToolbox
       module OpenAPI
         class OpenAPISubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
-          include ThreeScaleToolbox::Remotes
           include ResourceReader
 
           def self.command
@@ -51,7 +50,7 @@ module ThreeScaleToolbox
           def create_context
             {
               api_spec: ThreeScaleApiSpec.new(load_openapi),
-              threescale_client: remote(fetch_required_option(:destination), verify_ssl),
+              threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name]
             }
           end

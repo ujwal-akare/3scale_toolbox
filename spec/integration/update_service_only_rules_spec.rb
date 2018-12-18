@@ -127,8 +127,6 @@ RSpec.shared_context :update_rules_stubbed_api3scale_clients do
   include_context :update_rules_stubbed_internal_http_client
   include_context :update_rules_stubbed_external_http_client
 
-  puts '============ RUNNING STUBBED 3SCALE API CLIENTS =========='
-
   let(:endpoint) { 'https://example.com' }
   let(:provider_key) { '123456789' }
   let(:verify_ssl) { true }
@@ -144,11 +142,16 @@ RSpec.shared_context :update_rules_stubbed_api3scale_clients do
   end
   let(:source_client) { ThreeScale::API::Client.new(external_source_client) }
   let(:target_client) { ThreeScale::API::Client.new(external_target_client) }
+
+  before :example do
+    puts '============ RUNNING STUBBED 3SCALE API CLIENTS =========='
+  end
 end
 
 RSpec.describe 'Update Service Only Rules' do
   if ENV.key?('ENDPOINT')
-    include_context :real_api3scale_clients
+    include_context :real_copy_clients
+    include_context :real_copy_cleanup
   else
     include_context :update_rules_stubbed_api3scale_clients
   end
@@ -160,13 +163,13 @@ RSpec.describe 'Update Service Only Rules' do
     "update service --force -t #{target_system_name}" \
       " -s #{source_url} -d #{destination_url}" \
       ' --rules-only' \
-      " #{source.id} #{target.id}"
+      " #{source_service.id} #{target_service.id}"
   end
   let(:command_line_args) { command_line_str.split }
   subject { ThreeScaleToolbox::CLI.run(command_line_args) }
   # source and target services are being created for testing
-  let(:source) { Helpers::ServiceFactory.new_service source_client }
-  let(:target) { Helpers::ServiceFactory.new_service target_client }
+  let(:source_service) { Helpers::ServiceFactory.new_service source_client }
+  let(:target_service) { Helpers::ServiceFactory.new_service target_client }
 
   it_behaves_like 'service mapping rules'
 end
