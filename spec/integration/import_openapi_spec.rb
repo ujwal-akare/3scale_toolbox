@@ -1,7 +1,6 @@
 require '3scale_toolbox'
 
 RSpec.shared_context :import_oas_stubbed_api3scale_client do
-  puts '============ RUNNING STUBBED 3SCALE API CLIENT =========='
   let(:internal_http_client) { double('internal_http_client') }
   let(:http_client_class) { class_double('ThreeScale::API::HttpClient').as_stubbed_const }
 
@@ -54,6 +53,7 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
   end
 
   before :example do
+    puts '============ RUNNING STUBBED 3SCALE API CLIENT =========='
     ##
     # Internal http client stub
     allow(internal_http_client).to receive(:post).with('/admin/api/services', anything)

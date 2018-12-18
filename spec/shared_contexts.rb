@@ -60,8 +60,6 @@ end
 RSpec.shared_context :real_api3scale_client do
   include_context :allow_net_connect
 
-  puts '================ RUNNING REAL 3SCALE API CLIENT ========='
-
   let(:endpoint) { ENV.fetch('ENDPOINT') }
 
   let(:provider_key) { ENV.fetch('PROVIDER_KEY') }
@@ -74,6 +72,10 @@ RSpec.shared_context :real_api3scale_client do
                                     verify_ssl: verify_ssl)
   end
   let(:api3scale_client) { ThreeScale::API::Client.new(http_client) }
+
+  before :example do
+    puts '================ RUNNING REAL 3SCALE API CLIENT ========='
+  end
 end
 
 RSpec.shared_context :toolbox_tasks_helper do
