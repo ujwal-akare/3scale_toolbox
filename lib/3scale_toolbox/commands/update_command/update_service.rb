@@ -11,8 +11,8 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'service'
             usage       'service [opts] -s <src> -d <dst> <src_service_id> <dst_service_id>'
-            summary     'Update service'
-            description 'Will update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
+            summary     'update service'
+            description 'Update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
 
             option  :s, :source, '3scale source instance. Url or remote name', argument: :required
             option  :d, :destination, '3scale target instance. Url or remote name', argument: :required

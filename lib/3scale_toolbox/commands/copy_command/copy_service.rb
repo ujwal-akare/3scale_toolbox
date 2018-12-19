@@ -11,8 +11,8 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'service'
             usage       'service [opts] -s <src> -d <dst> <service_id>'
-            summary     'Copy service'
-            description 'Will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.'
+            summary     'copy service'
+            description 'will create a new services, copy existing proxy settings, metrics, methods, application plans and mapping rules.'
 
             option  :s, :source, '3scale source instance. Url or remote name', argument: :required
             option  :d, :destination, '3scale target instance. Url or remote name', argument: :required

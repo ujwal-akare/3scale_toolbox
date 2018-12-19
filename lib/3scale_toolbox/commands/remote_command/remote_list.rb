@@ -8,8 +8,8 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'list'
             usage       'list'
-            summary     '3scale CLI remote list'
-            description '3scale CLI command to list all defined remotes'
+            summary     'remote list'
+            description 'List all defined remotes'
             runner RemoteListSubcommand
           end
         end

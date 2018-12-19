@@ -9,9 +9,9 @@ module ThreeScaleToolbox
       def self.command
         Cri::Command.define do
           name        'import'
-          usage       'import <command> [options]'
-          summary     '3scale import command'
-          description '3scale import command.'
+          usage       'import <sub-command> [options]'
+          summary     'import super command'
+          description 'Importing 3scale entities'
         end
       end
       add_subcommand(ImportCsvSubcommand)

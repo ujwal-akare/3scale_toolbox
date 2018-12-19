@@ -8,8 +8,8 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'rename'
             usage       'rename <old_name> <new_name>'
-            summary     '3scale CLI remote rename'
-            description '3scale CLI command to rename remote name'
+            summary     'remote rename'
+            description 'Rename remote name'
             param       :remote_old_name
             param       :remote_new_name
             runner RemoteRenameSubcommand

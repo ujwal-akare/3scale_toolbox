@@ -11,12 +11,13 @@
    * [Remotes](#remotes)
 * [Development](#development)
    * [Testing](#testing)
+   * [Develop your own core command](#develop-core-command)
 * [Plugins](#plugins)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
 
 ## Installation
-Install the CLI:
+Install the toolbox:
 
     $ gem install 3scale_toolbox
 
@@ -25,25 +26,28 @@ Install the CLI:
 ```shell
 $ 3scale help
 NAME
-    3scale - 3scale CLI Toolbox
+    3scale - 3scale toolbox
 
 USAGE
-    3scale <command> [options]
+    3scale <sub-command> [options]
 
 DESCRIPTION
-    3scale CLI tools to manage your API from the terminal.
+    3scale toolbox to manage your API from the terminal.
 
 COMMANDS
-    copy       3scale copy command
+    copy       copy super command
     help       show help
-    import     3scale import command
-    update     3scale update command
-    remote     3scale CLI remote
+    import     import super command
+    remote     remotes super command
+    update     update super command
 
 OPTIONS
-    -k --insecure      Proceed and operate even for server connections
-                       otherwise considered insecure
-    -v --version       Prints the version of this command
+    -c --config-file=<value>      3scale toolbox configuration file (default:
+                                  /home/eguzki/.3scalerc.yaml)
+    -h --help                     show help for this command
+    -k --insecure                 Proceed and operate even for server
+                                  connections otherwise considered insecure
+    -v --version                  Prints the version of this command
 ```
 
 ### Copy a service
@@ -216,6 +220,71 @@ The easiest way to set everything up is it to have a `.env` file in the root of 
 ENDPOINT=https://your-domain-admin.3scaledomain
 PROVIDER_KEY=abc123
 VERIFY_SSL=true (by default true)
+```
+### Develop Core Command
+
+Very simple core command to list existing services.
+Helps to illustrate basic command code structure and helper methods to deal with remotes.
+
+```
+$ cat lib/3scale_toolbox/commands/service_list_command.rb
+module ThreeScaleToolbox
+  module Commands
+    class ServiceListCommand < Cri::CommandRunner
+      include ThreeScaleToolbox::Command
+
+      def self.command
+        Cri::Command.define do
+          name        'service_list'
+          usage       'service_list <3scale_remote>'
+          summary     'service list'
+          description 'list available services'
+          param       :remote
+          runner ServiceListCommand
+        end
+      end
+
+      def run
+        puts threescale_client(arguments[:remote]).list_services
+      end
+    end
+  end
+end
+```
+A few things worth highlighting:
+- Your module must include the *ThreeScaleToolbox::Command* module. It allows your command to be added to the toobox command tree.
+- You must implement the `command` module function and return an instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
+- `threescale_client` helper method returns *3scale API* client instance. All the process remote parsing, fetching from remote list and client instantiation is done out of the box.
+
+Then register the core command in `lib/3scale_toolbox/commands.rb`
+```
+--- a/lib/3scale_toolbox/commands.rb
++++ b/lib/3scale_toolbox/commands.rb
+@@ -4,6 +4,7 @@ require '3scale_toolbox/commands/copy_command'
+ require '3scale_toolbox/commands/import_command'
+ require '3scale_toolbox/commands/update_command'
+ require '3scale_toolbox/commands/remote_command'
++require '3scale_toolbox/commands/service_list_command'
+
+ module ThreeScaleToolbox
+   module Commands
+@@ -12,7 +13,8 @@ module ThreeScaleToolbox
+       ThreeScaleToolbox::Commands::CopyCommand,
+       ThreeScaleToolbox::Commands::ImportCommand,
+       ThreeScaleToolbox::Commands::UpdateCommand,
+-      ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand
++      ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand,
++      ThreeScaleToolbox::Commands::ServiceListCommand
+     ].freeze
+   end
+ end
+```
+
+Running the new core command:
+
+```shell
+$ 3scale service_list my-3scale-instance
+{ ... }
 ```
 
 ## Plugins
