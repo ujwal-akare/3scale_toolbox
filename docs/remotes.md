@@ -1,14 +1,14 @@
 # Remotes
 
-Manage set of 3scale instances.
+Manage a set of references to 3scale accounts (on the same or different instances).
 
-Added remotes are stored in configuration file and can be used in any command
-where 3scale instances need to be specified.
+Added remotes are stored in configuration file and can be used in any command where 3scale instances need to be specified.
 
 ## Synopsis
 
 ```
 3scale remote [--config-file <config_file>]
+3scale remote list [--config-file <config_file>]
 3scale remote add [--config-file <config_file>] <name> <url>
 3scale remote remove [--config-file <config_file>] <name>
 3scale remote rename [--config-file <config_file>] <old_name> <new_name>
@@ -18,14 +18,14 @@ where 3scale instances need to be specified.
 
 *--config-file <config_file>*
 
-3scale CLI configuration file. When not set, the toolbox will lookup path at:
+3scale toolbox configuration file. When not set, the toolbox will use either:
 
-* *THREESCALE_CLI_CONFIG* environment variable
-* `$HOME/.3scalerc.yaml`
+* path specified in the *THREESCALE_CLI_CONFIG* environment variable
+* the default of `$HOME/.3scalerc.yaml` of not specified by --config-file option or environment variable
 
 ## Remote URLS
 
-The 3scale toolbox access 3scale instances by an `HTTP[S]` URL.
+The 3scale toolbox accesses 3scale instances using a `HTTP[S]` URL.
 Tokens are used for authentication and authorization purposes.
 3scale API supports the following token types:
 * `access_token` (preferred)
@@ -38,10 +38,11 @@ http[s]://<provider_key>|<access_token>@<3scale-instance-domain>
 ```
 
 ## Commands
+Several subcommands are available to perform operations on the remotes.
 
 ### List
 
-Shows the list of existing remotes. Several subcommands are available to perform operations on the remotes.
+Shows the list of existing remotes (name, URL and authentication key).
 
 Example:
 
