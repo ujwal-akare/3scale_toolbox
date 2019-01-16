@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Michal Cichra', 'Eguzki Astiz Lezaun']
   spec.email         = ['michal@3scale.net', 'eastizle@redhat.com']
 
-  spec.summary       = %q{3scale CLI Toolbox.}
-  spec.description   = %q{3scale CLI tools to manage your API from the terminal.}
+  spec.summary       = %q{3scale Toolbox.}
+  spec.description   = %q{3scale tools to manage your API from the terminal.}
   spec.homepage      = 'https://github.com/3scale/3scale_toolbox'
 
   spec.files         = Dir['{lib}/**/*.rb'] + %w[README.md] + Dir['exe/*']

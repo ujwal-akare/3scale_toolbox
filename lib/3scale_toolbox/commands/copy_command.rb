@@ -9,9 +9,9 @@ module ThreeScaleToolbox
       def self.command
         Cri::Command.define do
           name        'copy'
-          usage       'copy <command> [options]'
-          summary     '3scale copy command'
-          description '3scale copy command.'
+          usage       'copy <sub-command> [options]'
+          summary     'copy super command'
+          description 'Copy 3scale entities between tenants'
         end
       end
       add_subcommand(CopyServiceSubcommand)

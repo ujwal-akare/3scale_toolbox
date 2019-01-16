@@ -14,7 +14,7 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'csv'
             usage       'csv [opts] -d <dst> -f <file>'
-            summary     'Import csv file'
+            summary     'import csv file'
             description 'Create new services, metrics, methods and mapping rules from CSV formatted file'
 
             option  :d, :destination, '3scale target instance. Url or remote name', argument: :required

@@ -9,10 +9,10 @@ module ThreeScaleToolbox
       def self.command
         Cri::Command.define do
           name        '3scale'
-          usage       '3scale <command> [options]'
-          summary     '3scale CLI Toolbox'
-          description '3scale CLI tools to manage your API from the terminal.'
-          option :c, 'config-file', '3scale CLI configuration file',
+          usage       '3scale <sub-command> [options]'
+          summary     '3scale toolbox'
+          description '3scale toolbox to manage your API from the terminal.'
+          option :c, 'config-file', '3scale toolbox configuration file',
             argument: :required, default: ThreeScaleToolbox.default_config_file
           flag :v, :version, 'Prints the version of this command' do
             puts ThreeScaleToolbox::VERSION
