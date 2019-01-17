@@ -28,7 +28,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
           ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep
         ].each do |task_class|
-          task = double(task_class.to_s)
+          task = instance_double(task_class.to_s)
           task_class_obj = class_double(task_class).as_stubbed_const
           expect(task_class_obj).to receive(:new).and_return(task)
           expect(task).to receive(:call)

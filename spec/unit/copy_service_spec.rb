@@ -20,7 +20,7 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
       expect(subject).to receive(:threescale_client).twice.and_return(remote)
 
       # Entities::Service instance stub
-      service = double('Entities::Service instance')
+      service = instance_double('ThreeScaleToolbox::Entities::Service')
       expect(service).to receive(:show_service).and_return(service_obj)
       expect(service).to receive(:id).and_return('ome_service_id')
 

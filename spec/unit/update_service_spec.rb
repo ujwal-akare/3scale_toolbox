@@ -8,7 +8,7 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
       expect(subject).to receive(:threescale_client).twice.and_return(remote)
 
       # Entities::Service instance stub
-      service = double('Entities::Service instance')
+      service = instance_double('ThreeScaleToolbox::Entities::Service')
 
       # Entities::Service class stub
       service_class = class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const
