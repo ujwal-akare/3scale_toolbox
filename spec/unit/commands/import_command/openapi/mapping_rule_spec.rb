@@ -17,7 +17,7 @@ RSpec.describe 'OpenAPI Mapping Rule' do
     subject { OpenAPIMappingRuleClass.new(operation).mapping_rule }
 
     it 'contains "pattern"' do
-      is_expected.to include('pattern' => path)
+      is_expected.to include('pattern' => path + '$')
     end
 
     it 'contains "http_method"' do

@@ -3,7 +3,6 @@ module ThreeScaleToolbox
     module ImportCommand
       module OpenAPI
         module MappingRule
-
           def mapping_rule
             {
               'pattern' => pattern,
@@ -13,12 +12,13 @@ module ThreeScaleToolbox
             }
           end
 
-          def http_method 
+          def http_method
             operation[:verb].upcase
           end
 
           def pattern
-            operation[:path]
+            # apply strict matching
+            operation[:path] + '$'
           end
 
           def delta
