@@ -32,9 +32,9 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
   let(:external_mapping_rules) do
     {
       'mapping_rules' => [
-        { 'mapping_rule' => { 'delta' => 1, 'http_method' => 'POST', 'pattern' => '/v2/pet' } },
-        { 'mapping_rule' => { 'delta' => 1, 'http_method' => 'PUT', 'pattern' => '/v2/pet' } },
-        { 'mapping_rule' => { 'delta' => 1, 'http_method' => 'GET', 'pattern' => '/v2/pet/findByStatus' } }
+        { 'mapping_rule' => { 'delta' => 1, 'http_method' => 'POST', 'pattern' => '/v2/pet$' } },
+        { 'mapping_rule' => { 'delta' => 1, 'http_method' => 'PUT', 'pattern' => '/v2/pet$' } },
+        { 'mapping_rule' => { 'delta' => 1, 'http_method' => 'GET', 'pattern' => '/v2/pet/findByStatus$' } }
       ]
     }
   end
@@ -96,9 +96,9 @@ RSpec.shared_examples 'oas imported' do
   let(:method_keys) { %w[friendly_name system_name] }
   let(:expected_mapping_rules) do
     [
-      { 'pattern' => '/v2/pet', 'http_method' => 'POST', 'delta' => 1 },
-      { 'pattern' => '/v2/pet', 'http_method' => 'PUT', 'delta' => 1 },
-      { 'pattern' => '/v2/pet/findByStatus', 'http_method' => 'GET', 'delta' => 1 }
+      { 'pattern' => '/v2/pet$', 'http_method' => 'POST', 'delta' => 1 },
+      { 'pattern' => '/v2/pet$', 'http_method' => 'PUT', 'delta' => 1 },
+      { 'pattern' => '/v2/pet/findByStatus$', 'http_method' => 'GET', 'delta' => 1 }
     ]
   end
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
