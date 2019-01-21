@@ -6,8 +6,8 @@ RSpec.shared_examples 'service settings' do
     expect(subject).to eq(0)
     expect(
       # looking forward to Hash.slice on ruby 2.5
-      target.show_service.select { |k, _| compare_keys.include?(k) }
-    ).to eq(source.show_service.select { |k, _| compare_keys.include?(k) })
+      target_service.show_service.select { |k, _| compare_keys.include?(k) }
+    ).to eq(source_service.show_service.select { |k, _| compare_keys.include?(k) })
   end
 end
 
@@ -19,28 +19,21 @@ RSpec.shared_examples 'proxy settings' do
     expect(subject).to eq(0)
     expect(
       # looking forward to Hash.slice on ruby 2.5
-      target.show_proxy.select { |k, _| compare_keys.include?(k) }
-    ).to eq(source.show_proxy.select { |k, _| compare_keys.include?(k) })
+      target_service.show_proxy.select { |k, _| compare_keys.include?(k) }
+    ).to eq(source_service.show_proxy.select { |k, _| compare_keys.include?(k) })
   end
 end
 
 RSpec.shared_examples 'service methods' do
-  let(:source_methods) { source.methods }
-  let(:target_methods) { target.methods }
+  let(:source_methods) { source_service.methods }
+  let(:target_methods) { target_service.methods }
   let(:method_keys) { %w[friendly_name system_name] }
 
   it 'match' do
     expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
     expect(source_methods.size).to be > 0
-    source_methods.each do |source_method|
-      copied_method = target_methods.find do |target_method|
-        ThreeScaleToolbox::Helper.compare_hashes(source_method, target_method, method_keys)
-      end
-      expect(
-        copied_method.select { |k, _| method_keys.include?(k) }
-      ).to eq(source_method.select { |k, _| method_keys.include?(k) })
-    end
+    expect(source_methods).to be_subset_of(target_methods).comparing_keys(method_keys)
   end
 end
 
@@ -52,14 +45,7 @@ RSpec.shared_examples 'service metrics' do
     expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
     expect(source_metrics.size).to be > 0
-    source_metrics.each do |source_metric|
-      copied_metric = target_metrics.find do |target_metric|
-        ThreeScaleToolbox::Helper.compare_hashes(source_metric, target_metric, metric_keys)
-      end
-      expect(
-        copied_metric.select { |k, _| metric_keys.include?(k) }
-      ).to eq(source_metric.select { |k, _| metric_keys.include?(k) })
-    end
+    expect(source_metrics).to be_subset_of(target_metrics).comparing_keys(metric_keys)
   end
 end
 
@@ -107,10 +93,10 @@ RSpec.shared_examples 'service plan limits' do
       # For each plan, get {source, target} limits
       # Expect for each limit in source,
       # there exists a target limit with custom eq method
-      source_limits = source.plan_limits(source_plan['id'])
+      source_limits = source_service.plan_limits(source_plan['id'])
       expect(source_limits.size).to be > 0
       copied_plan = plan_mapping.fetch(source_plan['id'])
-      target_limits = target.plan_limits(copied_plan['id'])
+      target_limits = target_service.plan_limits(copied_plan['id'])
       limit_map = limit_mapping(source_limits, target_limits, metrics_mapping)
       # Check all mapped values are not nil
       expect(limit_map.size).to be > 0
@@ -123,8 +109,8 @@ RSpec.shared_examples 'service mapping rules' do
   include_context :toolbox_tasks_helper
   include_context :copied_metrics
 
-  let(:source_mapping_rules) { source.mapping_rules }
-  let(:target_mapping_rules) { target.mapping_rules }
+  let(:source_mapping_rules) { source_service.mapping_rules }
+  let(:target_mapping_rules) { target_service.mapping_rules }
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
 
   def mapping_rule_match(src, target, metrics_mapping, keys)

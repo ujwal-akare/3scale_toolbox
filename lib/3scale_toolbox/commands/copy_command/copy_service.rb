@@ -31,6 +31,7 @@ module ThreeScaleToolbox
           source_service = Entities::Service.new(id: arguments[:service_id],
                                                  remote: threescale_client(source))
           target_service = create_new_service(source_service.show_service, destination, system_name)
+          puts "new service id #{target_service.id}"
           context = create_context(source_service, target_service)
           tasks = [
             Tasks::CopyServiceProxyTask.new(context),
