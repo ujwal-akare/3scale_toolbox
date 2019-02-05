@@ -4,6 +4,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0]
+
+### Added
+- Manage 3scale instance with [remotes](https://github.com/3scale/3scale_toolbox/blob/v0.6.0/docs/remotes.md),  [#53](https://github.com/3scale/3scale_toolbox/pull/53)
+- Global error handler.  [#73](https://github.com/3scale/3scale_toolbox/pull/73)
+- Unit tests.  [#72](https://github.com/3scale/3scale_toolbox/pull/72)
+- Integration tests.  [#75](https://github.com/3scale/3scale_toolbox/pull/75)
+- OpenAPI 2.0 (Swagger) import command.  [#76](https://github.com/3scale/3scale_toolbox/pull/76)
+
+### Changed
+
+### Fixed
+- On update service, only include system_name when specified in options. [#68](https://github.com/3scale/3scale_toolbox/pull/68)
+
 ## [0.5.0]
 
 ### Added
@@ -57,7 +71,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.6.0
 [0.5.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.5.0
 [0.4.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.4.0
 [0.3.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.3.0
