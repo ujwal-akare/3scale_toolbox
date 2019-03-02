@@ -109,6 +109,28 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     }
   end
 
+  let(:external_source_activedocs) do
+    {
+      'api_docs' => [
+        { 'api_doc' => {
+          'id' => 4, 'name' => 'ad_0', 'system_name' => 'ad_0',
+          'service_id' => source_service_id.to_i
+        } }
+      ]
+    }
+  end
+
+  let(:external_target_activedocs) do
+    {
+      'api_docs' => [
+        { 'api_doc' => {
+          'id' => 9, 'name' => 'ad_0', 'system_name' => 'ad_03333',
+          'service_id' => target_service_id.to_i
+        } }
+      ]
+    }
+  end
+
   before :example do
     # service settings
     allow(external_source_client).to receive(:get).with('/admin/api/services/1').and_return(external_source_service)
@@ -159,6 +181,12 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     expect(external_target_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
     expect(external_source_client).to receive(:put).with('/admin/api/services/1/proxy/policies', anything)
     expect(external_target_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
+    # activedocs
+    allow(external_source_client).to receive(:get).with('/admin/api/active_docs').and_return(external_source_activedocs)
+    allow(external_target_client).to receive(:get).with('/admin/api/active_docs').and_return(external_target_activedocs)
+    # crete activedocs
+    expect(external_source_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
+    expect(external_target_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
   end
 end
 
@@ -288,6 +316,17 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     }
   end
 
+  let(:internal_source_activedocs) do
+    {
+      'api_docs' => [
+        { 'api_doc' => {
+          'id' => 0, 'name' => 'ad_0', 'system_name' => 'ad_0',
+          'service_id' => source_service_id.to_i
+        } }
+      ]
+    }
+  end
+
   before :example do
     # Stub http client used by command source code under test
     expect(http_client_class).to receive(:new).twice.and_return(internal_http_client)
@@ -329,6 +368,10 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1/proxy/policies').and_return(internal_proxy_policies)
     # put target policies
     expect(internal_http_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
+    # get source activedocs
+    expect(internal_http_client).to receive(:get).with('/admin/api/active_docs').at_least(:once).and_return(internal_source_activedocs)
+    # crete activedocs
+    expect(internal_http_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
     # pricing rules
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/pricing_rules').exactly(2).times.and_return(internal_source_pricingrules_01)
   end
@@ -390,4 +433,5 @@ RSpec.describe 'Update Service' do
   it_behaves_like 'service mapping rules'
   it_behaves_like 'service pricing rules'
   it_behaves_like 'service proxy policies'
+  it_behaves_like 'service activedocs'
 end

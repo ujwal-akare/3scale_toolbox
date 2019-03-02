@@ -190,5 +190,29 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         subject.update_policies(params)
       end
     end
+
+    context '#list_activedocs' do
+      let(:owned_activedocs0) do
+        {
+          'id' => 0, 'name' => 'ad_0', 'system_name' => 'ad_0', 'service_id' => id
+        }
+      end
+      let(:owned_activedocs1) do
+        {
+          'id' => 1, 'name' => 'ad_1', 'system_name' => 'ad_1', 'service_id' => id
+        }
+      end
+      let(:not_owned_activedocs) do
+        {
+          'id' => 2, 'name' => 'ad_2', 'system_name' => 'ad_2', 'service_id' => 'other'
+        }
+      end
+      let(:activedocs) { [owned_activedocs0, owned_activedocs1, not_owned_activedocs] }
+
+      it 'filters activedocs not owned by service' do
+        expect(remote).to receive(:list_activedocs).and_return(activedocs)
+        expect(subject.list_activedocs).to match_array([owned_activedocs0, owned_activedocs1])
+      end
+    end
   end
 end

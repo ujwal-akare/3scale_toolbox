@@ -22,6 +22,7 @@ module Helpers
       create_mapping_rules
       update_proxy_policies
       create_pricing_rules(plans)
+      create_activedocs
     end
 
     def create_service(client)
@@ -87,6 +88,48 @@ module Helpers
       end
     end
 
+    def create_activedocs
+      active_docs = {
+        name: 'myActiveDocs',
+        system_name: "myActiveDocs#{service.id.to_i}",
+        service_id: service.id.to_i,
+        body: activedocs_sample.to_json,
+        description: 'some description'
+      }
+
+      res = service.remote.create_activedocs(active_docs)
+      raise ThreeScaleToolbox::Error, "ActiveDocs has not been created. Errors: #{res['errors']}" unless res['errors'].nil?
+    end
+
+    def activedocs_sample
+      {
+        'basePath': 'https://hello-world-api.3scale.net',
+        'apiVersion': 'v1',
+        'apis': [
+          {
+            'path': '/',
+            'operations': [
+              {
+                'httpMethod': 'GET',
+                'summary': 'Say Hello!',
+                'description': '<p>This operation says hello.</p>',
+                'group': 'words',
+                'parameters': [
+                  {
+                    'name': 'user_key',
+                    'description': 'Your API access key',
+                    'dataType': 'string',
+                    'paramType': 'query',
+                    'threescale_name': 'user_keys'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    end
+ 
     def update_proxy_policies
       policies_config = [
         {
