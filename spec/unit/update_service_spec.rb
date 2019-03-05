@@ -92,7 +92,8 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
           ThreeScaleToolbox::Tasks::CopyApplicationPlansTask,
           ThreeScaleToolbox::Tasks::CopyLimitsTask,
           ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
-          ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+          ThreeScaleToolbox::Tasks::CopyMappingRulesTask,
+          ThreeScaleToolbox::Tasks::CopyPoliciesTask
         ]
       end
       include_examples 'check tasks'
@@ -116,7 +117,8 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
           ThreeScaleToolbox::Tasks::CopyMetricsTask,
           ThreeScaleToolbox::Tasks::CopyApplicationPlansTask,
           ThreeScaleToolbox::Tasks::CopyLimitsTask,
-          ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+          ThreeScaleToolbox::Tasks::CopyMappingRulesTask,
+          ThreeScaleToolbox::Tasks::CopyPoliciesTask
         ]
       end
       include_examples 'check tasks'

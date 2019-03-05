@@ -20,6 +20,7 @@ module Helpers
       plans = create_application_plans
       create_application_plan_limits(plans)
       create_mapping_rules
+      update_proxy_policies
     end
 
     def create_service(client)
@@ -83,6 +84,37 @@ module Helpers
 
         service.create_mapping_rule(mapping_rule)
       end
+    end
+
+    def update_proxy_policies
+      policies_config = [
+        {
+          'name' => 'apicast',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'soap',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'url_rewriting',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'ip_check',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        }
+      ]
+
+      service.update_policies('policies_config' => policies_config)
     end
   end
 end

@@ -58,6 +58,37 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     }
   end
 
+  let(:external_proxy_policies) do
+    {
+      'policies_config' => [
+        {
+          'name' => 'apicast',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'soap',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'url_rewriting',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'ip_check',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        }
+      ]
+    }
+  end
+
   before :example do
     # service settings
     allow(external_source_client).to receive(:get).with('/admin/api/services/1').and_return(external_source_service)
@@ -82,6 +113,9 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     # mapping rule
     allow(external_source_client).to receive(:get).with('/admin/api/services/1/proxy/mapping_rules').and_return(external_mapping_rules)
     allow(external_target_client).to receive(:get).with('/admin/api/services/100/proxy/mapping_rules').and_return(external_mapping_rules)
+    # proxy policies
+    allow(external_source_client).to receive(:get).with('/admin/api/services/1/proxy/policies').and_return(external_proxy_policies)
+    allow(external_target_client).to receive(:get).with('/admin/api/services/100/proxy/policies').and_return(external_proxy_policies)
     ##
     # service creation calls
     expect(external_source_client).to receive(:post).with('/admin/api/services', anything).and_return(external_source_service)
@@ -96,6 +130,8 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     expect(external_target_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything)
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/proxy/mapping_rules', anything)
     expect(external_target_client).to receive(:post).exactly(2).times.with('/admin/api/services/100/proxy/mapping_rules', anything)
+    expect(external_source_client).to receive(:put).with('/admin/api/services/1/proxy/policies', anything)
+    expect(external_target_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
   end
 end
 
@@ -184,6 +220,37 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     }
   end
 
+  let(:internal_proxy_policies) do
+    {
+      'policies_config' => [
+        {
+          'name' => 'apicast',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'soap',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'url_rewriting',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        },
+        {
+          'name' => 'ip_check',
+          'version' => 'builtin',
+          'configuration' => {},
+          'enabled' => true
+        }
+      ]
+    }
+  end
+
   before :example do
     # Stub http client used by command source code under test
     expect(http_client_class).to receive(:new).twice.and_return(internal_http_client)
@@ -221,6 +288,10 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/limits').at_least(:once).and_return(internal_source_app_limits)
     # delete target mapping rule
     expect(internal_http_client).to receive(:delete).with('/admin/api/services/100/proxy/mapping_rules/1')
+    # get source policies
+    expect(internal_http_client).to receive(:get).with('/admin/api/services/1/proxy/policies').and_return(internal_proxy_policies)
+    # put target policies
+    expect(internal_http_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
   end
 end
 
@@ -278,4 +349,5 @@ RSpec.describe 'Update Service' do
   it_behaves_like 'service plans'
   it_behaves_like 'service plan limits'
   it_behaves_like 'service mapping rules'
+  it_behaves_like 'service proxy policies'
 end
