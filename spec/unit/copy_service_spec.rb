@@ -2,33 +2,37 @@ require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
   context '#run' do
+    let(:source_service_id) { 100 }
+    let(:target_service_id) { 200 }
+    let(:source_system_name) { 'source_name' }
+    let(:source_service_obj) { { 'id' => source_service_id, 'system_name' => source_system_name } }
+    let(:target_service_obj) { { 'id' => target_service_id } }
+    let(:source_remote) { double('source_remote') }
+    let(:target_remote) { double('target_remote') }
+    let(:arguments) { { 'service_id': source_service_id } }
     let(:options) do
       {
-        'source': 'https://source_key@source.example.com',
-        'destination': 'https://destination_key@destination.example.com',
-        'target_system_name': 'some_system_name'
+        'source': 'mysource',
+        'destination': 'mydestination'
       }
     end
-    let(:arguments) { { 'service_id': 'some_service_id' } }
-    let(:service_obj) { { 'some_key' => 'some_value' } }
+    let(:expected_create_params) do
+      {
+        'system_name' => source_system_name
+      }
+    end
 
     subject { described_class.new(options, arguments, nil) }
 
-    it 'all required tasks are run' do
+    before :each do
       # Remote stub
-      remote = double('remote')
-      expect(subject).to receive(:threescale_client).twice.and_return(remote)
+      expect(subject).to receive(:threescale_client).with('mysource').and_return(source_remote)
+      expect(subject).to receive(:threescale_client).with('mydestination').and_return(target_remote)
 
-      # Entities::Service instance stub
-      service = instance_double('ThreeScaleToolbox::Entities::Service')
-      expect(service).to receive(:show_service).and_return(service_obj)
-      expect(service).to receive(:id).and_return('ome_service_id')
+      expect(source_remote).to receive(:show_service).with(source_service_id).and_return(source_service_obj)
+      expect(target_remote).to receive(:create_service)
+        .with(hash_including(expected_create_params)).and_return(target_service_obj)
 
-      # Entities::Service class stub
-      service_class = class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const
-      expect(service_class).to receive(:new).with(id: 'some_service_id', remote: remote).and_return(service)
-      expect(service_class).to receive(:create).with(remote: remote, service: service_obj,
-                                                     system_name: 'some_system_name').and_return(service)
       # Task stubs
       [
         ThreeScaleToolbox::Tasks::CopyServiceProxyTask,
@@ -44,9 +48,32 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
         expect(task_class_obj).to receive(:new).and_return(task)
         expect(task).to receive(:call)
       end
+    end
 
+    it 'all required tasks are run' do
       # Run
-      subject.run
+      expect { subject.run }.to output.to_stdout
+    end
+
+    context 'with target system name option' do
+      let(:target_system_name) { 'target_name' }
+      let(:options) do
+        {
+          'source': 'mysource',
+          'destination': 'mydestination',
+          'target_system_name': target_system_name
+        }
+      end
+      let(:expected_create_params) do
+        {
+          'system_name' => target_system_name
+        }
+      end
+
+      it 'target system_name is overridden' do
+        # Run
+        expect { subject.run }.to output.to_stdout
+      end
     end
   end
 end

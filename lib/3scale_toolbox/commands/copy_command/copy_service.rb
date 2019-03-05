@@ -16,7 +16,7 @@ module ThreeScaleToolbox
 
             option  :s, :source, '3scale source instance. Url or remote name', argument: :required
             option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
-            option  :t, 'target_system_name', 'Target system name', argument: :required
+            option  :t, 'target_system_name', 'Target system name. Default to source system name', argument: :required
             param   :service_id
 
             runner CopyServiceSubcommand
@@ -26,11 +26,10 @@ module ThreeScaleToolbox
         def run
           source      = fetch_required_option(:source)
           destination = fetch_required_option(:destination)
-          system_name = fetch_required_option(:target_system_name)
 
           source_service = Entities::Service.new(id: arguments[:service_id],
                                                  remote: threescale_client(source))
-          target_service = create_new_service(source_service.show_service, destination, system_name)
+          target_service = create_new_service(source_service.show_service, destination)
           puts "new service id #{target_service.id}"
           context = create_context(source_service, target_service)
           tasks = [
@@ -54,10 +53,10 @@ module ThreeScaleToolbox
           }
         end
 
-        def create_new_service(service, destination, system_name)
+        def create_new_service(service, destination)
           Entities::Service.create(remote: threescale_client(destination),
                                    service: service,
-                                   system_name: system_name)
+                                   system_name: options[:target_system_name] || service['system_name'])
         end
       end
     end
