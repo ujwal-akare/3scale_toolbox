@@ -108,6 +108,14 @@ module ThreeScaleToolbox
       def delete_service
         remote.delete_service id
       end
+
+      def policies
+        remote.show_policies id
+      end
+
+      def update_policies(params)
+        remote.update_policies(id, params)
+      end
     end
   end
 end
