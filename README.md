@@ -69,7 +69,7 @@ USAGE
 
 DESCRIPTION
     Will create a new services, copy existing proxy settings, metrics,
-    methods, application plans and mapping rules.
+    methods, policies, application plans and mapping rules.
 
 OPTIONS
     -d --destination=<value>             3scale target instance. Url or
@@ -108,7 +108,7 @@ USAGE
 
 DESCRIPTION
     Will update existing service, update proxy settings, metrics, methods,
-    application plans and mapping rules.
+    application plans, policies and mapping rules.
 
 OPTIONS
     -d --destination=<value>      3scale target instance. Url or
