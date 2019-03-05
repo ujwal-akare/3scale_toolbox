@@ -76,7 +76,8 @@ OPTIONS
                                          remote name
     -s --source=<value>                  3scale source instance. Url or
                                          remote name
-    -t --target_system_name=<value>      Target system name
+    -t --target_system_name=<value>      Target system name. Default to 
+                                         source system name
 
 OPTIONS FOR COPY
     -h --help                            show help for this command
