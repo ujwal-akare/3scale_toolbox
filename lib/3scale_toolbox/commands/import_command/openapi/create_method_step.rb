@@ -12,13 +12,11 @@ module ThreeScaleToolbox
               metric_id = res['id']
               # if method system_name exists, ignore error and get metric_id
               # Make operation indempotent
-              unless res['errors'].nil?
-                if !res['errors']['system_name'].nil? \
-                  && res['errors']['system_name'][0] =~ /has already been taken/
-                  metric_id = method_id_by_system_name[op.method['system_name']]
-                else
-                  raise Error, "Metohd has not been saved. Errors: #{res['errors']}"
-                end
+              if (errors = res['errors'])
+                raise Error, "Metohd has not been saved. #{errors}" \
+                  unless system_name_already_taken_error? errors
+
+                metric_id = method_id_by_system_name[op.method['system_name']]
               end
 
               op.set(:metric_id, metric_id)

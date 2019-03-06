@@ -116,6 +116,14 @@ module ThreeScaleToolbox
       def update_policies(params)
         remote.update_policies(id, params)
       end
+
+      def list_activedocs
+        remote.list_activedocs.select do |activedoc|
+          # service_id is optional attr. It would return nil and would not match
+          # activedocs endpoints return service_id as integers
+          activedoc['service_id'] == id.to_i
+        end
+      end
     end
   end
 end

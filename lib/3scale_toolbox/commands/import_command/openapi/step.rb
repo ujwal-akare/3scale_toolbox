@@ -38,6 +38,14 @@ module ThreeScaleToolbox
             # could be nil
             context[:target_system_name]
           end
+
+          def resource
+            context[:api_spec_resource]
+          end
+
+          def system_name_already_taken_error?(error)
+            Array(Hash(error)['system_name']).any? { |msg| msg.match(/has already been taken/) }
+          end
         end
       end
     end
