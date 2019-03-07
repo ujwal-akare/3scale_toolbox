@@ -9,9 +9,9 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
   let(:verify_ssl) { true }
   let(:external_http_client) { double('external_http_client') }
   let(:api3scale_client) { ThreeScale::API::Client.new(external_http_client) }
-  let(:fake_service_id) { '100' }
+  let(:fake_service_id) { 100 }
 
-  let(:service_attr) { { 'service' => { 'id' => fake_service_id } } }
+  let(:service_attr) { { 'service' => { 'id' => fake_service_id, 'system_name' => 'some_system_name' } } }
   let(:metrics) do
     {
       'metrics' => [
@@ -52,6 +52,18 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
       ]
     }
   end
+  let(:external_activedocs) do
+    {
+      'api_docs' => [
+        {
+          'api_doc' => {
+            'id' => 4, 'name' => 'Swagger Petstore', 'system_name' => system_name,
+            'service_id' => service_id, 'body' => oas_resource_json
+          }
+        }
+      ]
+    }
+  end
 
   before :example do
     puts '============ RUNNING STUBBED 3SCALE API CLIENT =========='
@@ -69,6 +81,8 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
     expect(internal_http_client).to receive(:delete).with('/admin/api/services/100/proxy/mapping_rules/1')
     expect(internal_http_client).to receive(:post).with('/admin/api/services/100/proxy/mapping_rules', anything)
                                                   .exactly(3).times
+    expect(internal_http_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
+    expect(internal_http_client).to receive(:get).with('/admin/api/services/100').and_return(service_attr)
 
     ##
     # External http client stub
@@ -82,6 +96,8 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
                                                 .and_return(external_methods)
     allow(external_http_client).to receive(:get).with('/admin/api/services/100/proxy/mapping_rules')
                                                 .and_return(external_mapping_rules)
+    allow(external_http_client).to receive(:get).with('/admin/api/active_docs')
+                                                .and_return(external_activedocs)
   end
 end
 
@@ -102,6 +118,8 @@ RSpec.shared_examples 'oas imported' do
     ]
   end
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
+  let(:service_active_docs) { service.list_activedocs }
+  let(:oas_resource_json) { YAML.safe_load(File.read(oas_resource_path)).to_json }
 
   it 'methods are created' do
     expect { subject }.to output.to_stdout
@@ -121,10 +139,21 @@ RSpec.shared_examples 'oas imported' do
     expect(expected_mapping_rules).to be_subset_of(service.mapping_rules).comparing_keys(mapping_rule_keys)
     expect(service.mapping_rules).to be_subset_of(expected_mapping_rules).comparing_keys(mapping_rule_keys)
   end
+
+  it 'activedocs are created' do
+    expect { subject }.to output.to_stdout
+    expect(subject).to eq(0)
+    expect(service_active_docs.size).to eq(1)
+    expect(service_active_docs[0]['name']).to eq('Swagger Petstore')
+    expect(service_active_docs[0]['body']).to eq(oas_resource_json)
+  end
 end
 
 RSpec.shared_context :import_oas_real_cleanup do
   after :example do
+    service.list_activedocs.each do |activedoc|
+      service.remote.delete_activedocs(activedoc['id'])
+    end
     service.delete_service
   end
 end

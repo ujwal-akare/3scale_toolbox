@@ -8,6 +8,7 @@ require '3scale_toolbox/commands/import_command/openapi/threescale_api_spec'
 require '3scale_toolbox/commands/import_command/openapi/create_method_step'
 require '3scale_toolbox/commands/import_command/openapi/create_mapping_rule_step'
 require '3scale_toolbox/commands/import_command/openapi/create_service_step'
+require '3scale_toolbox/commands/import_command/openapi/create_activedocs_step'
 
 module ThreeScaleToolbox
   module Commands
@@ -33,13 +34,15 @@ module ThreeScaleToolbox
           end
 
           def run
-            context = create_context
+            openapi_resource = load_resource(arguments[:openapi_resource])
+            context = create_context(openapi_resource)
 
             tasks = []
             tasks << CreateServiceStep.new(context)
             tasks << CreateMethodsStep.new(context)
             tasks << ThreeScaleToolbox::Tasks::DestroyMappingRulesTask.new(context)
             tasks << CreateMappingRulesStep.new(context)
+            tasks << CreateActiveDocsStep.new(context)
 
             # run tasks
             tasks.each(&:call)
@@ -47,16 +50,17 @@ module ThreeScaleToolbox
 
           private
 
-          def create_context
+          def create_context(openapi_resource)
             {
-              api_spec: ThreeScaleApiSpec.new(load_openapi),
+              api_spec_resource: openapi_resource,
+              api_spec: ThreeScaleApiSpec.new(load_openapi(openapi_resource)),
               threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name]
             }
           end
 
-          def load_openapi
-            Swagger.build(load_resource(arguments[:openapi_resource]))
+          def load_openapi(openapi_resource)
+            Swagger.build(openapi_resource)
             # Disable validation step because https://petstore.swagger.io/v2/swagger.json
             # does not pass validation. Maybe library's schema is outdated?
             # openapi.tap(&:validate)
