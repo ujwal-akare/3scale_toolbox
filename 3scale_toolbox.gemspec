@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 3.4'
   spec.required_ruby_version = '>= 2.3'
 
-  spec.add_dependency '3scale-api', '~> 0.1.7'
+  spec.add_dependency '3scale-api', '~> 0.1.8'
   spec.add_dependency 'cri', '~> 2.15'
   spec.add_dependency 'swagger-core', '~> 0.3'
 end

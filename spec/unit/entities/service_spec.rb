@@ -175,5 +175,20 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         subject.update_service(params)
       end
     end
+
+    context '#policies' do
+      it 'calls show_policies method' do
+        expect(remote).to receive(:show_policies).with(id)
+        subject.policies
+      end
+    end
+
+    context '#update_policies' do
+      let(:params) { [] }
+      it 'calls update_policies method' do
+        expect(remote).to receive(:update_policies).with(id, params)
+        subject.update_policies(params)
+      end
+    end
   end
 end

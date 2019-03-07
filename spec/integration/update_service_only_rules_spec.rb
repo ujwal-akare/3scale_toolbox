@@ -53,6 +53,8 @@ RSpec.shared_context :update_rules_stubbed_external_http_client do
     expect(external_target_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything)
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/proxy/mapping_rules', anything)
     expect(external_target_client).to receive(:post).exactly(2).times.with('/admin/api/services/100/proxy/mapping_rules', anything)
+    expect(external_source_client).to receive(:put).with('/admin/api/services/1/proxy/policies', anything)
+    expect(external_target_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
   end
 end
 

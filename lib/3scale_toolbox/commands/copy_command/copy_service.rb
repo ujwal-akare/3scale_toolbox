@@ -40,7 +40,8 @@ module ThreeScaleToolbox
             Tasks::CopyApplicationPlansTask.new(context),
             Tasks::CopyLimitsTask.new(context),
             Tasks::DestroyMappingRulesTask.new(context),
-            Tasks::CopyMappingRulesTask.new(context)
+            Tasks::CopyMappingRulesTask.new(context),
+            Tasks::CopyPoliciesTask.new(context),
           ]
           tasks.each(&:call)
         end

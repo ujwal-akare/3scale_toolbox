@@ -132,3 +132,15 @@ RSpec.shared_examples 'service mapping rules' do
     end
   end
 end
+
+RSpec.shared_examples 'service proxy policies' do
+  let(:source_policies) { source_service.policies }
+  let(:target_policies) { target_service.policies }
+
+  it 'match' do
+    expect { subject }.to output.to_stdout
+    expect(subject).to eq(0)
+    expect(source_policies.size).to be > 3
+    expect(target_policies).to match_array(source_policies)
+  end
+end

@@ -37,7 +37,8 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
         ThreeScaleToolbox::Tasks::CopyApplicationPlansTask,
         ThreeScaleToolbox::Tasks::CopyLimitsTask,
         ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
-        ThreeScaleToolbox::Tasks::CopyMappingRulesTask
+        ThreeScaleToolbox::Tasks::CopyMappingRulesTask,
+        ThreeScaleToolbox::Tasks::CopyPoliciesTask
       ].each do |task_class|
         task = double(task_class.to_s)
         task_class_obj = class_double(task_class).as_stubbed_const

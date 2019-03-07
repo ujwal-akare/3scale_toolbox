@@ -46,6 +46,7 @@ module ThreeScaleToolbox
             tasks << Tasks::CopyMetricsTask.new(context)
             tasks << Tasks::CopyApplicationPlansTask.new(context)
             tasks << Tasks::CopyLimitsTask.new(context)
+            tasks << Tasks::CopyPoliciesTask.new(context)
           end
           tasks << Tasks::DestroyMappingRulesTask.new(context) if options[:force]
           tasks << Tasks::CopyMappingRulesTask.new(context)
