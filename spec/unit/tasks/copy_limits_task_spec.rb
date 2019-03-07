@@ -98,7 +98,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
       end
 
       it 'does not call create_application_plan_limit method' do
-        expect { subject.call }.to output(/is missing 0 from the original plan/).to_stdout
+        expect { subject.call }.to output(/Missing 0 plan limits/).to_stdout
       end
     end
 
@@ -117,7 +117,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
         expect(target).to receive(:create_application_plan_limit).with(plan_0['id'],
                                                                        metric_1['id'],
                                                                        limit_0)
-        expect { subject.call }.to output(/is missing 1 from the original plan/).to_stdout
+        expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end
   end

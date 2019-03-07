@@ -21,6 +21,7 @@ module Helpers
       create_application_plan_limits(plans)
       create_mapping_rules
       update_proxy_policies
+      create_pricing_rules(plans)
     end
 
     def create_service(client)
@@ -115,6 +116,14 @@ module Helpers
       ]
 
       service.update_policies('policies_config' => policies_config)
+    end
+
+    def create_pricing_rules(plans)
+      hits_id = service.hits['id']
+      plans.each do |plan|
+        pricing_rule = { 'cost_per_unit' => '2.0', 'min' => 102, 'max' => 200 }
+        service.remote.create_pricingrule(plan.fetch('id'), hits_id, pricing_rule)
+      end
     end
   end
 end

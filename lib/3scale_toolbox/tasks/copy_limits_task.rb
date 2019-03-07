@@ -19,8 +19,8 @@ module ThreeScaleToolbox
               limit
             )
           end
-          puts "target application plan #{target_plan['id']} is missing" \
-            " #{missing_limits.size} from the original plan #{plan_id}"
+          puts "Missing #{missing_limits.size} plan limits from target application plan " \
+            "#{target_plan['id']}. Source plan #{plan_id}"
         end
       end
 

@@ -144,3 +144,43 @@ RSpec.shared_examples 'service proxy policies' do
     expect(target_policies).to match_array(source_policies)
   end
 end
+
+RSpec.shared_examples 'service pricing rules' do
+  include_context :toolbox_tasks_helper
+  include_context :copied_plans
+  include_context :copied_metrics
+
+  def limit_match(limit_a, limit_b, metrics_mapping)
+    ThreeScaleToolbox::Helper.compare_hashes(limit_a, limit_b, %w[period value]) &&
+      metrics_mapping.fetch(limit_a.fetch('metric_id')) == limit_b.fetch('metric_id')
+  end
+
+  def pricingrule_mapping(limits_a, limits_b, metrics_mapping)
+    limits_a.map do |limit_a|
+      found_limit = limits_b.find do |limit_b|
+        limit_match(limit_a, limit_b, metrics_mapping)
+      end
+      [limit_a, found_limit]
+    end.to_h
+  end
+
+  it 'pricing rules match' do
+    expect { subject }.to output.to_stdout
+    expect(subject).to eq(0)
+    # already checked there exist more than one app plan
+    source_plans.each do |source_plan|
+      # For each plan, get {source, target} pricing rules
+      # Expect for each pricing rules in source plan,
+      # there should exists the same target pricing rule
+      source_pricingrules = source_service.remote.list_pricingrules_per_application_plan(source_plan['id'])
+      expect(source_pricingrules.size).to be > 0
+      copied_plan = plan_mapping.fetch(source_plan['id'])
+      target_pricingrules = target_service.remote.list_pricingrules_per_application_plan(copied_plan['id'])
+      # the difference should be empty set
+      missing_pricingrules = ThreeScaleToolbox::Helper.array_difference(source_pricingrules, target_pricingrules) do |src, target|
+        ThreeScaleToolbox::Helper.compare_hashes(src, target, ['system_name'])
+      end
+      expect(missing_pricingrules.size).to be_zero
+    end
+  end
+end

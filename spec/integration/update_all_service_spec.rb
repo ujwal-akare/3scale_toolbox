@@ -58,6 +58,26 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     }
   end
 
+  let(:external_pricingrules_01) do
+    {
+      'pricing_rules' => [
+        { 'pricing_rule' => {
+          'id' => 4, 'name' => 'pr_1', 'system_name' => 'pr_1'
+        } }
+      ]
+    }
+  end
+
+  let(:external_pricingrules_02) do
+    {
+      'pricing_rules' => [
+        { 'pricing_rule' => {
+          'id' => 8, 'name' => 'pr_2', 'system_name' => 'pr_2'
+        } }
+      ]
+    }
+  end
+
   let(:external_proxy_policies) do
     {
       'policies_config' => [
@@ -116,6 +136,11 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     # proxy policies
     allow(external_source_client).to receive(:get).with('/admin/api/services/1/proxy/policies').and_return(external_proxy_policies)
     allow(external_target_client).to receive(:get).with('/admin/api/services/100/proxy/policies').and_return(external_proxy_policies)
+    # pricing rules
+    allow(external_source_client).to receive(:get).with('/admin/api/application_plans/1/pricing_rules').and_return(external_pricingrules_01)
+    allow(external_target_client).to receive(:get).with('/admin/api/application_plans/1/pricing_rules').and_return(external_pricingrules_01)
+    allow(external_source_client).to receive(:get).with('/admin/api/application_plans/2/pricing_rules').and_return(external_pricingrules_02)
+    allow(external_target_client).to receive(:get).with('/admin/api/application_plans/2/pricing_rules').and_return(external_pricingrules_02)
     ##
     # service creation calls
     expect(external_source_client).to receive(:post).with('/admin/api/services', anything).and_return(external_source_service)
@@ -130,6 +155,8 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     expect(external_target_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything)
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/proxy/mapping_rules', anything)
     expect(external_target_client).to receive(:post).exactly(2).times.with('/admin/api/services/100/proxy/mapping_rules', anything)
+    expect(external_source_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
+    expect(external_target_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
     expect(external_source_client).to receive(:put).with('/admin/api/services/1/proxy/policies', anything)
     expect(external_target_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
   end
@@ -251,6 +278,16 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     }
   end
 
+  let(:internal_source_pricingrules_01) do
+    {
+      'pricing_rules' => [
+        { 'pricing_rule' => {
+          'id' => 9, 'name' => 'pr_0', 'system_name' => 'pr_0'
+        } }
+      ]
+    }
+  end
+
   before :example do
     # Stub http client used by command source code under test
     expect(http_client_class).to receive(:new).twice.and_return(internal_http_client)
@@ -292,6 +329,8 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1/proxy/policies').and_return(internal_proxy_policies)
     # put target policies
     expect(internal_http_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything)
+    # pricing rules
+    expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/pricing_rules').exactly(2).times.and_return(internal_source_pricingrules_01)
   end
 end
 
@@ -349,5 +388,6 @@ RSpec.describe 'Update Service' do
   it_behaves_like 'service plans'
   it_behaves_like 'service plan limits'
   it_behaves_like 'service mapping rules'
+  it_behaves_like 'service pricing rules'
   it_behaves_like 'service proxy policies'
 end
