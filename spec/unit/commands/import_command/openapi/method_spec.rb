@@ -22,4 +22,18 @@ RSpec.describe 'OpenAPI Method' do
       is_expected.to include('system_name' => operationId.downcase)
     end
   end
+
+  context 'operation id not available' do
+    let(:operation) { { verb: 'get', path: '/pet/{petId}' } }
+
+    subject { OpenAPIMethodClass.new(operation).method }
+
+    it 'contains "friendly_name"' do
+      is_expected.to include('friendly_name' => 'getpetpetId')
+    end
+
+    it 'contains "system_name"' do
+      is_expected.to include('system_name' => 'getpetpetid')
+    end
+  end
 end
