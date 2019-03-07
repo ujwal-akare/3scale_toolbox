@@ -15,12 +15,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
         'id' => 1,
         'name' => 'pr_1',
         'system_name' => 'pr_1',
-        'links' => [
-          {
-            'rel' => 'metric',
-            'href' => 'https://3scale-supertest-admin.3scale.net/admin/api/services/2/metrics/0'
-          }
-        ]
+        'metric_id' => 0
       }
     end
     let(:source_plans) { [plan_0] }
