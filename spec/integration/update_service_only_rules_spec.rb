@@ -58,6 +58,9 @@ RSpec.shared_context :update_rules_stubbed_external_http_client do
     # create pricing rules
     expect(external_source_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
     expect(external_target_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
+    # crete activedocs
+    expect(external_source_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
+    expect(external_target_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
   end
 end
 

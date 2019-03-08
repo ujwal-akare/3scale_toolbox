@@ -98,7 +98,15 @@ end
 
 RSpec.shared_context :real_copy_cleanup do
   after :example do
+    # delete source activedocs
+    source_service.list_activedocs.each do |activedoc|
+      source_service.remote.delete_activedocs(activedoc['id'])
+    end
     source_service.delete_service
+    # delete target activedocs
+    target_service.list_activedocs.each do |activedoc|
+      target_service.remote.delete_activedocs(activedoc['id'])
+    end
     target_service.delete_service
   end
 end

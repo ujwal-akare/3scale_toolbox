@@ -52,7 +52,7 @@ OPTIONS
 ```
 
 ### Copy a service
-Will create a new service, copy existing proxy settings, pricing rules, metrics, methods, application plans and mapping rules.
+Will create a new service, copy existing proxy settings, pricing rules, activedocs, metrics, methods, application plans and mapping rules.
 
 3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
@@ -93,7 +93,7 @@ OPTIONS FOR COPY
 
 ### Update a service
 
-Will update existing service, update proxy settings, pricing rules, metrics, methods, application plans and mapping rules.
+Will update existing service, update proxy settings, pricing rules, activedocs, metrics, methods, application plans and mapping rules.
 
 3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 

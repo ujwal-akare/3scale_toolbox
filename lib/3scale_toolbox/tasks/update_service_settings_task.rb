@@ -12,7 +12,7 @@ module ThreeScaleToolbox
       def call
         source_obj = source.show_service
         response = target.update_service(target_service_params(source_obj))
-        raise Error, "Service has not been saved. Errors: #{response['errors']}" unless response['errors'].nil?
+        raise ThreeScaleToolbox::Error, "Service has not been saved. Errors: #{response['errors']}" unless response['errors'].nil?
 
         puts "updated service settings for service id #{source.id}..."
       end

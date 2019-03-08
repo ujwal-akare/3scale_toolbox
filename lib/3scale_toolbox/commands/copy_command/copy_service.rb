@@ -42,6 +42,7 @@ module ThreeScaleToolbox
             Tasks::CopyMappingRulesTask.new(context),
             Tasks::CopyPoliciesTask.new(context),
             Tasks::CopyPricingRulesTask.new(context),
+            Tasks::CopyActiveDocsTask.new(context),
           ]
           tasks.each(&:call)
         end

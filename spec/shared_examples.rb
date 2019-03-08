@@ -184,3 +184,16 @@ RSpec.shared_examples 'service pricing rules' do
     end
   end
 end
+
+RSpec.shared_examples 'service activedocs' do
+  let(:source_activedocs) { source_service.list_activedocs }
+  let(:target_activedocs) { target_service.list_activedocs }
+  let(:activedocs_keys) { %w[name] }
+
+  it 'match' do
+    expect { subject }.to output.to_stdout
+    expect(subject).to eq(0)
+    expect(source_activedocs.size).to be > 0
+    expect(source_activedocs).to be_subset_of(target_activedocs).comparing_keys(activedocs_keys)
+  end
+end

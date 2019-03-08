@@ -48,6 +48,8 @@ module ThreeScaleToolbox
             tasks << Tasks::CopyLimitsTask.new(context)
             tasks << Tasks::CopyPoliciesTask.new(context)
             tasks << Tasks::CopyPricingRulesTask.new(context)
+            tasks << Tasks::DeleteActiveDocsTask.new(context)
+            tasks << Tasks::CopyActiveDocsTask.new(context)
           end
           tasks << Tasks::DestroyMappingRulesTask.new(context) if options[:force]
           tasks << Tasks::CopyMappingRulesTask.new(context)
