@@ -4,6 +4,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.0]
+
+### Added
+- Copy/Update: include activedocs [#97](https://github.com/3scale/3scale_toolbox/pull/97)
+- Copy/Update: include pricing rules [#98](https://github.com/3scale/3scale_toolbox/pull/98)
+- Copy/Update: include proxy policies [#101](https://github.com/3scale/3scale_toolbox/pull/101)
+- Import OAS: push activedocs [#103](https://github.com/3scale/3scale_toolbox/pull/103)
+
+### Changed
+- In `copy service` comamnd, target system name is optional. [#100](https://github.com/3scale/3scale_toolbox/pull/100)
+
+### Fixed
+- Import OAS: fix when missing operation id in spec. [#102](https://github.com/3scale/3scale_toolbox/pull/102)
+
 ## [0.6.0]
 
 ### Added
@@ -71,7 +85,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.7.0
 [0.6.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.6.0
 [0.5.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.5.0
 [0.4.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.4.0
