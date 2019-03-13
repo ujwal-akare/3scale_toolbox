@@ -13,6 +13,10 @@ module ThreeScaleToolbox
           usage       'import <sub-command> [options]'
           summary     'import super command'
           description 'Importing 3scale entities'
+
+          run do |_opts, _args, cmd|
+            puts cmd.help
+          end
         end
       end
       add_subcommand(ImportCsvSubcommand)

@@ -6,6 +6,7 @@ module ThreeScaleToolbox
   module Commands
     module ThreeScaleCommand
       include ThreeScaleToolbox::Command
+
       def self.command
         Cri::Command.define do
           name        '3scale'
@@ -22,6 +23,10 @@ module ThreeScaleToolbox
           flag :h, :help, 'show help for this command' do |_, cmd|
             puts cmd.help
             exit 0
+          end
+
+          run do |_opts, _args, cmd|
+            puts cmd.help
           end
         end
       end
