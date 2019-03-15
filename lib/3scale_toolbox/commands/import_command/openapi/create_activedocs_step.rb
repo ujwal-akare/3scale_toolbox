@@ -11,7 +11,8 @@ module ThreeScaleToolbox
               system_name: activedocs_system_name,
               service_id: service.id,
               body: resource.to_json,
-              description: api_spec.description
+              description: api_spec.description,
+              published: true,
             }
 
             res = threescale_client.create_activedocs(active_doc)

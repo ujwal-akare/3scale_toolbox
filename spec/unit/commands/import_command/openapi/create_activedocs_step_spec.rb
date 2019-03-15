@@ -67,6 +67,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
           .with(hash_including(body: oas_body)).and_return({})
         subject.call
       end
+
+      it 'with published flag as true' do
+        expect(threescale_client).to receive(:create_activedocs)
+          .with(hash_including(published: true)).and_return({})
+        subject.call
+      end
     end
 
     context 'creates activedocs and returns error' do
