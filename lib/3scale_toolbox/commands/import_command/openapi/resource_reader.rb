@@ -13,6 +13,8 @@ module ThreeScaleToolbox
           def load_resource(resource)
             # Json format is parsed as well
             YAML.safe_load(read_content(resource))
+          rescue Psych::SyntaxError => e
+            raise ThreeScaleToolbox::Error, "JSON/YAML validation failed: #{e.message}"
           end
 
           ##

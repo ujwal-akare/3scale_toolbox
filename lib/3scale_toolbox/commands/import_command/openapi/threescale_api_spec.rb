@@ -22,7 +22,7 @@ module ThreeScaleToolbox
               Operation.new(
                 path: "#{openapi.base_path}#{op.path}",
                 verb: op.verb,
-                operationId: op.operationId
+                operationId: op.operation_id
               )
             end
           end

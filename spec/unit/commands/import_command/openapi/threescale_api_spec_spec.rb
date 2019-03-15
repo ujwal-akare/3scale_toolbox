@@ -1,8 +1,6 @@
 require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec do
-  include_context :temp_dir
-
   let(:title) { 'Some Title' }
   let(:description) { 'Some Description' }
   context '#parse' do
@@ -20,10 +18,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleAp
             post:
               operationId: "addPet"
               description: ""
+              responses:
+                405:
+                  description: "invalid input"
       YAML
     end
-    let(:resource) { tmp_dir.join('petstore.yaml').tap { |conf| conf.write(content) } }
-    let(:openapi) { Swagger.load(resource, format: :yaml) }
+    let(:openapi) { ThreeScaleToolbox::Swagger.build(YAML.safe_load(content)) }
     subject { described_class.new(openapi) }
 
     it 'title available' do

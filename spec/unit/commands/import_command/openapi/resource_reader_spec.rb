@@ -61,7 +61,7 @@ RSpec.describe 'OpenAPI ResourceReader' do
       end
 
       it 'raises error' do
-        expect { result }.to raise_error(Psych::SyntaxError)
+        expect { result }.to raise_error(ThreeScaleToolbox::Error)
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe 'OpenAPI ResourceReader' do
       let(:content) { '{ `some }' }
 
       it 'raises error' do
-        expect { result }.to raise_error(Psych::SyntaxError)
+        expect { result }.to raise_error(ThreeScaleToolbox::Error)
       end
     end
   end
