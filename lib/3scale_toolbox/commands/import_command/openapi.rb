@@ -27,6 +27,7 @@ module ThreeScaleToolbox
 
               option  :d, :destination, '3scale target instance. Format: "http[s]://<authentication>@3scale_domain"', argument: :required
               option  :t, 'target_system_name', 'Target system name', argument: :required
+              flag    nil, 'activedocs-hidden', 'Create ActiveDocs in hidden state'
               param   :openapi_resource
 
               runner OpenAPISubcommand
@@ -34,9 +35,6 @@ module ThreeScaleToolbox
           end
 
           def run
-            openapi_resource = load_resource(arguments[:openapi_resource])
-            context = create_context(openapi_resource)
-
             tasks = []
             tasks << CreateServiceStep.new(context)
             tasks << CreateMethodsStep.new(context)
@@ -50,12 +48,18 @@ module ThreeScaleToolbox
 
           private
 
-          def create_context(openapi_resource)
+          def context
+            @context ||= create_context
+          end
+
+          def create_context
+            openapi_resource = load_resource(arguments[:openapi_resource])
             {
               api_spec_resource: openapi_resource,
               api_spec: ThreeScaleApiSpec.new(load_openapi(openapi_resource)),
               threescale_client: threescale_client(fetch_required_option(:destination)),
-              target_system_name: options[:target_system_name]
+              target_system_name: options[:target_system_name],
+              activedocs_published: !options[:'activedocs-hidden']
             }
           end
 
