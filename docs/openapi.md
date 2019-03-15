@@ -3,13 +3,12 @@
 Features:
 
 * OpenAPI __2.0__ specification (f.k.a. __swagger__)
-* Create a new service. New service name will be taken from openapi definition `info.title` field.
-* Update existing service, providing `system_name` optional parameter. If service with that `system_name` does not exist, create it first.
-`system_name` can be passed as option parameter and defaults to *info.title* field from openapi spec.
+* Update existing service or create a new one. Service's `system_name` can be passed as option parameter and defaults to *info.title* field from openapi spec.
 * Create methods in the 'Definition' section. Method names are taken from `operation.operationId` field.
 * Attach newly created methods to the *Hits* metric.
 * All existing *mapping rules* are deleted before importing new API definition. Methods not deleted if exist before running the command.
 * Create mapping rules and show them under `API > Integration`.
+* Create ActiveDocs.
 * Perform schema validation.
 * OpenAPI definition resource can be provided by one of the following channels:
   * *Filename* in the available path.
@@ -30,6 +29,7 @@ DESCRIPTION
     Using an API definition format like OpenAPI, import to your 3scale API
 
 OPTIONS
+       --activedocs-hidden               Create ActiveDocs in hidden state
     -d --destination=<value>             3scale target instance. Format:
                                          "http[s]://<authentication>@3scale_domain"
     -t --target_system_name=<value>      Target system name
@@ -43,18 +43,6 @@ OPTIONS FOR IMPORT
                                          connections otherwise considered
                                          insecure
     -v --version                         Prints the version of this command
-```
-
-### Create new service
-
-```shell
-$ 3scale import openapi -d <destination> <openapi_resource>
-```
-
-### Update existing service
-
-```shell
-$ 3scale import openapi --target_system_name <TARGET_SYSTEM_NAME> -d <destination> <openapi_resource>
 ```
 
 ### OpenAPI definition from filename in path
