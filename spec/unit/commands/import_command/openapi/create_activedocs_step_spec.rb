@@ -1,15 +1,16 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActiveDocsStep do
-  let(:service) { double('service') }
   let(:api_spec_resource) { double('api_spec_resource') }
   let(:api_spec) { double('api_spec') }
   let(:service) { double('service') }
   let(:threescale_client) { double('threescale_client') }
+  let(:published) { true }
   let(:openapi_context) do
     {
       api_spec_resource: api_spec_resource,
       target: service,
       api_spec: api_spec,
-      threescale_client: threescale_client
+      threescale_client: threescale_client,
+      activedocs_published: published
     }
   end
   let(:title) { 'Some Title' }
@@ -72,6 +73,15 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
         expect(threescale_client).to receive(:create_activedocs)
           .with(hash_including(published: true)).and_return({})
         subject.call
+      end
+
+      context 'context published is false' do
+        let(:published) { false }
+        it 'with published flag as false' do
+          expect(threescale_client).to receive(:create_activedocs)
+            .with(hash_including(published: false)).and_return({})
+          subject.call
+        end
       end
     end
 

@@ -119,7 +119,7 @@ RSpec.shared_examples 'oas imported' do
   end
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
   let(:service_active_docs) { service.list_activedocs }
-  let(:oas_resource_json) { YAML.safe_load(File.read(oas_resource_path)).to_json }
+  let(:oas_resource_json) { JSON.pretty_generate(YAML.safe_load(File.read(oas_resource_path))) }
 
   it 'methods are created' do
     expect { subject }.to output.to_stdout
