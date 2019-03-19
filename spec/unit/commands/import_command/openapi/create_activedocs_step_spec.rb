@@ -4,13 +4,15 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
   let(:service) { double('service') }
   let(:threescale_client) { double('threescale_client') }
   let(:published) { true }
+  let(:skip_openapi_validation) { false }
   let(:openapi_context) do
     {
       api_spec_resource: api_spec_resource,
       target: service,
       api_spec: api_spec,
       threescale_client: threescale_client,
-      activedocs_published: published
+      activedocs_published: published,
+      skip_openapi_validation: skip_openapi_validation,
     }
   end
   let(:title) { 'Some Title' }
@@ -75,11 +77,26 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
         subject.call
       end
 
+      it 'with skip_swagger_validations flag as false' do
+        expect(threescale_client).to receive(:create_activedocs)
+          .with(hash_including(skip_swagger_validations: false)).and_return({})
+        subject.call
+      end
+
       context 'context published is false' do
         let(:published) { false }
         it 'with published flag as false' do
           expect(threescale_client).to receive(:create_activedocs)
             .with(hash_including(published: false)).and_return({})
+          subject.call
+        end
+      end
+
+      context 'context skip_openapi_validation is true' do
+        let(:skip_openapi_validation) { true }
+        it 'with skip_swagger_validations flag  as true' do
+          expect(threescale_client).to receive(:create_activedocs)
+            .with(hash_including(skip_swagger_validations: true)).and_return({})
           subject.call
         end
       end

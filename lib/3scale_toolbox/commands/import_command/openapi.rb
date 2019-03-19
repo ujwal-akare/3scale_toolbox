@@ -27,6 +27,7 @@ module ThreeScaleToolbox
               option  :d, :destination, '3scale target instance. Format: "http[s]://<authentication>@3scale_domain"', argument: :required
               option  :t, 'target_system_name', 'Target system name', argument: :required
               flag    nil, 'activedocs-hidden', 'Create ActiveDocs in hidden state'
+              flag    nil, 'skip-openapi-validation', 'Skip OpenAPI schema validation'
               param   :openapi_resource
 
               runner OpenAPISubcommand
@@ -58,12 +59,13 @@ module ThreeScaleToolbox
               api_spec: ThreeScaleApiSpec.new(load_openapi(openapi_resource)),
               threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name],
-              activedocs_published: !options[:'activedocs-hidden']
+              activedocs_published: !options[:'activedocs-hidden'],
+              skip_openapi_validation: options[:'skip-openapi-validation']
             }
           end
 
           def load_openapi(openapi_resource)
-            Swagger.build(openapi_resource)
+            Swagger.build(openapi_resource, validate: !options[:'skip-openapi-validation'])
           rescue JSON::Schema::ValidationError => e
             raise ThreeScaleToolbox::Error, "OpenAPI schema validation failed: #{e.message}"
           end

@@ -12,7 +12,8 @@ module ThreeScaleToolbox
               service_id: service.id,
               body: JSON.pretty_generate(resource),
               description: api_spec.description,
-              published: context[:activedocs_published]
+              published: context[:activedocs_published],
+              skip_swagger_validations: context[:skip_openapi_validation]
             }
 
             res = threescale_client.create_activedocs(active_doc)
