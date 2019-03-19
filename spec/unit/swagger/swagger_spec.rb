@@ -2,7 +2,8 @@ require '3scale_toolbox'
 
 RSpec.describe ThreeScaleToolbox::Swagger do
   let(:raw_specification) { YAML.safe_load(content) }
-  subject { described_class.build(raw_specification) }
+  let(:validate) { true }
+  subject { described_class.build(raw_specification, validate: validate) }
   let(:title) { 'some info title' }
   let(:description) { 'some info description' }
   let(:base_path) { '/v2' }
@@ -52,6 +53,14 @@ RSpec.describe ThreeScaleToolbox::Swagger do
     it 'should raise error' do
       expect { subject }.to raise_error(JSON::Schema::ValidationError)
     end
+
+    context 'but when validation skipped' do
+      let(:validate) { false }
+
+      it 'should not raise error' do
+        expect { subject }.not_to raise_error(JSON::Schema::ValidationError)
+      end
+    end
   end
 
   context 'missing paths' do
@@ -68,6 +77,14 @@ RSpec.describe ThreeScaleToolbox::Swagger do
 
     it 'should raise error' do
       expect { subject }.to raise_error(JSON::Schema::ValidationError)
+    end
+
+    context 'but when validation skipped' do
+      let(:validate) { false }
+
+      it 'should not raise error' do
+        expect { subject }.not_to raise_error(JSON::Schema::ValidationError)
+      end
     end
   end
 

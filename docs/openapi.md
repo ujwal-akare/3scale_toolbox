@@ -9,7 +9,7 @@ Features:
 * All existing *mapping rules* are deleted before importing new API definition. Methods not deleted if exist before running the command.
 * Create mapping rules and show them under `API > Integration`.
 * Create ActiveDocs.
-* Perform schema validation.
+* OpenAPI Specification 2.0 JSON Schema validation. Can be skipped with command flag `--skip-openapi-validation`.
 * OpenAPI definition resource can be provided by one of the following channels:
   * *Filename* in the available path.
   * *URL* format. Toolbox will try to download from given address.
@@ -32,6 +32,7 @@ OPTIONS
        --activedocs-hidden               Create ActiveDocs in hidden state
     -d --destination=<value>             3scale target instance. Format:
                                          "http[s]://<authentication>@3scale_domain"
+       --skip-openapi-validation         Skip OpenAPI schema validation
     -t --target_system_name=<value>      Target system name
 
 OPTIONS FOR IMPORT

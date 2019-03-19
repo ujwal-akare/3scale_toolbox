@@ -16,7 +16,7 @@ module ThreeScaleToolbox
           end
 
           def system_name
-            friendly_name.downcase
+            friendly_name.downcase.gsub(/[^\w]/, '_')
           end
 
           def operation_id

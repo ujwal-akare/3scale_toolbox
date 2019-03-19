@@ -4,9 +4,11 @@ module ThreeScaleToolbox
   module Swagger
     META_SCHEMA_PATH = File.expand_path('../../../resources/swagger_meta_schema.json', __dir__)
 
-    def self.build(raw_specification)
-      meta_schema = JSON.parse(File.read(META_SCHEMA_PATH))
-      JSON::Validator.validate!(meta_schema, raw_specification)
+    def self.build(raw_specification, validate: true)
+      if validate
+        meta_schema = JSON.parse(File.read(META_SCHEMA_PATH))
+        JSON::Validator.validate!(meta_schema, raw_specification)
+      end
 
       Specification.new(raw_specification)
     end
