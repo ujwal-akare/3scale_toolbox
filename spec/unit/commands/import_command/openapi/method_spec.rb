@@ -19,7 +19,11 @@ RSpec.describe 'OpenAPI Method' do
     end
 
     it 'contains "system_name"' do
-      is_expected.to include('system_name' => operationId.downcase)
+      is_expected.to include('system_name')
+    end
+
+    it '"system_name" is sanitized' do
+      is_expected.to include('system_name' => 'some_operation_id')
     end
   end
 
