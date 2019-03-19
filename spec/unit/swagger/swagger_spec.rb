@@ -34,6 +34,25 @@ RSpec.describe ThreeScaleToolbox::Swagger do
             responses:
               200:
                 description: "successful operation"
+      security:
+        - OauthSecurity:
+          - user
+        - MediaSecurity: []
+      securityDefinitions:
+        OauthSecurity:
+          type: oauth2
+          flow: accessCode
+          authorizationUrl: 'https://oauth.simple.api/authorization'
+          tokenUrl: 'https://oauth.simple.api/token'
+          scopes:
+            admin: Admin scope
+            user: User scope
+        MediaSecurity:
+          type: apiKey
+          in: query
+          name: media-api-key
+        LegacySecurity:
+          type: basic
     YAML
   end
 
@@ -58,7 +77,7 @@ RSpec.describe ThreeScaleToolbox::Swagger do
       let(:validate) { false }
 
       it 'should not raise error' do
-        expect { subject }.not_to raise_error(JSON::Schema::ValidationError)
+        expect { subject }.not_to raise_error
       end
     end
   end
@@ -83,7 +102,7 @@ RSpec.describe ThreeScaleToolbox::Swagger do
       let(:validate) { false }
 
       it 'should not raise error' do
-        expect { subject }.not_to raise_error(JSON::Schema::ValidationError)
+        expect { subject }.not_to raise_error
       end
     end
   end
@@ -173,6 +192,150 @@ RSpec.describe ThreeScaleToolbox::Swagger do
 
       it 'operationId matches' do
         expect(get_findPetsByStatus_operation.operation_id).to eq('findPetsByStatus')
+      end
+    end
+  end
+
+  context 'global_security_requirements' do
+    it 'available' do
+      expect(subject.global_security_requirements).not_to be_nil
+    end
+
+    it 'parsed as not empty' do
+      expect(subject.global_security_requirements).not_to be_empty
+    end
+
+    it '2 security schemes parsed' do
+      expect(subject.global_security_requirements.size).to eq(2)
+    end
+
+    context 'OauthSecurity' do
+      let(:sec_scheme) do
+        subject.global_security_requirements.find { |sec| sec.id == 'OauthSecurity' }
+      end
+
+      it 'available' do
+        expect(sec_scheme).not_to be_nil
+      end
+
+      it 'type matches' do
+        expect(sec_scheme.type).to eq('oauth2')
+      end
+
+      it 'name matches' do
+        expect(sec_scheme.name).to be_nil
+      end
+
+      it 'in_f matches' do
+        expect(sec_scheme.in_f).to be_nil
+      end
+
+      it 'flow matches' do
+        expect(sec_scheme.flow).to eq('accessCode')
+      end
+
+      it 'scopes matches' do
+        expect(sec_scheme.scopes).to contain_exactly('user')
+      end
+    end
+
+    context 'MediaSecurity' do
+      let(:sec_scheme) do
+        subject.global_security_requirements.find { |sec| sec.id == 'MediaSecurity' }
+      end
+
+      it 'available' do
+        expect(sec_scheme).not_to be_nil
+      end
+
+      it 'type matches' do
+        expect(sec_scheme.type).to eq('apiKey')
+      end
+
+      it 'name matches' do
+        expect(sec_scheme.name).to eq('media-api-key')
+      end
+
+      it 'in_f matches' do
+        expect(sec_scheme.in_f).to eq('query')
+      end
+
+      it 'flow matches' do
+        expect(sec_scheme.flow).to be_nil
+      end
+
+      it 'scopes matches' do
+        expect(sec_scheme.scopes).to be_empty
+      end
+    end
+
+    context 'missing security requirementes' do
+      let(:content) do
+        <<~YAML
+          ---
+          swagger: "2.0"
+          info:
+            title: "#{title}"
+            version: "1.0.0"
+          basePath: "#{base_path}"
+          paths:
+            /pet:
+              get:
+                operationId: "getPet"
+                responses:
+                  200:
+                    description: "successful operation"
+          securityDefinitions:
+            OauthSecurity:
+              type: oauth2
+              flow: accessCode
+              authorizationUrl: 'https://oauth.simple.api/authorization'
+              tokenUrl: 'https://oauth.simple.api/token'
+              scopes:
+                admin: Admin scope
+                user: User scope
+            MediaSecurity:
+              type: apiKey
+              in: query
+              name: media-api-key
+            LegacySecurity:
+              type: basic
+        YAML
+      end
+      it 'available' do
+        expect(subject.global_security_requirements).not_to be_nil
+      end
+
+      it 'parsed as empty' do
+        expect(subject.global_security_requirements).to be_empty
+      end
+    end
+
+    context 'missing security definitions' do
+      let(:content) do
+        <<~YAML
+          ---
+          swagger: "2.0"
+          info:
+            title: "#{title}"
+            version: "1.0.0"
+          basePath: "#{base_path}"
+          paths:
+            /pet:
+              get:
+                operationId: "getPet"
+                responses:
+                  200:
+                    description: "successful operation"
+          security:
+            - OauthSecurity:
+              - user
+            - MediaSecurity: []
+        YAML
+      end
+
+      it 'parsing raises error' do
+        expect { subject.global_security_requirements }.to raise_error(ThreeScaleToolbox::Error, /not found in security definitions/)
       end
     end
   end

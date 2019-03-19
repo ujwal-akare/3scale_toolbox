@@ -15,6 +15,9 @@ Features:
   * *URL* format. Toolbox will try to download from given address.
   * Read from *stdin* standard input stream.
 * Applied strict matching on mapping rule patterns
+* When there is no security requirement in swagger spec, the service is considered as an "Open API".
+Toolbox will then add `default_credentials` policy (also called as `anonymous_policy`) if not yet in policy chain (to be idempotent).
+`default_credentials` policy will be configured with userkey provided in optional parameter `--default-credentials-userkey`.
 
 ### Usage
 
@@ -29,21 +32,29 @@ DESCRIPTION
     Using an API definition format like OpenAPI, import to your 3scale API
 
 OPTIONS
-       --activedocs-hidden               Create ActiveDocs in hidden state
-    -d --destination=<value>             3scale target instance. Format:
-                                         "http[s]://<authentication>@3scale_domain"
-       --skip-openapi-validation         Skip OpenAPI schema validation
-    -t --target_system_name=<value>      Target system name
+       --activedocs-hidden                        Create ActiveDocs in hidden
+                                                  state
+    -d --destination=<value>                      3scale target instance.
+                                                  Format:
+                                                  "http[s]://<authentication>@3scale_domain"
+       --default-credentials-userkey=<value>      Default credentials policy
+                                                  userkey
+       --oidc-issuer-endpoint=<value>             OIDC Issuer Endpoint
+       --skip-openapi-validation                  Skip OpenAPI schema validation
+    -t --target_system_name=<value>               Target system name
 
 OPTIONS FOR IMPORT
-    -c --config-file=<value>             3scale toolbox configuration file
-                                         (default:
-                                         /home/eguzki/.3scalerc.yaml)
-    -h --help                            show help for this command
-    -k --insecure                        Proceed and operate even for server
-                                         connections otherwise considered
-                                         insecure
-    -v --version                         Prints the version of this command
+    -c --config-file=<value>                      3scale toolbox
+                                                  configuration file
+                                                  (default:
+                                                  /home/eguzki/.3scalerc.yaml)
+    -h --help                                     show help for this command
+    -k --insecure                                 Proceed and operate even
+                                                  for server connections
+                                                  otherwise considered
+                                                  insecure
+    -v --version                                  Prints the version of this
+                                                  command
 ```
 
 ### OpenAPI definition from filename in path

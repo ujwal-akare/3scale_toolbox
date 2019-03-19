@@ -48,6 +48,7 @@ module ThreeScaleToolbox
             default_service_settings.tap do |svc|
               svc['name'] = service_name
               svc['description'] = service_description
+              svc['backend_version'] = backend_version
             end
           end
 
@@ -61,6 +62,10 @@ module ThreeScaleToolbox
 
           def service_description
             api_spec.description
+          end
+
+          def backend_version
+            api_spec.backend_version
           end
         end
       end

@@ -19,6 +19,15 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
       ]
     }
   end
+
+  let(:service_policies) do
+    {
+      'policies_config' => [
+        { 'name' => 'apicast', 'version' => 'builtin', 'configuration' => {}, 'enabled' => true }
+      ]
+    }
+  end
+
   let(:external_methods) do
     {
       'methods' => [
@@ -65,6 +74,20 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
     }
   end
 
+  let(:external_proxy) do
+    {
+      'proxy' => {
+        'service_id' => 2555417777578,
+        'endpoint' => 'https://some-service-01-2445582057490.production.gw.apicast.io:443',
+        'api_backend' => 'https://petstore.swagger.io:443',
+        'credentials_location' => 'headers',
+        'auth_app_key' => 'app_key',
+        'auth_app_id' => 'app_id',
+        'auth_user_key' => 'api_key'
+      }
+    }
+  end
+
   before :example do
     puts '============ RUNNING STUBBED 3SCALE API CLIENT =========='
     ##
@@ -83,7 +106,9 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
                                                   .exactly(3).times
     expect(internal_http_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100').and_return(service_attr)
-
+    expect(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy', anything)
+    expect(internal_http_client).to receive(:get).with('/admin/api/services/100/proxy/policies')
+                                                 .and_return(service_policies)
     ##
     # External http client stub
     allow(external_http_client).to receive(:post).with('/admin/api/services', anything)
@@ -98,6 +123,8 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
                                                 .and_return(external_mapping_rules)
     allow(external_http_client).to receive(:get).with('/admin/api/active_docs')
                                                 .and_return(external_activedocs)
+    allow(external_http_client).to receive(:get).with('/admin/api/services/100/proxy')
+                                                .and_return(external_proxy)
   end
 end
 
@@ -117,8 +144,12 @@ RSpec.shared_examples 'oas imported' do
       { 'pattern' => '/v2/pet/findByStatus$', 'http_method' => 'GET', 'delta' => 1 }
     ]
   end
+  let(:expected_api_backend) { 'https://petstore.swagger.io:443' }
+  let(:expected_credentials_location) { 'headers' }
+  let(:expected_auth_user_key) { 'api_key' }
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
   let(:service_active_docs) { service.list_activedocs }
+  let(:service_proxy) { service.show_proxy }
   let(:oas_resource_json) { JSON.pretty_generate(YAML.safe_load(File.read(oas_resource_path))) }
 
   it 'methods are created' do
@@ -146,6 +177,15 @@ RSpec.shared_examples 'oas imported' do
     expect(service_active_docs.size).to eq(1)
     expect(service_active_docs[0]['name']).to eq('Swagger Petstore')
     expect(service_active_docs[0]['body']).to eq(oas_resource_json)
+  end
+
+  it 'service proxy is updated' do
+    expect { subject }.to output.to_stdout
+    expect(subject).to eq(0)
+    expect(service_proxy).not_to be_nil
+    expect(service_proxy).to include('api_backend' => expected_api_backend,
+                                     'credentials_location' => expected_credentials_location,
+                                     'auth_user_key' => expected_auth_user_key)
   end
 end
 
