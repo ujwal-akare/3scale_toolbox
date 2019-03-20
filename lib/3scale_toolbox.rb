@@ -1,6 +1,7 @@
 require '3scale_toolbox/version'
 require '3scale_toolbox/helper'
 require '3scale_toolbox/error'
+require '3scale_toolbox/proxy_logger'
 require '3scale_toolbox/swagger'
 require '3scale_toolbox/configuration'
 require '3scale_toolbox/remotes'

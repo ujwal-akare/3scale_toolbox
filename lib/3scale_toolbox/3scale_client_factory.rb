@@ -1,17 +1,18 @@
 module ThreeScaleToolbox
   class ThreeScaleClientFactory
     class << self
-      def get(remotes, remote_str, verify_ssl)
-        new(remotes, remote_str, verify_ssl).call
+      def get(remotes, remote_str, verify_ssl, verbose = false)
+        new(remotes, remote_str, verify_ssl, verbose).call
       end
     end
 
-    attr_reader :remotes, :remote_str, :verify_ssl
+    attr_reader :remotes, :remote_str, :verify_ssl, :verbose
 
-    def initialize(remotes, remote_str, verify_ssl)
+    def initialize(remotes, remote_str, verify_ssl, verbose)
       @remotes = remotes
       @remote_str = remote_str
       @verify_ssl = verify_ssl
+      @verbose = verbose
     end
 
     def call
@@ -21,7 +22,10 @@ module ThreeScaleToolbox
         remote = remotes.fetch(remote_str)
       end
 
-      remote_client(remote.merge(verify_ssl: verify_ssl))
+      client = remote_client(remote.merge(verify_ssl: verify_ssl))
+      return ProxyLogger.new(client) if verbose
+
+      client
     end
 
     private
