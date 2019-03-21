@@ -15,7 +15,9 @@ module ThreeScaleToolbox::CLI
 
   def self.install_signal_handlers
     # Set exit handler
-    %w[INT TERM].each do |signal|
+    # Only OS supported signals
+    available_signals = %w[INT TERM].select { |signal_name| Signal.list.key? signal_name }
+    available_signals.each do |signal|
       Signal.trap(signal) do
         puts
         exit!(0)
@@ -24,9 +26,11 @@ module ThreeScaleToolbox::CLI
 
     # Set stack trace dump handler
     if !defined?(RUBY_ENGINE) || RUBY_ENGINE != 'jruby'
-      Signal.trap('USR1') do
-        puts 'Caught USR1; dumping a stack trace'
-        puts caller.map { |i| "  #{i}" }.join("\n")
+      if Signal.list.key? 'USR1'
+        Signal.trap('USR1') do
+          puts 'Caught USR1; dumping a stack trace'
+          puts caller.map { |i| "  #{i}" }.join("\n")
+        end
       end
     end
   end
