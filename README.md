@@ -1,6 +1,11 @@
 # 3scale toolbox
 [![Build Status](https://travis-ci.org/3scale/3scale_toolbox.svg?branch=master)](https://travis-ci.org/3scale/3scale_toolbox)
 
+This software is licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
+
+See the LICENSE and NOTICE files that should have been provided along with this software for details.
+
+## Description
 3scale toolbox is a set of tools to help you manage your 3scale product. Using the [3scale API Ruby Client](https://github.com/3scale/3scale-api-ruby).
 
 ## Table of contents
@@ -77,7 +82,7 @@ OPTIONS
                                          remote name
     -s --source=<value>                  3scale source instance. Url or
                                          remote name
-    -t --target_system_name=<value>      Target system name. Default to 
+    -t --target_system_name=<value>      Target system name. Default to
                                          source system name
 
 OPTIONS FOR COPY
