@@ -47,12 +47,16 @@ module ThreeScaleToolbox
     # Input param can be endpoint url or remote name
     #
     def threescale_client(str)
-      ThreeScaleClientFactory.get(remotes, str, verify_ssl)
+      ThreeScaleClientFactory.get(remotes, str, verify_ssl, verbose)
     end
 
     def verify_ssl
       # this is flag. It is either true or false. Cannot be nil
       !options[:insecure]
+    end
+
+    def verbose
+      options[:verbose]
     end
 
     def exit_with_message(message)
