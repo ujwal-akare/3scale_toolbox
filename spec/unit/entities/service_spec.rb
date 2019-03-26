@@ -214,5 +214,30 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         expect(subject.list_activedocs).to match_array([owned_activedocs0, owned_activedocs1])
       end
     end
+
+    context 'oidc' do
+      let(:oidc_configuration) do
+        {
+          standard_flow_enabled: false,
+          implicit_flow_enabled: true,
+          service_accounts_enabled: false,
+          direct_access_grants_enabled: false
+        }
+      end
+
+      context '#show_oidc' do
+        it 'calls show_oidc method' do
+          expect(remote).to receive(:show_oidc).with(id).and_return(oidc_configuration)
+          expect(subject.show_oidc).to eq(oidc_configuration)
+        end
+      end
+
+      context '#update_oidc' do
+        it 'calls update_oidc method' do
+          expect(remote).to receive(:update_oidc).with(id, oidc_configuration)
+          subject.update_oidc(oidc_configuration)
+        end
+      end
+    end
   end
 end

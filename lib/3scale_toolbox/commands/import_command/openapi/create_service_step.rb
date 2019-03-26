@@ -26,7 +26,7 @@ module ThreeScaleToolbox
           private
 
           def service_system_name
-            target_system_name || service_name.downcase.tr(' ', '_')
+            target_system_name || service_name.downcase.gsub(/[^\w]/, '_')
           end
 
           def service_id

@@ -15,7 +15,11 @@ module ThreeScaleToolbox
 
             return unless oidc_settings.size.positive?
 
-            service.update_oidc oidc_settings
+            res = service.update_oidc oidc_settings
+            if (errors = res['errors'])
+              raise ThreeScaleToolbox::Error, "Service oidc has not been updated. #{errors}"
+            end
+
             puts 'Service oidc updated'
           end
 

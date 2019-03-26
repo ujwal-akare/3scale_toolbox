@@ -10,8 +10,13 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
   let(:external_http_client) { double('external_http_client') }
   let(:api3scale_client) { ThreeScale::API::Client.new(external_http_client) }
   let(:fake_service_id) { 100 }
+  let(:backend_version) { '1' }
 
-  let(:service_attr) { { 'service' => { 'id' => fake_service_id, 'system_name' => 'some_system_name' } } }
+  let(:service_attr) do
+    { 'service' => { 'id' => fake_service_id,
+                     'system_name' => 'some_system_name',
+                     'backend_version' => backend_version } }
+  end
   let(:metrics) do
     {
       'metrics' => [
@@ -83,7 +88,8 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
         'credentials_location' => 'headers',
         'auth_app_key' => 'app_key',
         'auth_app_id' => 'app_id',
-        'auth_user_key' => 'api_key'
+        'auth_user_key' => 'api_key',
+        'oidc_issuer_endpoint' => 'https://issuer.com'
       }
     }
   end
@@ -98,17 +104,21 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100/metrics')
                                                  .and_return(metrics)
     expect(internal_http_client).to receive(:post).with('/admin/api/services/100/metrics/1/methods', anything)
-                                                  .exactly(3).times
+                                                  .at_least(:once)
                                                   .and_return('id' => '1')
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100/proxy/mapping_rules').and_return(existing_mapping_rules)
     expect(internal_http_client).to receive(:delete).with('/admin/api/services/100/proxy/mapping_rules/1')
     expect(internal_http_client).to receive(:post).with('/admin/api/services/100/proxy/mapping_rules', anything)
-                                                  .exactly(3).times
+                                                  .at_least(:once)
     expect(internal_http_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100').and_return(service_attr)
-    expect(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy', anything)
+    expect(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy', anything).and_return({})
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100/proxy/policies')
                                                  .and_return(service_policies)
+    # Not all the tests update the following settings
+    allow(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy/oidc_configuration', anything).and_return({})
+    allow(internal_http_client).to receive(:put).with('/admin/api/services/100/proxy/policies', anything).and_return({})
+
     ##
     # External http client stub
     allow(external_http_client).to receive(:post).with('/admin/api/services', anything)
@@ -125,6 +135,8 @@ RSpec.shared_context :import_oas_stubbed_api3scale_client do
                                                 .and_return(external_activedocs)
     allow(external_http_client).to receive(:get).with('/admin/api/services/100/proxy')
                                                 .and_return(external_proxy)
+    allow(external_http_client).to receive(:get).with('/admin/api/services/100')
+                                                .and_return(service_attr)
   end
 end
 
@@ -148,9 +160,6 @@ RSpec.shared_examples 'oas imported' do
   let(:expected_credentials_location) { 'headers' }
   let(:expected_auth_user_key) { 'api_key' }
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
-  let(:service_active_docs) { service.list_activedocs }
-  let(:service_proxy) { service.show_proxy }
-  let(:oas_resource_json) { JSON.pretty_generate(YAML.safe_load(File.read(oas_resource_path))) }
 
   it 'methods are created' do
     expect { subject }.to output.to_stdout
@@ -216,6 +225,7 @@ RSpec.describe 'e2e OpenAPI import' do
     endpoint_uri.to_s
   end
   let(:oas_resource_path) { File.join(resources_path, 'petstore.yaml') }
+  let(:oas_resource_json) { JSON.pretty_generate(YAML.safe_load(File.read(oas_resource_path))) }
   let(:command_line_str) { "import openapi -t #{system_name} -d #{destination_url} #{oas_resource_path}" }
   subject { ThreeScaleToolbox::CLI.run(command_line_str.split) }
   let(:service_id) do
@@ -225,6 +235,8 @@ RSpec.describe 'e2e OpenAPI import' do
   let(:service) do
     ThreeScaleToolbox::Entities::Service.new(id: service_id, remote: api3scale_client)
   end
+  let(:service_active_docs) { service.list_activedocs }
+  let(:service_proxy) { service.show_proxy }
 
   context 'when target service exists' do
     before :example do
@@ -238,5 +250,27 @@ RSpec.describe 'e2e OpenAPI import' do
 
   context 'when target service does not exist' do
     it_behaves_like 'oas imported'
+  end
+
+  context 'import oidc service' do
+    let(:oas_resource_path) { File.join(resources_path, 'oidc.yaml') }
+    let(:backend_version) { 'oidc' }
+    let(:issuer_endpoint) { 'https://issuer.com' }
+    let(:service_settings) { service.show_service }
+    let(:credentials_location) { 'headers' }
+    let(:command_line_str) do
+      "import openapi -t #{system_name} --oidc-issuer-endpoint=#{issuer_endpoint} " \
+      " -d #{destination_url} #{oas_resource_path}"
+    end
+
+    it 'service oidc settings are updated' do
+      expect { subject }.to output.to_stdout
+      expect(subject).to eq(0)
+      expect(service_settings).not_to be_nil
+      expect(service_settings).to include('backend_version' => backend_version)
+      expect(service_proxy).not_to be_nil
+      expect(service_proxy).to include('oidc_issuer_endpoint' => issuer_endpoint,
+                                       'credentials_location' => credentials_location)
+    end
   end
 end
