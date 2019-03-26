@@ -10,7 +10,7 @@ module ThreeScaleToolbox
         plan_mapping.each do |plan_id, target_plan|
           limits = source.plan_limits(plan_id)
           limits_target = target.plan_limits(target_plan['id'])
-          missing_limits = missing_limits(limits, limits_target)
+          missing_limits = missing_limits(limits, limits_target, metrics_map)
           missing_limits.each do |limit|
             limit.delete('links')
             target.create_application_plan_limit(
@@ -26,9 +26,10 @@ module ThreeScaleToolbox
 
       private
 
-      def missing_limits(source_limits, target_limits)
+      def missing_limits(source_limits, target_limits, metrics_map)
         ThreeScaleToolbox::Helper.array_difference(source_limits, target_limits) do |limit, target|
-          ThreeScaleToolbox::Helper.compare_hashes(limit, target, ['period'])
+          ThreeScaleToolbox::Helper.compare_hashes(limit, target, ['period']) &&
+            metrics_map.fetch(limit.fetch('metric_id')) == target.fetch('metric_id')
         end
       end
     end

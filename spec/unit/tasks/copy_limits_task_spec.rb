@@ -120,5 +120,33 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end
+
+    context 'limit from diff metrics' do
+      let(:source_limits) { [limit_0] }
+      let(:target_plans) { [plan_0] }
+      let(:target_metrics) { [metric_1] }
+      let(:target_limit_0) do
+        { # limit for some other metric '2', same period
+          'id' => 0,
+          'period' => 'year',
+          'value' => 10_000,
+          'metric_id' => 2
+        }
+      end
+      # still missing limit_0 for metric_1
+      let(:target_limits) { [target_limit_0] }
+
+      before :each do
+        expect(source).to receive(:plan_limits).with(0).and_return(source_limits)
+        expect(target).to receive(:plan_limits).with(0).and_return(target_limits)
+      end
+
+      it 'calls create_application_plan_limit method' do
+        expect(target).to receive(:create_application_plan_limit).with(plan_0['id'],
+                                                                       metric_1['id'],
+                                                                       limit_0)
+        expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
+      end
+    end
   end
 end

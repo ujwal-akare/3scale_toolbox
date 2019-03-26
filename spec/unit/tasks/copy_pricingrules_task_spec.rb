@@ -14,8 +14,20 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
       {
         'id' => 1,
         'name' => 'pr_1',
-        'system_name' => 'pr_1',
+        'cost_per_unit' => '1.0',
+        'min' => 1,
+        'max' => 1000,
         'metric_id' => 0
+      }
+    end
+    let(:pricing_rule_1) do
+      {
+        'id' => 1,
+        'name' => 'pr_2',
+        'cost_per_unit' => '1.0',
+        'min' => 1,
+        'max' => 1000,
+        'metric_id' => 2
       }
     end
     let(:source_plans) { [plan_0] }
@@ -41,34 +53,44 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
       end
     end
 
-    context 'no pricingrules match' do
-      let(:source_pricingrules) { [] }
-      let(:target_pricingrules) { [] }
+    context 'application plans match' do
       before :each do
         expect(source_remote).to receive(:list_pricingrules_per_application_plan).and_return(source_pricingrules)
         expect(target_remote).to receive(:list_pricingrules_per_application_plan).and_return(target_pricingrules)
       end
 
-      # missing_pricingrules is an empty set
-      it 'does not call create_pricingrule method' do
-        expect { subject.call }.to output(/Missing 0 pricing rules/).to_stdout
-      end
-    end
+      context 'no pricingrules match' do
+        let(:source_pricingrules) { [] }
+        let(:target_pricingrules) { [] }
 
-    context 'pricingrules match' do
-      let(:source_pricingrules) { [pricing_rule_0] }
-      let(:target_pricingrules) { [] }
-      before :each do
-        expect(source_remote).to receive(:list_pricingrules_per_application_plan).and_return(source_pricingrules)
-        expect(target_remote).to receive(:list_pricingrules_per_application_plan).and_return(target_pricingrules)
+        # missing_pricingrules is an empty set
+        it 'does not call create_pricingrule method' do
+          expect { subject.call }.to output(/Missing 0 pricing rules/).to_stdout
+        end
       end
 
-      # missing_pricingrules is an empty set
-      it 'does not call create_pricingrule method' do
-        expect(target_remote).to receive(:create_pricingrule).with(plan_0['id'],
-                                                                   metric_1['id'],
-                                                                   pricing_rule_0)
-        expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+      context 'target pricingrules empty' do
+        let(:source_pricingrules) { [pricing_rule_0] }
+        let(:target_pricingrules) { [] }
+
+        it 'call create_pricingrule method' do
+          expect(target_remote).to receive(:create_pricingrule).with(plan_0['id'],
+                                                                     metric_1['id'],
+                                                                     pricing_rule_0)
+          expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+        end
+      end
+
+      context 'pricingrules from diff metrics' do
+        let(:source_pricingrules) { [pricing_rule_0] }
+        let(:target_pricingrules) { [pricing_rule_1] } # pricing_rule_1 does not belong to same metric
+
+        it 'does not call create_pricingrule method' do
+          expect(target_remote).to receive(:create_pricingrule).with(plan_0['id'],
+                                                                     metric_1['id'],
+                                                                     pricing_rule_0)
+          expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+        end
       end
     end
   end

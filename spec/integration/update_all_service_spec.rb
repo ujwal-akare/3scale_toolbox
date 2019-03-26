@@ -62,7 +62,7 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     {
       'pricing_rules' => [
         { 'pricing_rule' => {
-          'id' => 4, 'name' => 'pr_1', 'system_name' => 'pr_1'
+          'id' => 4, 'name' => 'pr_1', 'metric_id' => '1'
         } }
       ]
     }
@@ -72,7 +72,7 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     {
       'pricing_rules' => [
         { 'pricing_rule' => {
-          'id' => 8, 'name' => 'pr_2', 'system_name' => 'pr_2'
+          'id' => 8, 'name' => 'pr_2', 'metric_id' => '1'
         } }
       ]
     }
@@ -269,7 +269,7 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     {
       'limits' => [
         {
-          'limit' => { 'id' => '1' }
+          'limit' => { 'id' => '1', 'metric_id' => '1' }
         }
       ]
     }
@@ -310,7 +310,7 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     {
       'pricing_rules' => [
         { 'pricing_rule' => {
-          'id' => 9, 'name' => 'pr_0', 'system_name' => 'pr_0'
+          'id' => 9, 'name' => 'pr_0', 'metric_id' => '1'
         } }
       ]
     }
@@ -362,6 +362,8 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     expect(internal_http_client).to receive(:post).with('/admin/api/services/100/proxy/mapping_rules', anything)
     # get source plan limits
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/limits').at_least(:once).and_return(internal_source_app_limits)
+    # create plan limits
+    expect(internal_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/100/limits', anything)
     # delete target mapping rule
     expect(internal_http_client).to receive(:delete).with('/admin/api/services/100/proxy/mapping_rules/1')
     # get source policies
@@ -372,8 +374,10 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     expect(internal_http_client).to receive(:get).with('/admin/api/active_docs').at_least(:once).and_return(internal_source_activedocs)
     # crete activedocs
     expect(internal_http_client).to receive(:post).with('/admin/api/active_docs', anything).and_return({})
-    # pricing rules
+    # get pricing rules
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/pricing_rules').exactly(2).times.and_return(internal_source_pricingrules_01)
+    # create pricing rules
+    expect(internal_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/100/pricing_rules', anything)
   end
 end
 
