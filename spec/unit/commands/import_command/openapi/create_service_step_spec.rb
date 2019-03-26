@@ -20,6 +20,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
     before :example do
       allow(api_spec).to receive(:title).and_return(title)
       allow(api_spec).to receive(:description).and_return(description)
+      allow(api_spec).to receive(:backend_version).and_return('oidc')
     end
 
     context 'when service exists' do
@@ -32,7 +33,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
       let(:expected_settings) do
         {
           'name' => title,
-          'description' => description
+          'description' => description,
+          'backend_version' => 'oidc'
         }
       end
 

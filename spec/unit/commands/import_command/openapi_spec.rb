@@ -27,7 +27,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethodsStep,
           ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActiveDocsStep
+          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActiveDocsStep,
+          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceProxyStep,
+          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceOidcConfStep,
+          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePoliciesStep,
         ].each do |task_class|
           task = instance_double(task_class.to_s)
           task_class_obj = class_double(task_class).as_stubbed_const

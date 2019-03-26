@@ -8,6 +8,9 @@ require '3scale_toolbox/commands/import_command/openapi/create_method_step'
 require '3scale_toolbox/commands/import_command/openapi/create_mapping_rule_step'
 require '3scale_toolbox/commands/import_command/openapi/create_service_step'
 require '3scale_toolbox/commands/import_command/openapi/create_activedocs_step'
+require '3scale_toolbox/commands/import_command/openapi/update_service_proxy_step'
+require '3scale_toolbox/commands/import_command/openapi/update_service_oidc_conf_step'
+require '3scale_toolbox/commands/import_command/openapi/update_policies_step'
 
 module ThreeScaleToolbox
   module Commands
@@ -28,6 +31,8 @@ module ThreeScaleToolbox
               option  :t, 'target_system_name', 'Target system name', argument: :required
               flag    nil, 'activedocs-hidden', 'Create ActiveDocs in hidden state'
               flag    nil, 'skip-openapi-validation', 'Skip OpenAPI schema validation'
+              option  nil, 'oidc-issuer-endpoint', 'OIDC Issuer Endpoint', argument: :required
+              option  nil, 'default-credentials-userkey', 'Default credentials policy userkey', argument: :required
               param   :openapi_resource
 
               runner OpenAPISubcommand
@@ -41,6 +46,9 @@ module ThreeScaleToolbox
             tasks << ThreeScaleToolbox::Tasks::DestroyMappingRulesTask.new(context)
             tasks << CreateMappingRulesStep.new(context)
             tasks << CreateActiveDocsStep.new(context)
+            tasks << UpdateServiceProxyStep.new(context)
+            tasks << UpdateServiceOidcConfStep.new(context)
+            tasks << UpdatePoliciesStep.new(context)
 
             # run tasks
             tasks.each(&:call)
@@ -60,6 +68,8 @@ module ThreeScaleToolbox
               threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name],
               activedocs_published: !options[:'activedocs-hidden'],
+              oidc_issuer_endpoint: options[:'oidc-issuer-endpoint'],
+              default_credentials_userkey: options[:'default-credentials-userkey'],
               skip_openapi_validation: options[:'skip-openapi-validation']
             }
           end

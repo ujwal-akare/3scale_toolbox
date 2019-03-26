@@ -46,6 +46,18 @@ module ThreeScaleToolbox
           def system_name_already_taken_error?(error)
             Array(Hash(error)['system_name']).any? { |msg| msg.match(/has already been taken/) }
           end
+
+          def security
+            api_spec.security
+          end
+
+          def oidc_issuer_endpoint
+            context[:oidc_issuer_endpoint]
+          end
+
+          def default_credentials_userkey
+            context[:default_credentials_userkey]
+          end
         end
       end
     end

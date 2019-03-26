@@ -13,7 +13,7 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: petstore.swagger.io
+host: petstore.swagger.io:443
 basePath: /v2
 tags:
   - name: pet
@@ -126,6 +126,9 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
+security:
+  - api_key: []
+
 securityDefinitions:
   petstore_auth:
     type: oauth2
