@@ -18,7 +18,17 @@ module ThreeScaleToolbox
 
           def pattern
             # apply strict matching
-            operation[:path] + '$'
+            "#{raw_pattern}$"
+          end
+
+          def raw_pattern
+            # According OAS 2.0: path MUST begin with a slash
+            "#{public_base_path}#{operation[:path]}"
+          end
+
+          def public_base_path
+            # remove the last slash of the basePath
+            operation[:public_base_path].gsub(%r{/$}, '')
           end
 
           def delta

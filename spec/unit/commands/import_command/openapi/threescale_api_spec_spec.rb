@@ -52,7 +52,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleAp
     YAML
   end
   let(:openapi) { ThreeScaleToolbox::Swagger.build(YAML.safe_load(content)) }
-  subject { described_class.new(openapi) }
+  let(:base_path) { nil }
+  subject { described_class.new(openapi, base_path) }
 
   it 'title available' do
     expect(subject.title).to eq(title)
@@ -194,6 +195,72 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleAp
 
       it 'raises error' do
         expect { subject.security }.to raise_error(ThreeScaleToolbox::Error, /multiple security/)
+      end
+    end
+  end
+
+  context '#public_base_path' do
+  end
+
+  context '#base_path' do
+    context 'base path is not found' do
+      let(:content) do
+        <<~YAML
+          ---
+          swagger: "2.0"
+          info:
+            title: "#{title}"
+            version: "1.0.0"
+          paths:
+            /pet:
+              post:
+                operationId: "addPet"
+                responses:
+                  405:
+                    description: "invalid input"
+        YAML
+      end
+
+      it 'is path root' do
+        expect(subject.base_path).to eq('/')
+      end
+    end
+
+    context 'base path exists' do
+      let(:content) do
+        <<~YAML
+          ---
+          swagger: "2.0"
+          info:
+            title: "#{title}"
+            version: "1.0.0"
+          basePath: /v2
+          paths:
+            /pet:
+              post:
+                operationId: "addPet"
+                responses:
+                  405:
+                    description: "invalid input"
+        YAML
+      end
+
+      it 'matches' do
+        expect(subject.base_path).to eq('/v2')
+      end
+    end
+  end
+
+  context '#public_base_path' do
+    it 'when not overriden, base path' do
+      expect(subject.public_base_path).to eq(subject.base_path)
+    end
+
+    context 'overriden' do
+      let(:base_path) { 'overriden/path' }
+
+      it 'matches overriden' do
+        expect(subject.public_base_path).to eq(base_path)
       end
     end
   end
