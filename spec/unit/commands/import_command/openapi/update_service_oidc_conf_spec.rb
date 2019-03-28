@@ -5,6 +5,7 @@ RSpec.shared_examples 'oidc is updated with required flow' do
                            implicit_flow_enabled: expected_implicit_flow,
                            service_accounts_enabled: expected_service_accounts,
                            direct_access_grants_enabled: expected_direct_access_grants))
+      .and_return({})
     subject
   end
 end

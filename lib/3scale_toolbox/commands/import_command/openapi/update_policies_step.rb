@@ -20,7 +20,12 @@ module ThreeScaleToolbox
 
             return if source_policies_settings == policies_settings
 
-            service.update_policies('policies_config' => policies_settings)
+            res = service.update_policies('policies_config' => policies_settings)
+            if res.is_a?(Hash) && (errors = res['errors'])
+              raise ThreeScaleToolbox::Error, "Service policies have not been updated. #{errors}"
+            end
+
+            puts 'Service policies updated'
           end
 
           private

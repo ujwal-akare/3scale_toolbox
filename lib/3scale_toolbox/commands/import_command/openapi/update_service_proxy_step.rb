@@ -16,13 +16,19 @@ module ThreeScaleToolbox
 
             return unless proxy_settings.size.positive?
 
-            service.update_proxy proxy_settings
+            res = service.update_proxy proxy_settings
+            if (errors = res['errors'])
+              raise ThreeScaleToolbox::Error, "Service proxy has not been updated. #{errors}"
+            end
+
             puts 'Service proxy updated'
           end
 
           private
 
           def add_api_backend_settings(settings)
+            return if api_spec.host.nil?
+
             scheme = api_spec.schemes.first || 'https'
             host = api_spec.host
 

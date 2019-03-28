@@ -42,6 +42,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
       it 'anonymous policy is created' do
         expect(service).to receive(:update_policies)
           .with(hash_including('policies_config' => array_including(expected_anonymous_policy_settings)))
+          .and_return({})
         subject
       end
 
@@ -111,6 +112,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
       it 'keycloak role check policy is created' do
         expect(service).to receive(:update_policies)
           .with(hash_including('policies_config' => array_including(expected_keycloak_policy_settings)))
+          .and_return({})
         subject
       end
 

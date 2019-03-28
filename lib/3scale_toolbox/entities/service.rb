@@ -124,6 +124,14 @@ module ThreeScaleToolbox
           activedoc['service_id'] == id.to_i
         end
       end
+
+      def show_oidc
+        remote.show_oidc id
+      end
+
+      def update_oidc(oidc_settings)
+        remote.update_oidc(id, oidc_settings)
+      end
     end
   end
 end

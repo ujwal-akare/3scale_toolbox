@@ -194,6 +194,78 @@ RSpec.describe ThreeScaleToolbox::Swagger do
         expect(get_findPetsByStatus_operation.operation_id).to eq('findPetsByStatus')
       end
     end
+
+    context 'extensions in path object' do
+      let(:content) do
+        <<~YAML
+          ---
+          swagger: "2.0"
+          info:
+            title: "#{title}"
+            version: "1.0.0"
+          paths:
+            /pet:
+              get:
+                operationId: "getPet"
+                responses:
+                  200:
+                    description: "successful operation"
+              x-internal-id: 383883
+        YAML
+      end
+      it 'parsed as not empty' do
+        expect(subject.operations).not_to be_empty
+      end
+
+      it 'parsed single operation' do
+        expect(subject.operations.size).to eq(1)
+      end
+
+      it 'parsed operation path /pet' do
+        expect(subject.operations[0].path).to eq('/pet')
+      end
+      it 'parsed operation method get' do
+        expect(subject.operations[0].verb).to eq('get')
+      end
+    end
+
+    context 'parameters in path item object' do
+      let(:content) do
+        <<~YAML
+          ---
+          swagger: "2.0"
+          info:
+            title: "#{title}"
+            version: "1.0.0"
+          paths:
+            /pet/{name}:
+              get:
+                operationId: "getPet"
+                responses:
+                  200:
+                    description: "successful operation"
+              parameters:
+                - name: name
+                  in: path
+                  required: true
+                  type: string
+        YAML
+      end
+      it 'parsed as not empty' do
+        expect(subject.operations).not_to be_empty
+      end
+
+      it 'parsed single operation' do
+        expect(subject.operations.size).to eq(1)
+      end
+
+      it 'parsed operation path /pet/{name}' do
+        expect(subject.operations[0].path).to eq('/pet/{name}')
+      end
+      it 'parsed operation method get' do
+        expect(subject.operations[0].verb).to eq('get')
+      end
+    end
   end
 
   context 'global_security_requirements' do

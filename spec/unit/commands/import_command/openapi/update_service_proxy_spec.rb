@@ -26,7 +26,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
 
       it 'updates proxy' do
         expect(service).to receive(:update_proxy)
-          .with(hash_including(api_backend: 'https://example.com'))
+          .with(hash_including(api_backend: 'https://example.com')).and_return({})
         subject
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
                     api_backend: 'https://example.com',
                     credentials_location: 'query',
                     auth_user_key: key_name
-                  ))
+                  )).and_return({})
           subject
         end
       end
@@ -60,7 +60,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
                     api_backend: 'https://example.com',
                     credentials_location: 'headers',
                     auth_user_key: key_name
-                  ))
+                  )).and_return({})
           subject
         end
       end
@@ -86,7 +86,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
                   api_backend: 'https://example.com',
                   credentials_location: 'headers',
                   oidc_issuer_endpoint: oidc_issuer_endpoint
-                ))
+                )).and_return({})
         subject
       end
     end

@@ -81,8 +81,10 @@ module ThreeScaleToolbox
       def parse_operations
         raw['paths'].flat_map do |path, path_obj|
           path_obj.flat_map do |method, operation|
+            next unless %w[get head post put patch delete trace options].include? method
+
             Operation.new(verb: method, path: path, operation_id: operation['operationId'])
-          end
+          end.compact
         end
       end
 
