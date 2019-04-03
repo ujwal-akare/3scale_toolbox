@@ -417,14 +417,5 @@ RSpec.describe 'Copy Service' do
   let(:source_service) { Helpers::ServiceFactory.new_service source_client }
   let(:target_service) { ThreeScaleToolbox::Entities::Service.new(id: target_service_id, remote: target_client) }
 
-  it_behaves_like 'service settings'
-  it_behaves_like 'proxy settings'
-  it_behaves_like 'service methods'
-  it_behaves_like 'service metrics'
-  it_behaves_like 'service plans'
-  it_behaves_like 'service plan limits'
-  it_behaves_like 'service mapping rules'
-  it_behaves_like 'service proxy policies'
-  it_behaves_like 'service pricing rules'
-  it_behaves_like 'service activedocs'
+  it_behaves_like 'service copied'
 end

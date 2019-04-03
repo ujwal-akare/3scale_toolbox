@@ -10,7 +10,7 @@ module ThreeScaleToolbox
               name: api_spec.title,
               system_name: activedocs_system_name,
               service_id: service.id,
-              body: JSON.pretty_generate(resource),
+              body: JSON.pretty_generate(rewritten_openapi),
               description: api_spec.description,
               published: context[:activedocs_published],
               skip_swagger_validations: context[:skip_openapi_validation]
@@ -46,6 +46,43 @@ module ThreeScaleToolbox
             threescale_client.list_activedocs.select do |activedoc|
               activedoc['system_name'] == activedocs_system_name
             end
+          end
+
+          def rewritten_openapi
+            # Updates on copy
+            # Other processing steps can work with original openapi spec
+            Helper.hash_deep_dup(resource).tap do |activedocs|
+              # public production base URL
+              URI(service.show_proxy.fetch('endpoint')).tap do |uri|
+                activedocs['host'] = "#{uri.host}:#{uri.port}"
+                activedocs['schemes'] = [uri.scheme]
+              end
+
+              # the basePath field is updated to a new value only when overriden by optional param
+              activedocs['basePath'] = api_spec.public_base_path
+
+              # security definitions
+              # just valid for oauth2 when oidc_issuer_endpoint is supplied
+              if !security.nil? && security.type == 'oauth2' && !oidc_issuer_endpoint.nil?
+                # authorizationURL
+                if %w[implicit accessCode].include?(security.flow)
+                  activedocs['securityDefinitions'][security.id]['authorizationUrl'] = authorization_url
+                end
+
+                # tokenUrl
+                if %w[password application accessCode].include?(security.flow)
+                  activedocs['securityDefinitions'][security.id]['tokenUrl'] = token_url
+                end
+              end
+            end
+          end
+
+          def authorization_url
+            "#{oidc_issuer_endpoint}/protocol/openid-connect/auth"
+          end
+
+          def token_url
+            "#{oidc_issuer_endpoint}/protocol/openid-connect/token"
           end
         end
       end

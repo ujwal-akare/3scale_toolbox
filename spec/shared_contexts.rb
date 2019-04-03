@@ -243,6 +243,8 @@ RSpec.shared_context :oas_common_mocked_context do
     allow(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy/oidc_configuration', anything).and_return({})
     allow(internal_http_client).to receive(:put).with('/admin/api/services/100/proxy/policies',
                                                       anything).and_return({})
+    allow(internal_http_client).to receive(:get).with('/admin/api/services/100/proxy')
+                                                .and_return(external_proxy)
     ##
     # External http client stub
     allow(external_http_client).to receive(:post).with('/admin/api/services', anything)

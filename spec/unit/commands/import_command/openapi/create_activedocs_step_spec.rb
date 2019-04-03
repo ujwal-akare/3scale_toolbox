@@ -1,10 +1,18 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActiveDocsStep do
-  let(:api_spec_resource) { double('api_spec_resource') }
+  let(:api_spec_resource) do
+    {
+      'host' => 'original_host.com',
+      'schemes' => ['http'],
+      'basePath' => '/v1',
+    }
+  end
   let(:api_spec) { double('api_spec') }
   let(:service) { double('service') }
   let(:threescale_client) { double('threescale_client') }
   let(:published) { true }
   let(:skip_openapi_validation) { false }
+  let(:oidc_issuer_endpoint) { 'https://client_id:secret@sso.oidcissuer.com/oidc' }
+
   let(:openapi_context) do
     {
       api_spec_resource: api_spec_resource,
@@ -13,13 +21,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
       threescale_client: threescale_client,
       activedocs_published: published,
       skip_openapi_validation: skip_openapi_validation,
+      oidc_issuer_endpoint: oidc_issuer_endpoint
     }
   end
   let(:title) { 'Some Title' }
   let(:description) { 'Some Description' }
-  let(:oas_body) { '{}' }
   let(:service_id) { 1 }
   let(:service_system_name) { 'some_system_name' }
+  let(:new_public_base_path) { '/v2' }
   let(:activedocs_list) do
     [
       { 'id' => 1, 'system_name' => 'one' },
@@ -28,6 +37,15 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
     ]
   end
   let(:service_attrs) { { 'id' => service_id, 'system_name' => service_system_name } }
+  let(:security) do
+    ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'sec_id', type: 'apiKey',
+                                                        name: 'sec_name')
+  end
+  let(:service_proxy) do
+    {
+      'endpoint' => 'https://example.com:443'
+    }
+  end
 
   subject { described_class.new(openapi_context) }
 
@@ -35,9 +53,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
     before :each do
       allow(api_spec).to receive(:title).and_return(title)
       allow(api_spec).to receive(:description).and_return(description)
+      allow(api_spec).to receive(:security).and_return(security)
+      allow(api_spec).to receive(:public_base_path).and_return(new_public_base_path)
       allow(service).to receive(:id).and_return(service_id)
       allow(service).to receive(:show_service).and_return(service_attrs)
-      allow(api_spec_resource).to receive(:to_json).and_return(oas_body)
+      allow(service).to receive(:show_proxy).and_return(service_proxy)
     end
 
     context 'creates activedocs' do
@@ -65,7 +85,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
         subject.call
       end
 
-      it 'with body' do
+      it 'with body host, basePath and schemes updated' do
+        oas_body = JSON.pretty_generate(
+          'host' => 'example.com:443', 'schemes' => ['https'],
+          'basePath' => new_public_base_path
+        )
         expect(threescale_client).to receive(:create_activedocs)
           .with(hash_including(body: oas_body)).and_return({})
         subject.call
@@ -124,6 +148,76 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
       it 'then updates activedocs with expected id' do
         expect(threescale_client).to receive(:update_activedocs).with(2, anything).and_return({})
         expect { subject.call }.to output.to_stdout
+      end
+    end
+
+    context 'oauth sec, flow implicit' do
+      let(:api_spec_resource) do
+        {
+          'host' => 'original_host.com',
+          'schemes' => ['http'],
+          'securityDefinitions' => {
+            'sec_id' => {
+              'authorizationUrl' => 'https://sso.original_host.com:443/auth'
+            }
+          }
+        }
+      end
+      let(:security) do
+        ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'sec_id', type: 'oauth2',
+                                                            name: 'sec_name', flow: 'implicit')
+      end
+
+      it 'body contains updated authorizationUrl' do
+        oas_body = JSON.pretty_generate(
+          'host' => 'example.com:443',
+          'schemes' => ['https'],
+          'securityDefinitions' => {
+            'sec_id' => {
+              'authorizationUrl' => "#{oidc_issuer_endpoint}/protocol/openid-connect/auth"
+            }
+          },
+          'basePath' => new_public_base_path,
+        )
+        expect(threescale_client).to receive(:create_activedocs)
+          .with(hash_including(body: oas_body)).and_return({})
+        subject.call
+      end
+    end
+
+    context 'oauth sec, flow accessCode' do
+      let(:api_spec_resource) do
+        {
+          'host' => 'original_host.com',
+          'schemes' => ['http'],
+          'securityDefinitions' => {
+            'sec_id' => {
+              'authorizationUrl' => 'https://sso.original_host.com:443/auth'
+            }
+          },
+          'basePath' => new_public_base_path,
+        }
+      end
+      let(:security) do
+        ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'sec_id', type: 'oauth2',
+                                                            name: 'sec_name', flow: 'accessCode')
+      end
+
+      it 'body contains updated authorizationUrl and tokenUrl' do
+        oas_body = JSON.pretty_generate(
+          'host' => 'example.com:443',
+          'schemes' => ['https'],
+          'securityDefinitions' => {
+            'sec_id' => {
+              'authorizationUrl' => "#{oidc_issuer_endpoint}/protocol/openid-connect/auth",
+              'tokenUrl' => "#{oidc_issuer_endpoint}/protocol/openid-connect/token"
+            }
+          },
+          'basePath' => new_public_base_path,
+        )
+        expect(threescale_client).to receive(:create_activedocs)
+          .with(hash_including(body: oas_body)).and_return({})
+        subject.call
       end
     end
   end
