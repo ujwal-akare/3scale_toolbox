@@ -3,22 +3,65 @@ require '3scale_toolbox'
 RSpec.describe ThreeScaleToolbox::Entities::Service do
   include_context :random_name
   let(:remote) { double('remote') }
+  let(:common_error_response) { { 'errors' => { 'comp' => 'error' } } }
+  let(:positive_response) { { 'errors' => nil, 'id' => 'some_id' } }
 
   context 'Service.create' do
     let(:system_name) { random_lowercase_name }
-    let(:service) { { 'name' => random_lowercase_name } }
+    let(:deployment_option) { 'hosted' }
+    let(:service) do
+      {
+        'name' => random_lowercase_name,
+        'deployment_option' => deployment_option
+      }
+    end
     let(:service_info) { { remote: remote, service: service, system_name: system_name } }
-    let(:expected_svc) { { 'name' => service['name'], 'system_name' => system_name } }
 
     it 'throws error on remote error' do
-      expect(remote).to receive(:create_service).with(expected_svc).and_return('errors' => true)
+      expect(remote).to receive(:create_service).and_return(common_error_response)
+      expect do
+        described_class.create(service_info)
+      end.to raise_error(ThreeScaleToolbox::Error, /Service has not been saved/)
+    end
+
+    context 'deployment mode invalid' do
+      let(:invalid_deployment_error_response) do
+        {
+          'errors' => {
+            'deployment_option' => ['is not included in the list']
+          }
+        }
+      end
+
+      it 'deployment config is removed' do
+        expect(remote).to receive(:create_service).with(hash_including('deployment_option'))
+                                                  .and_return(invalid_deployment_error_response)
+        expect(remote).to receive(:create_service).with(hash_excluding('deployment_option'))
+                                                  .and_return(positive_response)
+        service_obj = described_class.create(service_info)
+        expect(service_obj.id).to eq(positive_response['id'])
+      end
+
+      it 'throws error when second request returns error' do
+        expect(remote).to receive(:create_service).with(hash_including('deployment_option'))
+                                                  .and_return(invalid_deployment_error_response)
+        expect(remote).to receive(:create_service).with(hash_excluding('deployment_option'))
+                                                  .and_return(common_error_response)
+        expect do
+          described_class.create(service_info)
+        end.to raise_error(ThreeScaleToolbox::Error, /Service has not been saved/)
+      end
+    end
+
+    it 'throws deployment option error' do
+      expect(remote).to receive(:create_service).and_return(common_error_response)
       expect do
         described_class.create(service_info)
       end.to raise_error(ThreeScaleToolbox::Error, /Service has not been saved/)
     end
 
     it 'service instance is returned' do
-      expect(remote).to receive(:create_service).with(expected_svc).and_return('errors' => nil, 'id' => 'some_id')
+      expect(remote).to receive(:create_service).and_return(positive_response)
       service_obj = described_class.create(service_info)
       expect(service_obj.id).to eq('some_id')
       expect(service_obj.remote).to be(remote)

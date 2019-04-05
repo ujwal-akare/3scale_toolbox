@@ -10,16 +10,33 @@ module ThreeScaleToolbox
 
       class << self
         def create(remote:, service:, system_name:)
-          svc_obj = remote.create_service copy_service_params(service, system_name)
-          unless svc_obj['errors'].nil?
-            raise ThreeScaleToolbox::Error, 'Service has not been saved. ' \
-              "Errors: #{svc_obj['errors']}"
+          svc_obj = create_service(
+            remote: remote,
+            service: copy_service_params(service, system_name)
+          )
+          if (errors = svc_obj['errors'])
+            raise ThreeScaleToolbox::Error, "Service has not been saved. Errors: #{errors}" \
           end
 
           new(id: svc_obj.fetch('id'), remote: remote)
         end
 
         private
+
+        def create_service(remote:, service:)
+          svc_obj = remote.create_service service
+
+          # Source and target remotes might not allow same set of deployment options
+          # Invalid deployment option check
+          # use default deployment_option
+          if (errors = svc_obj['errors']) &&
+             ThreeScaleToolbox::Helper.service_invalid_deployment_option?(errors)
+            service.delete('deployment_option')
+            svc_obj = remote.create_service(service)
+          end
+
+          svc_obj
+        end
 
         def copy_service_params(original, system_name)
           service_params = Helper.filter_params(VALID_PARAMS, original)
