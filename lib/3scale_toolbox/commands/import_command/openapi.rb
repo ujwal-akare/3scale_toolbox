@@ -46,9 +46,13 @@ module ThreeScaleToolbox
             tasks << ThreeScaleToolbox::Tasks::DestroyMappingRulesTask.new(context)
             tasks << CreateMappingRulesStep.new(context)
             tasks << CreateActiveDocsStep.new(context)
-            tasks << UpdateServiceProxyStep.new(context)
             tasks << UpdateServiceOidcConfStep.new(context)
             tasks << UpdatePoliciesStep.new(context)
+            # Update proxy must be the last step
+            # Proxy update is the mechanism to increase version of the proxy,
+            # Hence propagating (mapping rules, poicies, oidc, auth) update to
+            # latest proxy config, making available to gateway.
+            tasks << UpdateServiceProxyStep.new(context)
 
             # run tasks
             tasks.each(&:call)

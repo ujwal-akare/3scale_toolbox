@@ -19,6 +19,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       allow(api_spec).to receive(:schemes).and_return(schemes)
       allow(api_spec).to receive(:host).and_return(host)
       allow(api_spec).to receive(:security).and_return(security)
+      allow(service).to receive(:id).and_return(1000)
     end
 
     context 'no sec requirements' do
@@ -30,6 +31,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
         subject
       end
     end
+
     context 'apiKey sec requirement' do
       let(:key_name) { 'some_name' }
       let(:security) do
