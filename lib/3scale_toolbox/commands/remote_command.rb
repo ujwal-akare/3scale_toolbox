@@ -1,6 +1,3 @@
-require 'cri'
-require '3scale_toolbox/base_command'
-require '3scale_toolbox/remotes'
 require '3scale_toolbox/commands/remote_command/remote_add'
 require '3scale_toolbox/commands/remote_command/remote_remove'
 require '3scale_toolbox/commands/remote_command/remote_rename'

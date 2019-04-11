@@ -89,15 +89,18 @@ RSpec.shared_examples 'service plan limits' do
     expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
     # already checked there exist more than one app plan
-    source_plans.each do |source_plan|
+    source_plans.each do |source_plan_attrs|
+      source_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: source_plan_attrs['id'],
+                                                                     service: source_service)
       # For each plan, get {source, target} limits
       # Expect for each limit in source,
       # there exists a target limit with custom eq method
-      source_limits = source_service.plan_limits(source_plan['id'])
+      source_limits = source_plan.limits
       expect(source_limits.size).to be > 0
-      copied_plan = plan_mapping.fetch(source_plan['id'])
-      target_limits = target_service.plan_limits(copied_plan['id'])
-      limit_map = limit_mapping(source_limits, target_limits, metrics_mapping)
+      copied_plan = plan_mapping.fetch(source_plan.id)
+      target_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: copied_plan['id'],
+                                                                     service: target_service)
+      limit_map = limit_mapping(source_limits, target_plan.limits, metrics_mapping)
       # Check all mapped values are not nil
       expect(limit_map.size).to be > 0
       expect(limit_map.values).not_to include(nil)

@@ -154,40 +154,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       end
     end
 
-    context '#create_application_plan' do
-      let(:plan) { { 'id': 3 } }
-
-      it 'calls create_application_plan method' do
-        expect(remote).to receive(:create_application_plan).with(id, plan)
-        subject.create_application_plan(plan)
-      end
-    end
-
-    context '#plan_limits' do
-      let(:plan_id) { 3 }
-
-      it 'calls list_application_plan_limits method' do
-        expect(remote).to receive(:list_application_plan_limits).with(plan_id)
-        subject.plan_limits(plan_id)
-      end
-    end
-
-    context '#create_application_plan_limit' do
-      let(:plan_id) { 3 }
-      let(:metric_id) { 4 }
-      let(:limit) do
-        {
-          'period' => 'year',
-          'value' => 10_000
-        }
-      end
-
-      it 'calls create_application_plan_limit method' do
-        expect(remote).to receive(:create_application_plan_limit).with(plan_id, metric_id, limit)
-        subject.create_application_plan_limit(plan_id, metric_id, limit)
-      end
-    end
-
     context '#mapping_rules' do
       it 'calls list_mapping_rules method' do
         expect(remote).to receive(:list_mapping_rules).with(id)

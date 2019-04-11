@@ -15,6 +15,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
    * [Update a service](#update-a-service)
    * [Import from CSV](#import-from-csv)
    * [Import from OpenAPI definition](#import-openapi)
+   * [Export/Import Application Plan](#export-import-application-plan)
    * [Remotes](#remotes)
 * [Development](#development)
    * [Testing](#testing)
@@ -201,6 +202,12 @@ Using an API definition format like OpenAPI, import to your 3scale API
 Currently, only OpenAPI __2.0__ specification (f.k.a. __swagger__) is supported.
 
 [Import from OpenAPI](docs/openapi.md)
+
+### Export Import Application Plan
+
+A single application plan can be exported/imported as `yaml` format.
+
+[Export/Import Application Plan](docs/export-import-app-plan.md)
 
 ### Remotes
 

@@ -1,5 +1,3 @@
-require 'cri'
-require '3scale_toolbox/base_command'
 require '3scale_toolbox/commands/import_command/import_csv'
 require '3scale_toolbox/commands/import_command/openapi'
 

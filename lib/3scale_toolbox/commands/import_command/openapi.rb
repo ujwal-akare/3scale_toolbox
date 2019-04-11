@@ -2,7 +2,6 @@ require '3scale_toolbox/commands/import_command/openapi/method'
 require '3scale_toolbox/commands/import_command/openapi/mapping_rule'
 require '3scale_toolbox/commands/import_command/openapi/operation'
 require '3scale_toolbox/commands/import_command/openapi/step'
-require '3scale_toolbox/commands/import_command/openapi/resource_reader'
 require '3scale_toolbox/commands/import_command/openapi/threescale_api_spec'
 require '3scale_toolbox/commands/import_command/openapi/create_method_step'
 require '3scale_toolbox/commands/import_command/openapi/create_mapping_rule_step'
@@ -18,7 +17,7 @@ module ThreeScaleToolbox
       module OpenAPI
         class OpenAPISubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
-          include ResourceReader
+          include ThreeScaleToolbox::ResourceReader
 
           def self.command
             Cri::Command.define do

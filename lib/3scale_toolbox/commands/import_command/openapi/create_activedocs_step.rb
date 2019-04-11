@@ -20,7 +20,7 @@ module ThreeScaleToolbox
             # Make operation indempotent
             if (errors = res['errors'])
               raise ThreeScaleToolbox::Error, "ActiveDocs has not been created. #{errors}" \
-                unless system_name_already_taken_error? errors
+                unless ThreeScaleToolbox::Helper.system_name_already_taken_error? errors
 
               # if activedocs system_name exists, ignore error, update activedocs
               puts 'Activedocs exists, update!'

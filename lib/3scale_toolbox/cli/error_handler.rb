@@ -1,5 +1,3 @@
-require 'json'
-
 module ThreeScaleToolbox
   module CLI
     class ErrorHandler

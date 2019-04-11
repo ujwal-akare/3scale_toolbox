@@ -1,0 +1,37 @@
+---
+plan:
+  name: basic
+  state: published
+  setup_fee: 0.0
+  cost_per_month: 0.0
+  trial_period_days: 0
+  cancellation_period: 0
+  approval_required: false
+  system_name: basic
+  end_user_required: false
+limits:
+- period: year
+  value: 10000
+  metric_system_name: metric_01
+pricingrules:
+- cost_per_unit: '2.0'
+  min: 102
+  max: 200
+  metric_system_name: method_01
+plan_features:
+- name: Unlimited Greetings
+  system_name: unlimited_greetings
+  scope: application_plan
+  visible: true
+metrics:
+- name: metric_01
+  system_name: metric_01
+  friendly_name: metric_01
+  description: Metric01
+  unit: '1'
+methods:
+- name: method_01
+  system_name: method_01
+  friendly_name: method_01
+created_at: '2019-05-01T07:10:18Z'
+toolbox_version: 0.8.0

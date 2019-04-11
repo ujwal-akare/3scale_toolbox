@@ -38,6 +38,14 @@ module ThreeScaleToolbox
           msg.match(/is not included in the list/)
         end
       end
+
+      def system_name_already_taken_error?(error)
+        Array(Hash(error)['system_name']).any? { |msg| msg.match(/has already been taken/) }
+      end
+
+      def period_already_taken_error?(error)
+        Array(Hash(error)['period']).any? { |msg| msg.match(/has already been taken/) }
+      end
     end
   end
 end

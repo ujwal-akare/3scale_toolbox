@@ -1,9 +1,3 @@
-require 'cri'
-require 'uri'
-require 'csv'
-require '3scale/api'
-require '3scale_toolbox/base_command'
-
 module ThreeScaleToolbox
   module Commands
     module ImportCommand

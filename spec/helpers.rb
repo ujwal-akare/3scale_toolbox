@@ -59,7 +59,8 @@ module Helpers
           'name' => name, 'state' => 'published', 'default' => false,
           'custom' => false, 'system_name' => name
         }
-        service.create_application_plan(application_plan)
+        ThreeScaleToolbox::Entities::ApplicationPlan.create(service: service,
+                                                            plan_attrs: application_plan)
       end
     end
 
@@ -69,7 +70,7 @@ module Helpers
         # limits (only limits for hits metric)
         %w[day week month year].each do |period|
           limit = { 'period' => period, 'value' => 10_000 }
-          service.create_application_plan_limit(plan.fetch('id'), hits_id, limit)
+          plan.create_limit(hits_id, limit)
         end
       end
     end
@@ -129,7 +130,7 @@ module Helpers
         ]
       }
     end
- 
+
     def update_proxy_policies
       policies_config = [
         {
@@ -165,7 +166,7 @@ module Helpers
       hits_id = service.hits['id']
       plans.each do |plan|
         pricing_rule = { 'cost_per_unit' => '2.0', 'min' => 102, 'max' => 200 }
-        service.remote.create_pricingrule(plan.fetch('id'), hits_id, pricing_rule)
+        plan.create_pricing_rule(hits_id, pricing_rule)
       end
     end
   end

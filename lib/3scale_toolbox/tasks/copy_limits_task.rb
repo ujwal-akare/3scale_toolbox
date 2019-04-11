@@ -8,19 +8,15 @@ module ThreeScaleToolbox
         metrics_map = metrics_mapping(source.metrics, target.metrics)
         plan_mapping = application_plan_mapping(source.plans, target.plans)
         plan_mapping.each do |plan_id, target_plan|
-          limits = source.plan_limits(plan_id)
-          limits_target = target.plan_limits(target_plan['id'])
-          missing_limits = missing_limits(limits, limits_target, metrics_map)
+          source_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: plan_id, service: source)
+          target_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: target_plan['id'], service: target)
+          missing_limits = missing_limits(source_plan.limits, target_plan.limits, metrics_map)
           missing_limits.each do |limit|
             limit.delete('links')
-            target.create_application_plan_limit(
-              target_plan['id'],
-              metrics_map.fetch(limit.fetch('metric_id')),
-              limit
-            )
+            target_plan.create_limit(metrics_map.fetch(limit.fetch('metric_id')), limit)
           end
           puts "Missing #{missing_limits.size} plan limits from target application plan " \
-            "#{target_plan['id']}. Source plan #{plan_id}"
+            "#{target_plan.id}. Source plan #{plan_id}"
         end
       end
 
