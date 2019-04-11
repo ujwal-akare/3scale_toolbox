@@ -15,8 +15,7 @@ module ThreeScaleToolbox
             if service.nil?
               # Create service and update context
               self.service = Entities::Service.create(remote: threescale_client,
-                                                      service: service_settings,
-                                                      system_name: service_system_name)
+                                                      service_params: service_settings)
               puts "Created service id: #{service.id}, name: #{service_name}"
             else
               service.update(service_settings)
@@ -35,6 +34,7 @@ module ThreeScaleToolbox
               svc['name'] = service_name
               svc['description'] = service_description
               svc['backend_version'] = backend_version
+              svc['system_name'] = service_system_name
             end
           end
 

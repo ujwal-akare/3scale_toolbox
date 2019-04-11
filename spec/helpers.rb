@@ -28,10 +28,13 @@ module Helpers
     def create_service(client)
       service_name = "API_TEST_#{Helpers.random_lowercase_name}_#{Time.now.getutc.to_i}"
       system_name = service_name.delete("\s").downcase
-      service_obj = { 'name' => service_name }
+      service_obj = {
+        'name' => service_name,
+        'system_name' => system_name,
+      }
 
       ThreeScaleToolbox::Entities::Service.create(
-        remote: client, service: service_obj, system_name: system_name
+        remote: client, service_params: service_obj
       )
     end
 

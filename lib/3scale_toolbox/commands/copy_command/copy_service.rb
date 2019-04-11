@@ -58,9 +58,9 @@ module ThreeScaleToolbox
         end
 
         def create_new_service(service, destination)
+          service["system_name"] = options[:target_system_name] if !options[:target_system_name].nil?
           Entities::Service.create(remote: threescale_client(destination),
-                                   service: service,
-                                   system_name: options[:target_system_name] || service['system_name'])
+                                   service_params: service)
         end
       end
     end

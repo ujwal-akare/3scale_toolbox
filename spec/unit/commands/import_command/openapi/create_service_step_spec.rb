@@ -6,19 +6,21 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
   let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:title) { 'Some Title' }
   let(:description) { 'Some Description' }
+  let(:system_name) { 'some_system_name'}
   let(:openapi_context) do
     {
       target: service,
       api_spec: api_spec,
       threescale_client: threescale_client,
-      target_system_name: 'some_system_name'
+      target_system_name: system_name,
     }
   end
   let(:expected_settings) do
     {
       'name' => title,
       'description' => description,
-      'backend_version' => 'oidc'
+      'backend_version' => 'oidc',
+      'system_name' => system_name,
     }
   end
 
@@ -54,7 +56,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
       end
 
       it 'service is created' do
-        expect(service_class).to receive(:create).with(hash_including(service: expected_settings))
+        expect(service_class).to receive(:create).with(hash_including(service_params: expected_settings))
                                                  .and_return(service)
         expect(service).to receive(:id).and_return(service_id)
         expect { subject }.to output(/Created service id: #{service_id}/).to_stdout

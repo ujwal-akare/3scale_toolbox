@@ -10,10 +10,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     let(:service) do
       {
         'name' => random_lowercase_name,
-        'deployment_option' => deployment_option
+        'deployment_option' => deployment_option,
+        'system_name' => system_name,
       }
     end
-    let(:service_info) { { remote: remote, service: service, system_name: system_name } }
+    let(:service_info) { { remote: remote, service_params: service } }
+    let(:expected_svc) { { 'name' => service['name'], 'system_name' => system_name } }
 
     it 'throws error on remote error' do
       expect(remote).to receive(:create_service).and_return(common_error_response)
