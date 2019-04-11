@@ -11,13 +11,30 @@ module ThreeScaleToolbox
 
       def call
         source_obj = source.show_service
-        response = target.update_service(target_service_params(source_obj))
-        raise ThreeScaleToolbox::Error, "Service has not been saved. Errors: #{response['errors']}" unless response['errors'].nil?
+        svc_obj = update_service target_service_params(source_obj)
+        if (errors = svc_obj['errors'])
+          raise ThreeScaleToolbox::Error, "Service has not been saved. Errors: #{errors}" \
+        end
 
         puts "updated service settings for service id #{source.id}..."
       end
 
       private
+
+      def update_service(service)
+        svc_obj = target.update_service service
+
+        # Source and target remotes might not allow same set of deployment options
+        # Invalid deployment option check
+        # use default deployment_option
+        if (errors = svc_obj['errors']) &&
+           ThreeScaleToolbox::Helper.service_invalid_deployment_option?(errors)
+          service.delete('deployment_option')
+          svc_obj = target.update_service(service)
+        end
+
+        svc_obj
+      end
 
       # system name only included when specified from options
       def target_service_params(source)

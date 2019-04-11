@@ -32,6 +32,12 @@ module ThreeScaleToolbox
 
         uri_obj
       end
+
+      def service_invalid_deployment_option?(error)
+        Array(Hash(error)['deployment_option']).any? do |msg|
+          msg.match(/is not included in the list/)
+        end
+      end
     end
   end
 end
