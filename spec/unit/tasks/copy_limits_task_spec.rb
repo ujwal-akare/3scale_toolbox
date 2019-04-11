@@ -125,6 +125,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
         expect(target_remote).to receive(:create_application_plan_limit).with(plan_0['id'],
                                                                        metric_1['id'],
                                                                        limit_0)
+                                                                        .and_return({})
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end
@@ -155,6 +156,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
         expect(target_remote).to receive(:create_application_plan_limit).with(plan_0['id'],
                                                                               metric_1['id'],
                                                                               limit_0)
+                                                                        .and_return({})
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end
