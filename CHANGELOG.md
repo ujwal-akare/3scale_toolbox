@@ -4,6 +4,24 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.8.0]
+
+### Added
+- Print usage when missing subcommand [#106](https://github.com/3scale/3scale_toolbox/pull/106)
+- New swagger parser. Support vendor extensions. [#110](https://github.com/3scale/3scale_toolbox/pull/110)
+- Optionally skip validation of Swagger format [#112](https://github.com/3scale/3scale_toolbox/pull/112)
+- Toolbox optional verbose mode [#115](https://github.com/3scale/3scale_toolbox/pull/115)
+- Update service settings based on security reqs when importing openapi [#116](https://github.com/3scale/3scale_toolbox/pull/116)
+- Deprecate ruby 2.3, add ruby 2.6 support [#131](https://github.com/3scale/3scale_toolbox/pull/131)
+
+### Changed
+- When importing OAS, ActiveDoc is created by default on visible state [#109](https://github.com/3scale/3scale_toolbox/pull/109)
+- Software under Apache 2.0 License [#114](https://github.com/3scale/3scale_toolbox/pull/114)
+
+### Fixed
+- Support system signals for windows systems [#113](https://github.com/3scale/3scale_toolbox/pull/113)
+- Copy service set default deployment option when it is invalid in target env [#126](https://github.com/3scale/3scale_toolbox/pull/126)
+
 ## [0.7.0]
 
 ### Added
@@ -85,7 +103,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.8.0
 [0.7.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.7.0
 [0.6.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.6.0
 [0.5.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.5.0
