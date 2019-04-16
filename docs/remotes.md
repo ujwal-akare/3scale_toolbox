@@ -21,7 +21,7 @@ Added remotes are stored in configuration file and can be used in any command wh
 3scale toolbox configuration file. When not set, the toolbox will use either:
 
 * path specified in the *THREESCALE_CLI_CONFIG* environment variable
-* the default of `$HOME/.3scalerc.yaml` of not specified by --config-file option or environment variable
+* the default of `$HOME/.3scalerc.yaml` when not specified by --config-file option or environment variable
 
 ## Remote URLS
 

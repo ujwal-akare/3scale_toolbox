@@ -50,11 +50,12 @@ COMMANDS
 
 OPTIONS
     -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  /home/eguzki/.3scalerc.yaml)
+                                  $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
     -k --insecure                 Proceed and operate even for server
                                   connections otherwise considered insecure
     -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 ### Copy a service
@@ -91,6 +92,7 @@ OPTIONS FOR COPY
                                          connections otherwise considered
                                          insecure
     -v --version                         Prints the version of this command
+       --verbose                         Verbose mode
 ```
 
 ```shell
@@ -131,6 +133,7 @@ OPTIONS FOR UPDATE
     -k --insecure                 Proceed and operate even for server
                                   connections otherwise considered insecure
     -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 Example:
@@ -182,6 +185,7 @@ OPTIONS FOR IMPORT
     -k --insecure                 Proceed and operate even for server
                                   connections otherwise considered insecure
     -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 Example:

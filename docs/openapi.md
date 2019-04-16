@@ -55,6 +55,7 @@ OPTIONS FOR IMPORT
                                                   insecure
     -v --version                                  Prints the version of this
                                                   command
+       --verbose                                  Verbose mode
 ```
 
 ### OpenAPI definition from filename in path
