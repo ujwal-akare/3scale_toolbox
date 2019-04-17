@@ -5,8 +5,9 @@ module ThreeScaleToolbox
         class ThreeScaleApiSpec
           attr_reader :openapi
 
-          def initialize(openapi)
+          def initialize(openapi, base_path = nil)
             @openapi = openapi
+            @base_path = base_path
           end
 
           def title
@@ -46,11 +47,21 @@ module ThreeScaleToolbox
           def operations
             openapi.operations.map do |op|
               Operation.new(
-                path: "#{openapi.base_path}#{op.path}",
+                base_path: base_path,
+                public_base_path: public_base_path,
+                path: op.path,
                 verb: op.verb,
                 operationId: op.operation_id
               )
             end
+          end
+
+          def public_base_path
+            @base_path || base_path
+          end
+
+          def base_path
+            openapi.base_path || '/'
           end
 
           private

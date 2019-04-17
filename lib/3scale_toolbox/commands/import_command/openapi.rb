@@ -33,6 +33,8 @@ module ThreeScaleToolbox
               flag    nil, 'skip-openapi-validation', 'Skip OpenAPI schema validation'
               option  nil, 'oidc-issuer-endpoint', 'OIDC Issuer Endpoint', argument: :required
               option  nil, 'default-credentials-userkey', 'Default credentials policy userkey', argument: :required
+              option  nil, 'override-private-basepath', 'Override the basepath for the public URLs', argument: :required
+              option  nil, 'override-public-basepath', 'Override the basepath for the private URLs', argument: :required
               param   :openapi_resource
 
               runner OpenAPISubcommand
@@ -64,13 +66,14 @@ module ThreeScaleToolbox
             openapi_resource = load_resource(arguments[:openapi_resource])
             {
               api_spec_resource: openapi_resource,
-              api_spec: ThreeScaleApiSpec.new(load_openapi(openapi_resource)),
+              api_spec: ThreeScaleApiSpec.new(load_openapi(openapi_resource), options[:'override-public-basepath']),
               threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name],
               activedocs_published: !options[:'activedocs-hidden'],
               oidc_issuer_endpoint: options[:'oidc-issuer-endpoint'],
               default_credentials_userkey: options[:'default-credentials-userkey'],
-              skip_openapi_validation: options[:'skip-openapi-validation']
+              skip_openapi_validation: options[:'skip-openapi-validation'],
+              override_private_basepath: options[:'override-private-basepath']
             }
           end
 

@@ -13,3 +13,13 @@ RSpec::Matchers.define :be_subset_of do |superset|
     @keys = keys
   end
 end
+
+RSpec::Matchers.define :excluding_policies do |policy_name|
+  match do |policies_object|
+    return true unless policies_object.key?('policies_config')
+
+    policies_object['policies_config'].all? do |policy|
+      policy[:name] != policy_name
+    end
+  end
+end

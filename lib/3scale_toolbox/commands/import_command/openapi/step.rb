@@ -58,6 +58,10 @@ module ThreeScaleToolbox
           def default_credentials_userkey
             context[:default_credentials_userkey]
           end
+
+          def override_private_basepath
+            context[:override_private_basepath]
+          end
         end
       end
     end

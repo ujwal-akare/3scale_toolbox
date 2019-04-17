@@ -13,7 +13,7 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: petstore.swagger.io:443
+host: echo-api.3scale.net:443
 basePath: /v2
 tags:
   - name: pet
@@ -140,7 +140,7 @@ securityDefinitions:
   api_key:
     type: apiKey
     name: api_key
-    in: header
+    in: query 
 definitions:
   Order:
     type: object
