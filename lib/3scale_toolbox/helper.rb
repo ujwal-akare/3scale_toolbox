@@ -33,6 +33,10 @@ module ThreeScaleToolbox
         uri_obj
       end
 
+      def hash_deep_dup(hash)
+        JSON.parse(JSON.generate(hash))
+      end
+
       def service_invalid_deployment_option?(error)
         Array(Hash(error)['deployment_option']).any? do |msg|
           msg.match(/is not included in the list/)
