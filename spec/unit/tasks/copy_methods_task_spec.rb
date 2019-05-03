@@ -1,9 +1,8 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyMethodsTask do
   context '#call' do
-    let(:source) { double('source') }
-    let(:target) { double('target') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:method_class) { class_double('ThreeScaleToolbox::Entities::Method').as_stubbed_const }
     let(:method_0) do
       {
         'id' => 0,
@@ -54,10 +53,10 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyMethodsTask do
 
       it 'it calls create_method method' do
         # original method has been filtered
-        expect(target).to receive(:create_method).with(
-          target_hits_metric_id,
-          hash_including('system_name' => method_0['system_name'],
-                         'friendly_name' => method_0['friendly_name'])
+        expect(method_class).to receive(:create).with(service: target,
+                                                      parent_id: target_hits_metric_id,
+                                                      attrs: hash_including('system_name' => method_0['system_name'],
+                                                                            'friendly_name' => method_0['friendly_name'])
         )
         expect { subject.call }.to output(/created 1 missing methods/).to_stdout
       end

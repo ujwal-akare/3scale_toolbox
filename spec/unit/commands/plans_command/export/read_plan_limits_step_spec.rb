@@ -1,5 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanLimitsStep do
-  let(:threescale_client) { double('threescale_client') }
+  let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:service_system_name) { 'myservice' }
   let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }
   let(:service_info) { { remote: threescale_client, ref: service_system_name } }
@@ -55,10 +55,13 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanLimits
           { 'id' => '01', 'name' => 'Metric 01', 'system_name' => 'metric_01' }
         ]
       end
+      let(:hits_id) { '1' }
+      let(:hits_metric) { { 'id' => hits_id, 'unit' => '1' } }
 
       before :example do
         expect(service).to receive(:metrics).and_return(service_metrics)
-        expect(service).to receive(:methods).and_return(service_methods)
+        expect(service).to receive(:hits).and_return(hits_metric)
+        expect(service).to receive(:methods).with(hits_id).and_return(service_methods)
       end
 
       it 'limit addded' do

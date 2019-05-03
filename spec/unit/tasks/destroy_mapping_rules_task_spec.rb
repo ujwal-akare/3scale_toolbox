@@ -1,8 +1,6 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::DestroyMappingRulesTask do
   context '#call' do
-    let(:target) { double('target') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
     subject { described_class.new(target: target) }
 
     context 'several mapping rules available' do

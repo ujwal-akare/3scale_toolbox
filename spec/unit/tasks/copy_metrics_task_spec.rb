@@ -1,9 +1,8 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyMetricsTask do
   context '#call' do
-    let(:source) { double('source') }
-    let(:target) { double('target') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:metric_class) { class_double('ThreeScaleToolbox::Entities::Metric').as_stubbed_const }
     let(:metric_0) do
       {
         'id' => 0,
@@ -48,11 +47,10 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyMetricsTask do
       let(:target_metrics) { [metric_1] }
 
       it 'it calls create_metric method' do
-        expect(target).to receive(:create_metric).with(
-          hash_including('name' => metric_0['name'],
-                         'system_name' => metric_0['system_name'],
-                         'unit' => metric_0['unit'])
-        )
+        expect(metric_class).to receive(:create).with(service: target,
+                                                      attrs: hash_including('name' => metric_0['name'],
+                                                                            'system_name' => metric_0['system_name'],
+                                                                            'unit' => metric_0['unit']))
         expect { subject.call }.to output(/created 1 metrics/).to_stdout
       end
     end

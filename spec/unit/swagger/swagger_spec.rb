@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Swagger do
   let(:raw_specification) { YAML.safe_load(content) }
   let(:validate) { true }

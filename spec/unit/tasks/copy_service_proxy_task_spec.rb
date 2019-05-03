@@ -1,9 +1,7 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyServiceProxyTask do
   context '#call' do
-    let(:source) { double('source') }
-    let(:target) { double('target') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
     let(:target_id) { 2 }
     let(:source_proxy) do
       {
@@ -19,7 +17,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyServiceProxyTask do
 
     context '1 missing rule' do
       it 'it calls update_proxy method' do
-        expect(source).to receive(:show_proxy).and_return(source_proxy)
+        expect(source).to receive(:proxy).and_return(source_proxy)
         expect(target).to receive(:update_proxy).with(source_proxy)
         expect(target).to receive(:id).and_return(target_id)
         expect { subject.call }.to output(/updated proxy of #{target_id}/).to_stdout

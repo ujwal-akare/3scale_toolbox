@@ -32,7 +32,7 @@ module ThreeScaleToolbox
           private
 
           def activedocs_system_name
-            @activedocs_system_name ||= service.show_service['system_name']
+            @activedocs_system_name ||= service.attrs['system_name']
           end
 
           def find_activedocs_id
@@ -53,7 +53,7 @@ module ThreeScaleToolbox
             # Other processing steps can work with original openapi spec
             Helper.hash_deep_dup(resource).tap do |activedocs|
               # public production base URL
-              URI(service.show_proxy.fetch('endpoint')).tap do |uri|
+              URI(service.proxy.fetch('endpoint')).tap do |uri|
                 activedocs['host'] = "#{uri.host}:#{uri.port}"
                 activedocs['schemes'] = [uri.scheme]
               end

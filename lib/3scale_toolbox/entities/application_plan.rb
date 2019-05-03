@@ -5,15 +5,15 @@ module ThreeScaleToolbox
         def create(service:, plan_attrs:)
           plan = service.remote.create_application_plan service.id, build_plan_attrs(plan_attrs)
           if (errors = plan['errors'])
-            raise ThreeScaleToolbox::Error, "Application plan has not been saved. Errors: #{errors}"
+            raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan has not been created', errors)
           end
 
-          new(id: plan.fetch('id'), service: service)
+          new(id: plan.fetch('id'), service: service, attrs: plan)
         end
 
         # ref can be system_name or service_id
         def find(service:, ref:)
-          new(id: ref, service: service).tap(&:show)
+          new(id: ref, service: service).tap(&:attrs)
         rescue ThreeScale::API::HttpClient::NotFoundError
           find_by_system_name(service: service, system_name: ref)
         end
@@ -22,7 +22,7 @@ module ThreeScaleToolbox
           plan = service.plans.find { |p| p['system_name'] == system_name }
           return if plan.nil?
 
-          new(id: plan.fetch('id'), service: service)
+          new(id: plan.fetch('id'), service: service, attrs: plan)
         end
 
         def build_plan_attrs(source_attrs)
@@ -30,32 +30,42 @@ module ThreeScaleToolbox
           source_attrs.clone.tap do |new_plan_attrs|
             # plans are created by default in hidden state
             # If published is required, 'state_event' attr has to be added
-            new_plan_attrs['state_event'] = 'publish' if new_plan_attrs['state'] == 'published'
-            new_plan_attrs['state_event'] = 'hide' if new_plan_attrs['state'] == 'hidden'
+            state = new_plan_attrs.delete('state')
+            new_plan_attrs['state_event'] = 'publish' if state == 'published'
+            new_plan_attrs['state_event'] = 'hide' if state == 'hidden'
           end
         end
       end
 
       attr_reader :id, :service, :remote
 
-      def initialize(id:, service:)
+      def initialize(id:, service:, attrs: nil)
         @id = id
         @service = service
         @remote = service.remote
+        @attrs = attrs
       end
 
-      def show
-        remote.show_application_plan service.id, id
+      def attrs
+        @attrs ||= read_plan_attrs
       end
 
       def update(plan_attrs)
-        remote.update_application_plan(service.id, id, self.class.build_plan_attrs(plan_attrs))
+        new_attrs = remote.update_application_plan(service.id, id,
+                                                   self.class.build_plan_attrs(plan_attrs))
+        if (errors = new_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan has not been updated', errors)
+        end
+
+        @attrs = new_attrs
+
+        new_attrs
       end
 
       def make_default
         plan = remote.application_plan_as_default service.id, id
         if (errors = plan['errors'])
-          raise ThreeScaleToolbox::Error, "Application plan has not been set to default. Errors: #{errors}"
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan has not been set to default', errors)
         end
 
         plan
@@ -91,13 +101,27 @@ module ThreeScaleToolbox
       end
 
       def limits
-        remote.list_application_plan_limits id
+        plan_limits = remote.list_application_plan_limits id
+        if plan_limits.respond_to?(:has_key?) && (errors = plan_limits['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Limits per application plan not read', errors)
+        end
+
+        plan_limits
+      end
+
+      def metric_limits(metric_id)
+        # remote.list_metric_limits(plan_id, metric_id) returns all limits for a given metric,
+        # without filtering by app plan
+        # Already reported. https://issues.jboss.org/browse/THREESCALE-2486
+        # Meanwhile, the strategy will be to get all metrics from a given plan
+        # and filter by metric_id
+        limits.select { |limit| limit['metric_id'] == metric_id }
       end
 
       def create_limit(metric_id, limit_attrs)
         limit = remote.create_application_plan_limit id, metric_id, limit_attrs
         if (errors = limit['errors'])
-          raise ThreeScaleToolbox::Error, "Limit has not been created. Errors: #{errors}"
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Limit has not been created', errors)
         end
 
         limit
@@ -106,7 +130,7 @@ module ThreeScaleToolbox
       def update_limit(metric_id, limit_id, limit_attrs)
         limit = remote.update_application_plan_limit id, metric_id, limit_id, limit_attrs
         if (errors = limit['errors'])
-          raise ThreeScaleToolbox::Error, "Limit #{limit_id} has not been updated. Errors: #{errors}"
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Limit not updated', errors)
         end
 
         limit
@@ -137,6 +161,15 @@ module ThreeScaleToolbox
       end
 
       private
+
+      def read_plan_attrs
+        plan_attrs = remote.show_application_plan service.id, id
+        if (errors = plan_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan not read', errors)
+        end
+
+        plan_attrs
+      end
 
       def eternity_zero_limits
         limits.select { |limit| zero_eternity_limit_attrs < limit }

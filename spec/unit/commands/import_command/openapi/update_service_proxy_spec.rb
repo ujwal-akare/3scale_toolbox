@@ -1,6 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceProxyStep do
-  let(:api_spec) { double('api_spec') }
-  let(:service) { double('service') }
+  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:schemes) { [] }
   let(:host) { 'example.com' }
   let(:oidc_issuer_endpoint) { 'https://sso.example.com' }

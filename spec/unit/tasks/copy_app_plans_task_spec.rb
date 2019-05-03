@@ -1,9 +1,7 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
   context '#call' do
-    let(:source) { double('source') }
-    let(:target) { double('target') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
     2.times do |idx|
       let("plan_#{idx}".to_sym) do
         {

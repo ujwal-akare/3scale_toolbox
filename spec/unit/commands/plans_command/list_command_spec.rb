@@ -5,7 +5,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::List::ListSubcommand d
     }
   end
   let(:options) {}
-  let(:remote) { instance_double('ThreeScale::API') }
+  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   subject { described_class.new(options, arguments, nil) }

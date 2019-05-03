@@ -1,9 +1,7 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::DeleteActiveDocsTask do
   context '#call' do
-    let(:target) { double('target') }
-    let(:remote) { double('remote') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
     subject { described_class.new(target: target) }
 
     before :each do
@@ -17,7 +15,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::DeleteActiveDocsTask do
       end
 
       it 'it calls delete_activedocs method on each activedocs' do
-        expect(target).to receive(:list_activedocs).and_return(target_activedocs)
+        expect(target).to receive(:activedocs).and_return(target_activedocs)
         expect(target_activedocs.size).to be > 0
         target_activedocs.each do |activedocs|
           expect(remote).to receive(:delete_activedocs).with(activedocs['id'])

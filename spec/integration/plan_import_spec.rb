@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.shared_context :plan_import_stubbed_api3scale_client do
   let(:endpoint) { 'https://example.com' }
   let(:provider_key) { '123456789' }
@@ -45,6 +43,7 @@ RSpec.shared_context :plan_import_stubbed_api3scale_client do
       }
     }
   end
+  let(:external_plans) { { 'plans' => [external_app_plan] } }
   let(:external_plan_limits) { { 'limits' => [plan_limit_01] } }
   let(:external_plan_prs) { { 'pricing_rules' => [plan_pr_01] } }
   let(:external_plan_features) do
@@ -82,7 +81,6 @@ RSpec.shared_context :plan_import_stubbed_api3scale_client do
   let(:feature_01) { { 'feature' => feature_01_attrs.merge('id' => 1) } }
 
   before :example do
-    puts '============ RUNNING STUBBED 3SCALE API CLIENTS =========='
     ##
     # Internal http client stub
     expect(http_client_class).to receive(:new).and_return(internal_http_client)
@@ -134,7 +132,7 @@ RSpec.shared_context :plan_import_stubbed_api3scale_client do
     allow(external_http_client).to receive(:get).with('/admin/api/services/1000/application_plans/basic')
                                                 .and_raise(ThreeScale::API::HttpClient::NotFoundError)
     allow(external_http_client).to receive(:get).with('/admin/api/services/1000/application_plans')
-                                                .and_return(internal_plans)
+                                                .and_return(external_plans)
     allow(external_http_client).to receive(:get).with('/admin/api/services/1000/application_plans/1')
                                                 .and_return(external_app_plan)
     allow(external_http_client).to receive(:get).with('/admin/api/application_plans/1/limits')
@@ -177,7 +175,7 @@ RSpec.describe 'Application Plan Import' do
   subject { ThreeScaleToolbox::CLI.run(command_line_args) }
 
   after :example do
-    service.delete_service
+    service.delete
   end
 
   it do
@@ -197,15 +195,16 @@ RSpec.describe 'Application Plan Import' do
     file_method = file_methods[0]
     service_metrics = service.metrics
     expect(service_metrics).not_to be_empty
-    service_methods = service.methods
+    service_methods = service.methods(service.hits.fetch('id'))
     expect(service_methods).not_to be_empty
+
     remote_plan_client = ThreeScaleToolbox::Entities::ApplicationPlan.find(
       service: service, ref: file_plan['system_name']
     )
     expect(remote_plan_client).not_to be_nil
 
     # check imported plan attrs match plan attr read from remote
-    expect(remote_plan_client.show).to include(file_plan)
+    expect(remote_plan_client.attrs).to include(file_plan)
 
     # check imported plan limts
     remote_plan_limits = remote_plan_client.limits

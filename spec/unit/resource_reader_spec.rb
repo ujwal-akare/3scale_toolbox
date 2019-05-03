@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.shared_examples 'content is read' do
   let(:result) { subject.read_content(resource) }
 

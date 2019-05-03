@@ -1,5 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricingRulesStep do
-  let(:threescale_client) { double('threescale_client') }
+  let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:service_system_name) { 'myservice' }
   let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }
   let(:service_info) { { remote: threescale_client, ref: service_system_name } }
@@ -49,14 +49,17 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
           { 'id' => '02', 'name' => 'Method 01', 'system_name' => 'method_01' }
         ]
       end
+      let(:hits_metric) { { 'id' => '100', 'system_name' => 'hits' } }
       # service metrics include service methods
       let(:service_metrics) do
         service_methods + [
-          { 'id' => '01', 'name' => 'Metric 01', 'system_name' => 'metric_01' }
+          { 'id' => '01', 'name' => 'Metric 01', 'system_name' => 'metric_01' },
+          hits_metric
         ]
       end
 
       before :example do
+        expect(service).to receive(:hits).and_return(hits_metric)
         expect(service).to receive(:metrics).and_return(service_metrics)
         expect(service).to receive(:methods).and_return(service_methods)
       end

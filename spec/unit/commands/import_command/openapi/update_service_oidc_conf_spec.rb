@@ -11,8 +11,8 @@ RSpec.shared_examples 'oidc is updated with required flow' do
 end
 
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceOidcConfStep do
-  let(:api_spec) { double('api_spec') }
-  let(:service) { double('service') }
+  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:openapi_context) do
     {
       target: service,

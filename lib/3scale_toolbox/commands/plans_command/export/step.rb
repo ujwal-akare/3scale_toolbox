@@ -50,7 +50,7 @@ module ThreeScaleToolbox
           end
 
           def service_methods
-            context[:service_methods] ||= service.methods
+            context[:service_methods] ||= service.methods(service_hits['id'])
           end
 
           def metric_info(elem, elem_name)
@@ -87,6 +87,10 @@ module ThreeScaleToolbox
 
           def find_method(id)
             service_methods.find { |method| method['id'] == id }
+          end
+
+          def service_hits
+            context[:service_hits] ||= service.hits
           end
         end
       end

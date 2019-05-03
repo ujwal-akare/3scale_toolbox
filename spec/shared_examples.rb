@@ -35,23 +35,30 @@ RSpec.shared_examples 'service copied' do
     expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
 
+    # target_service has stale data after updating service
+    target_service_new = ThreeScaleToolbox::Entities::Service.new(id: target_service.id,
+                                                                  remote: target_service.remote)
+
     # service settings
     compare_keys = ThreeScaleToolbox::Entities::Service::VALID_PARAMS - ['system_name']
+
     expect(
       # looking forward to Hash.slice on ruby 2.5
-      target_service.show_service.select { |k, _| compare_keys.include?(k) }
-    ).to eq(source_service.show_service.select { |k, _| compare_keys.include?(k) })
+      target_service_new.attrs.select { |k, _| compare_keys.include?(k) }
+    ).to eq(source_service.attrs.select { |k, _| compare_keys.include?(k) })
 
     # proxy settings
     compare_keys = %w[api_backend auth_app_key auth_app_id auth_user_key credentials_location]
     expect(
       # looking forward to Hash.slice on ruby 2.5
-      target_service.show_proxy.select { |k, _| compare_keys.include?(k) }
-    ).to eq(source_service.show_proxy.select { |k, _| compare_keys.include?(k) })
+      target_service_new.proxy.select { |k, _| compare_keys.include?(k) }
+    ).to eq(source_service.proxy.select { |k, _| compare_keys.include?(k) })
 
     # service methods
-    source_methods = source_service.methods
-    target_methods = target_service.methods
+    source_hits_id = source_service.hits['id']
+    target_hits_id = target_service_new.hits['id']
+    source_methods = source_service.methods source_hits_id
+    target_methods = target_service_new.methods target_hits_id
     method_keys = %w[friendly_name system_name]
     expect(source_methods.size).to be > 0
     expect(source_methods).to be_subset_of(target_methods).comparing_keys(method_keys)
@@ -81,7 +88,7 @@ RSpec.shared_examples 'service copied' do
       expect(source_limits.size).to be > 0
       copied_plan = plan_mapping.fetch(source_plan.id)
       target_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: copied_plan['id'],
-                                                                     service: target_service)
+                                                                     service: target_service_new)
       limit_map = limit_mapping(source_limits, target_plan.limits, metrics_mapping)
       # Check all mapped values are not nil
       expect(limit_map.size).to be > 0
@@ -90,7 +97,7 @@ RSpec.shared_examples 'service copied' do
 
     # service mapping rules
     source_mapping_rules = source_service.mapping_rules
-    target_mapping_rules = target_service.mapping_rules
+    target_mapping_rules = target_service_new.mapping_rules
     mapping_rule_keys = %w[pattern http_method delta]
     expect(source_mapping_rules.size).to be > 0
     source_mapping_rules.each do |source_mapping_rule|
@@ -103,7 +110,7 @@ RSpec.shared_examples 'service copied' do
     end
     # service proxy policies
     source_policies = source_service.policies
-    target_policies = target_service.policies
+    target_policies = target_service_new.policies
     expect(source_policies.size).to be > 3
     expect(target_policies).to match_array(source_policies)
 
@@ -116,7 +123,7 @@ RSpec.shared_examples 'service copied' do
       source_pricingrules = source_service.remote.list_pricingrules_per_application_plan(source_plan['id'])
       expect(source_pricingrules.size).to be > 0
       copied_plan = plan_mapping.fetch(source_plan['id'])
-      target_pricingrules = target_service.remote.list_pricingrules_per_application_plan(copied_plan['id'])
+      target_pricingrules = target_service_new.remote.list_pricingrules_per_application_plan(copied_plan['id'])
       # the difference should be empty set
       missing_pricingrules = ThreeScaleToolbox::Helper.array_difference(source_pricingrules, target_pricingrules) do |src, target|
         ThreeScaleToolbox::Helper.compare_hashes(src, target, ['system_name'])
@@ -125,8 +132,8 @@ RSpec.shared_examples 'service copied' do
     end
 
     # service activedocs
-    source_activedocs = source_service.list_activedocs
-    target_activedocs = target_service.list_activedocs
+    source_activedocs = source_service.activedocs
+    target_activedocs = target_service_new.activedocs
     activedocs_keys = %w[name]
     expect(source_activedocs.size).to be > 0
     expect(source_activedocs).to be_subset_of(target_activedocs).comparing_keys(activedocs_keys)

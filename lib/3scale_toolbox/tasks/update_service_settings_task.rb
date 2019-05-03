@@ -10,7 +10,7 @@ module ThreeScaleToolbox
       end
 
       def call
-        source_obj = source.show_service
+        source_obj = source.attrs
         svc_obj = update_service target_service_params(source_obj)
         if (errors = svc_obj['errors'])
           raise ThreeScaleToolbox::Error, "Service has not been saved. Errors: #{errors}" \
@@ -22,7 +22,7 @@ module ThreeScaleToolbox
       private
 
       def update_service(service)
-        svc_obj = target.update_service service
+        svc_obj = target.update service
 
         # Source and target remotes might not allow same set of deployment options
         # Invalid deployment option check
@@ -30,7 +30,7 @@ module ThreeScaleToolbox
         if (errors = svc_obj['errors']) &&
            ThreeScaleToolbox::Helper.service_invalid_deployment_option?(errors)
           service.delete('deployment_option')
-          svc_obj = target.update_service(service)
+          svc_obj = target.update service
         end
 
         svc_obj

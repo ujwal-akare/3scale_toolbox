@@ -43,7 +43,7 @@ module ThreeScaleToolbox
           end
 
           def plan_attrs
-            @plan_attrs ||= plan.show
+            @plan_attrs ||= plan.attrs
           end
 
           def plan

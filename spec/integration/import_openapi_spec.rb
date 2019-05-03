@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.shared_context :import_oas_basic_stubbed do
   include_context :oas_common_mocked_context
 
@@ -81,7 +79,7 @@ RSpec.describe 'OpenAPI import basic test' do
   let(:command_line_str) do
     "import openapi -t #{system_name} -d #{destination_url} #{oas_resource_path}"
   end
-  let(:service_active_docs) { service.list_activedocs }
+  let(:service_active_docs) { service.activedocs }
   let(:backend_version) { '1' }
   let(:expected_methods) do
     [
@@ -114,7 +112,8 @@ RSpec.describe 'OpenAPI import basic test' do
     expect(expected_methods.size).to be > 0
     # test Set(service.methods) includes Set(expected_methods)
     # with a custom identity method for methods
-    expect(expected_methods).to be_subset_of(service.methods).comparing_keys(method_keys)
+    hits_id = service.hits['id']
+    expect(expected_methods).to be_subset_of(service.methods(hits_id)).comparing_keys(method_keys)
 
     # mapping rules are created
     expect(expected_mapping_rules.size).to be > 0

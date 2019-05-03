@@ -1,77 +1,50 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethodsStep do
   subject { described_class.new(openapi_context) }
-  let(:service) { double('service') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:method_class) { class_double('ThreeScaleToolbox::Entities::Method').as_stubbed_const }
+  let(:method_0) { instance_double('ThreeScaleToolbox::Entities::Method') }
+  let(:method_1) { instance_double('ThreeScaleToolbox::Entities::Method') }
   let(:op0) { double('op0') }
   let(:op1) { double('op1') }
   let(:operations) { [op0, op1] }
   let(:openapi_context) { { operations: operations, target: service } }
-  let(:method_0) { { 'id' => '0', 'system_name' => 'method0' } }
-  let(:method_1) { { 'id' => '1', 'system_name' => 'method1' } }
-  let(:hits_metric) { { 'id' => '1' } }
+  let(:method_0_attrs) { { 'id' => 0, 'system_name' => 'method0' } }
+  let(:method_1_attrs) { { 'id' => 1, 'system_name' => 'method1' } }
+  let(:hits_metric) { { 'id' => 2 } }
 
   context '#call' do
     before :example do
       expect(service).to receive(:hits).and_return(hits_metric)
-
+      allow(op0).to receive(:method).and_return(method_0_attrs)
+      allow(op1).to receive(:method).and_return(method_1_attrs)
     end
 
     context 'when methods do not exist' do
       before :example do
-        expect(service).to receive(:create_method).with('1', method_0).and_return('id' => '0')
-        expect(service).to receive(:create_method).with('1', method_1).and_return('id' => '1')
-        expect(op0).to receive(:method).and_return(method_0)
-        expect(op1).to receive(:method).and_return(method_1)
+        expect(method_class).to receive(:create).with(service: service, parent_id: 2, attrs: method_0_attrs)
+                                                .and_return(method_0)
+        expect(method_class).to receive(:create).with(service: service, parent_id: 2, attrs: method_1_attrs)
+                                                .and_return(method_1)
+        expect(method_0).to receive(:id).and_return(0)
+        expect(method_1).to receive(:id).and_return(1)
       end
 
       it 'methods created' do
-        expect(op0).to receive(:set).with(:metric_id, '0')
-        expect(op1).to receive(:set).with(:metric_id, '1')
+        expect(op0).to receive(:set).with(:metric_id, 0)
+        expect(op1).to receive(:set).with(:metric_id, 1)
         subject.call
       end
     end
 
     context 'when methods exist' do
-      let(:create_method_error) do
-        {
-          'errors' => {
-            'system_name' => ['has already been taken'],
-            'friendly_name' => ['has already been taken']
-          }
-        }
-      end
-
       before :example do
-        expect(service).to receive(:methods).and_return([method_0, method_1])
-        expect(service).to receive(:create_method).with('1', method_0)
-                                                  .and_return(create_method_error)
-        expect(service).to receive(:create_method).with('1', method_1)
-                                                  .and_return(create_method_error)
-        expect(op0).to receive(:method).twice.and_return(method_0)
-        expect(op1).to receive(:method).twice.and_return(method_1)
+        expect(service).to receive(:methods).and_return([method_0_attrs, method_1_attrs])
       end
 
       it 'methods not created' do
-        expect(op0).to receive(:set).with(:metric_id, '0')
-        expect(op1).to receive(:set).with(:metric_id, '1')
+        expect(op0).to receive(:set).with(:metric_id, 0)
+        expect(op1).to receive(:set).with(:metric_id, 1)
         subject.call
-      end
-    end
-
-    context 'when create method returns unexpected' do
-      let(:create_method_error) do
-        {
-          'errors' => {
-            'friendly_name' => ['something went wrong']
-          }
-        }
-      end
-      before :example do
-        expect(op0).to receive(:method).and_return(method_0)
-        expect(service).to receive(:create_method).and_return(create_method_error)
-      end
-
-      it 'error raised' do
-        expect { subject.call }.to raise_error(ThreeScaleToolbox::Error)
       end
     end
   end

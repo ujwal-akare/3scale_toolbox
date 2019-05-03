@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::CLI::ErrorHandler do
   include_context :temp_dir
 

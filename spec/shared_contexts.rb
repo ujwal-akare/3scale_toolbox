@@ -1,7 +1,3 @@
-require 'erb'
-require 'tmpdir'
-require 'pathname'
-
 RSpec.shared_context :random_name do
   def random_lowercase_name
     Helpers.random_lowercase_name
@@ -99,24 +95,24 @@ end
 RSpec.shared_context :real_copy_cleanup do
   after :example do
     # delete source activedocs
-    source_service.list_activedocs.each do |activedoc|
+    source_service.activedocs.each do |activedoc|
       source_service.remote.delete_activedocs(activedoc['id'])
     end
-    source_service.delete_service
+    source_service.delete
     # delete target activedocs
-    target_service.list_activedocs.each do |activedoc|
+    target_service.activedocs.each do |activedoc|
       target_service.remote.delete_activedocs(activedoc['id'])
     end
-    target_service.delete_service
+    target_service.delete
   end
 end
 
 RSpec.shared_context :import_oas_real_cleanup do
   after :example do
-    service.list_activedocs.each do |activedoc|
+    service.activedocs.each do |activedoc|
       service.remote.delete_activedocs(activedoc['id'])
     end
-    service.delete_service
+    service.delete
   end
 end
 
@@ -164,18 +160,18 @@ RSpec.shared_context :oas_common_context do
   let(:service) do
     ThreeScaleToolbox::Entities::Service.new(id: service_id, remote: api3scale_client)
   end
-  let(:service_proxy) { service.show_proxy }
-  let(:service_settings) { service.show_service }
+  let(:service_proxy) { service.proxy }
+  let(:service_settings) { service.attrs }
 end
 
 RSpec.shared_context :oas_common_mocked_context do
-  let(:internal_http_client) { double('internal_http_client') }
+  let(:internal_http_client) { instance_double('ThreeScale::API::HttpClient', 'internal_http_client') }
   let(:http_client_class) { class_double('ThreeScale::API::HttpClient').as_stubbed_const }
 
   let(:endpoint) { 'https://example.com' }
   let(:provider_key) { '123456789' }
   let(:verify_ssl) { true }
-  let(:external_http_client) { double('external_http_client') }
+  let(:external_http_client) { instance_double('ThreeScale::API::HttpClient', 'external_http_client') }
   let(:api3scale_client) { ThreeScale::API::Client.new(external_http_client) }
   let(:fake_service_id) { 100 }
 
@@ -191,6 +187,8 @@ RSpec.shared_context :oas_common_mocked_context do
       ]
     }
   end
+
+  let(:internal_empty_methods) { { 'methods' => [] } }
 
   let(:service_policies) do
     {
@@ -216,15 +214,20 @@ RSpec.shared_context :oas_common_mocked_context do
     }
   end
 
+  let(:empty_services) { { 'services' => [ ] } }
+
   before :example do
     puts '============ RUNNING STUBBED 3SCALE API CLIENT =========='
     ##
     # Internal http client stub
+    allow(internal_http_client).to receive(:get).with('/admin/api/services').and_return(empty_services)
     allow(internal_http_client).to receive(:post).with('/admin/api/services', anything)
                                                  .and_return(service_attr)
     allow(http_client_class).to receive(:new).and_return(internal_http_client)
     allow(internal_http_client).to receive(:get).with('/admin/api/services/100/metrics')
                                                 .and_return(metrics)
+    allow(internal_http_client).to receive(:get).with('/admin/api/services/100/metrics/1/methods')
+                                                 .and_return(internal_empty_methods)
     allow(internal_http_client).to receive(:post).with('/admin/api/services/100/metrics/1/methods',
                                                        anything).at_least(:once)
                                                  .and_return('id' => '1')

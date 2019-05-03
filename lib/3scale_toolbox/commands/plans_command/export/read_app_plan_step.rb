@@ -7,7 +7,7 @@ module ThreeScaleToolbox
           ##
           # Reads Application plan
           def call
-            result[:plan] = plan.show
+            result[:plan] = plan.attrs
           end
         end
       end

@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.shared_context :plan_export_stubbed_api3scale_client do
   let(:endpoint) { 'https://example.com' }
   let(:provider_key) { '123456789' }
@@ -59,7 +57,7 @@ RSpec.shared_context :plan_export_stubbed_api3scale_client do
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1000')
                                                  .and_return(internal_service)
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1000/application_plans/1')
-                                                 .twice.and_return(internal_app_plan)
+                                                 .and_return(internal_app_plan)
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/limits')
                                                  .and_return(internal_plan_limits)
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/pricing_rules')
@@ -143,24 +141,29 @@ RSpec.describe 'Application Plan Export' do
 
   before :example do
     # method
-    method = service.create_method(service_hits_id, method_attrs)
+    method = ThreeScaleToolbox::Entities::Method.create(service: service,
+                                                        parent_id: service_hits_id,
+                                                        attrs: method_attrs)
     # create more methods not used for limits or pricingrules
     # These methods should not be exported
-    service.create_method(service_hits_id, name: 'method_02')
-    service.create_method(service_hits_id, name: 'method_03')
-
+    ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: service_hits_id,
+                                               attrs: { friendly_name: 'method_02' })
+    ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: service_hits_id,
+                                               attrs: { friendly_name: 'method_03 ' })
     # metric
-    metric = service.create_metric(metric_attrs)
+    metric = ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: metric_attrs)
     # create more metrics not used for limits or pricingrules
     # These metrics should not be exported
-    service.create_metric(name: 'metric_02')
-    service.create_metric(name: 'metric_03')
+    ThreeScaleToolbox::Entities::Metric.create(service: service,
+                                               attrs: { unit: '1', friendly_name: 'metric_02' })
+    ThreeScaleToolbox::Entities::Metric.create(service: service,
+                                               attrs: { unit: '1', friendly_name: 'metric_03' })
 
     # limit on the metric
-    plan.create_limit(metric.fetch('id'), plan_limit_attrs)
+    plan.create_limit(metric.attrs.fetch('id'), plan_limit_attrs)
 
     # pricing rule on the method
-    plan.create_pricing_rule(method.fetch('id'), plan_pr_attrs)
+    plan.create_pricing_rule(method.attrs.fetch('id'), plan_pr_attrs)
 
     # Feature
     feature = service.create_feature(plan_feature_attrs)
@@ -168,7 +171,7 @@ RSpec.describe 'Application Plan Export' do
   end
 
   after :example do
-    service.delete_service
+    service.delete
   end
 
   it do

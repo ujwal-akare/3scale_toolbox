@@ -6,7 +6,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Delete::DeleteSubcomma
     }
   end
   let(:options) {}
-  let(:remote) { instance_double('ThreeScale::API') }
+  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:plan_class) { class_double(ThreeScaleToolbox::Entities::ApplicationPlan).as_stubbed_const }

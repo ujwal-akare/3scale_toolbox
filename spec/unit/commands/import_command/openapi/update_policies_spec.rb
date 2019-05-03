@@ -1,6 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePoliciesStep do
-  let(:api_spec) { double('api_spec') }
-  let(:service) { double('service') }
+  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:default_credentials_userkey) { '12345' }
   let(:override_private_basepath) { nil }
   let(:available_policies) do

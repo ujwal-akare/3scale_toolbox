@@ -1,5 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPlanFeaturesStep do
-  let(:threescale_client) { double('threescale_client') }
+  let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:service_system_name) { 'myservice' }
   let(:plan_system_name) { 'myplan' }
   let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }

@@ -1,11 +1,9 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
   context '#call' do
-    let(:source) { double('source') }
-    let(:source_remote) { double('source_remote') }
-    let(:target) { double('target') }
-    let(:target_remote) { double('target_remote') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:source_remote) { instance_double('ThreeScale::API::Client', 'source_remote') }
+    let(:target_remote) { instance_double('ThreeScale::API::Client', 'target_remote') }
     let(:plan_0) do
       {
         'id' => 0,

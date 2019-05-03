@@ -33,22 +33,16 @@ module ThreeScaleToolbox
           end
 
           def create_metric(metric_attrs)
-            metric = service.create_metric(metric_attrs)
-            if (errors = metric['errors'])
-              raise ThreeScaleToolbox::Error, "Metric has not been created. #{errors}"
-            end
-
-            puts "Created metric: #{metric['system_name']}"
+            metric = ThreeScaleToolbox::Entities::Metric.create(service: service,
+                                                                attrs: metric_attrs)
+            puts "Created metric: #{metric.attrs['system_name']}"
           end
 
           def create_method(method_attrs)
-            method = service.create_method(service_hits['id'], method_attrs)
-            if (errors = method['errors'])
-              raise ThreeScaleToolbox::Error, "Method has not been created. #{errors}" \
-
-            end
-
-            puts "Created method: #{method_attrs['system_name']}"
+            method = ThreeScaleToolbox::Entities::Method.create(service: service,
+                                                                parent_id: service_hits['id'],
+                                                                attrs: method_attrs)
+            puts "Created method: #{method.attrs['system_name']}"
           end
         end
       end

@@ -1,5 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingRulesStep do
-  let(:threescale_client) { double('threescale_client') }
+  let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:service_system_name) { 'myservice' }
   let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }
   let(:service_info) { { remote: threescale_client, ref: service_system_name } }

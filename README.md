@@ -14,10 +14,12 @@ See the LICENSE and NOTICE files that should have been provided along with this 
    * [Copy a service](#copy-a-service)
    * [Update a service](#update-a-service)
    * [Import from CSV](#import-from-csv)
-   * [Import from OpenAPI definition](#import-openapi)
-   * [Export/Import Application Plan](#export-import-application-plan)
+   * [Import from OpenAPI definition](docs/openapi.md)
+   * [Export/Import Application Plan](docs/export-import-app-plan.md)
    * Create, Apply, List, Show, Delete [Application plan](docs/app-plan.md)
-   * [Remotes](#remotes)
+   * Create, Apply, List, Delete [Metric](docs/metric.md)
+   * Create, Apply, List, Delete [Method](docs/method.md)
+   * [Remotes](docs/remotes.md)
 * [Development](#development)
    * [Testing](#testing)
    * [Develop your own core command](#develop-core-command)
@@ -195,26 +197,6 @@ Example:
 ```shell
 3scale import csv --destination=https://provider_key@user-admin.3scale.net --file=examples/import_example.csv
 ```
-
-### Import OpenAPI
-
-Using an API definition format like OpenAPI, import to your 3scale API
-
-Currently, only OpenAPI __2.0__ specification (f.k.a. __swagger__) is supported.
-
-[Import from OpenAPI](docs/openapi.md)
-
-### Export Import Application Plan
-
-A single application plan can be exported/imported as `yaml` format.
-
-[Export/Import Application Plan](docs/export-import-app-plan.md)
-
-### Remotes
-
-Manage set of 3scale instances.
-
-[Howto](docs/remotes.md)
 
 ## Development
 

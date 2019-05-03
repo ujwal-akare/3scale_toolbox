@@ -6,29 +6,35 @@ module ThreeScaleToolbox
           include Step
 
           def call
-            hits_metric_id = service.hits['id']
-            operations.each do |op|
-              res = service.create_method(hits_metric_id, op.method)
-              metric_id = res['id']
-              # if method system_name exists, ignore error and get metric_id
-              # Make operation indempotent
-              if (errors = res['errors'])
-                raise ThreeScaleToolbox::Error, "Metohd has not been saved. #{errors}" \
-                  unless ThreeScaleToolbox::Helper.system_name_already_taken_error? errors
+            missing_operations.each do |op|
+              method = Entities::Method.create(service: service, parent_id: hits_metric_id,
+                                               attrs: op.method)
+              op.set(:metric_id, method.id)
+            end
 
-                metric_id = method_id_by_system_name[op.method['system_name']]
-              end
-
-              op.set(:metric_id, metric_id)
+            existing_operations.each do |op|
+              op.set(:metric_id, service_methods_index.fetch(op.method['system_name']))
             end
           end
 
           private
 
-          def method_id_by_system_name
-            @method_id_by_system_name ||= service.methods.each_with_object({}) do |method, acc|
+          def hits_metric_id
+            @hits_metric_id ||= service.hits['id']
+          end
+
+          def service_methods_index
+            @service_methods_index ||= service.methods(hits_metric_id).each_with_object({}) do |method, acc|
               acc[method['system_name']] = method['id']
             end
+          end
+
+          def missing_operations
+            operations.reject { |op| service_methods_index.key? op.method['system_name'] }
+          end
+
+          def existing_operations
+            operations.select { |op| service_methods_index.key? op.method['system_name'] }
           end
         end
       end
