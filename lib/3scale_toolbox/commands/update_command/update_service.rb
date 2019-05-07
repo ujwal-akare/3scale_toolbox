@@ -41,7 +41,6 @@ module ThreeScaleToolbox
           tasks = []
           unless options[:'rules-only']
             tasks << Tasks::UpdateServiceSettingsTask.new(context.merge(target_name: system_name))
-            tasks << Tasks::CopyServiceProxyTask.new(context)
             tasks << Tasks::CopyMethodsTask.new(context)
             tasks << Tasks::CopyMetricsTask.new(context)
             tasks << Tasks::CopyApplicationPlansTask.new(context)
@@ -50,6 +49,11 @@ module ThreeScaleToolbox
             tasks << Tasks::CopyPricingRulesTask.new(context)
             tasks << Tasks::DeleteActiveDocsTask.new(context)
             tasks << Tasks::CopyActiveDocsTask.new(context)
+            # Copy proxy must be the last task
+            # Proxy update is the mechanism to increase version of the proxy,
+            # Hence propagating (mapping rules, poicies, oidc, auth) update to
+            # latest proxy config, making available to gateway.
+            tasks << Tasks::CopyServiceProxyTask.new(context)
           end
           tasks << Tasks::DestroyMappingRulesTask.new(context) if options[:force]
           tasks << Tasks::CopyMappingRulesTask.new(context)

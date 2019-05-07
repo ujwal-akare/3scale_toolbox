@@ -9,12 +9,15 @@ module ThreeScaleToolbox
           # Updates Proxy config
           def call
             # setting required attrs, operation is idempotent
-            proxy_settings = {}
+            proxy_settings = {
+              # Adding harmless attribute to avoid empty body
+              # update_proxy cannot be done with empty body
+              # and must be done to increase proxy version
+              service_id: service.id
+            }
 
             add_api_backend_settings(proxy_settings)
             add_security_proxy_settings(proxy_settings)
-
-            return unless proxy_settings.size.positive?
 
             res = service.update_proxy proxy_settings
             if (errors = res['errors'])

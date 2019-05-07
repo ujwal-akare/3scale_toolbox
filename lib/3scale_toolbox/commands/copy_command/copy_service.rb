@@ -33,7 +33,6 @@ module ThreeScaleToolbox
           puts "new service id #{target_service.id}"
           context = create_context(source_service, target_service)
           tasks = [
-            Tasks::CopyServiceProxyTask.new(context),
             Tasks::CopyMethodsTask.new(context),
             Tasks::CopyMetricsTask.new(context),
             Tasks::CopyApplicationPlansTask.new(context),
@@ -43,6 +42,11 @@ module ThreeScaleToolbox
             Tasks::CopyPoliciesTask.new(context),
             Tasks::CopyPricingRulesTask.new(context),
             Tasks::CopyActiveDocsTask.new(context),
+            # Copy proxy must be the last task
+            # Proxy update is the mechanism to increase version of the proxy,
+            # Hence propagating (mapping rules, poicies, oidc, auth) update to
+            # latest proxy config, making available to gateway.
+            Tasks::CopyServiceProxyTask.new(context),
           ]
           tasks.each(&:call)
         end
