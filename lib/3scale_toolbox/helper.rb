@@ -51,5 +51,34 @@ module ThreeScaleToolbox
         Array(Hash(error)['period']).any? { |msg| msg.match(/has already been taken/) }
       end
     end
+
+    class BooleanTransformer
+      def call(param_str)
+        raise ArgumentError unless param_str.is_a?(String)
+
+        return true if true?(param_str)
+        return false if false?(param_str)
+
+        raise ArgumentError
+      end
+
+      def true?(param_str)
+        case param_str
+        when 'true', '1'
+          true
+        else
+          false
+        end
+      end
+
+      def false?(param_str)
+        case param_str
+        when 'false', '0'
+          true
+        else
+          false
+        end
+      end
+    end
   end
 end

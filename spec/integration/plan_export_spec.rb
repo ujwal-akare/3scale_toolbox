@@ -83,7 +83,7 @@ RSpec.shared_context :plan_export_stubbed_api3scale_client do
                                                  .and_return(external_metric)
     allow(external_http_client).to receive(:post).with('/admin/api/services/1000/application_plans', anything)
                                                  .and_return(external_app_plan)
-    allow(external_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/3/limits', anything)
+    allow(external_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/3/limits', anything).and_return({})
     allow(external_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/2/pricing_rules', anything)
     allow(external_http_client).to receive(:post).with('/admin/api/services/1000/features', anything)
                                                  .and_return(external_service_feature)

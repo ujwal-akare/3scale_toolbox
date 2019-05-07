@@ -16,6 +16,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
    * [Import from CSV](#import-from-csv)
    * [Import from OpenAPI definition](#import-openapi)
    * [Export/Import Application Plan](#export-import-application-plan)
+   * Create, Apply, List, Show, Delete [Application plan](docs/app-plan.md)
    * [Remotes](#remotes)
 * [Development](#development)
    * [Testing](#testing)

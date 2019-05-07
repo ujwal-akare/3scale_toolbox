@@ -173,8 +173,8 @@ RSpec.shared_context :update_all_stubbed_external_http_client do
     expect(external_target_client).to receive(:post).exactly(4).times.with('/admin/api/services/100/metrics', anything)
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/application_plans', anything).and_return(external_app_plan_01)
     expect(external_target_client).to receive(:post).exactly(2).times.with('/admin/api/services/100/application_plans', anything).and_return(external_app_plan_01)
-    expect(external_source_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything)
-    expect(external_target_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything)
+    expect(external_source_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything).and_return({})
+    expect(external_target_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything).and_return({})
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/proxy/mapping_rules', anything)
     expect(external_target_client).to receive(:post).exactly(2).times.with('/admin/api/services/100/proxy/mapping_rules', anything)
     expect(external_source_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
@@ -363,7 +363,7 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     # get source plan limits
     expect(internal_http_client).to receive(:get).with('/admin/api/application_plans/1/limits').at_least(:once).and_return(internal_source_app_limits)
     # create plan limits
-    expect(internal_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/100/limits', anything)
+    expect(internal_http_client).to receive(:post).with('/admin/api/application_plans/1/metrics/100/limits', anything).and_return({})
     # delete target mapping rule
     expect(internal_http_client).to receive(:delete).with('/admin/api/services/100/proxy/mapping_rules/1')
     # get source policies
