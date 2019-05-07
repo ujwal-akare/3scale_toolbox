@@ -21,6 +21,20 @@ module ThreeScaleToolbox
           new(id: svc_obj.fetch('id'), remote: remote)
         end
 
+        # ref can be system_name or service_id
+        def find(remote:, ref:)
+          new(id: ref, remote: remote).tap(&:show_service)
+        rescue ThreeScale::API::HttpClient::NotFoundError
+          find_by_system_name(remote: remote, system_name: ref)
+        end
+
+        def find_by_system_name(remote:, system_name:)
+          service = remote.list_services.find { |svc| svc['system_name'] == system_name }
+          return if service.nil?
+
+          new(id: service.fetch('id'), remote: remote)
+        end
+
         private
 
         def create_service(remote:, service:)
@@ -94,18 +108,6 @@ module ThreeScaleToolbox
         remote.list_service_application_plans id
       end
 
-      def create_application_plan(plan)
-        remote.create_application_plan id, plan
-      end
-
-      def plan_limits(plan_id)
-        remote.list_application_plan_limits(plan_id)
-      end
-
-      def create_application_plan_limit(plan_id, metric_id, limit)
-        remote.create_application_plan_limit plan_id, metric_id, limit
-      end
-
       def mapping_rules
         remote.list_mapping_rules id
       end
@@ -148,6 +150,17 @@ module ThreeScaleToolbox
 
       def update_oidc(oidc_settings)
         remote.update_oidc(id, oidc_settings)
+      end
+
+      def features
+        remote.list_service_features id
+      end
+
+      def create_feature(attrs)
+        # Workaround until issue is fixed: https://github.com/3scale/porta/issues/774
+        attrs['scope'] = 'ApplicationPlan' if attrs['scope'] == 'application_plan'
+        attrs['scope'] = 'ServicePlan' if attrs['scope'] == 'service_plan'
+        remote.create_service_feature id, attrs
       end
     end
   end

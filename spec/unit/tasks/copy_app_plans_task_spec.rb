@@ -54,7 +54,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyApplicationPlansTask do
       let(:target_plans) { [plan_1] }
 
       it 'call create_application_plan method' do
-        expect(target).to receive(:create_application_plan).with(plan_0)
+        expect(ThreeScaleToolbox::Entities::ApplicationPlan).to receive(:create).with(hash_including(service: target, plan_attrs: plan_0))
         expect { subject.call }.to output(/target service missing 1 application plans/).to_stdout
       end
     end

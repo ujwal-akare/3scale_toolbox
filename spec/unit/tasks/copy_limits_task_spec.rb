@@ -3,7 +3,9 @@ require '3scale_toolbox'
 RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
   context '#call' do
     let(:source) { double('source') }
+    let(:source_remote) { double('source_remote') }
     let(:target) { double('target') }
+    let(:target_remote) { double('target_remote') }
     let(:plan_0) do
       {
         'id' => 0,
@@ -69,6 +71,8 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
     subject { described_class.new(source: source, target: target) }
 
     before :each do
+      allow(source).to receive(:remote).and_return(source_remote)
+      allow(target).to receive(:remote).and_return(target_remote)
       expect(source).to receive(:plans).and_return(source_plans)
       expect(source).to receive(:metrics).and_return(source_metrics)
       expect(target).to receive(:plans).and_return(target_plans)
@@ -93,8 +97,10 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
       let(:target_limits) { [limit_0] }
 
       before :each do
-        expect(source).to receive(:plan_limits).with(0).and_return(source_limits)
-        expect(target).to receive(:plan_limits).with(0).and_return(target_limits)
+        expect(source_remote).to receive(:list_application_plan_limits).with(0)
+                                                                       .and_return(source_limits)
+        expect(target_remote).to receive(:list_application_plan_limits).with(0)
+                                                                       .and_return(target_limits)
       end
 
       it 'does not call create_application_plan_limit method' do
@@ -109,12 +115,14 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
       let(:target_limits) { [] }
 
       before :each do
-        expect(source).to receive(:plan_limits).with(0).and_return(source_limits)
-        expect(target).to receive(:plan_limits).with(0).and_return(target_limits)
+        expect(source_remote).to receive(:list_application_plan_limits).with(0)
+                                                                       .and_return(source_limits)
+        expect(target_remote).to receive(:list_application_plan_limits).with(0)
+                                                                       .and_return(target_limits)
       end
 
       it 'calls create_application_plan_limit method' do
-        expect(target).to receive(:create_application_plan_limit).with(plan_0['id'],
+        expect(target_remote).to receive(:create_application_plan_limit).with(plan_0['id'],
                                                                        metric_1['id'],
                                                                        limit_0)
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
@@ -137,14 +145,16 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyLimitsTask do
       let(:target_limits) { [target_limit_0] }
 
       before :each do
-        expect(source).to receive(:plan_limits).with(0).and_return(source_limits)
-        expect(target).to receive(:plan_limits).with(0).and_return(target_limits)
+        expect(source_remote).to receive(:list_application_plan_limits).with(0)
+                                                                       .and_return(source_limits)
+        expect(target_remote).to receive(:list_application_plan_limits).with(0)
+                                                                       .and_return(target_limits)
       end
 
       it 'calls create_application_plan_limit method' do
-        expect(target).to receive(:create_application_plan_limit).with(plan_0['id'],
-                                                                       metric_1['id'],
-                                                                       limit_0)
+        expect(target_remote).to receive(:create_application_plan_limit).with(plan_0['id'],
+                                                                              metric_1['id'],
+                                                                              limit_0)
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end

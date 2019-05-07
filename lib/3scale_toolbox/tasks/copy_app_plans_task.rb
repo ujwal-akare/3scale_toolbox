@@ -13,7 +13,7 @@ module ThreeScaleToolbox
           if plan.delete('custom') # TODO: what to do with custom plans?
             puts "skipping custom plan #{plan}"
           else
-            target.create_application_plan(plan)
+            ThreeScaleToolbox::Entities::ApplicationPlan.create(service: target, plan_attrs: plan)
           end
         end
         puts "target service missing #{missing_plans.size} application plans"

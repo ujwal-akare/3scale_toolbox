@@ -14,7 +14,7 @@ module ThreeScaleToolbox
               # Make operation indempotent
               if (errors = res['errors'])
                 raise ThreeScaleToolbox::Error, "Metohd has not been saved. #{errors}" \
-                  unless system_name_already_taken_error? errors
+                  unless ThreeScaleToolbox::Helper.system_name_already_taken_error? errors
 
                 metric_id = method_id_by_system_name[op.method['system_name']]
               end

@@ -1,5 +1,3 @@
-require 'cri'
-require '3scale_toolbox/base_command'
 require '3scale_toolbox/commands/copy_command/copy_service'
 
 module ThreeScaleToolbox

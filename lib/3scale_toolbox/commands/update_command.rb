@@ -1,5 +1,3 @@
-require 'cri'
-require '3scale_toolbox/base_command'
 require '3scale_toolbox/commands/update_command/update_service'
 
 module ThreeScaleToolbox

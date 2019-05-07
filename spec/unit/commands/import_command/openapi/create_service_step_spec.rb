@@ -1,3 +1,5 @@
+require '3scale_toolbox'
+
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServiceStep do
   let(:api_spec) { double('api_spec') }
   let(:service_id) { '100' }

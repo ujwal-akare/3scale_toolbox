@@ -353,7 +353,7 @@ RSpec.shared_context :update_all_stubbed_internal_http_client do
     # get target app plans
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100/application_plans').at_least(:once).and_return(internal_target_app_plans)
     # create target app plan
-    expect(internal_http_client).to receive(:post).with('/admin/api/services/100/application_plans', anything)
+    expect(internal_http_client).to receive(:post).with('/admin/api/services/100/application_plans', anything).and_return(internal_app_plan_01)
     # get source mapping rules
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1/proxy/mapping_rules').at_least(:once).and_return(internal_source_mapping_rules)
     # get target mapping rules

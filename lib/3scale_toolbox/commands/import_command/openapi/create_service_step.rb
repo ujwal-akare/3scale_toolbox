@@ -18,7 +18,11 @@ module ThreeScaleToolbox
             raise unless e.message =~ /"system_name"=>\["has already been taken"\]/
 
             # Update service and update context
-            self.service = Entities::Service.new(id: service_id, remote: threescale_client)
+            self.service = Entities::Service.find_by_system_name(remote: threescale_client,
+                                                                 system_name: service_system_name)
+            # It should exist
+            raise ThreeScaleToolbox::Error, "Service with system_name: #{service_system_name}, should exist" if service.nil?
+
             service.update_service(service_settings)
             puts "Updated service id: #{service.id}, name: #{service_name}"
           end
@@ -27,21 +31,6 @@ module ThreeScaleToolbox
 
           def service_system_name
             target_system_name || service_name.downcase.gsub(/[^\w]/, '_')
-          end
-
-          def service_id
-            @service_id ||= fetch_service_id
-          end
-
-          def fetch_service_id
-            # figure out service by system_name
-            service_found = threescale_client.list_services.find do |svc|
-              svc['system_name'] == service_system_name
-            end
-            # It should exist
-            raise ThreeScaleToolbox::Error, "Service with system_name: #{service_system_name}, should exist" if service_found.nil?
-
-            service_found['id']
           end
 
           def service_settings

@@ -47,7 +47,7 @@ OPTIONS FOR IMPORT
     -c --config-file=<value>                      3scale toolbox
                                                   configuration file
                                                   (default:
-                                                  /home/eguzki/.3scalerc.yaml)
+                                                  $HOME/.3scalerc.yaml)
     -h --help                                     show help for this command
     -k --insecure                                 Proceed and operate even
                                                   for server connections

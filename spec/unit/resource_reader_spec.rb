@@ -12,15 +12,15 @@ RSpec.shared_examples 'content is read' do
   end
 end
 
-RSpec.describe 'OpenAPI ResourceReader' do
+RSpec.describe ThreeScaleToolbox::ResourceReader do
   include_context :temp_dir
 
   subject do
-    Class.new { include ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ResourceReader }.new
+    Class.new { include ThreeScaleToolbox::ResourceReader }.new
   end
 
   context '#load_resource' do
-    let(:resource) { tmp_dir.join('petstore.file').tap { |conf| conf.write(content) } }
+    let(:resource) { tmp_dir.join('file.ext').tap { |conf| conf.write(content) } }
     let(:result) { subject.load_resource(resource) }
 
     context 'valid json' do
@@ -83,7 +83,7 @@ RSpec.describe 'OpenAPI ResourceReader' do
     end
 
     context 'from file' do
-      let(:resource) { tmp_dir.join('petstore.yaml').tap { |conf| conf.write(content) } }
+      let(:resource) { tmp_dir.join('file.yaml').tap { |conf| conf.write(content) } }
       it_behaves_like 'content is read'
     end
 
