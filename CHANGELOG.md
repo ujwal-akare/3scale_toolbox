@@ -4,6 +4,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.9.0]
+
+### Added
+- Import openapi: update url-rewritting policy [#121](https://github.com/3scale/3scale_toolbox/pull/121)
+- Dockerfile: build toolbox image [#123](https://github.com/3scale/3scale_toolbox/pull/123)
+- Import openapi: patch activedocs [#124](https://github.com/3scale/3scale_toolbox/pull/124)
+- Export/import Application Plan limits, pricing rules and features [#132](https://github.com/3scale/3scale_toolbox/pull/132)
+- Application plan CRUD operations [#134](https://github.com/3scale/3scale_toolbox/pull/134) 
+
+### Fixed
+- Application plan limits and pricingrules matching rules [#119](https://github.com/3scale/3scale_toolbox/pull/119)
+- Update proxy object with latest changes [#129](https://github.com/3scale/3scale_toolbox/pull/129)
+
 ## [0.8.0]
 
 ### Added
@@ -103,7 +116,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.9.0
 [0.8.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.8.0
 [0.7.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.7.0
 [0.6.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.6.0
