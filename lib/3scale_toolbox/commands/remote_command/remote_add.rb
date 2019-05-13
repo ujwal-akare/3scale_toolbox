@@ -31,7 +31,7 @@ module ThreeScaleToolbox
           # parsing url before trying to create client
           # raises Invalid URL when syntax is incorrect
           ThreeScaleToolbox::Helper.parse_uri(remote_url_str)
-          threescale_client(remote_url_str).list_services
+          threescale_client(remote_url_str).list_accounts
         rescue ThreeScale::API::HttpClient::ForbiddenError
           raise ThreeScaleToolbox::Error, 'remote not valid'
         end

@@ -58,7 +58,7 @@ RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteAddSubcommand d
         FileUtils.cp(File.join(resources_path, 'valid_config_file.yaml'),
                      tmp_dir)
         stub_request(:get, /example.com/).to_return(status: 200,
-                                                    body: '{"services": []}')
+                                                    body: '{"accounts": []}')
       end
       let(:configuration) { ThreeScaleToolbox::Configuration.new(config_file) }
 
