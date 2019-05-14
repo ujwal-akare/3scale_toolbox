@@ -9,10 +9,10 @@ module ThreeScaleToolbox
       include ThreeScaleToolbox::Command
       def self.command
         Cri::Command.define do
-          name        'metrics'
-          usage       'metrics <sub-command> [options]'
-          summary     'metrics super command'
-          description 'Metrics commands'
+          name        'metric'
+          usage       'metric <sub-command> [options]'
+          summary     'metric super command'
+          description 'Metric commands'
 
           run do |_opts, _args, cmd|
             puts cmd.help
