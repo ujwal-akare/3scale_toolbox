@@ -6,9 +6,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
       'basePath' => '/v1',
     }
   end
-  let(:api_spec) { double('api_spec') }
-  let(:service) { double('service') }
-  let(:threescale_client) { double('threescale_client') }
+  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:published) { true }
   let(:skip_openapi_validation) { false }
   let(:oidc_issuer_endpoint) { 'https://client_id:secret@sso.oidcissuer.com/oidc' }
@@ -56,8 +56,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
       allow(api_spec).to receive(:security).and_return(security)
       allow(api_spec).to receive(:public_base_path).and_return(new_public_base_path)
       allow(service).to receive(:id).and_return(service_id)
-      allow(service).to receive(:show_service).and_return(service_attrs)
-      allow(service).to receive(:show_proxy).and_return(service_proxy)
+      allow(service).to receive(:attrs).and_return(service_attrs)
+      allow(service).to receive(:proxy).and_return(service_proxy)
     end
 
     context 'creates activedocs' do

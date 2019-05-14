@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Configuration do
   include_context :temp_dir
 

@@ -1,8 +1,6 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Entities::Service do
   include_context :random_name
-  let(:remote) { double('remote') }
+  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:common_error_response) { { 'errors' => { 'comp' => 'error' } } }
   let(:positive_response) { { 'errors' => nil, 'id' => 'some_id' } }
 
@@ -21,7 +19,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       expect(remote).to receive(:create_service).and_return(common_error_response)
       expect do
         described_class.create(service_info)
-      end.to raise_error(ThreeScaleToolbox::Error, /Service has not been saved/)
+      end.to raise_error(ThreeScaleToolbox::Error, /Service has not been created/)
     end
 
     context 'deployment mode invalid' do
@@ -49,7 +47,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
                                                   .and_return(common_error_response)
         expect do
           described_class.create(service_info)
-        end.to raise_error(ThreeScaleToolbox::Error, /Service has not been saved/)
+        end.to raise_error(ThreeScaleToolbox::Error, /Service has not been created/)
       end
     end
 
@@ -57,7 +55,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       expect(remote).to receive(:create_service).and_return(common_error_response)
       expect do
         described_class.create(service_info)
-      end.to raise_error(ThreeScaleToolbox::Error, /Service has not been saved/)
+      end.to raise_error(ThreeScaleToolbox::Error, /Service has not been created/)
     end
 
     it 'service instance is returned' do
@@ -78,35 +76,42 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         { 'id' => 20, 'system_name' => 'metric_20' }
       ]
     end
+    let(:methods) do
+      [
+        { 'id' => 101, 'system_name' => 'method_101' },
+        { 'id' => 201, 'system_name' => 'method_201' }
+      ]
+    end
+    let(:proxy) { { 'id' => 201 } }
+
     subject { described_class.new(id: id, remote: remote) }
 
-    context '#show_service' do
+    context '#attrs' do
       it 'calls show_service method' do
-        expect(remote).to receive(:show_service).with(id)
-        subject.show_service
+        expect(remote).to receive(:show_service).with(id).and_return({})
+        subject.attrs
       end
     end
 
     context '#update_proxy' do
-      let(:proxy) { { param: 'value' } }
 
       it 'calls update_proxy method' do
-        expect(remote).to receive(:update_proxy).with(id, proxy)
-        subject.update_proxy(proxy)
+        expect(remote).to receive(:update_proxy).with(id, proxy).and_return(proxy)
+        expect(subject.update_proxy(proxy)).to eq(proxy)
       end
     end
 
-    context '#show_proxy' do
+    context '#proxy' do
       it 'calls show_proxy method' do
-        expect(remote).to receive(:show_proxy).with(id)
-        subject.show_proxy
+        expect(remote).to receive(:show_proxy).with(id).and_return(proxy)
+        expect(subject.proxy).to eq(proxy)
       end
     end
 
     context '#metrics' do
       it 'calls list_metrics method' do
-        expect(remote).to receive(:list_metrics).with(id)
-        subject.metrics
+        expect(remote).to receive(:list_metrics).with(id).and_return(metrics)
+        expect(subject.metrics).to eq(metrics)
       end
     end
 
@@ -124,26 +129,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     context '#methods' do
       it 'calls list_methods method' do
-        expect(remote).to receive(:list_metrics).with(id).and_return(metrics)
-        expect(remote).to receive(:list_methods).with(id, hits_metric['id'])
-        subject.methods
-      end
-    end
-
-    context '#create_metric' do
-      it 'calls create_metric method' do
-        expect(remote).to receive(:create_metric).with(id, hits_metric)
-        subject.create_metric(hits_metric)
-      end
-    end
-
-    context '#create_method' do
-      let(:some_method) { { 'id': 5 } }
-      let(:parent_metric_id) { 43 }
-
-      it 'calls create_method method' do
-        expect(remote).to receive(:create_method).with(id, parent_metric_id, some_method)
-        subject.create_method(parent_metric_id, some_method)
+        expect(remote).to receive(:list_methods).with(id, hits_metric['id']).and_return(methods)
+        expect(subject.methods(hits_metric['id'])).to eq(methods)
       end
     end
 
@@ -177,11 +164,21 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       end
     end
 
-    context '#update_service' do
-      let(:params) { { 'id' => 5 } }
+    context '#update' do
+      let(:params) { { 'name' => 'new name' } }
+      let(:new_params) { { 'id' => 5, 'name' => 'new_name' } }
+
+      before :example do
+        expect(remote).to receive(:update_service).with(id, params).and_return(new_params)
+      end
+
       it 'calls update_service method' do
-        expect(remote).to receive(:update_service).with(id, params)
-        subject.update_service(params)
+        expect(subject.update(params)).to eq(new_params)
+      end
+
+      it 'call to attrs returns new params' do
+        subject.update(params)
+        expect(subject.attrs).to eq(new_params)
       end
     end
 
@@ -200,7 +197,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       end
     end
 
-    context '#list_activedocs' do
+    context '#activedocs' do
       let(:owned_activedocs0) do
         {
           'id' => 0, 'name' => 'ad_0', 'system_name' => 'ad_0', 'service_id' => id
@@ -220,7 +217,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
       it 'filters activedocs not owned by service' do
         expect(remote).to receive(:list_activedocs).and_return(activedocs)
-        expect(subject.list_activedocs).to match_array([owned_activedocs0, owned_activedocs1])
+        expect(subject.activedocs).to match_array([owned_activedocs0, owned_activedocs1])
       end
     end
 
@@ -234,17 +231,17 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         }
       end
 
-      context '#show_oidc' do
+      context '#oidc' do
         it 'calls show_oidc method' do
           expect(remote).to receive(:show_oidc).with(id).and_return(oidc_configuration)
-          expect(subject.show_oidc).to eq(oidc_configuration)
+          expect(subject.oidc).to eq(oidc_configuration)
         end
       end
 
       context '#update_oidc' do
         it 'calls update_oidc method' do
-          expect(remote).to receive(:update_oidc).with(id, oidc_configuration)
-          subject.update_oidc(oidc_configuration)
+          expect(remote).to receive(:update_oidc).with(id, oidc_configuration).and_return(oidc_configuration)
+          expect(subject.update_oidc(oidc_configuration)).to eq(oidc_configuration)
         end
       end
     end

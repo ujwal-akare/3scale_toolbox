@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand do
   context '#run' do
     let(:source_service_id) { 100 }
@@ -7,8 +5,8 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
     let(:source_system_name) { 'source_name' }
     let(:source_service_obj) { { 'id' => source_service_id, 'system_name' => source_system_name } }
     let(:target_service_obj) { { 'id' => target_service_id } }
-    let(:source_remote) { double('source_remote') }
-    let(:target_remote) { double('target_remote') }
+    let(:source_remote) { instance_double('ThreeScale::API::Client', 'source_remote') }
+    let(:target_remote) { instance_double('ThreeScale::API::Client', 'target_remote') }
     let(:arguments) { { 'service_id': source_service_id } }
     let(:options) do
       {

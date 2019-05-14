@@ -5,6 +5,8 @@ require '3scale_toolbox/commands/import_command'
 require '3scale_toolbox/commands/update_command'
 require '3scale_toolbox/commands/remote_command'
 require '3scale_toolbox/commands/plans_command'
+require '3scale_toolbox/commands/metrics_command'
+require '3scale_toolbox/commands/methods_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -15,6 +17,8 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::UpdateCommand,
       ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand,
       ThreeScaleToolbox::Commands::PlansCommand,
+      ThreeScaleToolbox::Commands::MetricsCommand,
+      ThreeScaleToolbox::Commands::MethodsCommand,
     ].freeze
   end
 end

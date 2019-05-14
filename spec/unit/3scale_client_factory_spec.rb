@@ -1,14 +1,12 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::ThreeScaleClientFactory do
-  let(:remotes) { double('remotes') }
+  let(:remotes) { instance_double('ThreeScaleToolbox::Remotes', 'remotes') }
   let(:threescale_api) { class_double('ThreeScale::API').as_stubbed_const }
   let(:endpoint) { 'https://example.com' }
   let(:authentication) { '123456789' }
   let(:verify_ssl) { true }
   let(:api_info) { { endpoint: endpoint, provider_key: authentication, verify_ssl: verify_ssl } }
   let(:remote_info) { { endpoint: endpoint, authentication: authentication } }
-  let(:client) { double('client') }
+  let(:client) { instance_double('ThreeScale::API::Client', 'client') }
   let(:verbose) { false }
   let(:remote_str) do
     u = URI(endpoint)
@@ -40,7 +38,7 @@ RSpec.describe ThreeScaleToolbox::ThreeScaleClientFactory do
 
       it 'proxy client is returned' do
         proxy_logger = class_double('ThreeScaleToolbox::ProxyLogger').as_stubbed_const
-        proxied_client = double('proxied_client')
+        proxied_client = instance_double('ThreeScaleToolbox::ProxyLogger', 'proxied_client')
         expect(proxy_logger).to receive(:new).with(client).and_return(proxied_client)
         expect(subject).to eq(proxied_client)
       end

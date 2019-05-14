@@ -1,10 +1,6 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcommand do
   RSpec.shared_examples 'check tasks' do
     it 'all required tasks are run' do
-      # Remote stub
-      remote = double('remote')
       expect(subject).to receive(:threescale_client).twice.and_return(remote)
 
       # Entities::Service instance stub
@@ -30,6 +26,7 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
   end
 
   context '#run' do
+    let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
     let(:source) { 'https://source_key@source.example.com' }
     let(:destination) { 'https://destination_key@destination.example.com' }
     let(:target_system_name) { 'some_system_name' }

@@ -1,14 +1,19 @@
 RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricsStep do
-  let(:threescale_client) { double('threescale_client') }
+  let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:service_system_name) { 'myservice' }
   let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }
   let(:service_info) { { remote: threescale_client, ref: service_system_name } }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:metric_class) { class_double('ThreeScaleToolbox::Entities::Metric').as_stubbed_const }
+  let(:metric) { instance_double('ThreeScaleToolbox::Entities::Metric') }
+  let(:method_class) { class_double('ThreeScaleToolbox::Entities::Method').as_stubbed_const }
+  let(:method) { instance_double('ThreeScaleToolbox::Entities::Method') }
   let(:plan_system_name) { 'myplan' }
   let(:service_methods) { [] }
   let(:service_metrics) { [] }
   let(:resource_methods) { [] }
   let(:resource_metrics) { [] }
+  let(:hits_metric) { { 'id' => 1 } }
   let(:artifacts_resource) do
     {
       'methods' => resource_methods,
@@ -31,6 +36,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricsS
                                              .and_return(service)
       allow(service).to receive(:methods).and_return(service_methods)
       allow(service).to receive(:metrics).and_return(service_metrics)
+      allow(service).to receive(:hits).and_return(hits_metric)
     end
 
     context 'no missing metric or methods' do
@@ -44,17 +50,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricsS
       let(:resource_metrics) { [resource_metric] }
 
       it 'then metric is created' do
-        expect(service).to receive(:create_metric).with(hash_including(resource_metric))
-                                                  .and_return('id' => 1000)
+        expect(metric_class).to receive(:create).with(hash_including(attrs: resource_metric))
+                                                .and_return(metric)
+        expect(metric).to receive(:attrs).and_return(resource_metric)
         expect { subject.call }.to output(/Created metric/).to_stdout
-      end
-
-      context 'and create_metric returns error' do
-        it 'then error raised' do
-          expect(service).to receive(:create_metric).and_return('errors' => 'some error')
-          expect { subject.call }.to raise_error(ThreeScaleToolbox::Error,
-                                                 /Metric has not been created/)
-        end
       end
     end
 
@@ -66,17 +65,11 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricsS
       let(:service_metrics) { [hits_metric] }
 
       it 'then method is created' do
-        expect(service).to receive(:create_method).with(hits_id, hash_including(resource_method))
-                                                  .and_return('id' => 1000)
+        expect(method_class).to receive(:create).with(hash_including(parent_id: hits_id,
+                                                                     attrs: resource_method))
+                                                .and_return(method)
+        expect(method).to receive(:attrs).and_return(resource_method)
         expect { subject.call }.to output(/Created method/).to_stdout
-      end
-
-      context 'and create_method returns error' do
-        it 'then error raised' do
-          expect(service).to receive(:create_method).and_return('errors' => 'some error')
-          expect { subject.call }.to raise_error(ThreeScaleToolbox::Error,
-                                                 /Method has not been created/)
-        end
       end
     end
   end

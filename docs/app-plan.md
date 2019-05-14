@@ -23,7 +23,7 @@ NAME
 
 USAGE
     3scale application-plan create [opts] <remote>
-    <service> <plan_name>
+    <service> <plan-name>
 
 DESCRIPTION
     Create application plan

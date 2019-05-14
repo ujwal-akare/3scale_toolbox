@@ -74,11 +74,11 @@ module ThreeScaleToolbox
           end
 
           def service_hits
-            context[:service_hits] ||= find_service_hits
+            context[:service_hits] ||= service.hits
           end
 
           def service_methods
-            context[:service_methods] ||= service.methods
+            context[:service_methods] ||= service.methods(service_hits['id'])
           end
 
           def invalidate_service_methods
@@ -114,12 +114,6 @@ module ThreeScaleToolbox
           def find_plan
             Entities::ApplicationPlan.find(service: service, ref: plan_system_name).tap do |p|
               raise ThreeScaleToolbox::Error, "Application plan #{plan_system_name} does not exist" if p.nil?
-            end
-          end
-
-          def find_service_hits
-            find_metric_by_system_name('hits').tap do |hits_metric|
-              raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
             end
           end
         end

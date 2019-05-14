@@ -1,4 +1,3 @@
-
 module ThreeScaleToolbox
   module Command
     def self.included(base)

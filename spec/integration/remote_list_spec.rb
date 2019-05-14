@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Commands::RemoteCommand::RemoteListSubcommand do
   include_context :temp_dir
   include_context :resources

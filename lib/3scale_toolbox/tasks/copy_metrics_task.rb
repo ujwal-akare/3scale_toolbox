@@ -14,7 +14,7 @@ module ThreeScaleToolbox
 
         missing.each do |metric|
           metric.delete('links')
-          target.create_metric(metric)
+          Entities::Metric.create(service: target, attrs: metric)
         end
 
         puts "created #{missing.size} metrics on the target service"

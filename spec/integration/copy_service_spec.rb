@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.shared_context :copy_service_stubbed_external_http_client do
   let(:external_source_service) { { 'service' => { 'id' => source_service_id } } }
   let(:external_target_service) { { 'service' => { 'id' => target_service_id } } }
@@ -166,13 +164,13 @@ RSpec.shared_context :copy_service_stubbed_external_http_client do
     ##
     # service creation calls
     expect(external_source_client).to receive(:post).with('/admin/api/services', anything).and_return(external_source_service)
-    expect(external_source_client).to receive(:post).exactly(3).times.with('/admin/api/services/1/metrics/1/methods', anything)
-    expect(external_source_client).to receive(:post).exactly(4).times.with('/admin/api/services/1/metrics', anything)
+    expect(external_source_client).to receive(:post).exactly(3).times.with('/admin/api/services/1/metrics/1/methods', anything).and_return('id' => 11)
+    expect(external_source_client).to receive(:post).exactly(4).times.with('/admin/api/services/1/metrics', anything).and_return('id' => 1)
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/application_plans', anything).and_return(external_app_plan_01)
     expect(external_source_client).to receive(:post).exactly(8).times.with('/admin/api/application_plans/1/metrics/1/limits', anything).and_return({})
     expect(external_source_client).to receive(:post).exactly(2).times.with('/admin/api/services/1/proxy/mapping_rules', anything)
     expect(external_source_client).to receive(:post).with('/admin/api/application_plans/1/metrics/1/pricing_rules', anything).exactly(2).times.and_return({})
-    expect(external_source_client).to receive(:put).with('/admin/api/services/1/proxy/policies', anything)
+    expect(external_source_client).to receive(:put).with('/admin/api/services/1/proxy/policies', anything).and_return({})
     # activedocs
     allow(external_source_client).to receive(:get).with('/admin/api/active_docs').and_return(external_source_activedocs)
     allow(external_target_client).to receive(:get).with('/admin/api/active_docs').and_return(external_target_activedocs)
@@ -182,7 +180,7 @@ RSpec.shared_context :copy_service_stubbed_external_http_client do
 end
 
 RSpec.shared_context :copy_service_stubbed_internal_http_client do
-  let(:internal_http_client) { double('internal_http_client') }
+  let(:internal_http_client) { instance_double('ThreeScale::API::HttpClient', 'internal_http_client') }
   let(:http_client_class) { class_double('ThreeScale::API::HttpClient').as_stubbed_const }
 
   let(:internal_source_service) { { 'service' => { 'id' => source_service_id } } }
@@ -210,11 +208,12 @@ RSpec.shared_context :copy_service_stubbed_internal_http_client do
       ]
     }
   end
+  let(:internal_source_method) do
+    { 'method' => { 'id' => '11', 'system_name' => 'method_11' } }
+  end
   let(:internal_source_methods) do
     {
-      'methods' => [
-        { 'method' => { 'id' => '11', 'system_name' => 'method_11' } }
-      ]
+      'methods' => [internal_source_method]
     }
   end
   let(:internal_target_methods) { { 'methods' => [] } }
@@ -328,7 +327,7 @@ RSpec.shared_context :copy_service_stubbed_internal_http_client do
     # get source proxy settings
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1/proxy').and_return(internal_source_proxy_service)
     # update target proxy settings
-    expect(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy', anything)
+    expect(internal_http_client).to receive(:patch).with('/admin/api/services/100/proxy', anything).and_return(internal_source_proxy_service)
     # get source metrics
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1/metrics').at_least(:once).and_return(internal_source_metrics)
     # get target metrics
@@ -338,7 +337,7 @@ RSpec.shared_context :copy_service_stubbed_internal_http_client do
     # get target methods
     expect(internal_http_client).to receive(:get).with('/admin/api/services/100/metrics/100/methods').and_return(internal_target_methods)
     # create target method
-    expect(internal_http_client).to receive(:post).with('/admin/api/services/100/metrics/100/methods', anything)
+    expect(internal_http_client).to receive(:post).with('/admin/api/services/100/metrics/100/methods', anything).and_return(internal_source_method)
     # get source app plans
     expect(internal_http_client).to receive(:get).with('/admin/api/services/1/application_plans').at_least(:once).and_return(internal_source_app_plans)
     # get target app plans
@@ -382,8 +381,8 @@ RSpec.shared_context :copy_service_stubbed_api3scale_clients do
   let(:target_system_name) { 'stubbed_system_name' }
   let(:source_service_id) { '1' }
   let(:target_service_id) { '100' }
-  let(:external_source_client) { double('external_source_client') }
-  let(:external_target_client) { double('external_target_client') }
+  let(:external_source_client) { instance_double('ThreeScale::API::HttpClient', 'external_source_client') }
+  let(:external_target_client) { instance_double('ThreeScale::API::HttpClient', 'external_target_client') }
   let(:client_url) do
     endpoint_uri = URI(endpoint)
     endpoint_uri.user = provider_key

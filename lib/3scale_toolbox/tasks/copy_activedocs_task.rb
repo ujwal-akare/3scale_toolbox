@@ -6,7 +6,7 @@ module ThreeScaleToolbox
       def call
         puts 'copying all service ActiveDocs'
 
-        target_activedocs = source.list_activedocs.map do |source_activedoc|
+        target_activedocs = source.activedocs.map do |source_activedoc|
           source_activedoc.clone.tap do |target_activedoc|
             target_activedoc.delete('id')
             target_activedoc['service_id'] = target.id

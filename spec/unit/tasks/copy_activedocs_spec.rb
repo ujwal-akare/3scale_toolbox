@@ -1,12 +1,10 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyActiveDocsTask do
   context '#call' do
     let(:source_service_id) { '10'}
     let(:target_service_id) { '20' }
-    let(:source) { double('source') }
-    let(:target) { double('target') }
-    let(:remote) { double('remote') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
     let(:activedocs0) do
       {
         'id' => 0, 'name' => 'ad_0', 'system_name' => 'ad_0', 'service_id' => source_service_id
@@ -22,7 +20,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyActiveDocsTask do
     subject { described_class.new(source: source, target: target) }
 
     before :each do
-      expect(source).to receive(:list_activedocs).and_return(activedocs)
+      expect(source).to receive(:activedocs).and_return(activedocs)
       allow(target).to receive(:id).and_return(target_service_id)
       allow(target).to receive(:remote).and_return(remote)
     end

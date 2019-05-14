@@ -1,8 +1,6 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
-  let(:remote) { double('remote') }
-  let(:service) { double('service') }
+  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
 
   before :example do
     allow(service).to receive(:remote).and_return(remote)
@@ -21,7 +19,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
                                                          .and_return('errors' => true)
       expect do
         described_class.create(service: service, plan_attrs: plan_attrs)
-      end.to raise_error(ThreeScaleToolbox::Error, /Application plan has not been saved/)
+      end.to raise_error(ThreeScaleToolbox::Error, /Application plan has not been created/)
     end
 
     it 'plan instance is returned' do
@@ -30,6 +28,95 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
       expect(plan_obj.id).to eq('some_id')
       expect(plan_obj.remote).to be(remote)
+    end
+
+    context 'attrs include published state' do
+      let(:plan_attrs) { { 'system_name' => 'some_name', 'state' => 'published' } }
+
+      it 'plan attrs include state_event as publish' do
+        expected_create_attrs = {
+          'system_name' => 'some_name',
+          'state_event' => 'publish'
+        }
+        expect(remote).to receive(:create_application_plan).with(service_id, hash_including(expected_create_attrs))
+                                                           .and_return('id' => 'some_id')
+        plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
+        expect(plan_obj.id).to eq('some_id')
+        expect(plan_obj.remote).to be(remote)
+      end
+    end
+
+    context 'attrs include hidden state' do
+      let(:plan_attrs) { { 'system_name' => 'some_name', 'state' => 'hidden' } }
+
+      it 'plan attrs include state_event as hide' do
+        expected_create_attrs = {
+          'system_name' => 'some_name',
+          'state_event' => 'hide'
+        }
+        expect(remote).to receive(:create_application_plan).with(service_id, hash_including(expected_create_attrs))
+                                                           .and_return('id' => 'some_id')
+        plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
+        expect(plan_obj.id).to eq('some_id')
+        expect(plan_obj.remote).to be(remote)
+      end
+    end
+  end
+
+  context 'ApplicationPlan.find' do
+    let(:service_id) { 1000 }
+    let(:plan_id) { 2000 }
+    let(:plan_system_name) { 'some_system_name' }
+    let(:plan_attrs) { { 'id' => plan_id, 'system_name' => plan_system_name } }
+
+    before :example do
+      allow(service).to receive(:id).and_return(service_id)
+    end
+
+    context 'plan is found by id' do
+      let(:plan_ref) { plan_id }
+
+      before :example do
+        expect(remote).to receive(:show_application_plan).with(service_id, plan_ref)
+                                                         .and_return(plan_attrs)
+      end
+
+      it 'plan instance is returned' do
+        plan_obj = described_class.find(service: service, ref: plan_ref)
+        expect(plan_obj.id).to eq(plan_id)
+      end
+    end
+
+    context 'plan is found by system_name' do
+      let(:plan_ref) { plan_system_name }
+      let(:plans) { [plan_attrs] }
+
+      before :example do
+        expect(remote).to receive(:show_application_plan).with(service_id, plan_ref)
+                                                         .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(service).to receive(:plans).and_return(plans)
+      end
+
+      it 'plan instance is returned' do
+        plan_obj = described_class.find(service: service, ref: plan_ref)
+        expect(plan_obj.id).to eq(plan_id)
+      end
+    end
+
+    context 'plan is not found' do
+      let(:plan_ref) { plan_system_name }
+      let(:plans) { [] }
+
+      before :example do
+        expect(remote).to receive(:show_application_plan).with(service_id, plan_ref)
+                                                         .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(service).to receive(:plans).and_return(plans)
+      end
+
+      it 'plan instance is not returned' do
+        plan_obj = described_class.find(service: service, ref: plan_ref)
+        expect(plan_obj).to be_nil
+      end
     end
   end
 
@@ -189,6 +276,52 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
         let(:metrics) { [metric_0, metric_1] }
         it 'noop' do
           subject.disable
+        end
+      end
+    end
+
+    context '#update' do
+      let(:plan_attrs) { { 'id' => id, 'system_name' => 'some name' } }
+      let(:new_plan_attrs) { { 'id' => id, 'someattr' => 2, 'system_name' => 'some name' } }
+      let(:update_plan_attrs) { plan_attrs }
+
+      before :example do
+        expect(remote).to receive(:update_application_plan).with(service_id, id, update_plan_attrs)
+                                                           .and_return(response_body)
+      end
+
+      context 'when plan is updated' do
+        let(:response_body) { new_plan_attrs }
+
+        it 'plan attrs are returned' do
+          expect(subject.update(plan_attrs)).to eq(new_plan_attrs)
+        end
+
+        context 'attrs include published state' do
+          let(:plan_attrs) { { 'state' => 'published' } }
+          let(:update_plan_attrs) { { 'state_event' => 'publish' } }
+
+          it 'plan attrs include state_event as publish' do
+            expect(subject.update(plan_attrs)).to eq(new_plan_attrs)
+          end
+        end
+
+        context 'attrs include hidden state' do
+          let(:plan_attrs) { { 'state' => 'hidden' } }
+          let(:update_plan_attrs) { { 'state_event' => 'hide' } }
+
+          it 'plan attrs include state_event as hide' do
+            expect(subject.update(plan_attrs)).to eq(new_plan_attrs)
+          end
+        end
+      end
+
+      context 'operation returns error' do
+        let(:response_body) { { 'errors' => 'some error' } }
+
+        it 'raises error' do
+          expect { subject.update(plan_attrs) }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
+                                                              /Application plan has not been updated/)
         end
       end
     end

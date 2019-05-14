@@ -7,7 +7,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
   end
   let(:options) { {} }
   let(:basic_plan_attrs) { { 'name' => 'someplan' } }
-  let(:remote) { instance_double('ThreeScale::API') }
+  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:plan_class) { class_double(ThreeScaleToolbox::Entities::ApplicationPlan).as_stubbed_const }
@@ -92,7 +92,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
         end
         let(:plan_attrs) { basic_plan_attrs.merge(expected_params) }
 
-        it 'plan disabled' do
+        it 'plan created with expected params' do
           expect { subject.run }.to output(/Created application plan id: 1/).to_stdout
         end
       end

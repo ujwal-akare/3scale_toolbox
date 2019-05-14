@@ -6,7 +6,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Show::ShowSubcommand d
     }
   end
   let(:options) {}
-  let(:remote) { instance_double('ThreeScale::API') }
+  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:plan_class) { class_double(ThreeScaleToolbox::Entities::ApplicationPlan).as_stubbed_const }
@@ -46,7 +46,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Show::ShowSubcommand d
       end
 
       it 'name is shown' do
-        expect(plan).to receive(:show).and_return(plan_attrs)
+        expect(plan).to receive(:attrs).and_return(plan_attrs)
         expect { subject.run }.to output(/planA/).to_stdout
       end
     end

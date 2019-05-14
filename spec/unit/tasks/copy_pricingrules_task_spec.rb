@@ -1,11 +1,9 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
   context '#call' do
-    let(:source) { double('source') }
-    let(:target) { double('target') }
-    let(:source_remote) { double('source_remote') }
-    let(:target_remote) { double('target_remote') }
+    let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
+    let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:source_remote) { instance_double('ThreeScale::API::Client', 'source_remote') }
+    let(:target_remote) { instance_double('ThreeScale::API::Client', 'target_remote') }
     let(:plan_0) { { 'id' => 0, 'name' => 'plan_0', 'system_name' => 'plan_0' } }
     let(:plan_1) { { 'id' => 1, 'name' => 'plan_1', 'system_name' => 'plan_1' } }
     let(:metric_0) { { 'id' => 0, 'name' => 'metric_0', 'system_name' => 'metric_0' } }

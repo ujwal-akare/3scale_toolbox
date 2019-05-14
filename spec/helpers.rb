@@ -40,15 +40,16 @@ module Helpers
       3.times.each do
         method = { 'system_name' => Helpers.random_lowercase_name,
                    'friendly_name' => Helpers.random_lowercase_name }
-        service.create_method(hits_id, method)
+        ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: hits_id,
+                                                   attrs: method)
       end
     end
 
     def create_metrics
       4.times.each do
         name = Helpers.random_lowercase_name
-        metric = { 'name' => name, 'system_name' => name, 'unit' => '1' }
-        service.create_metric(metric)
+        metric = { 'friendly_name' => name, 'system_name' => name, 'unit' => '1' }
+        ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: metric)
       end
     end
 

@@ -1,5 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep do
-  let(:service) { double('service') }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:op0) { double('op0') }
   let(:op1) { double('op1') }
   let(:operations) { [op0, op1] }

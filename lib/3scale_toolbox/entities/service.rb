@@ -10,29 +10,35 @@ module ThreeScaleToolbox
 
       class << self
         def create(remote:, service:, system_name:)
-          svc_obj = create_service(
+          svc_attrs = create_service(
             remote: remote,
             service: copy_service_params(service, system_name)
           )
-          if (errors = svc_obj['errors'])
-            raise ThreeScaleToolbox::Error, "Service has not been saved. Errors: #{errors}" \
+          if (errors = svc_attrs['errors'])
+            raise ThreeScaleToolbox::ThreeScaleApiError.new('Service has not been created', errors)
           end
 
-          new(id: svc_obj.fetch('id'), remote: remote)
+          new(id: svc_attrs.fetch('id'), remote: remote, attrs: svc_attrs)
         end
 
         # ref can be system_name or service_id
         def find(remote:, ref:)
-          new(id: ref, remote: remote).tap(&:show_service)
+          new(id: ref, remote: remote).tap(&:attrs)
         rescue ThreeScale::API::HttpClient::NotFoundError
           find_by_system_name(remote: remote, system_name: ref)
         end
 
         def find_by_system_name(remote:, system_name:)
-          service = remote.list_services.find { |svc| svc['system_name'] == system_name }
-          return if service.nil?
+          service_list = remote.list_services
 
-          new(id: service.fetch('id'), remote: remote)
+          if service_list.respond_to?(:has_key?) && (errors = service_list['errors'])
+            raise ThreeScaleToolbox::ThreeScaleApiError.new('Service list not read', errors)
+          end
+
+          service_attrs = service_list.find { |svc| svc['system_name'] == system_name }
+          return if service_attrs.nil?
+
+          new(id: service_attrs.fetch('id'), remote: remote, attrs: service_attrs)
         end
 
         private
@@ -62,25 +68,42 @@ module ThreeScaleToolbox
 
       attr_reader :id, :remote
 
-      def initialize(id:, remote:)
+      def initialize(id:, remote:, attrs: nil)
         @id = id
         @remote = remote
+        @attrs = attrs
       end
 
-      def show_service
-        remote.show_service id
+      def attrs
+        @attrs ||= service_attrs
       end
 
       def update_proxy(proxy)
-        remote.update_proxy id, proxy
+        new_proxy_attrs = remote.update_proxy id, proxy
+
+        if (errors = new_proxy_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service proxy not updated', errors)
+        end
+
+        new_proxy_attrs
       end
 
-      def show_proxy
-        remote.show_proxy id
+      def proxy
+        proxy_attrs = remote.show_proxy id
+        if (errors = proxy_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service proxy not read', errors)
+        end
+
+        proxy_attrs
       end
 
       def metrics
-        remote.list_metrics id
+        service_metrics = remote.list_metrics id
+        if service_metrics.respond_to?(:has_key?) && (errors = service_metrics['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
+        end
+
+        service_metrics
       end
 
       def hits
@@ -92,20 +115,22 @@ module ThreeScaleToolbox
         hits_metric
       end
 
-      def methods
-        remote.list_methods id, hits['id']
-      end
+      def methods(parent_metric_id)
+        service_methods = remote.list_methods id, parent_metric_id
+        if service_methods.respond_to?(:has_key?) && (errors = service_methods['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service methods not read', errors)
+        end
 
-      def create_metric(metric)
-        remote.create_metric id, metric
-      end
-
-      def create_method(parent_metric_id, method)
-        remote.create_method id, parent_metric_id, method
+        service_methods
       end
 
       def plans
-        remote.list_service_application_plans id
+        service_plans = remote.list_service_application_plans id
+        if service_plans.respond_to?(:has_key?) && (errors = service_plans['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service plans not read', errors)
+        end
+
+        service_plans
       end
 
       def mapping_rules
@@ -120,11 +145,19 @@ module ThreeScaleToolbox
         remote.create_mapping_rule id, mapping_rule
       end
 
-      def update_service(params)
-        remote.update_service(id, params)
+      def update(svc_attrs)
+        new_attrs = remote.update_service id, svc_attrs
+        if (errors = new_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service not updated', errors)
+        end
+
+        # update current attrs
+        @attrs = new_attrs
+
+        new_attrs
       end
 
-      def delete_service
+      def delete
         remote.delete_service id
       end
 
@@ -136,31 +169,72 @@ module ThreeScaleToolbox
         remote.update_policies(id, params)
       end
 
-      def list_activedocs
-        remote.list_activedocs.select do |activedoc|
+      def activedocs
+        tenant_activedocs = remote.list_activedocs
+
+        if tenant_activedocs.respond_to?(:has_key?) && (errors = tenant_activedocs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service activedocs not read', errors)
+        end
+
+        tenant_activedocs.select do |activedoc|
           # service_id is optional attr. It would return nil and would not match
           # activedocs endpoints return service_id as integers
           activedoc['service_id'] == id.to_i
         end
       end
 
-      def show_oidc
-        remote.show_oidc id
+      def oidc
+        service_oidc = remote.show_oidc id
+
+        if (errors = service_oidc['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service oicdc not read', errors)
+        end
+
+        service_oidc
       end
 
       def update_oidc(oidc_settings)
-        remote.update_oidc(id, oidc_settings)
+        new_oidc = remote.update_oidc(id, oidc_settings)
+
+        if (errors = new_oidc['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service oicdc not updated', errors)
+        end
+
+        new_oidc
       end
 
       def features
-        remote.list_service_features id
+        service_features = remote.list_service_features id
+
+        if service_features.respond_to?(:has_key?) && (errors = service_features['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service features not read', errors)
+        end
+
+        service_features
       end
 
-      def create_feature(attrs)
+      def create_feature(feature_attrs)
         # Workaround until issue is fixed: https://github.com/3scale/porta/issues/774
-        attrs['scope'] = 'ApplicationPlan' if attrs['scope'] == 'application_plan'
-        attrs['scope'] = 'ServicePlan' if attrs['scope'] == 'service_plan'
-        remote.create_service_feature id, attrs
+        feature_attrs['scope'] = 'ApplicationPlan' if feature_attrs['scope'] == 'application_plan'
+        feature_attrs['scope'] = 'ServicePlan' if feature_attrs['scope'] == 'service_plan'
+        new_feature = remote.create_service_feature id, feature_attrs
+
+        if (errors = new_feature['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service feature not created', errors)
+        end
+
+        new_feature
+      end
+
+      private
+
+      def service_attrs
+        svc = remote.show_service id
+        if (errors = svc['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service attrs not read', errors)
+        end
+
+        svc
       end
     end
   end

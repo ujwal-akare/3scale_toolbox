@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.shared_context :import_oas_oidc_stubbed do
   include_context :oas_common_mocked_context
 
