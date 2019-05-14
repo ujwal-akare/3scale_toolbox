@@ -19,7 +19,7 @@ NAME
     create - create method
 
 USAGE
-    3scale methods create [opts] <remote>
+    3scale method create [opts] <remote>
     <service> <method-name>
 
 DESCRIPTION
@@ -31,7 +31,7 @@ OPTIONS
                                   plans
     -t --system-name=<value>      Method system name
 
-OPTIONS FOR METHODS
+OPTIONS FOR METHOD
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
@@ -56,7 +56,7 @@ NAME
     apply - Update method
 
 USAGE
-    3scale methods apply [opts] <remote> <service>
+    3scale method apply [opts] <remote> <service>
     <method>
 
 DESCRIPTION
@@ -70,7 +70,7 @@ OPTIONS
                                   plans
     -n --name=<value>             Method name
 
-OPTIONS FOR METHODS
+OPTIONS FOR METHOD
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                    $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
@@ -87,12 +87,12 @@ NAME
     list - list methods
 
 USAGE
-    3scale methods list [opts] <remote> <service>
+    3scale method list [opts] <remote> <service>
 
 DESCRIPTION
     List methods
 
-OPTIONS FOR METHODS
+OPTIONS FOR METHOD
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
@@ -109,13 +109,13 @@ NAME
     delete - delete method
 
 USAGE
-    3scale methods delete [opts] <remote>
+    3scale method delete [opts] <remote>
     <service> <method>
 
 DESCRIPTION
     Delete method
 
-OPTIONS FOR METHODS
+OPTIONS FOR METHOD
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command

@@ -19,7 +19,7 @@ NAME
     create - create metric
 
 USAGE
-    3scale metrics create [opts] <remote>
+    3scale metric create [opts] <remote>
     <service> <metric-name>
 
 DESCRIPTION
@@ -32,7 +32,7 @@ OPTIONS
     -t --system-name=<value>      Application plan system name
        --unit=<value>             Metric unit. Default hit
 
-OPTIONS FOR METRICS
+OPTIONS FOR METRIC
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
@@ -57,7 +57,7 @@ NAME
     apply - Update metric
 
 USAGE
-    3scale metrics apply [opts] <remote> <service>
+    3scale metric apply [opts] <remote> <service>
     <metric>
 
 DESCRIPTION
@@ -72,7 +72,7 @@ OPTIONS
     -n --name=<value>             Metric name
        --unit=<value>             Metric unit. Default hit
 
-OPTIONS FOR METRICS
+OPTIONS FOR METRIC
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
@@ -89,12 +89,12 @@ NAME
     list - list metrics
 
 USAGE
-    3scale metrics list [opts] <remote> <service>
+    3scale metric list [opts] <remote> <service>
 
 DESCRIPTION
     List metrics
 
-OPTIONS FOR METRICS
+OPTIONS FOR METRIC
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
@@ -111,13 +111,13 @@ NAME
     delete - delete metric
 
 USAGE
-    3scale metrics delete [opts] <remote>
+    3scale metric delete [opts] <remote>
     <service> <metric>
 
 DESCRIPTION
     Delete metric
 
-OPTIONS FOR METRICS
+OPTIONS FOR METRIC
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
