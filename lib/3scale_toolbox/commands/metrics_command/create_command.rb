@@ -8,7 +8,7 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'create'
-              usage       'create [opts] <remote> <service> <metric_name>'
+              usage       'create [opts] <remote> <service> <metric-name>'
               summary     'create metric'
               description 'Create metric'
 

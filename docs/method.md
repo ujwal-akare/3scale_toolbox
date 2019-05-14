@@ -20,7 +20,7 @@ NAME
 
 USAGE
     3scale methods create [opts] <remote>
-    <service> <method_name>
+    <service> <method-name>
 
 DESCRIPTION
     Create method

@@ -20,7 +20,7 @@ NAME
 
 USAGE
     3scale metrics create [opts] <remote>
-    <service> <metric_name>
+    <service> <metric-name>
 
 DESCRIPTION
     Create metric

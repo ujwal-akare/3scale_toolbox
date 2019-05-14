@@ -8,7 +8,7 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'create'
-              usage       'create [opts] <remote> <service> <plan_name>'
+              usage       'create [opts] <remote> <service> <plan-name>'
               summary     'create application plan'
               description 'Create application plan'
 
