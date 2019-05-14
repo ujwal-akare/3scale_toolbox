@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.10.0]
+
+### Added
+- Metric CRUD operations [#137](https://github.com/3scale/3scale_toolbox/pull/137) 
+- Method CRUD operations [#137](https://github.com/3scale/3scale_toolbox/pull/137) 
+
+### Fixed
+- Remote adding validation method support master account [#138](https://github.com/3scale/3scale_toolbox/pull/138)
+
 ## [0.9.0]
 
 ### Added
@@ -116,7 +125,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.10.0
 [0.9.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.9.0
 [0.8.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.8.0
 [0.7.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.7.0
