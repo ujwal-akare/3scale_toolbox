@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Print `import openapi --help` options for file & URL formats [#143](https://github.com/3scale/3scale_toolbox/pull/143)
+
 ## [0.10.0]
 
 ### Added
