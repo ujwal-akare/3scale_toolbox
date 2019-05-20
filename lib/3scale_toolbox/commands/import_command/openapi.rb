@@ -22,9 +22,9 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'openapi'
-              usage       'openapi [opts] -d <dst> <spec>'
-              summary     'Import API defintion in OpenAPI specification'
-              description 'Using an API definition format like OpenAPI, import to your 3scale API'
+              usage       'openapi [opts] -d <destination> <spec> (/path/to/your/spec/file.[json|yaml|yml] OR http[s]://domain/resource/path.[json|yaml|yml])'
+              summary     'Import API defintion in OpenAPI specification from a local file or URL'
+              description 'Using an API definition format like OpenAPI, import to your 3scale API directly from a local OpenAPI spec compliant file or a remote URL'
 
               option  :d, :destination, '3scale target instance. Format: "http[s]://<authentication>@3scale_domain"', argument: :required
               option  :t, 'target_system_name', 'Target system name', argument: :required
