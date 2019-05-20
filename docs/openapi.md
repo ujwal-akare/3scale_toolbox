@@ -23,13 +23,13 @@ Toolbox will then add `default_credentials` policy (also called as `anonymous_po
 
 ```shell
 NAME
-    openapi - Import API defintion in OpenAPI specification
+    openapi - Import API defintion in OpenAPI specification from a local file or URL
 
 USAGE
-    3scale import openapi [opts] -d <dst> <spec>
+    3scale import openapi [opts] -d <destination> <spec> (/path/to/your/spec/file.[json|yaml|yml] OR http[s]://domain/resource/path.[json|yaml|yml])
 
 DESCRIPTION
-    Using an API definition format like OpenAPI, import to your 3scale API
+    Using an API definition format like OpenAPI, import to your 3scale API directly from a local OpenAPI spec compliant file or a remote URL
 
 OPTIONS
        --activedocs-hidden                        Create ActiveDocs in hidden
