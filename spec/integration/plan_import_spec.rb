@@ -160,10 +160,10 @@ RSpec.describe 'Application Plan Import' do
     endpoint_uri.to_s
   end
   let(:service_system_name) { "service_#{random_lowercase_name}" }
-  let(:service_obj) { { 'name' => service_system_name } }
+  let(:service_obj) { { 'name' => service_system_name, 'system_name' => service_system_name } }
   let(:service) do
     ThreeScaleToolbox::Entities::Service.create(
-      remote: api3scale_client, service: service_obj, system_name: service_system_name
+      remote: api3scale_client, service_params: service_obj
     )
   end
 

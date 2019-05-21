@@ -10,10 +10,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     let(:service) do
       {
         'name' => random_lowercase_name,
-        'deployment_option' => deployment_option
+        'deployment_option' => deployment_option,
+        'system_name' => system_name,
       }
     end
-    let(:service_info) { { remote: remote, service: service, system_name: system_name } }
+    let(:service_info) { { remote: remote, service_params: service } }
+    let(:expected_svc) { { 'name' => service['name'], 'system_name' => system_name } }
 
     it 'throws error on remote error' do
       expect(remote).to receive(:create_service).and_return(common_error_response)
@@ -62,6 +64,72 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       expect(remote).to receive(:create_service).and_return(positive_response)
       service_obj = described_class.create(service_info)
       expect(service_obj.id).to eq('some_id')
+      expect(service_obj.remote).to be(remote)
+    end
+  end
+
+  context 'Service.find' do
+    let(:system_name) { random_lowercase_name }
+    let(:service_info) { { remote: remote, ref: system_name } }
+
+    it 'remote call raises unexpected error' do
+      expect(remote).to receive(:show_service).and_raise(StandardError)
+      expect do
+        described_class.find(service_info)
+      end.to raise_error(StandardError)
+    end
+
+    it 'returns nil when the service does not exist' do
+      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+      expect(remote).to receive(:list_services).and_return([{"system_name" => "sysname1"}, {"system_name" => "sysname2"}])
+      expect(described_class.find(service_info)).to be_nil
+    end
+
+    it 'service instance is returned when specifying an existing service ID' do
+      expect(remote).to receive(:show_service).and_return({"id" => system_name, "system_name" => "sysname1"})
+      service_obj = described_class.find(service_info)
+      expect(service_obj.id).to eq(system_name)
+      expect(service_obj.remote).to be(remote)
+    end
+
+    it 'service instance is returned when specifying an existing system-name' do
+      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+      expect(remote).to receive(:list_services).and_return([{"id" => 3, "system_name" => system_name}, {"id" => 7, "system_name" => "sysname1"}])
+      service_obj = described_class.find(service_info)
+      expect(service_obj.id).to eq(3)
+      expect(service_obj.remote).to be(remote)
+    end
+
+    it 'service instance is returned from service ID in front of an existing service with the same system-name as the ID' do
+      svc_info = { remote: remote, ref: "3"}
+      expect(remote).to receive(:show_service).and_return({"id" => svc_info[:ref], "system_name" => "sysname1"})
+      allow(remote).to receive(:list_services).and_return([{"id" => "4", "system_name" => svc_info[:ref]}, {"id" => "5", "system_name" => "sysname2"}])
+      service_obj = described_class.find(svc_info)
+      expect(service_obj.id).to eq(svc_info[:ref])
+      expect(service_obj.remote).to be(remote)
+    end
+  end
+
+  context 'Service.find_by_system_name' do
+    let(:system_name) { random_lowercase_name }
+    let(:service_info) { { remote: remote, system_name: system_name } }
+
+    it 'an exception is raised when remote is not configured' do
+      expect(remote).to receive(:list_services).and_raise(StandardError)
+      expect do
+        described_class.find_by_system_name(service_info)
+      end.to raise_error(StandardError)
+    end
+
+    it 'returns nil when the service does not exist' do
+      expect(remote).to receive(:list_services).and_return([{"system_name" => "sysname1"}, {"system_name" => "sysname2"}])
+      expect(described_class.find_by_system_name(service_info)).to be_nil
+    end
+
+    it 'service instance is returned when specifying an existing system-name' do
+      expect(remote).to receive(:list_services).and_return([{"id" => 3, "system_name" => system_name}, {"id" => 7, "system_name" => "sysname1"}])
+      service_obj = described_class.find_by_system_name(service_info)
+      expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
     end
   end

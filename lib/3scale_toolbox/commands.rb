@@ -7,6 +7,7 @@ require '3scale_toolbox/commands/remote_command'
 require '3scale_toolbox/commands/plans_command'
 require '3scale_toolbox/commands/metrics_command'
 require '3scale_toolbox/commands/methods_command'
+require '3scale_toolbox/commands/service_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -19,6 +20,7 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::PlansCommand,
       ThreeScaleToolbox::Commands::MetricsCommand,
       ThreeScaleToolbox::Commands::MethodsCommand,
+      ThreeScaleToolbox::Commands::ServiceCommand,
     ].freeze
   end
 end
