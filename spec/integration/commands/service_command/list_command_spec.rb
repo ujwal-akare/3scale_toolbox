@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe 'Service List command' do
   include_context :real_api3scale_client
   include_context :random_name

@@ -1,5 +1,3 @@
- require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcommand do
   include_context :random_name
 

@@ -1,5 +1,3 @@
-require '3scale_toolbox'
-
 RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::List::ListSubcommand do
   context '#run' do
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
