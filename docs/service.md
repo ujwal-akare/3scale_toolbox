@@ -48,7 +48,6 @@ OPTIONS FOR SERVICE
                                           insecure
     -v --version                          Prints the version of this command
        --verbose                          Verbose mode
-
 ```
 
 ### Apply
@@ -63,7 +62,7 @@ NAME
     apply - Update service
 
 USAGE
-    3scale service service apply <remote>
+    3scale service apply <remote>
     <service-id_or_system-name>
 
 DESCRIPTION
@@ -101,7 +100,7 @@ NAME
     list - List all services
 
 USAGE
-    3scale service service list <remote>
+    3scale service list <remote>
 
 DESCRIPTION
     List all services
@@ -122,7 +121,7 @@ NAME
     show - Show the information of a service
 
 USAGE
-    3scale service service show <remote>
+    3scale service show <remote>
     <service-id_or_system-name>
 
 DESCRIPTION
@@ -146,7 +145,7 @@ NAME
     delete - Delete a service
 
 USAGE
-    3scale service service delete <remote>
+    3scale service delete <remote>
     <service-id_or_system-name>
 
 DESCRIPTION
