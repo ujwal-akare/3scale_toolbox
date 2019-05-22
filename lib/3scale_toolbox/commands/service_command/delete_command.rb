@@ -8,7 +8,7 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'delete'
-              usage       'service delete <remote> <service-id_or_system-name>'
+              usage       'delete <remote> <service-id_or_system-name>'
               summary     'Delete a service'
               description 'Delete a service'
               runner DeleteSubcommand

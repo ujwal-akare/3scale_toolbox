@@ -8,7 +8,7 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'list'
-              usage       'service list <remote>'
+              usage       'list <remote>'
               summary     'List all services'
               description 'List all services'
               runner ListSubcommand

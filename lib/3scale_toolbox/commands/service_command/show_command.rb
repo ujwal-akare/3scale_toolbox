@@ -8,7 +8,7 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'show'
-              usage       'service show <remote> <service-id_or_system-name>'
+              usage       'show <remote> <service-id_or_system-name>'
               summary     'Show the information of a service'
               description "Show the information of a service"
               runner ShowSubcommand

@@ -8,7 +8,7 @@ module ThreeScaleToolbox
           def self.command
             Cri::Command.define do
               name        'apply'
-              usage       'service apply <remote> <service-id_or_system-name>'
+              usage       'apply <remote> <service-id_or_system-name>'
               summary     'Update service'
               description "Update (create if it does not exist) service"
               runner ApplySubcommand
