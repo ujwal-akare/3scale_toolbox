@@ -66,3 +66,9 @@
     :why: MIT License https://github.com/defunkt/colored/blob/master/LICENSE
     :versions: []
     :when: 2018-12-06 16:05:25.674247558 Z
+- - :approve
+  - bundler
+  - :who: 
+    :why: MIT License https://github.com/bundler/bundler/blob/master/LICENSE.md 
+    :versions: []
+    :when: 2019-05-28 09:24:54.882581954 Z
