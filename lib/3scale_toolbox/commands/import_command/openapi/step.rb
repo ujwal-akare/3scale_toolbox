@@ -59,6 +59,14 @@ module ThreeScaleToolbox
           def override_private_basepath
             context[:override_private_basepath]
           end
+
+          def production_public_base_url
+            context[:production_public_base_url]
+          end
+
+          def staging_public_base_url
+            context[:staging_public_base_url]
+          end
         end
       end
     end
