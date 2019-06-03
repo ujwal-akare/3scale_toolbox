@@ -49,7 +49,7 @@ module ThreeScaleToolbox
           end
 
           def option_disabled
-            !options[:disabled].nil?
+            options.fetch(:disabled, false)
           end
 
           def service

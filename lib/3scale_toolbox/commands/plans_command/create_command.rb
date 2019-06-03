@@ -64,15 +64,15 @@ module ThreeScaleToolbox
           end
 
           def option_default
-            !options[:default].nil?
+            options.fetch(:default, false)
           end
 
           def option_disabled
-            !options[:disabled].nil?
+            options.fetch(:disabled, false)
           end
 
           def option_publish
-            !options[:publish].nil?
+            options.fetch(:publish, false)
           end
 
           def service
