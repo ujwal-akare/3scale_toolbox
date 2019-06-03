@@ -3,7 +3,6 @@ module ThreeScaleToolbox
     module ImportCommand
       module OpenAPI
         module Method
-
           def method
             {
               'friendly_name' => friendly_name,

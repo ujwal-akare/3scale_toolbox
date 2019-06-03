@@ -26,7 +26,7 @@ RSpec.describe 'Service Create command' do
       let (:service_system_name) { "service_sysname_#{random_lowercase_name}" }
       let (:service_ref) { service_system_name }
       let (:service_auth_mode) { "2" }
-      let (:options) { "--system-name #{service_system_name} --authentication-mode #{service_auth_mode}"}
+      let (:options) { "--system-name #{service_system_name} --authentication-mode #{service_auth_mode}" }
       let (:command_line_str) { "service create #{remote} #{service_name} #{options}" }
 
       it "successfully creates a new service with them" do
@@ -50,7 +50,7 @@ RSpec.describe 'Service Create command' do
     let (:command_line_str) { "service create #{remote} #{service_name}" }
 
     before :example do
-      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_name} )
+      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: { "name" => service_name })
     end
 
     it "fails to create the service" do

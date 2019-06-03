@@ -10,7 +10,7 @@ module ThreeScaleToolbox
           summary     '3scale toolbox'
           description '3scale toolbox to manage your API from the terminal.'
           option :c, 'config-file', '3scale toolbox configuration file',
-            argument: :required, default: ThreeScaleToolbox.default_config_file
+                 argument: :required, default: ThreeScaleToolbox.default_config_file
           flag :v, :version, 'Prints the version of this command' do
             puts ThreeScaleToolbox::VERSION
             exit 0

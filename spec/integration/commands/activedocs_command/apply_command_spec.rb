@@ -17,7 +17,6 @@ RSpec.describe 'ActiveDocs Apply command' do
     context 'without specifying options' do
       let (:command_line_str) { "activedocs apply #{remote} #{activedocs_ref} --openapi-spec #{activedocs_file}" }
 
-
       it "successfully creates a new activedocs" do
         expect(subject).to eq(0)
         res = ThreeScaleToolbox::Entities::ActiveDocs::find(remote: api3scale_client, ref: activedocs_ref)
@@ -32,7 +31,7 @@ RSpec.describe 'ActiveDocs Apply command' do
       let (:activedocs_sysname) { "activedocs_sysname#{random_lowercase_name}" }
       let (:activedocs_name) { "activedocs_name#{random_lowercase_name}" }
       let (:activedocs_ref) { activedocs_sysname }
-      let (:options) { "--name #{activedocs_name} --publish --openapi-spec #{activedocs_file}"}
+      let (:options) { "--name #{activedocs_name} --publish --openapi-spec #{activedocs_file}" }
       let (:command_line_str) { "activedocs apply #{remote} #{activedocs_ref} #{options}" }
 
       it "successfully creates a new activedocs with them" do
@@ -60,7 +59,7 @@ RSpec.describe 'ActiveDocs Apply command' do
     let (:command_line_str) { "activedocs apply #{remote} #{activedocs_ref} #{options}" }
     before :example do
       ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client,
-        attrs: {"name" => activedocs_ref, "body" => activedocs_body_pretty_json, "published" => true, "description" => "olddescription"} )
+                                                      attrs: { "name" => activedocs_ref, "body" => activedocs_body_pretty_json, "published" => true, "description" => "olddescription" })
     end
 
     it "is updated" do

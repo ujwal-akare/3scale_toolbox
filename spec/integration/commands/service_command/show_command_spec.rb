@@ -24,7 +24,7 @@ RSpec.describe 'Service Show command' do
     let (:command_line_str) { "service show #{remote} #{service_ref}" }
 
     before :example do
-      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref} )
+      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: { "name" => service_ref })
     end
 
     it "shows the service" do

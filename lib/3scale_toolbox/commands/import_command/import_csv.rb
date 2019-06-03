@@ -35,7 +35,7 @@ module ThreeScaleToolbox
           data     = CSV.read file_path
           headings = data.shift
           services = {}
-          stats    = { services: 0, metrics: 0, methods: 0 , mapping_rules: 0 }
+          stats    = { services: 0, metrics: 0, methods: 0, mapping_rules: 0 }
 
           # prepare services data
           data.each do |row|
@@ -69,17 +69,16 @@ module ThreeScaleToolbox
             end
 
             services[service_name][:items].each do |item|
-
               metric, method = {}
 
               case item['type']
                 # create a metric
               when 'metric'
                 metric = client.create_metric(service['id'], {
-                  system_name:   item['endpoint_system_name'],
-                  friendly_name: item['endpoint_name'],
-                  unit:          'unit'
-                })
+                                                system_name:   item['endpoint_system_name'],
+                                                friendly_name: item['endpoint_name'],
+                                                unit:          'unit'
+                                              })
 
                 if metric['errors'].nil?
                   stats[:metrics] += 1
@@ -90,10 +89,10 @@ module ThreeScaleToolbox
                 # create a method
               when 'method'
                 method = client.create_method(service['id'], hits_metric['id'], {
-                  system_name:   item['endpoint_system_name'],
-                  friendly_name: item['endpoint_name'],
-                  unit:          'unit'
-                })
+                                                system_name:   item['endpoint_system_name'],
+                                                friendly_name: item['endpoint_name'],
+                                                unit:          'unit'
+                                              })
 
                 if method['errors'].nil?
                   stats[:methods] += 1
@@ -106,13 +105,13 @@ module ThreeScaleToolbox
               # create a mapping rule
               if (metric_id = metric['id'] || method['id'])
                 mapping_rule = client.create_mapping_rule(service['id'], {
-                  metric_id:          metric_id,
-                  pattern:            item['endpoint_path'],
-                  http_method:        item['endpoint_http_method'],
-                  metric_system_name: item['endpoint_system_name'],
-                  auth_app_key:       auth_app_key_according_service(service),
-                  delta:              1
-                })
+                                                            metric_id:          metric_id,
+                                                            pattern:            item['endpoint_path'],
+                                                            http_method:        item['endpoint_http_method'],
+                                                            metric_system_name: item['endpoint_system_name'],
+                                                            auth_app_key:       auth_app_key_according_service(service),
+                                                            delta:              1
+                                                          })
 
                 if mapping_rule['errors'].nil?
                   stats[:mapping_rules] += 1

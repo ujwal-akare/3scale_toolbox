@@ -18,7 +18,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Delete::DeleteSub
 
     context "when the activedocs does not exists" do
       let(:activedocs_ref) { "unexistingadocs" }
-      let(:arguments) { {remote: remote_name, activedocs_id_or_system_name: activedocs_ref } }
+      let(:arguments) { { remote: remote_name, activedocs_id_or_system_name: activedocs_ref } }
 
       it 'an error is raised' do
         expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(nil)
@@ -30,8 +30,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Delete::DeleteSub
 
     context "when a activedocs exists" do
       let(:activedocs_ref) { "existingadocs" }
-      let(:arguments) { {remote: remote_name, activedocs_id_or_system_name: activedocs_ref } }
-      
+      let(:arguments) { { remote: remote_name, activedocs_id_or_system_name: activedocs_ref } }
+
       it 'is removed' do
         adocs_id = "3"
         expect(activedocs).to receive(:delete).and_return(true)

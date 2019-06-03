@@ -56,8 +56,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyMethodsTask do
         expect(method_class).to receive(:create).with(service: target,
                                                       parent_id: target_hits_metric_id,
                                                       attrs: hash_including('system_name' => method_0['system_name'],
-                                                                            'friendly_name' => method_0['friendly_name'])
-        )
+                                                                            'friendly_name' => method_0['friendly_name']))
         expect { subject.call }.to output(/created 1 missing methods/).to_stdout
       end
     end

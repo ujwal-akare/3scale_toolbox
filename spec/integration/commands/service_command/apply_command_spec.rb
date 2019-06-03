@@ -22,7 +22,7 @@ RSpec.describe 'Service Apply command' do
       let (:service_name) { "service_#{random_lowercase_name}" }
       let (:service_auth_mode) { "1" }
       let (:support_email) { "examplesupport@gmail.com" }
-      let (:options) { "--name #{service_name} --authentication-mode #{service_auth_mode} --support-email #{support_email}"}
+      let (:options) { "--name #{service_name} --authentication-mode #{service_auth_mode} --support-email #{support_email}" }
       let (:command_line_str) { "service apply #{remote} #{service_ref} #{options}" }
 
       it "is created with those options set" do
@@ -40,15 +40,14 @@ RSpec.describe 'Service Apply command' do
       res = ThreeScaleToolbox::Entities::Service::find(remote: api3scale_client, ref: service_ref)
       res.delete if !res.nil?
     end
-
   end
 
   context "When service exists" do
     let (:service_ref) { "service_sysname_#{random_lowercase_name}" }
-    let (:service_new_name) { "service_name_#{random_lowercase_name}"}
+    let (:service_new_name) { "service_name_#{random_lowercase_name}" }
     let (:service_new_desc) { "anewdescription" }
     let (:service_new_mail) { "newmail@gmail.com" }
-    let (:options) { "--name #{service_new_name} --description #{service_new_desc} --support-email #{service_new_mail}"}
+    let (:options) { "--name #{service_new_name} --description #{service_new_desc} --support-email #{service_new_mail}" }
     let (:command_line_str) { "service apply #{remote} #{service_ref} #{options}" }
 
     before :example do

@@ -321,7 +321,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
 
         it 'raises error' do
           expect { subject.update(plan_attrs) }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
-                                                              /Application plan has not been updated/)
+                                                               /Application plan has not been updated/)
         end
       end
     end

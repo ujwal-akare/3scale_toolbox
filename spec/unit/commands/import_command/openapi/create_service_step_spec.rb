@@ -6,7 +6,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
   let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:title) { 'Some Title' }
   let(:description) { 'Some Description' }
-  let(:system_name) { 'some_system_name'}
+  let(:system_name) { 'some_system_name' }
   let(:openapi_context) do
     {
       target: service,
@@ -34,7 +34,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
     end
 
     context 'when service exists' do
-
       before :example do
         expect(service_class).to receive(:find_by_system_name)
           .with(remote: threescale_client, system_name: openapi_context[:target_system_name])

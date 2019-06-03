@@ -66,8 +66,9 @@ module ThreeScaleToolbox
 
           def create_service_attrs
             service_attrs.merge(
-                "system_name" => ref, 
-                "name" => ref) { |_key, oldval, _newval| oldval } # receiver of the merge message has key priority
+              "system_name" => ref,
+              "name" => ref
+            ) { |_key, oldval, _newval| oldval } # receiver of the merge message has key priority
           end
         end
       end

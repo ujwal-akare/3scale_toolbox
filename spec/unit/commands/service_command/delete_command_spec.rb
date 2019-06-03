@@ -16,7 +16,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Delete::DeleteSubcom
 
     context "when the service does not exists" do
       let(:service_ref) { "unexistingservice" }
-      let(:arguments) { {remote: remote_name, service_id_or_system_name: service_ref } }
+      let(:arguments) { { remote: remote_name, service_id_or_system_name: service_ref } }
 
       it 'an error is raised' do
         expect(service_class).to receive(:find).with(remote: remote, ref: service_ref).and_return(nil)
@@ -28,8 +28,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Delete::DeleteSubcom
 
     context "when a service exists" do
       let(:service_ref) { "existingservice" }
-      let(:arguments) { {remote: remote_name, service_id_or_system_name: service_ref } }
-      
+      let(:arguments) { { remote: remote_name, service_id_or_system_name: service_ref } }
+
       it 'is removed' do
         svc_id = "3"
         expect(service).to receive(:delete).and_return(true)

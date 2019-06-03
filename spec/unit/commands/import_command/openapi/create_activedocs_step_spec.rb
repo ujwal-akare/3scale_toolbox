@@ -140,7 +140,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
     context 'when activedocs already exists' do
       before :each do
         expect(threescale_client).to receive(:create_activedocs)
-          .and_return('errors' => {'system_name' => ['has already been taken']})
+          .and_return('errors' => { 'system_name' => ['has already been taken'] })
         expect(threescale_client).to receive(:list_activedocs)
           .and_return(activedocs_list)
       end

@@ -4,7 +4,7 @@ RSpec.describe 'ActiveDocs Create command' do
   include_context :resources
   subject { ThreeScaleToolbox::CLI.run(command_line_str.split) }
   let(:remote) { client_url }
-  
+
   let (:activedocs_file) { File.join(resources_path, 'valid_swagger.yaml') }
   let (:activedocs_body_pretty_json) do
     activedoc_body_content = YAML.load_file(activedocs_file)
@@ -31,7 +31,7 @@ RSpec.describe 'ActiveDocs Create command' do
     context 'specifying options' do
       let (:activedocs_system_name) { "activedocs_sysname_#{random_lowercase_name}" }
       let (:activedocs_ref) { activedocs_system_name }
-      let (:options) { "--system-name #{activedocs_system_name} --published"}
+      let (:options) { "--system-name #{activedocs_system_name} --published" }
       let (:command_line_str) { "activedocs create #{remote} #{activedocs_name} #{activedocs_file} #{options}" }
 
       it "successfully creates a new activedocs with them" do
@@ -55,7 +55,7 @@ RSpec.describe 'ActiveDocs Create command' do
     let (:activedocs_name) { "activedocs_#{random_lowercase_name}" }
     let (:command_line_str) { "activedocs create #{remote} #{activedocs_name} #{activedocs_file}" }
     before :example do
-      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: {"name" => activedocs_name, "body" => activedocs_body_pretty_json} )
+      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: { "name" => activedocs_name, "body" => activedocs_body_pretty_json })
     end
 
     it "fails to create the activedocs" do

@@ -43,7 +43,6 @@ module ThreeScaleToolbox
             context[:api_spec_resource]
           end
 
-
           def security
             api_spec.security
           end

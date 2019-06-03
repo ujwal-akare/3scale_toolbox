@@ -14,8 +14,8 @@ RSpec.describe 'Service List command' do
     let (:command_line_str) { "service list #{remote}" }
 
     before :example do
-      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => svc_ref_1} )
-      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => svc_ref_2} )
+      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: { "name" => svc_ref_1 })
+      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: { "name" => svc_ref_2 })
     end
 
     it "lists svc_ref_1" do

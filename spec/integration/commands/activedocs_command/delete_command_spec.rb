@@ -24,7 +24,7 @@ RSpec.describe 'ActiveDocs Delete command' do
     end
 
     before :example do
-      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: {"name" => activedocs_ref, "body" => activedocs_body_pretty_json} )
+      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: { "name" => activedocs_ref, "body" => activedocs_body_pretty_json })
     end
 
     it "deletes it" do

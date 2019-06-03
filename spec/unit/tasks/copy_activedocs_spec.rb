@@ -1,6 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Tasks::CopyActiveDocsTask do
   context '#call' do
-    let(:source_service_id) { '10'}
+    let(:source_service_id) { '10' }
     let(:target_service_id) { '20' }
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }

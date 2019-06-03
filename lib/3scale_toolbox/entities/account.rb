@@ -17,17 +17,15 @@ module ThreeScaleToolbox
 
       def self.find(text, client)
         account = client.find_account(email: text, buyer_provider_key: text,
-            buyer_service_token: text)
+                                      buyer_service_token: text)
         if (errors = account['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new(
-              'Account find returned errors', errors
+            'Account find returned errors', errors
           )
         end
         account_id = account['id']
         self.new(id: account_id, attrs: account)
       end
-
-
     end
   end
 end

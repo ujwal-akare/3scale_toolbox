@@ -23,7 +23,6 @@ require '3scale_toolbox/commands'
 require '3scale_toolbox/cli'
 
 module ThreeScaleToolbox
-
   def self.load_plugins
     plugin_paths.each { |plugin_path| require plugin_path }
   end
