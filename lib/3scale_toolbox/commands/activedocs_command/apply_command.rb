@@ -73,11 +73,11 @@ module ThreeScaleToolbox
           end
 
           def option_publish
-            !options[:publish].nil?
+            options.fetch(:publish, false)
           end
 
           def option_hide
-            !options[:hide].nil?
+            options.fetch(:hide, false)
           end
 
           def option_openapi_spec
@@ -115,7 +115,7 @@ module ThreeScaleToolbox
           def create_activedocs_attrs
             check_openapi_spec_defined
             activedocs_attrs.merge(
-                "system_name" => ref, 
+                "system_name" => ref,
                 "name" => ref,
                 "body" => activedocs_json_spec,
             ) { |_key, oldval, _newval| oldval } # receiver of the merge message has key priority
