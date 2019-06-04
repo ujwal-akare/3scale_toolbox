@@ -313,6 +313,62 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       end
     end
 
+    context '#proxy_configs' do
+      it 'returns an error on remote error' do
+        expect(remote).to receive(:proxy_config_list).and_return(common_error_response)
+        expect { subject.proxy_configs("sandbox") }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError, /ProxyConfigs not read/)
+      end
+
+      it 'returns an empty array when there are no proxy_configs in an environment' do
+        expect(remote).to receive(:proxy_config_list).with(id, "sandbox").and_return([])
+        results = subject.proxy_configs("sandbox")
+        expect(results.size).to eq(0)
+      end
+
+      context "when sandbox environment is requested" do
+        let(:owned_proxy_config_sandbox_0) { { "id" => 3, "environment" => "sandbox", "version" => 0} }
+        let(:owned_proxy_config_sandbox_1) { { "id" => 4, "environment" => "sandbox", "version" => 1} }
+        let(:environment) { "sandbox" }
+
+        it 'returns the expected ProxyConfig entities' do
+          expect(remote).to receive(:proxy_config_list).with(id, environment).and_return([owned_proxy_config_sandbox_0, owned_proxy_config_sandbox_1])
+          results = subject.proxy_configs(environment)
+          expect(results.size).to eq(2)
+          pc_0 = results[0]
+          pc_1 = results[1]
+          expect(pc_0).to be_a(ThreeScaleToolbox::Entities::ProxyConfig)
+          expect(pc_1).to be_a(ThreeScaleToolbox::Entities::ProxyConfig)
+          expect(pc_0.attrs['id']).to eq(3)
+          expect(pc_0.attrs['environment']).to eq(environment)
+          expect(pc_0.attrs['version']).to eq(0)
+          expect(pc_1.attrs['id']).to eq(4)
+          expect(pc_1.attrs['environment']).to eq(environment)
+          expect(pc_1.attrs['version']).to eq(1)
+        end
+      end
+
+      context "when production environment is requested" do
+        let(:owned_proxy_config_production_0) { { "id" => 0, "environment" => "production", "version" => 0} }
+        let(:owned_proxy_config_production_1) { { "id" => 1, "environment" => "production", "version" => 1} }  
+        let(:environment) { "production" }
+        it 'returns the expected ProxyConfig entities' do
+          expect(remote).to receive(:proxy_config_list).with(id, environment).and_return([owned_proxy_config_production_0, owned_proxy_config_production_1])
+          results = subject.proxy_configs(environment)
+          expect(results.size).to eq(2)
+          pc_0 = results[0]
+          pc_1 = results[1]
+          expect(pc_0).to be_a(ThreeScaleToolbox::Entities::ProxyConfig)
+          expect(pc_1).to be_a(ThreeScaleToolbox::Entities::ProxyConfig)
+          expect(pc_0.attrs['id']).to eq(0)
+          expect(pc_0.attrs['environment']).to eq(environment)
+          expect(pc_0.attrs['version']).to eq(0)
+          expect(pc_1.attrs['id']).to eq(1)
+          expect(pc_1.attrs['environment']).to eq(environment)
+          expect(pc_1.attrs['version']).to eq(1)
+        end
+      end
+    end
+
     context 'oidc' do
       let(:oidc_configuration) do
         {
