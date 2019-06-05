@@ -21,6 +21,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
    * Create, Apply, List, Delete [Method](docs/method.md)
    * Create, Apply, List, Show, Delete [Service](docs/service.md)
    * Create, Apply, List, Delete [ActiveDocs](docs/activedocs.md)
+   * List, Show, Promote [Proxy Configuration](docs/proxy-config.md)
    * [Remotes](docs/remotes.md)
 * [Development](#development)
    * [Testing](#testing)
