@@ -13,15 +13,16 @@ module ThreeScaleToolbox
       public_constant :VERBOSE_PRINTABLE_VARS
 
       attr_accessor :verbose
-      attr_reader :id, :attrs
+      attr_reader :id, :attrs, :remote
 
-      def initialize(id:, attrs: nil, verbose: false)
-        @id                       = id
-        @attrs                    = attrs
-        @verbose                  = verbose
+      def initialize(id:, remote:, attrs: nil, verbose: false)
+        @id = id
+        @remote = remote
+        @attrs = attrs
+        @verbose = verbose
       end
 
-      def to_s()
+      def to_s
         if @verbose
           format_vars(printable_attrs: self.class.const_get(:VERBOSE_PRINTABLE_VARS, inherit: true))
         else
