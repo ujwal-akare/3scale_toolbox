@@ -1,4 +1,5 @@
 require '3scale_toolbox/commands/application_command/list_command'
+require '3scale_toolbox/commands/application_command/create_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -17,6 +18,7 @@ module ThreeScaleToolbox
         end
       end
       add_subcommand(List::ListSubcommand)
+      add_subcommand(Create::CreateSubcommand)
     end
   end
 end

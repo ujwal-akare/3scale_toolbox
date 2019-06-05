@@ -2,6 +2,14 @@ module ThreeScaleToolbox
   module Entities
     class Application
       class << self
+        def create(remote:, account_id:, plan_id:, app_attrs: nil)
+          attrs = remote.create_application(account_id, app_attrs, plan_id: plan_id)
+          if (errors = attrs['errors'])
+            raise ThreeScaleToolbox::ThreeScaleApiError.new('Application has not been created', errors)
+          end
+
+          new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
+        end
       end
 
       attr_reader :id, :remote
