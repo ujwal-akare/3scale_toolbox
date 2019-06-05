@@ -1,7 +1,6 @@
 module ThreeScaleToolbox
   module Entities
     module Entity
-
       PRINTABLE_VARS = %w[
         id
       ].freeze
@@ -15,7 +14,6 @@ module ThreeScaleToolbox
 
       attr_accessor :verbose
       attr_reader :id, :attrs
-
 
       def initialize(id:, attrs: nil, verbose: false)
         @id                       = id
@@ -33,8 +31,8 @@ module ThreeScaleToolbox
 
       private
 
-      def format_vars (printable_attrs: nil)
-        print_attrs = attrs.merge({":id" => @id})
+      def format_vars(printable_attrs: nil)
+        print_attrs = attrs.merge({ ":id" => @id })
         formatted_vars = printable_attrs.map do |attr|
           "#{attr} => #{attrs[attr]}"
         end

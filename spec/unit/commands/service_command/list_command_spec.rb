@@ -4,7 +4,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::List::ListSubcommand
     let(:remote_name) { "myremote" }
 
     let(:options) {}
-    let(:arguments) { {remote: remote_name} }
+    let(:arguments) { { remote: remote_name } }
 
     subject { described_class.new(options, arguments, nil) }
 
@@ -20,8 +20,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::List::ListSubcommand
     it 'when services are present those are printed' do
       expect(remote).to receive(:list_services).and_return(
         [
-          {"id" => 1, "name" => "name1", "system_name" => "sysname1"},
-          {"id" => 2, "name" => "name2", "system_name" => "sysname2"},
+          { "id" => 1, "name" => "name1", "system_name" => "sysname1" },
+          { "id" => 2, "name" => "name2", "system_name" => "sysname2" },
         ]
       )
       expect { subject.run }.to output("ID\tNAME\tSYSTEM_NAME\n1\tname1\tsysname1\n2\tname2\tsysname2\n").to_stdout

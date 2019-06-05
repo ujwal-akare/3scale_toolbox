@@ -16,7 +16,7 @@ module ThreeScaleToolbox
               description 'Find account by email, provider key or service token'
 
               option      :a, :'print-all', 'Print all the account info',
-                  argument: :forbidden
+                          argument: :forbidden
               param       :remote
               param       :text
 

@@ -81,12 +81,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     it 'returns nil when the service does not exist' do
       expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError)
-      expect(remote).to receive(:list_services).and_return([{"system_name" => "sysname1"}, {"system_name" => "sysname2"}])
+      expect(remote).to receive(:list_services).and_return([{ "system_name" => "sysname1" }, { "system_name" => "sysname2" }])
       expect(described_class.find(service_info)).to be_nil
     end
 
     it 'service instance is returned when specifying an existing service ID' do
-      expect(remote).to receive(:show_service).and_return({"id" => system_name, "system_name" => "sysname1"})
+      expect(remote).to receive(:show_service).and_return({ "id" => system_name, "system_name" => "sysname1" })
       service_obj = described_class.find(service_info)
       expect(service_obj.id).to eq(system_name)
       expect(service_obj.remote).to be(remote)
@@ -94,16 +94,16 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     it 'service instance is returned when specifying an existing system-name' do
       expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError)
-      expect(remote).to receive(:list_services).and_return([{"id" => 3, "system_name" => system_name}, {"id" => 7, "system_name" => "sysname1"}])
+      expect(remote).to receive(:list_services).and_return([{ "id" => 3, "system_name" => system_name }, { "id" => 7, "system_name" => "sysname1" }])
       service_obj = described_class.find(service_info)
       expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
     end
 
     it 'service instance is returned from service ID in front of an existing service with the same system-name as the ID' do
-      svc_info = { remote: remote, ref: "3"}
-      expect(remote).to receive(:show_service).and_return({"id" => svc_info[:ref], "system_name" => "sysname1"})
-      allow(remote).to receive(:list_services).and_return([{"id" => "4", "system_name" => svc_info[:ref]}, {"id" => "5", "system_name" => "sysname2"}])
+      svc_info = { remote: remote, ref: "3" }
+      expect(remote).to receive(:show_service).and_return({ "id" => svc_info[:ref], "system_name" => "sysname1" })
+      allow(remote).to receive(:list_services).and_return([{ "id" => "4", "system_name" => svc_info[:ref] }, { "id" => "5", "system_name" => "sysname2" }])
       service_obj = described_class.find(svc_info)
       expect(service_obj.id).to eq(svc_info[:ref])
       expect(service_obj.remote).to be(remote)
@@ -122,12 +122,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     it 'returns nil when the service does not exist' do
-      expect(remote).to receive(:list_services).and_return([{"system_name" => "sysname1"}, {"system_name" => "sysname2"}])
+      expect(remote).to receive(:list_services).and_return([{ "system_name" => "sysname1" }, { "system_name" => "sysname2" }])
       expect(described_class.find_by_system_name(service_info)).to be_nil
     end
 
     it 'service instance is returned when specifying an existing system-name' do
-      expect(remote).to receive(:list_services).and_return([{"id" => 3, "system_name" => system_name}, {"id" => 7, "system_name" => "sysname1"}])
+      expect(remote).to receive(:list_services).and_return([{ "id" => 3, "system_name" => system_name }, { "id" => 7, "system_name" => "sysname1" }])
       service_obj = described_class.find_by_system_name(service_info)
       expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
@@ -162,7 +162,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     context '#update_proxy' do
-
       it 'calls update_proxy method' do
         expect(remote).to receive(:update_proxy).with(id, proxy).and_return(proxy)
         expect(subject.update_proxy(proxy)).to eq(proxy)

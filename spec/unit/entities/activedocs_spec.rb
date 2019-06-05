@@ -7,7 +7,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
 
     context 'on remote error' do
       let(:remote_response) { { 'errors' => true } }
-      let(:activedocs_attrs) { {"name" => activedocs_name} }
+      let(:activedocs_attrs) { { "name" => activedocs_name } }
 
       it 'throws an error' do
         expect(remote).to receive(:create_activedocs).and_return(remote_response)
@@ -21,8 +21,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
       let(:activedocs_id) { "5" }
       let(:activedocs_system_name) { "exampleactivedocssysname" }
       let(:activedocs_description) { "description" }
-      let(:activedocs_attrs) { {"name" => activedocs_name, "system_name" => activedocs_system_name, "description" => activedocs_description} }
-      let(:activedocs_attrs_res) { activedocs_attrs.merge({"id" => activedocs_id})}
+      let(:activedocs_attrs) { { "name" => activedocs_name, "system_name" => activedocs_system_name, "description" => activedocs_description } }
+      let(:activedocs_attrs_res) { activedocs_attrs.merge({ "id" => activedocs_id }) }
 
       it 'an ActiveDocs instance is returned' do
         expect(remote).to receive(:create_activedocs).with(activedocs_attrs).and_return(activedocs_attrs_res)
@@ -76,7 +76,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
       let(:activedocs_ref) { "4" }
       let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "4", "id" => "3" } }
       let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => "4" } }
-  
+
       it "an instance is returned" do
         expect(remote).to receive(:list_activedocs).and_return([activedocs_attrs_1, activedocs_attrs_2])
         adoc_obj = described_class.find(remote: remote, ref: activedocs_ref)
@@ -123,7 +123,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
 
     context "#attrs" do
       it 'calls list_activedocs method' do
-        expect(remote).to receive(:list_activedocs).and_return([{"id" => activedocs_id}])
+        expect(remote).to receive(:list_activedocs).and_return([{ "id" => activedocs_id }])
         subject.attrs
       end
 
@@ -140,15 +140,14 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
 
       context 'ID cannot be found' do
         it 'returns an error' do
-          expect(remote).to receive(:list_activedocs).and_return([{"id" => "6"}, {"id" => "7"}])
+          expect(remote).to receive(:list_activedocs).and_return([{ "id" => "6" }, { "id" => "7" }])
           expect do
             subject.attrs
-          end.to raise_error( ThreeScaleToolbox::ActiveDocsNotFoundError)
+          end.to raise_error(ThreeScaleToolbox::ActiveDocsNotFoundError)
         end
       end
-
     end
-  
+
     context "#delete" do
       it 'calls delete_activedocs method' do
         expect(remote).to receive(:delete_activedocs)
@@ -175,5 +174,4 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
       end
     end
   end
-
 end

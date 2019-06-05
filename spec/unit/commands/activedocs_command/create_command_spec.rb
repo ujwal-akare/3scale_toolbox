@@ -20,7 +20,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
     # This should cover the case where the activedocs already exists
     # or other errors that are returned by calls to the API
     context "when there is an error creating the activedocs" do
-      let(:arguments) { {remote: remote_name, activedocs_name: "existingactivedocs", activedocs_spec: "-" } }
+      let(:arguments) { { remote: remote_name, activedocs_name: "existingactivedocs", activedocs_spec: "-" } }
       let(:exists_error_response) { { 'errors' => { 'system_name' => ["has already been taken"] } } }
       let(:already_exists_api_error) { ThreeScaleToolbox::ThreeScaleApiError.new('ActiveDocs has not been created', exists_error_response) }
       it 'an error is raised' do
@@ -33,7 +33,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
     end
 
     context "activedocs name parameter and spec are specified" do
-      let(:arguments) { {remote: remote_name, activedocs_name: activedocs_name, activedocs_spec: "-"} }
+      let(:arguments) { { remote: remote_name, activedocs_name: activedocs_name, activedocs_spec: "-" } }
       let(:activedocs_id) { "1" }
       let(:activedocs_name) { "a_activedocs_name" }
       let(:activedoc_body_str) do
@@ -48,10 +48,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
       end
       let(:activedocs_create_params) {
         { "name" => activedocs_name,
-          "body" => activedoc_body_pretty_json
-        }
+          "body" => activedoc_body_pretty_json }
       }
-      let(:activedocs_create_args) { {remote: remote, attrs: activedocs_create_params } }
+      let(:activedocs_create_args) { { remote: remote, attrs: activedocs_create_params } }
 
       shared_examples "successfully creates the activedocs with it" do
         it do
@@ -70,35 +69,35 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
         context "specifying system_name option" do
           let(:system_name) { "a_system_name" }
           let(:options) { { :'system-name' => system_name } }
-          let(:activedocs_create_params) { {"name" => activedocs_name, "body" => activedoc_body_pretty_json, "system_name" => system_name } }
+          let(:activedocs_create_params) { { "name" => activedocs_name, "body" => activedoc_body_pretty_json, "system_name" => system_name } }
           include_examples "successfully creates the activedocs with it"
         end
 
         context "specifying description option" do
           let(:description) { "adescription" }
           let(:options) { { :description => description } }
-          let(:activedocs_create_params) { {"name" => activedocs_name, "body" => activedoc_body_pretty_json, "description" => description } }
+          let(:activedocs_create_params) { { "name" => activedocs_name, "body" => activedoc_body_pretty_json, "description" => description } }
           include_examples "successfully creates the activedocs with it"
         end
 
         context "specifying a service id" do
           let(:service_id) { "aserviceid" }
           let(:options) { { :'service-id' => service_id } }
-          let(:activedocs_create_params) { {"name" => activedocs_name, "body" => activedoc_body_pretty_json, "service_id" => service_id } }
+          let(:activedocs_create_params) { { "name" => activedocs_name, "body" => activedoc_body_pretty_json, "service_id" => service_id } }
           include_examples "successfully creates the activedocs with it"
         end
 
         context "specifying a published flag" do
           let(:published) { true }
           let(:options) { { :published => published } }
-          let(:activedocs_create_params) { {"name" => activedocs_name, "body" => activedoc_body_pretty_json, "published" => published } }
+          let(:activedocs_create_params) { { "name" => activedocs_name, "body" => activedoc_body_pretty_json, "published" => published } }
           include_examples "successfully creates the activedocs with it"
         end
 
         context "specifying a skip-swagger-validations flag" do
           let(:skip_swagger_validation) { true }
           let(:options) { { :'skip-swagger-validations' => skip_swagger_validation } }
-          let(:activedocs_create_params) { {"name" => activedocs_name, "body" => activedoc_body_pretty_json, "skip_swagger_validations" => skip_swagger_validation } }
+          let(:activedocs_create_params) { { "name" => activedocs_name, "body" => activedoc_body_pretty_json, "skip_swagger_validations" => skip_swagger_validation } }
           include_examples "successfully creates the activedocs with it"
         end
       end

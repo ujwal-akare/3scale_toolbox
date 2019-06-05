@@ -13,7 +13,7 @@ module ThreeScaleToolbox
               description 'List all defined ActiveDocs'
               runner ListSubcommand
 
-              param   :remote
+              param :remote
             end
           end
 
@@ -39,7 +39,7 @@ module ThreeScaleToolbox
           end
 
           def print_header(fields_to_show)
-            puts fields_to_show.map{ |e| e.upcase}.join("\t")
+            puts fields_to_show.map { |e| e.upcase }.join("\t")
           end
 
           def print_results(activedocs, fields_to_show)

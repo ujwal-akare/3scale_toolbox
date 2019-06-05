@@ -16,7 +16,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Apply::ApplySubcomma
     end
 
     context "when the service is not found" do
-      let(:arguments) { {remote: remote_name, service_id_or_system_name: svc_ref} }
+      let(:arguments) { { remote: remote_name, service_id_or_system_name: svc_ref } }
       let(:svc_id) { "4" }
       let(:svc_ref) { "unexistingservice" }
       let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref } }
@@ -34,51 +34,51 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Apply::ApplySubcomma
 
       context "when name in options" do
         let(:svc_name) { "adifferentname" }
-        let(:options) { { name: svc_name} }
-        let(:svc_params) { { "name" => svc_name, "system_name" => svc_ref}}
+        let(:options) { { name: svc_name } }
+        let(:svc_params) { { "name" => svc_name, "system_name" => svc_ref } }
         include_examples "successfully creates the service with the specified parameter and options"
       end
 
-       context "when deployment-mode in options" do
-         let(:deployment_option) { "valid_deploymentoption"}
-         let(:options) { { :'deployment-mode' => deployment_option } }
-         let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "deployment_option" => deployment_option}}
-         include_examples "successfully creates the service with the specified parameter and options"
-       end
+      context "when deployment-mode in options" do
+        let(:deployment_option) { "valid_deploymentoption" }
+        let(:options) { { :'deployment-mode' => deployment_option } }
+        let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "deployment_option" => deployment_option } }
+        include_examples "successfully creates the service with the specified parameter and options"
+      end
 
-       context "when authentication-mode in options" do
-         let(:backend_version) { "valid_backend_version" }
-         let(:options) { { :'authentication-mode' => backend_version } }
-         let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "backend_version" => backend_version } }
-         include_examples "successfully creates the service with the specified parameter and options"
-       end
+      context "when authentication-mode in options" do
+        let(:backend_version) { "valid_backend_version" }
+        let(:options) { { :'authentication-mode' => backend_version } }
+        let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "backend_version" => backend_version } }
+        include_examples "successfully creates the service with the specified parameter and options"
+      end
 
-       context "when description in options" do
-         let(:description) { "adescription" }
-         let(:options) { { :description => description } }
-         let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "description" => description } }
-         include_examples "successfully creates the service with the specified parameter and options"
-       end
+      context "when description in options" do
+        let(:description) { "adescription" }
+        let(:options) { { :description => description } }
+        let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "description" => description } }
+        include_examples "successfully creates the service with the specified parameter and options"
+      end
 
-       context "when support-email in options" do
-        let(:support_email) { "examplemail@gmail.com"}
+      context "when support-email in options" do
+        let(:support_email) { "examplemail@gmail.com" }
         let(:options) { { :'support-email' => support_email } }
         let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref, "support_email" => support_email } }
         include_examples "successfully creates the service with the specified parameter and options"
-       end
+      end
     end
 
     context "when the service already exists" do
       let(:svc_ref) { "existingservice" }
       let(:svc_id) { "4" }
-      let(:arguments) { {remote: remote_name, service_id_or_system_name: svc_ref} }
+      let(:arguments) { { remote: remote_name, service_id_or_system_name: svc_ref } }
 
       before :example do
         expect(service_class).to receive(:find).with(remote: remote, ref: svc_ref).and_return(service)
         expect(service).to receive(:id).and_return(svc_id)
       end
 
-      context "with no options" do 
+      context "with no options" do
         let(:options) { {} }
         it "the service is not updated" do
           expect { subject.run }.to output(/Applied Service id: #{svc_id}/).to_stdout
@@ -89,7 +89,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Apply::ApplySubcomma
         let(:description) { "adescription" }
         let(:svc_name) { "aname" }
         let(:deployment_mode) { "adeploymentmode" }
-        let(:options) { { description: description, name: svc_name, :'deployment-mode' => deployment_mode} }
+        let(:options) { { description: description, name: svc_name, :'deployment-mode' => deployment_mode } }
         let(:svc_attrs) { { "description" => description, "name" => svc_name, "deployment_option" => deployment_mode } }
         it "the service is updated" do
           expect(service).to receive(:update).with(svc_attrs)

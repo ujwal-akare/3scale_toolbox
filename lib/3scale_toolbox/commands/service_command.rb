@@ -6,7 +6,6 @@ require '3scale_toolbox/commands/service_command/delete_command'
 require '3scale_toolbox/commands/service_command/create_command'
 require '3scale_toolbox/commands/service_command/apply_command'
 
-
 module ThreeScaleToolbox
   module Commands
     module ServiceCommand

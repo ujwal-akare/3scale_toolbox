@@ -21,7 +21,7 @@ RSpec.describe 'Service Delete command' do
     let (:service_ref) { "service_sysname_#{random_lowercase_name}" }
     let (:command_line_str) { "service delete #{remote} #{service_ref}" }
     before :example do
-      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref} )
+      ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: { "name" => service_ref })
     end
 
     it "deletes it" do

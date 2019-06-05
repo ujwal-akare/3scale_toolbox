@@ -6,7 +6,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
   let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:title) { 'Some Title' }
   let(:description) { 'Some Description' }
-  let(:system_name) { 'some_system_name'}
+  let(:system_name) { 'some_system_name' }
   let(:openapi_context) do
     {
       target: service,

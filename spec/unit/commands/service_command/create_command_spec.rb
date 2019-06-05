@@ -18,7 +18,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcom
     # This should cover the case where the service already exists
     # or other errors that are returned by calls to the API
     context "when there is an error creating the service" do
-      let(:arguments) { {remote: remote_name, service_name: "existingservice"} }
+      let(:arguments) { { remote: remote_name, service_name: "existingservice" } }
       let(:exists_error_response) { { 'errors' => { 'system_name' => ["has already been taken"] } } }
       let(:already_exists_api_error) { ThreeScaleToolbox::ThreeScaleApiError.new('Service has not been created', exists_error_response) }
       it 'an error is raised' do
@@ -30,10 +30,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcom
     end
 
     context "service name parameter is specified" do
-      let(:arguments) { {remote: remote_name, service_name: service_name} }
+      let(:arguments) { { remote: remote_name, service_name: service_name } }
       let(:service_name) { "a_service_name" }
-      let(:service_create_params) { {"name" => service_name} }
-      let(:service_create_args) { {remote: remote, service_params: service_create_params } }
+      let(:service_create_params) { { "name" => service_name } }
+      let(:service_create_args) { { remote: remote, service_params: service_create_params } }
       let(:service_id) { "1" }
       shared_examples "successfully creates the service with it" do
         it do
@@ -51,24 +51,24 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcom
         context "specifying system_name option" do
           let(:system_name) { "a_system_name" }
           let(:options) { { :'system-name' => system_name } }
-          let(:service_create_params) { {"name" => service_name, "system_name" => system_name } }
-          let(:service_create_args) { {remote: remote, service_params: service_create_params } }
+          let(:service_create_params) { { "name" => service_name, "system_name" => system_name } }
+          let(:service_create_args) { { remote: remote, service_params: service_create_params } }
           include_examples "successfully creates the service with it"
         end
 
         context "specifying authentication-mode option" do
           let(:authentication_mode) { "1" }
           let(:options) { { :'authentication-mode' => authentication_mode } }
-          let(:service_create_params) { {"name" => service_name, "backend_version" => authentication_mode } }
-          let(:service_create_args) { {remote: remote, service_params: service_create_params } }
+          let(:service_create_params) { { "name" => service_name, "backend_version" => authentication_mode } }
+          let(:service_create_args) { { remote: remote, service_params: service_create_params } }
           include_examples "successfully creates the service with it"
         end
 
         context "specifying a valid deployment option" do
           let(:deployment_mode) { "valid_deploymentoption" }
           let(:options) { { :'deployment-mode' => deployment_mode } }
-          let(:service_create_params) { {"name" => service_name, "deployment_option" => deployment_mode } }
-          let(:service_create_args) { {remote: remote, service_params: service_create_params } }
+          let(:service_create_params) { { "name" => service_name, "deployment_option" => deployment_mode } }
+          let(:service_create_args) { { remote: remote, service_params: service_create_params } }
           include_examples "successfully creates the service with it"
         end
       end

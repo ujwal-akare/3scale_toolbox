@@ -50,11 +50,11 @@ module ThreeScaleToolbox
           end
 
           def print_header
-            puts SERVICE_FIELDS_TO_SHOW.map{|e| e.upcase}.join("\t")
+            puts SERVICE_FIELDS_TO_SHOW.map { |e| e.upcase }.join("\t")
           end
 
           def print_data
-              puts SERVICE_FIELDS_TO_SHOW.map{|field| service.attrs.fetch(field, '(empty)')}.join("\t")
+            puts SERVICE_FIELDS_TO_SHOW.map { |field| service.attrs.fetch(field, '(empty)') }.join("\t")
           end
         end
       end

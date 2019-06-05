@@ -49,7 +49,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
         activedocs_body_content = YAML.safe_load(activedocs_body_str)
         JSON.pretty_generate(activedocs_body_content)
       end
-      let(:general_options) { {:'openapi-spec' => "-"} }
+      let(:general_options) { { :'openapi-spec' => "-" } }
 
       context 'when activedocs not found' do
         let (:activedocs_attrs) { { "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
@@ -70,13 +70,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
 
         context 'when name in options' do
           let(:options) { general_options.merge({ name: 'new name' }) }
-          let(:activedocs_attrs) { { "name" => options[:name], "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json}}
+          let(:activedocs_attrs) { { "name" => options[:name], "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
           include_examples 'activedocs created'
         end
 
         context 'when service-id in options' do
           let(:options) { general_options.merge({ :'service-id' => '7' }) }
-          let(:activedocs_attrs) { { "service_id" => options[:'service-id'], "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json}}
+          let(:activedocs_attrs) { { "service_id" => options[:'service-id'], "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
           include_examples 'activedocs created'
         end
       end

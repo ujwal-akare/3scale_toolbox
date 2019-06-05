@@ -4,7 +4,7 @@ RSpec.describe 'ActiveDocs List command' do
   include_context :resources
   subject { ThreeScaleToolbox::CLI.run(command_line_str.split) }
   let(:remote) { client_url }
-  
+
   context "With multiple existing activedocs" do
     let (:adocs_ref_1) { "activedocs_sysname_#{random_lowercase_name}" }
     let (:adocs_ref_2) { "activedocs_sysname_#{random_lowercase_name}" }
@@ -16,8 +16,8 @@ RSpec.describe 'ActiveDocs List command' do
     let (:command_line_str) { "activedocs list #{remote}" }
 
     before :example do
-      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: {"name" => adocs_ref_1, "body" => activedocs_body_pretty_json } )
-      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: {"name" => adocs_ref_2, "body" => activedocs_body_pretty_json } )
+      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: { "name" => adocs_ref_1, "body" => activedocs_body_pretty_json })
+      ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client, attrs: { "name" => adocs_ref_2, "body" => activedocs_body_pretty_json })
     end
 
     it "lists adocs_ref_1" do

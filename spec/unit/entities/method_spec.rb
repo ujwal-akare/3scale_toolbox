@@ -14,7 +14,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
     before :example do
       allow(service).to receive(:id).and_return(service_id)
       expect(remote).to receive(:create_method).with(service_id, parent_id, method_attrs)
-                                              .and_return(remote_response)
+                                               .and_return(remote_response)
     end
 
     context 'when remote return error' do

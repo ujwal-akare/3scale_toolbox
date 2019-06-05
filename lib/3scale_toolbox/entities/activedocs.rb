@@ -1,10 +1,9 @@
 module ThreeScaleToolbox
   module Entities
     class ActiveDocs
-
       class << self
         def create(remote:, attrs:)
-          activedocs_res = create_activedocs(remote: remote, attrs: attrs)    
+          activedocs_res = create_activedocs(remote: remote, attrs: attrs)
           new(id: activedocs_res.fetch('id'), remote: remote, attrs: activedocs_res)
         end
 
@@ -35,10 +34,11 @@ module ThreeScaleToolbox
           if (errors = activedocs_res['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('ActiveDocs has not been created', errors)
           end
+
           activedocs_res
         end
       end
-      
+
       attr_reader :id, :remote
 
       def initialize(id:, remote:, attrs: nil)

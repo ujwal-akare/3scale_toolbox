@@ -14,7 +14,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Show::ShowSubcommand
 
     context "when the service does not exists" do
       let(:service_ref) { "unexistingservice" }
-      let(:arguments) { {remote: remote_name, service_id_or_system_name: service_ref} }
+      let(:arguments) { { remote: remote_name, service_id_or_system_name: service_ref } }
 
       it 'an error is raised' do
         expect(service_class).to receive(:find).with(remote: remote, ref: service_ref).and_return(nil)
@@ -26,8 +26,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Show::ShowSubcommand
 
     context "when a service exists" do
       let(:service_ref) { "1" }
-      let(:existing_service) { {"id" => service_ref, "system_name" => "existingservice", "name" => "name1", "support_email" => ""} }
-      let(:arguments) { {remote: "myremote", service_id_or_system_name: service_ref} }
+      let(:existing_service) { { "id" => service_ref, "system_name" => "existingservice", "name" => "name1", "support_email" => "" } }
+      let(:arguments) { { remote: "myremote", service_id_or_system_name: service_ref } }
 
       before :example do
         expect(service).to receive(:attrs).and_return(existing_service).at_least(:once)

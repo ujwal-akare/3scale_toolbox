@@ -115,9 +115,9 @@ module ThreeScaleToolbox
           def create_activedocs_attrs
             check_openapi_spec_defined
             activedocs_attrs.merge(
-                "system_name" => ref,
-                "name" => ref,
-                "body" => activedocs_json_spec,
+              "system_name" => ref,
+              "name" => ref,
+              "body" => activedocs_json_spec,
             ) { |_key, oldval, _newval| oldval } # receiver of the merge message has key priority
           end
         end

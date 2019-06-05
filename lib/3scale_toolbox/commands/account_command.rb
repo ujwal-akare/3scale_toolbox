@@ -12,11 +12,9 @@ module ThreeScaleToolbox
           summary     'account super command'
           description 'Accounts commands'
 
-
           run do |_opts, _args, cmd|
             puts cmd.help
           end
-
         end
       end
       add_subcommand(Find::FindSubcommand)

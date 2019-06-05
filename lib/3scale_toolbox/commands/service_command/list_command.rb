@@ -13,7 +13,7 @@ module ThreeScaleToolbox
               description 'List all services'
               runner ListSubcommand
 
-              param   :remote
+              param :remote
             end
           end
 
@@ -35,12 +35,12 @@ module ThreeScaleToolbox
           end
 
           def print_header
-            puts SERVICE_FIELDS_TO_SHOW.map{|e| e.upcase}.join("\t")
+            puts SERVICE_FIELDS_TO_SHOW.map { |e| e.upcase }.join("\t")
           end
 
           def print_data
             services.each do |service|
-              puts SERVICE_FIELDS_TO_SHOW.map{|field| service.fetch(field, '(empty)')}.join("\t")
+              puts SERVICE_FIELDS_TO_SHOW.map { |field| service.fetch(field, '(empty)') }.join("\t")
             end
           end
         end

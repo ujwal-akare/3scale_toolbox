@@ -40,17 +40,17 @@ RSpec.describe ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask do
       it 'deployment config is set to hosted' do
         expect(source).to receive(:id).and_return(service_id)
         expect(target).to receive(:update).with(hash_including('deployment_option'))
-                                                  .and_return(invalid_deployment_error_response)
+                                          .and_return(invalid_deployment_error_response)
         expect(target).to receive(:update).with(hash_excluding('deployment_option'))
-                                                  .and_return(positive_response)
+                                          .and_return(positive_response)
         expect { subject.call }.to output(/updated service settings for service id #{service_id}/).to_stdout
       end
 
       it 'throws error when second request returns error' do
         expect(target).to receive(:update).with(hash_including('deployment_option'))
-                                                  .and_return(invalid_deployment_error_response)
+                                          .and_return(invalid_deployment_error_response)
         expect(target).to receive(:update).with(hash_excluding('deployment_option'))
-                                                  .and_return(common_error_response)
+                                          .and_return(common_error_response)
         expect { subject.call }.to raise_error(ThreeScaleToolbox::Error, /not been saved/)
       end
     end

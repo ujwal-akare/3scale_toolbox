@@ -3,50 +3,50 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleAp
   let(:description) { 'Some Description' }
   let(:content) do
     <<~YAML
-        ---
-        swagger: "2.0"
-        info:
-          title: "#{title}"
-          description: "#{description}"
-          version: "1.0.0"
-        basePath: "/v2"
-        schemes: ["https", "http"]
-        paths:
-          /pet:
-            post:
-              operationId: "addPet"
-              description: ""
-              responses:
-                405:
-                  description: "invalid input"
-        security:
-          - OauthSecurity:
-            - user
-        securityDefinitions:
-          OauthSecurity:
-            type: oauth2
-            flow: accessCode
-            authorizationUrl: 'https://oauth.simple.api/authorization'
-            tokenUrl: 'https://oauth.simple.api/token'
-            scopes:
-              admin: Admin scope
-              user: User scope
+      ---
+      swagger: "2.0"
+      info:
+        title: "#{title}"
+        description: "#{description}"
+        version: "1.0.0"
+      basePath: "/v2"
+      schemes: ["https", "http"]
+      paths:
+        /pet:
+          post:
+            operationId: "addPet"
+            description: ""
+            responses:
+              405:
+                description: "invalid input"
+      security:
+        - OauthSecurity:
+          - user
+      securityDefinitions:
+        OauthSecurity:
+          type: oauth2
+          flow: accessCode
+          authorizationUrl: 'https://oauth.simple.api/authorization'
+          tokenUrl: 'https://oauth.simple.api/token'
+          scopes:
+            admin: Admin scope
+            user: User scope
     YAML
   end
   let(:minimum_req_swagger) do
     <<~YAML
-        ---
-        swagger: "2.0"
-        info:
-          title: "#{title}"
-          version: "1.0.0"
-        paths:
-          /pet:
-            post:
-              operationId: "addPet"
-              responses:
-                405:
-                  description: "invalid input"
+      ---
+      swagger: "2.0"
+      info:
+        title: "#{title}"
+        version: "1.0.0"
+      paths:
+        /pet:
+          post:
+            operationId: "addPet"
+            responses:
+              405:
+                description: "invalid input"
     YAML
   end
   let(:openapi) { ThreeScaleToolbox::Swagger.build(YAML.safe_load(content)) }
