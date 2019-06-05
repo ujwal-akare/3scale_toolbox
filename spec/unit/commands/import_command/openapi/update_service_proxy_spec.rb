@@ -2,13 +2,18 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
   let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:schemes) { [] }
-  let(:host) { 'example.com' }
+  let(:host) { nil }
+  let(:security) { nil }
+  let(:production_public_base_url) { nil }
+  let(:staging_public_base_url) { nil }
   let(:oidc_issuer_endpoint) { 'https://sso.example.com' }
   let(:openapi_context) do
     {
       target: service,
       api_spec: api_spec,
-      oidc_issuer_endpoint: oidc_issuer_endpoint
+      oidc_issuer_endpoint: oidc_issuer_endpoint,
+      production_public_base_url: production_public_base_url,
+      staging_public_base_url: staging_public_base_url,
     }
   end
 
@@ -22,13 +27,39 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       allow(service).to receive(:id).and_return(1000)
     end
 
-    context 'no sec requirements' do
-      let(:security) { nil }
+    context 'no proxy settings' do
+      it 'proxy not updated' do
+        subject
+      end
+    end
 
-      it 'updates proxy' do
+    context 'production public base url set' do
+      let(:production_public_base_url) { 'example.com' }
+
+      it 'endpoint updated' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(endpoint: 'example.com')).and_return({})
+        expect { subject }.to output.to_stdout
+      end
+    end
+
+    context 'staging public base url set' do
+      let(:staging_public_base_url) { 'example.com' }
+
+      it 'sandbox_endpoint updated' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(sandbox_endpoint: 'example.com')).and_return({})
+        expect { subject }.to output.to_stdout
+      end
+    end
+
+    context 'api_spec host set' do
+      let(:host) { 'example.com' }
+
+      it 'api_backend updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(api_backend: 'https://example.com')).and_return({})
-        subject
+        expect { subject }.to output.to_stdout
       end
     end
 
@@ -45,7 +76,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
         it 'updates proxy' do
           expect(service).to receive(:update_proxy)
             .with(hash_including(
-                    api_backend: 'https://example.com',
                     credentials_location: 'query',
                     auth_user_key: key_name
                   )).and_return({})
@@ -59,7 +89,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
         it 'updates proxy' do
           expect(service).to receive(:update_proxy)
             .with(hash_including(
-                    api_backend: 'https://example.com',
                     credentials_location: 'headers',
                     auth_user_key: key_name
                   )).and_return({})
@@ -85,7 +114,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'updates proxy' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(
-                  api_backend: 'https://example.com',
                   credentials_location: 'headers',
                   oidc_issuer_endpoint: oidc_issuer_endpoint
                 )).and_return({})

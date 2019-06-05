@@ -34,7 +34,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
     end
 
     context 'when service exists' do
-
       before :example do
         expect(service_class).to receive(:find_by_system_name)
           .with(remote: threescale_client, system_name: openapi_context[:target_system_name])
@@ -45,6 +44,40 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
       it 'service is updated' do
         expect(service).to receive(:update).with(expected_settings)
         expect { subject }.to output(/Updated service id: #{service_id}/).to_stdout
+      end
+
+      context 'and production_public_base_url is in context' do
+        let(:openapi_context) do
+          {
+            target: service,
+            api_spec: api_spec,
+            threescale_client: threescale_client,
+            target_system_name: system_name,
+            production_public_base_url: 'http://api.example.com',
+          }
+        end
+
+        it 'service settings include deployment option' do
+          expect(service).to receive(:update).with(hash_including('deployment_option' => 'self_managed'))
+          expect { subject }.to output.to_stdout
+        end
+      end
+
+      context 'and staging_public_base_url is in context' do
+        let(:openapi_context) do
+          {
+            target: service,
+            api_spec: api_spec,
+            threescale_client: threescale_client,
+            target_system_name: system_name,
+            staging_public_base_url: 'http://api.example.com',
+          }
+        end
+
+        it 'service settings include deployment option' do
+          expect(service).to receive(:update).with(hash_including('deployment_option' => 'self_managed'))
+          expect { subject }.to output.to_stdout
+        end
       end
     end
 

@@ -236,17 +236,42 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       let(:params) { { 'name' => 'new name' } }
       let(:new_params) { { 'id' => 5, 'name' => 'new_name' } }
 
-      before :example do
-        expect(remote).to receive(:update_service).with(id, params).and_return(new_params)
+      context 'remote call successfull' do
+        before :example do
+          expect(remote).to receive(:update_service).with(id, params).and_return(new_params)
+        end
+
+        it 'returns new params' do
+          expect(subject.update(params)).to eq(new_params)
+        end
+
+        it 'attrs method returns new params' do
+          subject.update(params)
+          expect(subject.attrs).to eq(new_params)
+        end
       end
 
-      it 'calls update_service method' do
-        expect(subject.update(params)).to eq(new_params)
-      end
+      context 'new attrs include invalid deployment option' do
+        let(:params) { { 'name' => 'new name', 'deployment_option' => 'self_managed' } }
+        let(:invalid_deployment_mode_error) do
+          {
+            'errors' => {
+              'deployment_option' => ['is not included in the list']
+            }
+          }
+        end
 
-      it 'call to attrs returns new params' do
-        subject.update(params)
-        expect(subject.attrs).to eq(new_params)
+        before :example do
+          expect(remote).to receive(:update_service).with(id, params)
+                                                    .and_return(invalid_deployment_mode_error)
+        end
+
+        it 'second update call with deployment mode attr removed' do
+          sanitized_params = params.dup.tap { |hs| hs.delete('deployment_option') }
+          expect(remote).to receive(:update_service).with(id, sanitized_params)
+                                                    .and_return(new_params)
+          expect(subject.update(params)).to eq(new_params)
+        end
       end
     end
 

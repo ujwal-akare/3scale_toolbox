@@ -143,7 +143,7 @@ module ThreeScaleToolbox
       end
 
       def update(svc_attrs)
-        new_attrs = remote.update_service id, svc_attrs
+        new_attrs = safe_update(svc_attrs)
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service not updated', errors)
         end
@@ -232,6 +232,21 @@ module ThreeScaleToolbox
         end
 
         svc
+      end
+
+      def safe_update(svc_attrs)
+        new_attrs = remote.update_service id, svc_attrs
+
+        # Source and target remotes might not allow same set of deployment options
+        # Invalid deployment option check
+        # use default deployment_option
+        if (errors = new_attrs['errors']) &&
+           ThreeScaleToolbox::Helper.service_invalid_deployment_option?(errors)
+          svc_attrs.delete('deployment_option')
+          new_attrs = remote.update_service id, svc_attrs
+        end
+
+        new_attrs
       end
     end
   end

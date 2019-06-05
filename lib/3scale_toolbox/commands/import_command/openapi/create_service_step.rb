@@ -35,6 +35,7 @@ module ThreeScaleToolbox
               svc['description'] = service_description
               svc['backend_version'] = backend_version
               svc['system_name'] = service_system_name
+              svc['deployment_option'] = 'self_managed' if !production_public_base_url.nil? || !staging_public_base_url.nil?
             end
           end
 
