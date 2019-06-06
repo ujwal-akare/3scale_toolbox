@@ -2,6 +2,7 @@
 
 * [List applications](#list)
 * [Create applications](#create)
+* [show applications](#show)
 
 ### List
 
@@ -50,4 +51,28 @@ OPTIONS
        --description=<value>          Application description
        --user-key=<value>             User Key (API Key) of the application
                                       to be created.
+```
+
+### Show
+
+```shell
+NAME
+    show - show application attributes
+
+USAGE
+    3scale application show [opts] <remote>
+    <application>
+
+DESCRIPTION
+    Show application attributes
+
+    Application param allows:
+
+    * Application internal id
+
+    * User_key (API key)
+
+    * App_id (from app_id/app_key pair)
+
+    * Client ID (for OAuth and OpenID Connect authentication modes)
 ```

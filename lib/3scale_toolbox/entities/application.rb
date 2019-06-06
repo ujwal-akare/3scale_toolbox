@@ -10,6 +10,18 @@ module ThreeScaleToolbox
 
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         end
+
+        # ref can be
+        # * Application internal id
+        # * User_key (API key)
+        # * App_id (from app_id/app_key pair)
+        # * Client ID (for OAuth and OpenID Connect authentication modes)
+        def find(remote:, ref:)
+          attrs = remote.find_application(id: ref, user_key: ref, application_id: ref)
+          new(id: ref, remote: remote, attrs: attrs)
+        rescue ThreeScale::API::HttpClient::NotFoundError
+          nil
+        end
       end
 
       attr_reader :id, :remote
