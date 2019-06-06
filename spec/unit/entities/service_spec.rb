@@ -392,6 +392,49 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
           expect(subject.update_oidc(oidc_configuration)).to eq(oidc_configuration)
         end
       end
+
+      context '#applications' do
+        context 'list_applications returns error' do
+          let(:request_error) { { 'errors' => 'some error' } }
+
+          before :example do
+            expect(remote).to receive(:list_applications).with(service_id: id)
+                                                         .and_return(request_error)
+          end
+
+          it 'error is raised' do
+            expect { subject.applications }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
+                                                           /Service applications not read/)
+          end
+        end
+
+        context 'list_applications returns applications' do
+          let(:app01_attrs) { { 'id' => '01', 'name' => 'app01' } }
+          let(:app02_attrs) { { 'id' => '02', 'name' => 'app02' } }
+          let(:app03_attrs) { { 'id' => '03', 'name' => 'app03' } }
+          let(:applications) { [app01_attrs, app02_attrs, app03_attrs] }
+
+          before :example do
+            expect(remote).to receive(:list_applications).with(service_id: id)
+                                                         .and_return(applications)
+          end
+
+          it 'app01 is returned' do
+            apps = subject.applications
+            expect(apps.map(&:id)).to include('01')
+          end
+
+          it 'app02 is returned' do
+            apps = subject.applications
+            expect(apps.map(&:id)).to include('02')
+          end
+
+          it 'app03 is returned' do
+            apps = subject.applications
+            expect(apps.map(&:id)).to include('03')
+          end
+        end
+      end
     end
   end
 end

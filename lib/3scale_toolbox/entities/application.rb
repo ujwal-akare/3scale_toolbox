@@ -47,6 +47,10 @@ module ThreeScaleToolbox
           # find_application criteria only accepts one parameter.
           # Otherwise unexpected behavior
           attrs = remote.find_application(type => ref)
+          if (errors = attrs['errors'])
+            raise ThreeScaleToolbox::ThreeScaleApiError.new('Application find error', errors)
+          end
+
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         rescue ThreeScale::API::HttpClient::NotFoundError
           nil

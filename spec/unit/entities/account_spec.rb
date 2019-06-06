@@ -1,7 +1,7 @@
 RSpec.describe ThreeScaleToolbox::Entities::Account do
   let(:account_ref) { 'accId' }
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
-  let(:account) { instance_double(ThreeScaleToolbox::Entities::Service) }
+  let(:account) { instance_double(ThreeScaleToolbox::Entities::Account) }
   let(:show_account_error) { { 'errors' => 'some error' } }
   let(:application_class) { class_double(ThreeScaleToolbox::Entities::Application).as_stubbed_const }
 
