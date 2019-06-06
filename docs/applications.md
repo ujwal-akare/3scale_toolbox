@@ -4,6 +4,7 @@
 * [Create applications](#create)
 * [show application](#show)
 * [Apply application](#apply)
+* [Delete application](#delete)
 
 ### List
 
@@ -136,4 +137,34 @@ OPTIONS
                                       state to suspended)
        --user-key=<value>             User Key (API Key) of the application
                                       to be created.
+```
+
+### Delete
+
+* `application` positional argument is application unique identifier. Allowed id's are:
+  * Application internal id
+  * User_key (API key)
+  * App_id (from app_id/app_key pair)
+  * Client ID (for OAuth and OpenID Connect authentication modes)
+
+```shell
+NAME
+    delete - delete application
+
+USAGE
+    3scale application delete [opts] <remote>
+    <application>
+
+DESCRIPTION
+    Delete application'
+
+    Application param allows:
+
+    * Application internal id
+
+    * User_key (API key)
+
+    * App_id (from app_id/app_key pair)
+
+    * Client ID (for OAuth and OpenID Connect authentication modes)
 ```

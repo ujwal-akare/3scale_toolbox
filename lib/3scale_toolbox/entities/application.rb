@@ -98,6 +98,10 @@ module ThreeScaleToolbox
         new_attrs
       end
 
+      def delete
+        remote.delete_application account_id, id
+      end
+
       private
 
       def account_id

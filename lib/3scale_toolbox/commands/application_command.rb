@@ -2,6 +2,7 @@ require '3scale_toolbox/commands/application_command/list_command'
 require '3scale_toolbox/commands/application_command/create_command'
 require '3scale_toolbox/commands/application_command/show_command'
 require '3scale_toolbox/commands/application_command/apply_command'
+require '3scale_toolbox/commands/application_command/delete_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -23,6 +24,7 @@ module ThreeScaleToolbox
       add_subcommand(Create::CreateSubcommand)
       add_subcommand(Show::ShowSubcommand)
       add_subcommand(Apply::ApplySubcommand)
+      add_subcommand(Delete::DeleteSubcommand)
     end
   end
 end
