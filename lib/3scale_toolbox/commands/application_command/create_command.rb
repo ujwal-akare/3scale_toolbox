@@ -14,7 +14,7 @@ module ThreeScaleToolbox
 
               option      nil, 'user-key', 'User Key (API Key) of the application to be created.', argument: :required
               option      nil, 'application-id', 'App ID or Client ID (for OAuth and OpenID Connect authentication modes) of the application to be created. ', argument: :required
-              option      nil, 'application-key', 'App ID or Client ID (for OAuth and OpenID Connect authentication modes) of the application to be created.', argument: :required
+              option      nil, 'application-key', 'App Key(s) or Client Secret (for OAuth and OpenID Connect authentication modes) of the application to be created.' , argument: :required
               option      nil, :description, 'Application description', argument: :required
               param       :remote
               param       :account

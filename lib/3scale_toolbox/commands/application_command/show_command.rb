@@ -6,7 +6,7 @@ module ThreeScaleToolbox
           include ThreeScaleToolbox::Command
 
           FIELDS_TO_SHOW = %w[id name description state enabled account_id service_id plan_id
-                              user_key application_id application_key].freeze
+                              user_key application_id].freeze
 
           def self.command
             Cri::Command.define do
