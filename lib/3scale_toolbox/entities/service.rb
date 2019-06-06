@@ -234,8 +234,8 @@ module ThreeScaleToolbox
         end
       end
 
-      def applications(plan_id: nil)
-        app_attrs_list = remote.list_applications(service_id: id, plan_id: plan_id)
+      def applications
+        app_attrs_list = remote.list_applications(service_id: id)
         if app_attrs_list.respond_to?(:has_key?) && (errors = app_attrs_list['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service applications not read', errors)
         end

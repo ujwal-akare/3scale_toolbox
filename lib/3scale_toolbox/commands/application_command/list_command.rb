@@ -28,8 +28,10 @@ module ThreeScaleToolbox
 
             applications = if option_account
                              account.applications
+                           elsif option_service && option_plan
+                             plan.applications
                            elsif option_service
-                             service.applications(plan_id: plan_id)
+                             service.applications
                            else
                              provider_account_applications
                            end
@@ -100,12 +102,6 @@ module ThreeScaleToolbox
                                    ref: option_account).tap do |acc|
               raise ThreeScaleToolbox::Error, "Account #{option_account} does not exist" if acc.nil?
             end
-          end
-
-          def plan_id
-            return unless option_plan
-
-            plan.id
           end
 
           def plan

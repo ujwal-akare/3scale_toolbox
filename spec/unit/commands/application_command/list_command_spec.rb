@@ -96,8 +96,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::List::ListSubcom
           let(:application_list) { [app0, app2] }
 
           before :example do
-            expect(service).to receive(:applications).with(plan_id: nil)
-                                                     .and_return(application_list)
+            expect(service).to receive(:applications).and_return(application_list)
           end
 
           it 'app_0 in the list' do
@@ -132,9 +131,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::List::ListSubcom
           let(:application_list) { [app0] }
 
           before :example do
-            expect(plan).to receive(:id).and_return(1000)
-            expect(service).to receive(:applications).with(plan_id: 1000)
-                                                     .and_return(application_list)
+            expect(plan).to receive(:applications).and_return(application_list)
           end
 
           it 'app_0 in the list' do
