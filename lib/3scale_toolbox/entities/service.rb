@@ -223,6 +223,17 @@ module ThreeScaleToolbox
         new_feature
       end
 
+      def proxy_configs(environment)
+        proxy_configs_attrs = remote.proxy_config_list(id, environment)
+        if proxy_configs_attrs.respond_to?(:has_key?) && (errors = proxy_configs_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('ProxyConfigs not read', errors)
+        end
+
+        proxy_configs_attrs.map do |proxy_config_attrs|
+          Entities::ProxyConfig.new(environment: environment, service: self, version: proxy_config_attrs.fetch("version"), attrs: proxy_config_attrs)
+        end
+      end
+
       private
 
       def service_attrs
