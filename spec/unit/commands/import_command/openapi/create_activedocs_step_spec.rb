@@ -11,7 +11,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
   let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:published) { true }
   let(:skip_openapi_validation) { false }
-  let(:oidc_issuer_endpoint) { 'https://client_id:secret@sso.oidcissuer.com/oidc' }
+  let(:oidc_issuer_endpoint) { 'https://client_id:secret@sso.example.com/oidc' }
 
   let(:openapi_context) do
     {

@@ -3,7 +3,7 @@ RSpec.describe 'OpenAPI import OIDC service' do
 
   # render from template to avoid system_name collision
   let(:oas_resource_path) { File.join(resources_path, 'oidc.yaml') }
-  let(:issuer_endpoint) { 'https://issuer.com' }
+  let(:issuer_endpoint) { 'https://example.com' }
   let(:command_line_str) do
     "import openapi -t #{system_name} --oidc-issuer-endpoint=#{issuer_endpoint} " \
     " -d #{destination_url} #{oas_resource_path}"
