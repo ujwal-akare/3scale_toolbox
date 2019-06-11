@@ -23,6 +23,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
    * Create, Apply, List, Delete [ActiveDocs](docs/activedocs.md)
    * List, Show, Promote [Proxy Configuration](docs/proxy-config.md)
    * [Copy Policy Registry](docs/copy-policy-registry.md)
+   * Create, Apply, List, Show, Delete, Suspend, Resume [Applications](docs/applications.md)
    * [Remotes](docs/remotes.md)
 * [Development](#development)
    * [Testing](#testing)
@@ -52,6 +53,7 @@ DESCRIPTION
 COMMANDS
     account              account super command
     activedocs           activedocs super command
+    application          application super command
     application-plan     application-plan super command
     copy                 copy super command
     help                 show help
@@ -59,6 +61,7 @@ COMMANDS
     method               method super command
     metric               metric super command
     policy-registry      policy-registry super command
+    proxy-config         proxy-config super command
     remote               remotes super command
     service              services super command
     update               update super command

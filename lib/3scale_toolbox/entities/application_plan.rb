@@ -160,6 +160,17 @@ module ThreeScaleToolbox
         remote.delete_application_plan service.id, id
       end
 
+      def applications
+        app_attrs_list = remote.list_applications(service_id: service.id, plan_id: id)
+        if app_attrs_list.respond_to?(:has_key?) && (errors = app_attrs_list['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Plan applications not read', errors)
+        end
+
+        app_attrs_list.map do |app_attrs|
+          Entities::Application.new(id: app_attrs.fetch('id'), remote: remote, attrs: app_attrs)
+        end
+      end
+
       private
 
       def read_plan_attrs

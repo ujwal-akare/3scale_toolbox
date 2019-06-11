@@ -15,8 +15,7 @@ module ThreeScaleToolbox
               summary     'find account'
               description 'Find account by email, provider key or service token'
 
-              option      :a, :'print-all', 'Print all the account info',
-                          argument: :forbidden
+              option      :a, :'print-all', 'Print all the account info', argument: :forbidden
               param       :remote
               param       :text
 
@@ -26,15 +25,14 @@ module ThreeScaleToolbox
 
           def run
             client = threescale_client(arguments[:remote])
-            begin
-              account = ThreeScaleToolbox::Entities::Account.find(arguments[:text], client)
-              account.verbose = options[:'print-all']
-              puts account
-            rescue ThreeScale::API::HttpClient::NotFoundError
-              puts "Account not found"
-            rescue ThreeScale::API::HttpClient::ForbiddenError
-              puts "Forbidden action"
+            account = ThreeScaleToolbox::Entities::Account.find_by_text(arguments[:text], client)
+            if account.nil?
+              puts 'Account not found'
+              return
             end
+
+            account.verbose = options[:'print-all']
+            puts account
           end
         end
       end
