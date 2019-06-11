@@ -19,8 +19,8 @@ module ThreeScaleToolbox
               flag        :p, :publish, 'Publish application plan'
               flag        nil, :hide, 'Hide application plan'
               option      nil, 'approval-required', 'Applications require approval. true or false', argument: :required, transform: ThreeScaleToolbox::Helper::BooleanTransformer.new
-              option      nil, 'cost-per-month', 'Cost per month', argument: :required, transform: method(:Integer)
-              option      nil, 'setup-fee', 'Setup fee', argument: :required, transform: method(:Integer)
+              option      nil, 'cost-per-month', 'Cost per month', argument: :required, transform: method(:Float)
+              option      nil, 'setup-fee', 'Setup fee', argument: :required, transform: method(:Float)
               option      nil, 'trial-period-days', 'Trial period days', argument: :required, transform: method(:Integer)
               option      nil, 'end-user-required', 'End user required. true or false', argument: :required, transform: ThreeScaleToolbox::Helper::BooleanTransformer.new
               param       :remote
