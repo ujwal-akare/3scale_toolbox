@@ -53,6 +53,7 @@ DESCRIPTION
 COMMANDS
     account              account super command
     activedocs           activedocs super command
+    application          application super command
     application-plan     application-plan super command
     copy                 copy super command
     help                 show help
@@ -60,6 +61,7 @@ COMMANDS
     method               method super command
     metric               metric super command
     policy-registry      policy-registry super command
+    proxy-config         proxy-config super command
     remote               remotes super command
     service              services super command
     update               update super command

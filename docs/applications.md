@@ -2,7 +2,7 @@
 
 * [List applications](#list)
 * [Create applications](#create)
-* [show application](#show)
+* [Show application](#show)
 * [Apply application](#apply)
 * [Delete application](#delete)
 
