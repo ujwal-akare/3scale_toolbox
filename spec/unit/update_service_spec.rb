@@ -82,7 +82,7 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
       end
       let(:tasks) do
         [
-          ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask,
+          ThreeScaleToolbox::Tasks::CopyServiceSettingsTask,
           ThreeScaleToolbox::Tasks::CopyServiceProxyTask,
           ThreeScaleToolbox::Tasks::CopyMethodsTask,
           ThreeScaleToolbox::Tasks::CopyMetricsTask,
@@ -111,7 +111,7 @@ RSpec.describe ThreeScaleToolbox::Commands::UpdateCommand::UpdateServiceSubcomma
       end
       let(:tasks) do
         [
-          ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask,
+          ThreeScaleToolbox::Tasks::CopyServiceSettingsTask,
           ThreeScaleToolbox::Tasks::CopyServiceProxyTask,
           ThreeScaleToolbox::Tasks::CopyMethodsTask,
           ThreeScaleToolbox::Tasks::CopyMetricsTask,

@@ -12,7 +12,9 @@ RSpec.describe 'Copy Service' do
   subject { ThreeScaleToolbox::CLI.run(command_line_args) }
   # source service is being created for testing
   let(:source_service) { Helpers::ServiceFactory.new_service source_client }
-  let(:target_service) { ThreeScaleToolbox::Entities::Service.new(id: target_service_id, remote: target_client) }
+  let(:target_service) do
+    ThreeScaleToolbox::Entities::Service.find(ref: target_system_name, remote: target_client)
+  end
 
   it_behaves_like 'service copied'
 end

@@ -1,4 +1,4 @@
-RSpec.describe ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask do
+RSpec.describe ThreeScaleToolbox::Tasks::CopyServiceSettingsTask do
   context '#call' do
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
@@ -15,6 +15,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask do
     let(:common_error_response) { { 'errors' => { 'comp' => 'error' } } }
     let(:positive_response) { { 'errors' => nil, 'id' => 'some_id' } }
     let(:target_name) { 'new_name' }
+    let(:expected_settings) { { 'name' => 'some_name', 'deployment_option' => deployment_option } }
     subject { described_class.new(source: source, target: target, target_name: target_name) }
 
     before :each do
@@ -55,25 +56,10 @@ RSpec.describe ThreeScaleToolbox::Tasks::UpdateServiceSettingsTask do
       end
     end
 
-    context 'system_name not provided' do
-      let(:target_name) { nil }
-      let(:expected_svc_settings) { service_settings.reject { |k, _| k == 'system_name' } }
-
-      it 'service settings does not contain system_name' do
-        expect(source).to receive(:id).and_return(service_id)
-        expect(target).to receive(:update).with(expected_svc_settings).and_return('errors' => nil)
-        expect { subject.call }.to output(/updated service settings for service id #{service_id}/).to_stdout
-      end
-    end
-
-    context 'system_name provided' do
-      let(:expected_svc_settings) { service_settings.merge('system_name' => target_name) }
-
-      it 'service settings contains new provided system_name' do
-        expect(source).to receive(:id).and_return(service_id)
-        expect(target).to receive(:update).with(expected_svc_settings).and_return('errors' => nil)
-        expect { subject.call }.to output(/updated service settings for service id #{service_id}/).to_stdout
-      end
+    it 'service settings updated' do
+      expect(source).to receive(:id).and_return(service_id)
+      expect(target).to receive(:update).with(expected_settings).and_return('errors' => nil)
+      expect { subject.call }.to output(/updated service settings for service id #{service_id}/).to_stdout
     end
   end
 end
