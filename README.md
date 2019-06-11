@@ -22,6 +22,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
    * Create, Apply, List, Show, Delete [Service](docs/service.md)
    * Create, Apply, List, Delete [ActiveDocs](docs/activedocs.md)
    * List, Show, Promote [Proxy Configuration](docs/proxy-config.md)
+   * [Copy Policy Registry](docs/copy-policy-registry.md)
    * [Remotes](docs/remotes.md)
 * [Development](#development)
    * [Testing](#testing)
@@ -49,11 +50,18 @@ DESCRIPTION
     3scale toolbox to manage your API from the terminal.
 
 COMMANDS
-    copy       copy super command
-    help       show help
-    import     import super command
-    remote     remotes super command
-    update     update super command
+    account              account super command
+    activedocs           activedocs super command
+    application-plan     application-plan super command
+    copy                 copy super command
+    help                 show help
+    import               import super command
+    method               method super command
+    metric               metric super command
+    policy-registry      policy-registry super command
+    remote               remotes super command
+    service              services super command
+    update               update super command
 
 OPTIONS
     -c --config-file=<value>      3scale toolbox configuration file (default:

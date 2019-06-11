@@ -11,6 +11,7 @@ require '3scale_toolbox/commands/service_command'
 require '3scale_toolbox/commands/activedocs_command'
 require '3scale_toolbox/commands/account_command'
 require '3scale_toolbox/commands/proxy_config_command'
+require '3scale_toolbox/commands/policy_registry_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -27,6 +28,7 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::ActiveDocsCommand,
       ThreeScaleToolbox::Commands::AccountCommand,
       ThreeScaleToolbox::Commands::ProxyConfigCommand,
+      ThreeScaleToolbox::Commands::PolicyRegistryCommand,
     ].freeze
   end
 end
