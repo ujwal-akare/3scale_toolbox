@@ -3,7 +3,7 @@ module ThreeScaleToolbox
     class ApplicationPlan
       class << self
         def create(service:, plan_attrs:)
-          plan = service.remote.create_application_plan service.id, build_plan_attrs(plan_attrs)
+          plan = service.remote.create_application_plan service.id, create_plan_attrs(plan_attrs)
           if (errors = plan['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan has not been created', errors)
           end
@@ -25,14 +25,13 @@ module ThreeScaleToolbox
           new(id: plan.fetch('id'), service: service, attrs: plan)
         end
 
-        def build_plan_attrs(source_attrs)
+        def create_plan_attrs(source_attrs)
           # shallow copy is enough
           source_attrs.clone.tap do |new_plan_attrs|
             # plans are created by default in hidden state
             # If published is required, 'state_event' attr has to be added
             state = new_plan_attrs.delete('state')
             new_plan_attrs['state_event'] = 'publish' if state == 'published'
-            new_plan_attrs['state_event'] = 'hide' if state == 'hidden'
           end
         end
       end
@@ -52,7 +51,7 @@ module ThreeScaleToolbox
 
       def update(plan_attrs)
         new_attrs = remote.update_application_plan(service.id, id,
-                                                   self.class.build_plan_attrs(plan_attrs))
+                                                   update_plan_attrs(plan_attrs))
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan has not been updated', errors)
         end
@@ -180,6 +179,20 @@ module ThreeScaleToolbox
         end
 
         plan_attrs
+      end
+
+      def update_plan_attrs(source_attrs)
+        # shallow copy is enough
+        source_attrs.clone.tap do |new_plan_attrs|
+          new_plan_attrs.delete('id')
+          new_plan_attrs.delete('links')
+          new_plan_attrs.delete('system_name')
+          # plans are created by default in hidden state
+          # If published is required, 'state_event' attr has to be added
+          state = new_plan_attrs.delete('state')
+          new_plan_attrs['state_event'] = 'publish' if state == 'published'
+          new_plan_attrs['state_event'] = 'hide' if state == 'hidden'
+        end
       end
 
       def eternity_zero_limits
