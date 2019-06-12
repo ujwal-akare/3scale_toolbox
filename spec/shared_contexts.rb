@@ -82,10 +82,6 @@ RSpec.shared_context :real_copy_clients do
   include_context :random_name
 
   let(:target_system_name) { "service_#{random_lowercase_name}_#{Time.now.getutc.to_i}" }
-  let(:target_service_id) do
-    # figure out target service by system_name
-    target_client.list_services.find { |service| service['system_name'] == target_system_name }['id']
-  end
   let(:source_client) { ThreeScale::API::Client.new(http_client) }
   let(:target_client) { ThreeScale::API::Client.new(http_client) }
 end

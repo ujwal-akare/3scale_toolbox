@@ -2,6 +2,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
   include_context :temp_dir
   include_context :resources
 
+  let(:threescaleapispec_class) { class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec).as_stubbed_const }
+  let(:threescaleapispec) { instance_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec, 'threescaleapispec') }
   let(:arguments) { { 'openapi_resource': oas_resource } }
   let(:options) { { 'destination': 'https://destination_key@destination.example.com' } }
   subject { described_class.new(options, arguments, nil) }
@@ -10,11 +12,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
     let(:oas_resource) { File.join(resources_path, 'valid_swagger.yaml') }
 
     context '#run' do
-      let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
-
       before :each do
-        threescale_api_spec_stub = class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec).as_stubbed_const
-        expect(threescale_api_spec_stub).to receive(:new).and_return(api_spec)
+        expect(threescaleapispec_class).to receive(:new).and_return(threescaleapispec)
         expect(subject).to receive(:threescale_client)
       end
 
@@ -29,7 +28,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActiveDocsStep,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceOidcConfStep,
           ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePoliciesStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::BumpProxyVersionStep,
+          ThreeScaleToolbox::Tasks::BumpProxyVersionTask,
         ].each do |task_class|
           task = instance_double(task_class.to_s)
           task_class_obj = class_double(task_class).as_stubbed_const

@@ -8,8 +8,11 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'service'
             usage       'service [opts] -s <src> -d <dst> <src_service_id> <dst_service_id>'
-            summary     'update service'
-            description 'Update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
+            summary     '[DEPRECTATED] update service'
+            description <<-HEREDOC
+            This command has been deprecated. Use '3scale copy service' instead.
+            \n Update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
+            HEREDOC
 
             option  :s, :source, '3scale source instance. Url or remote name', argument: :required
             option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
@@ -37,7 +40,7 @@ module ThreeScaleToolbox
 
           tasks = []
           unless options[:'rules-only']
-            tasks << Tasks::UpdateServiceSettingsTask.new(context.merge(target_name: system_name))
+            tasks << Tasks::CopyServiceSettingsTask.new(context)
             tasks << Tasks::CopyMethodsTask.new(context)
             tasks << Tasks::CopyMetricsTask.new(context)
             tasks << Tasks::CopyApplicationPlansTask.new(context)

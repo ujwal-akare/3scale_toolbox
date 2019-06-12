@@ -10,7 +10,6 @@ require '3scale_toolbox/commands/import_command/openapi/create_activedocs_step'
 require '3scale_toolbox/commands/import_command/openapi/update_service_proxy_step'
 require '3scale_toolbox/commands/import_command/openapi/update_service_oidc_conf_step'
 require '3scale_toolbox/commands/import_command/openapi/update_policies_step'
-require '3scale_toolbox/commands/import_command/openapi/bump_proxy_version_step'
 
 module ThreeScaleToolbox
   module Commands
@@ -49,17 +48,17 @@ module ThreeScaleToolbox
             # other tasks might read proxy settings (CreateActiveDocsStep does)
             tasks << UpdateServiceProxyStep.new(context)
             tasks << CreateMethodsStep.new(context)
-            tasks << ThreeScaleToolbox::Tasks::DestroyMappingRulesTask.new(context)
+            tasks << Tasks::DestroyMappingRulesTask.new(context)
             tasks << CreateMappingRulesStep.new(context)
             tasks << CreateActiveDocsStep.new(context)
             tasks << UpdateServiceOidcConfStep.new(context)
             tasks << UpdatePoliciesStep.new(context)
 
-            # This should be the last step
-            tasks << BumpProxyVersionStep.new(context)
-
             # run tasks
             tasks.each(&:call)
+
+            # This should be the last step
+            Tasks::BumpProxyVersionTask.new(service: context[:target]).call
           end
 
           private
