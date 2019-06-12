@@ -50,10 +50,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       let(:plan_attrs) { { 'system_name' => 'some_name', 'state' => 'hidden' } }
 
       it 'plan attrs include state_event as hide' do
-        expected_create_attrs = {
-          'system_name' => 'some_name',
-          'state_event' => 'hide'
-        }
+        expected_create_attrs = { 'system_name' => 'some_name' }
         expect(remote).to receive(:create_application_plan).with(service_id, hash_including(expected_create_attrs))
                                                            .and_return('id' => 'some_id')
         plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
@@ -281,9 +278,11 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
     end
 
     context '#update' do
-      let(:plan_attrs) { { 'id' => id, 'system_name' => 'some name' } }
-      let(:new_plan_attrs) { { 'id' => id, 'someattr' => 2, 'system_name' => 'some name' } }
-      let(:update_plan_attrs) { plan_attrs }
+      let(:plan_attrs) { { 'id' => id, 'system_name' => 'system_name01', 'name' => 'some name' } }
+      let(:new_plan_attrs) do
+        { 'id' => id, 'someattr' => 2, 'system_name' => 'system_name01', 'name' => 'some name' }
+      end
+      let(:update_plan_attrs) { { 'name' => 'some name' } }
 
       before :example do
         expect(remote).to receive(:update_application_plan).with(service_id, id, update_plan_attrs)
