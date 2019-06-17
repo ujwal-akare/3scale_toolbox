@@ -95,21 +95,18 @@ module ThreeScaleToolbox
       end
 
       def metrics
-        service_metrics = remote.list_metrics id
-        if service_metrics.respond_to?(:has_key?) && (errors = service_metrics['errors'])
-          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
-        end
+        # cache result to reuse
+        metric_and_method_list = metrics_and_methods
+        hits_metric_obj = hits_metric(metric_and_method_list)
+        hits_id = hits_metric_obj.fetch('id')
 
-        service_metrics
+        ThreeScaleToolbox::Helper.array_difference(metric_and_method_list, methods(hits_id)) do |metric, method|
+          ThreeScaleToolbox::Helper.compare_hashes(metric, method, %w[id])
+        end
       end
 
       def hits
-        hits_metric = metrics.find do |metric|
-          metric['system_name'] == 'hits'
-        end
-        raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
-
-        hits_metric
+        hits_metric(metrics)
       end
 
       def methods(parent_metric_id)
@@ -246,6 +243,22 @@ module ThreeScaleToolbox
       end
 
       private
+
+      def hits_metric(metric_list)
+        hits_metric = metric_list.find { |metric| metric['system_name'] == 'hits' }
+        raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
+
+        hits_metric
+      end
+
+      def metrics_and_methods
+        metrics_and_methods = remote.list_metrics id
+        if metrics_and_methods.respond_to?(:has_key?) && (errors = metrics_and_methods['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
+        end
+
+        metrics_and_methods
+      end
 
       def service_attrs
         svc = remote.show_service id

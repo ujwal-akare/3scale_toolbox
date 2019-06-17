@@ -29,24 +29,10 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::List::ListSubcommand
       let(:hits_metric) { { 'id' => '0', 'friendly_name' => 'hits' } }
       let(:metric_1) { { 'id' => '1', 'friendly_name' => 'metric 1' } }
       let(:metric_2) { { 'id' => '2', 'friendly_name' => 'metric 2' } }
-      let(:method_0) { { 'id' => '3', 'friendly_name' => 'method 0' } }
-      let(:method_1) { { 'id' => '4', 'friendly_name' => 'method 1' } }
-      let(:methods) { [method_0, method_1] }
-      # metrics include methods
-      let(:metrics) { [hits_metric, metric_1, metric_2] + methods }
+      let(:metrics) { [hits_metric, metric_1, metric_2] }
 
       before :example do
-        expect(service).to receive(:hits).and_return(hits_metric)
         expect(service).to receive(:metrics).and_return(metrics)
-        expect(service).to receive(:methods).with(hits_metric['id']).and_return(methods)
-      end
-
-      it 'method_0 not in the list' do
-        expect { subject.run }.not_to output(/method 0/).to_stdout
-      end
-
-      it 'method_1 not in the list' do
-        expect { subject.run }.not_to output(/method 1/).to_stdout
       end
 
       it 'hits metric in the list' do
