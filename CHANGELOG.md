@@ -4,14 +4,34 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.11.0]
+
 ### Added
 - Print `import openapi --help` options for file & URL formats [#143](https://github.com/3scale/3scale_toolbox/pull/143)
+- Service CRUD operations [#130](https://github.com/3scale/3scale_toolbox/pull/130)
+- ActiveDocs CRUD operations [#145](https://github.com/3scale/3scale_toolbox/pull/145)
+- Account find command [#142](https://github.com/3scale/3scale_toolbox/pull/142)
+- Import OpenApi: set the public staging prod URLs [#150](https://github.com/3scale/3scale_toolbox/pull/150)
+- ProxyConfig CRUD operations [#155](https://github.com/3scale/3scale_toolbox/pull/155)
+- Policy Registry (a.k.a. custom policies) copy command [#153](https://github.com/3scale/3scale_toolbox/pull/153)
+- Application CRUD operations [#157](https://github.com/3scale/3scale_toolbox/pull/157)
+
+### Changed
+- Mocked integration tests removed [#146](https://github.com/3scale/3scale_toolbox/pull/146)
+- Service copy command idempotent and working with service `system_name` or `id` [#164](https://github.com/3scale/3scale_toolbox/pull/164)
+
+### Fix
+- `metrics` command renamed to `metric` [#140](https://github.com/3scale/3scale_toolbox/pull/140)
+- `methods` command renamed to `method` [#140](https://github.com/3scale/3scale_toolbox/pull/140)
+- CI license finder check [#149](https://github.com/3scale/3scale_toolbox/pull/149)
+- Application plan commands float number processing [#162](https://github.com/3scale/3scale_toolbox/pull/162)
+- Application plan creation when hidden [#165](https://github.com/3scale/3scale_toolbox/pull/165)
 
 ## [0.10.0]
 
 ### Added
-- Metric CRUD operations [#137](https://github.com/3scale/3scale_toolbox/pull/137) 
-- Method CRUD operations [#137](https://github.com/3scale/3scale_toolbox/pull/137) 
+- Metric CRUD operations [#137](https://github.com/3scale/3scale_toolbox/pull/137)
+- Method CRUD operations [#137](https://github.com/3scale/3scale_toolbox/pull/137)
 
 ### Fixed
 - Remote adding validation method support master account [#138](https://github.com/3scale/3scale_toolbox/pull/138)
@@ -23,7 +43,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Dockerfile: build toolbox image [#123](https://github.com/3scale/3scale_toolbox/pull/123)
 - Import openapi: patch activedocs [#124](https://github.com/3scale/3scale_toolbox/pull/124)
 - Export/import Application Plan limits, pricing rules and features [#132](https://github.com/3scale/3scale_toolbox/pull/132)
-- Application plan CRUD operations [#134](https://github.com/3scale/3scale_toolbox/pull/134) 
+- Application plan CRUD operations [#134](https://github.com/3scale/3scale_toolbox/pull/134)
 
 ### Fixed
 - Application plan limits and pricingrules matching rules [#119](https://github.com/3scale/3scale_toolbox/pull/119)
@@ -128,7 +148,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.11.0
 [0.10.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.10.0
 [0.9.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.9.0
 [0.8.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.8.0
