@@ -53,6 +53,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
 
       before :example do
         expect(service).to receive(:metrics).and_return(service_metrics)
+        expect(service).to receive(:hits).and_return(service_metric)
       end
 
       it 'then limits are created' do

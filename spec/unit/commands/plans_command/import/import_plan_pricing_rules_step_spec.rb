@@ -54,6 +54,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
 
       before :example do
         expect(service).to receive(:metrics).and_return(service_metrics)
+        expect(service).to receive(:hits).and_return(service_metric)
       end
 
       it 'then pricingrules are created' do
