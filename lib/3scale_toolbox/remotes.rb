@@ -52,7 +52,7 @@ module ThreeScaleToolbox
     end
 
     def fetch(name)
-      all.fetch name
+      all.fetch(name) { raise_not_found(name) }
     end
 
     private
