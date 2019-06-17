@@ -6,6 +6,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
   let(:security) { nil }
   let(:production_public_base_url) { nil }
   let(:staging_public_base_url) { nil }
+  let(:override_private_base_url) { nil }
   let(:oidc_issuer_endpoint) { 'https://sso.example.com' }
   let(:openapi_context) do
     {
@@ -14,6 +15,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       oidc_issuer_endpoint: oidc_issuer_endpoint,
       production_public_base_url: production_public_base_url,
       staging_public_base_url: staging_public_base_url,
+      override_private_base_url: override_private_base_url,
     }
   end
 
@@ -59,6 +61,16 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'api_backend updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(api_backend: 'https://example.com')).and_return({})
+        expect { subject }.to output.to_stdout
+      end
+    end
+
+    context 'private base url set' do
+      let(:override_private_base_url) { 'http://echo-api.example.com' }
+
+      it 'api_backend updated' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(api_backend: override_private_base_url)).and_return({})
         expect { subject }.to output.to_stdout
       end
     end

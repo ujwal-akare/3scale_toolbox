@@ -40,12 +40,9 @@ module ThreeScaleToolbox
           end
 
           def add_api_backend_settings(settings)
-            return if api_spec.host.nil?
+            return if private_base_url.nil?
 
-            scheme = api_spec.schemes.first || 'https'
-            host = api_spec.host
-
-            settings[:api_backend] = "#{scheme}://#{host}"
+            settings[:api_backend] = private_base_url
           end
 
           def add_security_proxy_settings(settings)
@@ -73,6 +70,16 @@ module ThreeScaleToolbox
             else
               raise ThreeScaleToolbox::Error, "Unexpected security in_f field #{in_f}"
             end
+          end
+
+          def private_base_url
+              override_private_base_url || private_base_url_from_openapi
+          end
+
+          def private_base_url_from_openapi
+            return if api_spec.host.nil?
+
+            "#{api_spec.schemes.first || 'https'}://#{api_spec.host}"
           end
         end
       end
