@@ -144,7 +144,7 @@ RSpec.describe ThreeScaleToolbox::Remotes do
     context 'non existing remote' do
       it 'raises error' do
         expect(config.data(:remotes)).not_to include('some_name')
-        expect { subject.fetch('some_name') }.to raise_error(KeyError)
+        expect { subject.fetch('some_name') }.to raise_error(ThreeScaleToolbox::Error, /not found/)
       end
     end
   end
