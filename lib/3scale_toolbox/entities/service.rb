@@ -106,7 +106,7 @@ module ThreeScaleToolbox
       end
 
       def hits
-        hits_metric(metrics)
+        hits_metric(metrics_and_methods)
       end
 
       def methods(parent_metric_id)
@@ -116,6 +116,15 @@ module ThreeScaleToolbox
         end
 
         service_methods
+      end
+
+      def metrics_and_methods
+        m_m = remote.list_metrics id
+        if m_m.respond_to?(:has_key?) && (errors = m_m['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
+        end
+
+        m_m
       end
 
       def plans
@@ -242,6 +251,7 @@ module ThreeScaleToolbox
         end
       end
 
+
       private
 
       def hits_metric(metric_list)
@@ -249,15 +259,6 @@ module ThreeScaleToolbox
         raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
 
         hits_metric
-      end
-
-      def metrics_and_methods
-        metrics_and_methods = remote.list_metrics id
-        if metrics_and_methods.respond_to?(:has_key?) && (errors = metrics_and_methods['errors'])
-          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
-        end
-
-        metrics_and_methods
       end
 
       def service_attrs

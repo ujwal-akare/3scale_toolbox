@@ -176,7 +176,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     context '#metrics' do
-      it 'calls list_metrics method' do
+      it 'returns only metrics' do
         expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
         expect(remote).to receive(:list_methods).with(id, 1).and_return(methods)
         expect(subject.metrics).to eq(metrics)
@@ -191,7 +191,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
       it 'return hits metric' do
         expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
-        expect(remote).to receive(:list_methods).with(id, 1).and_return(methods)
         expect(subject.hits).to be(hits_metric)
       end
     end
@@ -200,6 +199,13 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       it 'calls list_methods method' do
         expect(remote).to receive(:list_methods).with(id, hits_metric['id']).and_return(methods)
         expect(subject.methods(hits_metric['id'])).to eq(methods)
+      end
+    end
+
+    context '#metrics_and_methods' do
+      it 'calls list_metrics method' do
+        expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
+        expect(subject.metrics_and_methods).to eq(metrics + methods)
       end
     end
 

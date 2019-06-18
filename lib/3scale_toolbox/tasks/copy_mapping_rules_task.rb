@@ -5,7 +5,6 @@ module ThreeScaleToolbox
       include Helper
 
       def call
-        metrics_map = metrics_mapping(source.metrics, target.metrics)
         missing_rules = missing_mapping_rules(source.mapping_rules,
                                               target.mapping_rules, metrics_map)
         missing_rules.each do |mapping_rule|
@@ -17,6 +16,10 @@ module ThreeScaleToolbox
       end
 
       private
+
+      def metrics_map
+        @metrics_map ||= metrics_mapping(source_metrics_and_methods, target_metrics_and_methods)
+      end
 
       def missing_mapping_rules(source_rules, target_rules, metrics_map)
         ThreeScaleToolbox::Helper.array_difference(source_rules, target_rules) do |source_rule, target_rule|
