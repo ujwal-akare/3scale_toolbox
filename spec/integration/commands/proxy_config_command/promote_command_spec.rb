@@ -22,7 +22,7 @@ RSpec.describe 'ProxyConfig Promote command' do
       end
 
       it "promotes the configuration version into production" do
-        expect { subject }.to output("Proxy Configuration promoted to '#{environment_prod}'\n").to_stdout
+        expect { subject }.to output("Proxy Configuration version 1 promoted to '#{environment_prod}'\n").to_stdout
         expect(subject).to eq(0)
       end
     end
@@ -40,9 +40,9 @@ RSpec.describe 'ProxyConfig Promote command' do
         res.delete if !res.nil?
       end
 
-      it "results in an error" do
-        expect { subject }.to output(/.*Error: ProxyConfig not promoted.*/).to_stderr
-        expect(subject).not_to eq(0)
+      it "results in not being promoted and a warning shown" do
+        expect { subject }.to output(/warning*/).to_stderr
+        expect(subject).to eq(0)
       end
     end
   end

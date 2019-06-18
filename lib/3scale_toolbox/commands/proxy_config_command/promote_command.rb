@@ -19,8 +19,12 @@ module ThreeScaleToolbox
           end
 
           def run
-            latest_proxy_config.promote(to: to_env)
-            puts "Proxy Configuration promoted to '#{to_env}'"
+            if promotable?
+              latest_proxy_config_from.promote(to: to_env)
+              puts "Proxy Configuration version #{latest_proxy_config_from.version} promoted to '#{to_env}'"
+            else
+              warn "warning: Nothing to promote. Proxy Configuration version #{latest_proxy_config_from.version} already promoted to production"
+            end
           end
 
           private
@@ -29,14 +33,26 @@ module ThreeScaleToolbox
             @remote ||= threescale_client(arguments[:remote])
           end
 
-          def latest_proxy_config
-            @proxy_config ||= find_proxy_config_latest
+          def latest_proxy_config_from
+            @proxy_config_from ||= find_proxy_config_latest_from
           end
 
-          def find_proxy_config_latest
+          def latest_proxy_config_to
+            @proxy_config_to ||= find_proxy_config_latest_to
+          end
+
+          def promotable?
+            return latest_proxy_config_to.nil? || latest_proxy_config_from.version != latest_proxy_config_to.version
+          end
+
+          def find_proxy_config_latest_from
             Entities::ProxyConfig.find_latest(service: service, environment: from_env).tap do |pc|
               raise ThreeScaleToolbox::Error, "ProxyConfig #{from_env} in service #{service.id} does not exist" if pc.nil?
             end
+          end
+
+          def find_proxy_config_latest_to
+            Entities::ProxyConfig.find_latest(service: service, environment: to_env)
           end
 
           def service_ref

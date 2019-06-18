@@ -3,10 +3,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ProxyConfigCommand::Promote::Promote
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
     let(:proxy_config_class) { class_double(ThreeScaleToolbox::Entities::ProxyConfig).as_stubbed_const }
-    let(:proxy_config) { instance_double(ThreeScaleToolbox::Entities::ProxyConfig) }
+    let(:proxy_config_from) { instance_double(ThreeScaleToolbox::Entities::ProxyConfig) }
+    let(:proxy_config_to) { instance_double(ThreeScaleToolbox::Entities::ProxyConfig) }
+    let(:proxy_config_env_from) { "sandbox" }
+    let(:proxy_config_env_to) { "production" }
     let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
     let(:service_ref) { 3 }
-    let(:proxy_config_env) { "sandbox" }
     let(:remote_name) { "myremote" }
     let(:arguments) { {remote: remote_name, service: service_ref} }
     let(:options) { {} }
@@ -22,33 +24,59 @@ RSpec.describe ThreeScaleToolbox::Commands::ProxyConfigCommand::Promote::Promote
       expect { subject.run }.to raise_error(ThreeScaleToolbox::Error)
     end
 
-    context "when proxy_config is not found" do
+    context "when proxy_config sandbox is not found" do
       it "an error is raised" do
         expect(service).to receive(:id).and_return(service_ref)
         expect(service_class).to receive(:find).and_return(service)
-        expect(proxy_config_class).to receive(:find_latest).and_return(nil)
+        expect(proxy_config_class).to receive(:find_latest).and_return(nil).twice
         expect { subject.run }.to raise_error(ThreeScaleToolbox::Error)
       end
     end
 
-    context "when proxy_config is found" do
-      let(:promote_to_env) { "production" }
-      let(:proxy_config_attrs) { {"id" => 5, "environment" => proxy_config_env, "version" => 6} }
-      let(:proxy_config_res) { {"id" => 5, "environment" =>promote_to_env, "version" => 6} }
+    context "when proxy_config sandbox is found" do
+      let(:proxy_config_version_to) { 1 }
+      let(:proxy_config_res) { {"id" => 5, "environment" => proxy_config_env_to, "version" => proxy_config_version_to} }
 
       before :example do
         expect(service_class).to receive(:find).and_return(service)
-        expect(proxy_config_class).to receive(:find_latest).with(service: service, environment: proxy_config_env).and_return(proxy_config)
-      end
-      it 'the proxy_config content is shown' do
-        expect(proxy_config).to receive(:promote).with(to: promote_to_env).and_return(proxy_config_res)
-        expect { subject.run}.to output("Proxy Configuration promoted to '#{promote_to_env}'\n").to_stdout
       end
 
-      context "and the proxy_config cannot be promoted" do
-        it 'an error is raised' do
-          expect(proxy_config).to receive(:promote).with(to: promote_to_env).and_raise(ThreeScaleToolbox::ThreeScaleApiError)
-          expect { subject.run}.to raise_error(ThreeScaleToolbox::ThreeScaleApiError)
+      context "and has never been promoted to production" do
+        let(:proxy_config_version_from) { 1 }
+
+        it "the proxy_config is promoted" do
+          expect(proxy_config_from).to receive(:version).and_return(proxy_config_version_from)
+          expect(proxy_config_class).to receive(:find_latest).with(service: service, environment: proxy_config_env_to).and_return(nil)
+          expect(proxy_config_class).to receive(:find_latest).with(service: service, environment: proxy_config_env_from).and_return(proxy_config_from)
+          expect(proxy_config_from).to receive(:promote).with(to: proxy_config_env_to).and_return(proxy_config_res)
+          expect { subject.run }.to output("Proxy Configuration version #{proxy_config_version_from} promoted to '#{proxy_config_env_to}'\n").to_stdout
+        end
+      end
+
+      context "and has at least once time been promoted to production" do
+
+        before :example do
+          expect(proxy_config_from).to receive(:version).and_return(proxy_config_version_from).twice
+          expect(proxy_config_to).to receive(:version).and_return(proxy_config_version_to)
+          expect(proxy_config_class).to receive(:find_latest).with(service: service, environment: proxy_config_env_to).and_return(proxy_config_to)
+          expect(proxy_config_class).to receive(:find_latest).with(service: service, environment: proxy_config_env_from).and_return(proxy_config_from)
+        end
+
+        context "and the currently existing promoted version is the same as the version to promote" do
+          let(:proxy_config_version_from) { 1 }
+  
+          it "the proxy_config is not promoted" do
+            expect { subject.run }.to output(/warning/).to_stderr
+          end
+        end
+  
+        context "and the currently existing promoted version is not the same as the version to promote" do
+          let(:proxy_config_version_from) { 2 }
+  
+          it "the proxy_config is promoted" do
+            expect(proxy_config_from).to receive(:promote).with(to: proxy_config_env_to).and_return(proxy_config_res)
+            expect { subject.run}.to output("Proxy Configuration version #{proxy_config_version_from} promoted to '#{proxy_config_env_to}'\n").to_stdout
+          end
         end
       end
     end
