@@ -6,8 +6,9 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
     let(:target_remote) { instance_double('ThreeScale::API::Client', 'target_remote') }
     let(:plan_0) { { 'id' => 0, 'name' => 'plan_0', 'system_name' => 'plan_0' } }
     let(:plan_1) { { 'id' => 1, 'name' => 'plan_1', 'system_name' => 'plan_1' } }
-    let(:metric_0) { { 'id' => 0, 'name' => 'metric_0', 'system_name' => 'metric_0' } }
-    let(:metric_1) { { 'id' => 1, 'name' => 'metric_0', 'system_name' => 'metric_0' } }
+    let(:metric_hits) { { 'id' => 0, 'name' => 'hits', 'system_name' => 'hits' } }
+    let(:metric_0) { { 'id' => 1, 'name' => 'metric_0', 'system_name' => 'metric_0' } }
+    let(:metric_1) { { 'id' => 2, 'name' => 'metric_0', 'system_name' => 'metric_0' } }
     let(:pricing_rule_0) do
       {
         'id' => 1,
@@ -15,7 +16,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
         'cost_per_unit' => '1.0',
         'min' => 1,
         'max' => 1000,
-        'metric_id' => 0
+        'metric_id' => 1
       }
     end
     let(:pricing_rule_1) do
@@ -25,7 +26,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
         'cost_per_unit' => '1.0',
         'min' => 1,
         'max' => 1000,
-        'metric_id' => 2
+        'metric_id' => 3
       }
     end
     let(:source_plans) { [plan_0] }
@@ -37,9 +38,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
       allow(source).to receive(:remote).and_return(source_remote)
       allow(target).to receive(:remote).and_return(target_remote)
       expect(source).to receive(:plans).and_return(source_plans)
-      expect(source).to receive(:metrics).and_return([metric_0])
       expect(target).to receive(:plans).and_return(target_plans)
-      expect(target).to receive(:metrics).and_return([metric_1])
     end
 
     context 'no application plan match' do
@@ -53,6 +52,12 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyPricingRulesTask do
 
     context 'application plans match' do
       before :each do
+        expect(source).to receive(:metrics).and_return([metric_0])
+        expect(source).to receive(:hits).and_return(metric_hits)
+        expect(source).to receive(:methods).and_return([])
+        expect(target).to receive(:metrics).and_return([metric_1])
+        expect(target).to receive(:hits).and_return(metric_hits)
+        expect(target).to receive(:methods).and_return([])
         expect(source_remote).to receive(:list_pricingrules_per_application_plan).and_return(source_pricingrules)
         expect(target_remote).to receive(:list_pricingrules_per_application_plan).and_return(target_pricingrules)
       end

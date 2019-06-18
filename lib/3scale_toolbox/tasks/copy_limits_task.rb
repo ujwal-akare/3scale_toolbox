@@ -5,7 +5,6 @@ module ThreeScaleToolbox
       include Helper
 
       def call
-        metrics_map = metrics_mapping(source.metrics, target.metrics)
         plan_mapping = application_plan_mapping(source.plans, target.plans)
         plan_mapping.each do |plan_id, target_plan|
           source_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: plan_id, service: source)
@@ -21,6 +20,10 @@ module ThreeScaleToolbox
       end
 
       private
+
+      def metrics_map
+        @metrics_map ||= metrics_mapping(source_metrics_and_methods, target_metrics_and_methods)
+      end
 
       def missing_limits(source_limits, target_limits, metrics_map)
         ThreeScaleToolbox::Helper.array_difference(source_limits, target_limits) do |limit, target|

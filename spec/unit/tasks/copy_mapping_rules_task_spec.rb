@@ -2,6 +2,7 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyMappingRulesTask do
   context '#call' do
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
+    let(:metric_hits) { { 'id' => 99, 'name' => 'hits', 'system_name' => 'hits' } }
     let(:metric_0) do
       {
         'id' => 0,
@@ -67,10 +68,14 @@ RSpec.describe ThreeScaleToolbox::Tasks::CopyMappingRulesTask do
     subject { described_class.new(source: source, target: target) }
 
     before :each do
-      expect(source).to receive(:metrics).and_return(source_metrics)
       expect(source).to receive(:mapping_rules).and_return(source_mapping_rules)
-      expect(target).to receive(:metrics).and_return(target_metrics)
       expect(target).to receive(:mapping_rules).and_return(target_mapping_rules)
+      expect(source).to receive(:metrics).and_return(source_metrics)
+      expect(source).to receive(:hits).and_return(metric_hits)
+      expect(source).to receive(:methods).and_return([])
+      expect(target).to receive(:metrics).and_return(target_metrics)
+      expect(target).to receive(:hits).and_return(metric_hits)
+      expect(target).to receive(:methods).and_return([])
     end
 
     context 'no missing rules' do

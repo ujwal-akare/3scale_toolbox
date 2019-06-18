@@ -26,8 +26,6 @@ module ThreeScaleToolbox
           end
 
           def filtered_limit_methods
-            # has to be filtered this way
-            # looking up in metrics list does not work. Metric list includes methods and metrics
             result[:limits].select { |limit| limit.dig('metric', 'type') == 'method' }
           end
 
@@ -40,7 +38,6 @@ module ThreeScaleToolbox
           end
 
           def filtered_pricing_rule_methods
-            # looking up in metrics list does not work. Metric list includes methods and metrics
             result[:pricingrules].select { |limit| limit.dig('metric', 'type') == 'method' }
           end
         end

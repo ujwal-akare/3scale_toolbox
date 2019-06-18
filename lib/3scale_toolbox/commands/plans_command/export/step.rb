@@ -54,8 +54,6 @@ module ThreeScaleToolbox
           end
 
           def metric_info(elem, elem_name)
-            # Methods are included in metrics.
-            # First methods must be checked, otherwise it could be considered as a false metric
             if (method = find_method(elem.fetch('metric_id')))
               { 'type' => 'method', 'system_name' => method.fetch('system_name') }
             elsif (metric = find_metric(elem.fetch('metric_id')))

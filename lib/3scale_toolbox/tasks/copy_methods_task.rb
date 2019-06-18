@@ -4,26 +4,30 @@ module ThreeScaleToolbox
       include CopyTask
 
       def call
-        source_hits_id = source.hits['id']
-        target_hits_id = target.hits['id']
-        source_methods = source.methods source_hits_id
-        target_methods = target.methods target_hits_id
-        puts "original service hits metric #{source_hits_id} has #{source_methods.size} methods"
-        puts "target service hits metric #{target_hits_id} has #{target_methods.size} methods"
-        missing = missing_methods(source_methods, target_methods).each do |method|
-          Entities::Method.create(
-            service: target,
-            parent_id: target_hits_id,
-            attrs: ThreeScaleToolbox::Helper.filter_params(%w[friendly_name system_name], method)
-          )
-        end
-        puts "created #{missing.size} missing methods on target service"
+        puts "original service hits metric #{source_hits.fetch('id')} has #{source_methods.size} methods"
+        puts "target service hits metric #{target_hits.fetch('id')} has #{target_methods.size} methods"
+        missing_methods.each(&method(:create_method))
+        puts "created #{missing_methods.size} missing methods on target service"
+        invalidate_target_methods if missing_methods.size.positive?
       end
 
       private
 
-      def missing_methods(source_methods, target_methods)
-        ThreeScaleToolbox::Helper.array_difference(source_methods, target_methods) do |method, target|
+      def create_method(method)
+        Entities::Method.create(
+          service: target,
+          parent_id: target_hits.fetch('id'),
+          attrs: ThreeScaleToolbox::Helper.filter_params(%w[friendly_name system_name], method)
+        )
+      rescue ThreeScaleToolbox::ThreeScaleApiError => e
+        raise e unless ThreeScaleToolbox::Helper.system_name_already_taken_error?(e.apierrors)
+
+        warn "[WARN] method #{method.fetch('system_name')} not created. " \
+          'Metric with the same system_name exists.'
+      end
+
+      def missing_methods
+        @missing_methods ||= ThreeScaleToolbox::Helper.array_difference(source_methods, target_methods) do |method, target|
           ThreeScaleToolbox::Helper.compare_hashes(method, target, ['system_name'])
         end
       end

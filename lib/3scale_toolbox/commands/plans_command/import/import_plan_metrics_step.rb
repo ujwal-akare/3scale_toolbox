@@ -18,9 +18,6 @@ module ThreeScaleToolbox
           private
 
           def missing_metrics
-            # service metrics list includes methods
-            # this array_difference method computes elements in resource_metrics not included in service_metrics
-            # So methods will not be in the "missing_metrics" list, as long as array diff semantics are kept.
             ThreeScaleToolbox::Helper.array_difference(resource_metrics, service_metrics) do |a, b|
               ThreeScaleToolbox::Helper.compare_hashes(a, b, ['system_name'])
             end

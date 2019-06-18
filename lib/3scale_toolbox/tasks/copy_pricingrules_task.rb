@@ -5,7 +5,6 @@ module ThreeScaleToolbox
       include Helper
 
       def call
-        metrics_map = metrics_mapping(source.metrics, target.metrics)
         plan_mapping = application_plan_mapping(source.plans, target.plans)
         plan_mapping.each do |plan_id, target_plan|
           pricing_rules_source = source.remote.list_pricingrules_per_application_plan(plan_id)
@@ -26,6 +25,10 @@ module ThreeScaleToolbox
       end
 
       private
+
+      def metrics_map
+        @metrics_map ||= metrics_mapping(source_metrics_and_methods, target_metrics_and_methods)
+      end
 
       def missing_pricing_rules(source_pricing_rules, target_pricing_rules, metrics_map)
         ThreeScaleToolbox::Helper.array_difference(source_pricing_rules, target_pricing_rules) do |src, target|
