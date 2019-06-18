@@ -26,10 +26,13 @@ NAME
     openapi - Import API defintion in OpenAPI specification from a local file or URL
 
 USAGE
-    3scale import openapi [opts] -d <destination> <spec> (/path/to/your/spec/file.[json|yaml|yml] OR http[s]://domain/resource/path.[json|yaml|yml])
+    3scale import openapi [opts] -d <destination>
+    <spec> (/path/to/your/spec/file.[json|yaml|yml] OR
+    http[s]://domain/resource/path.[json|yaml|yml])
 
 DESCRIPTION
-    Using an API definition format like OpenAPI, import to your 3scale API directly from a local OpenAPI spec compliant file or a remote URL
+    Using an API definition format like OpenAPI, import to your 3scale API
+    directly from a local OpenAPI spec compliant file or a remote URL
 
 OPTIONS
        --activedocs-hidden                        Create ActiveDocs in hidden
@@ -40,22 +43,17 @@ OPTIONS
        --default-credentials-userkey=<value>      Default credentials policy
                                                   userkey
        --oidc-issuer-endpoint=<value>             OIDC Issuer Endpoint
-       --skip-openapi-validation                  Skip OpenAPI schema validation
+       --override-private-base-url=<value>        Custom private base URL
+       --override-private-basepath=<value>        Override the basepath for
+                                                  the private URLs
+       --override-public-basepath=<value>         Override the basepath for
+                                                  the public URLs
+       --production-public-base-url=<value>       Custom public production
+                                                  URL
+       --skip-openapi-validation                  Skip OpenAPI schema
+                                                  validation
+       --staging-public-base-url=<value>          Custom public staging URL
     -t --target_system_name=<value>               Target system name
-
-OPTIONS FOR IMPORT
-    -c --config-file=<value>                      3scale toolbox
-                                                  configuration file
-                                                  (default:
-                                                  $HOME/.3scalerc.yaml)
-    -h --help                                     show help for this command
-    -k --insecure                                 Proceed and operate even
-                                                  for server connections
-                                                  otherwise considered
-                                                  insecure
-    -v --version                                  Prints the version of this
-                                                  command
-       --verbose                                  Verbose mode
 ```
 
 ### OpenAPI definition from filename in path

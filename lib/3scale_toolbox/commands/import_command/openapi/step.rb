@@ -66,6 +66,10 @@ module ThreeScaleToolbox
           def staging_public_base_url
             context[:staging_public_base_url]
           end
+
+          def override_private_base_url
+            context[:override_private_base_url]
+          end
         end
       end
     end
