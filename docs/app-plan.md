@@ -35,7 +35,6 @@ OPTIONS
     -d --default                        Make default application plan
        --disabled                       Disables all methods and metrics in
                                         this application plan
-       --end-user-required=<value>      End user required. true or false
     -p --published                      Publish application plan
        --setup-fee=<value>              Setup fee
     -t --system-name=<value>            Application plan system name
@@ -85,7 +84,6 @@ OPTIONS
        --disabled                       Disables all methods and metrics in
                                         this application plan
        --enabled                        Enable application plan
-       --end-user-required=<value>      End user required. true or false
        --hide                           Hide application plan
     -n --name=<value>                   Plan name
     -p --publish                        Publish application plan

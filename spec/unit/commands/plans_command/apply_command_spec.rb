@@ -79,7 +79,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
           let(:options) do
             {
               'approval-required': 'b',
-              'end-user-required': 'c',
               'cost-per-month': 0,
               'setup-fee': 1,
               'trial-period-days': 2
@@ -88,7 +87,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
           let(:plan_attrs) do
             {
               'approval_required' => 'b',
-              'end_user_required' => 'c',
               'cost_per_month' => 0,
               'setup_fee' => 1,
               'trial_period_days' => 2

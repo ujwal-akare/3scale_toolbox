@@ -84,7 +84,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
           {
             'system_name' => 'a',
             'approval_required' => 'b',
-            'end_user_required' => 'c',
             'cost_per_month' => 0,
             'setup_fee' => 1,
             'trial_period_days' => 2

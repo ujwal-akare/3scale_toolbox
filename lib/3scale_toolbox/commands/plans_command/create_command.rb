@@ -20,7 +20,6 @@ module ThreeScaleToolbox
               option      nil, 'cost-per-month', 'Cost per month', argument: :required, transform: method(:Float)
               option      nil, 'setup-fee', 'Setup fee', argument: :required, transform: method(:Float)
               option      nil, 'trial-period-days', 'Trial period days', argument: :required, transform: method(:Integer)
-              option      nil, 'end-user-required', 'End user required. true or false', argument: :required, transform: ThreeScaleToolbox::Helper::BooleanTransformer.new
               param       :remote
               param       :service_ref
               param       :plan_name
@@ -56,7 +55,6 @@ module ThreeScaleToolbox
               'name' => arguments[:plan_name],
               'system_name' => options[:'system-name'],
               'approval_required' => options[:'approval-required'],
-              'end_user_required' => options[:'end-user-required'],
               'cost_per_month' => options[:'cost-per-month'],
               'setup_fee' => options[:'setup-fee'],
               'trial_period_days' => options[:'trial-period-days']
