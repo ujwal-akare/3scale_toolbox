@@ -60,9 +60,11 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
       end
 
       context 'when plan found' do
+        let(:current_attrs) { {} }
         before :example do
           expect(plan_class).to receive(:find).and_return(plan)
           expect(plan).to receive(:id).and_return(1)
+          expect(plan).to receive(:attrs).and_return(current_attrs)
         end
 
         context 'with no options' do
@@ -128,21 +130,45 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
 
         context 'with publish option' do
           let(:options) { { publish: true } }
-          let(:plan_attrs) { { 'state' => 'published' } }
 
-          it 'plan updated published' do
-            expect(plan).to receive(:update).with(plan_attrs)
-            expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
+          context 'when already published' do
+            let(:current_attrs) { { 'state' => 'published' } }
+
+            it 'plan not updated' do
+              expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
+            end
+          end
+
+          context 'when hidden' do
+            let(:current_attrs) { { 'state' => 'hidden' } }
+            let(:expected_plan_attrs) { { 'state' => 'published' } }
+
+            it 'plan updated published' do
+              expect(plan).to receive(:update).with(expected_plan_attrs)
+              expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
+            end
           end
         end
 
         context 'with hide option' do
           let(:options) { { hide: true } }
-          let(:plan_attrs) { { 'state' => 'hidden' } }
 
-          it 'plan updated hidden' do
-            expect(plan).to receive(:update).with(plan_attrs)
-            expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
+          context 'when already hidden' do
+            let(:current_attrs) { { 'state' => 'hidden' } }
+
+            it 'plan not updated' do
+              expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
+            end
+          end
+
+          context 'when published' do
+            let(:current_attrs) { { 'state' => 'published' } }
+            let(:expected_plan_attrs) { { 'state' => 'hidden' } }
+
+            it 'plan updated hidden' do
+              expect(plan).to receive(:update).with(expected_plan_attrs)
+              expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
+            end
           end
         end
       end
