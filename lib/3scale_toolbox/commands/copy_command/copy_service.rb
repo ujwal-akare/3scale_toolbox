@@ -43,6 +43,11 @@ module ThreeScaleToolbox
                                                       service_params: create_service_attrs)
           end
 
+          if target_service == source_service
+            raise ThreeScaleToolbox::Error, 'Source and destination services are the same: ' \
+              "ID: #{source_service.id} system_name: #{source_service.attrs['system_name']}"
+          end
+
           puts "new service id #{target_service.id}"
 
           context = create_context(source_service, target_service)
