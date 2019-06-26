@@ -13,11 +13,20 @@ RSpec.describe 'ProxyConfig List command' do
       svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
 
       svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage1" })
-      pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)
+      pc_sandbox_1 = nil
+      Helpers.wait do
+        pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)
+        !pc_sandbox_1.nil? 
+      end
+
       pc_sandbox_1.promote(to: "production")
 
       svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage2" })
-      pc_sandbox_2 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 2)
+      pc_sandbox_2 = nil
+      Helpers.wait do
+        pc_sandbox_2 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 2)
+        !pc_sandbox_2.nil? 
+      end
       pc_sandbox_2.promote(to: "production")
 
       svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage3" })

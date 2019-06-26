@@ -174,4 +174,21 @@ module Helpers
       end
     end
   end
+
+  # wait tries a block of code until it returns true, or the timeout is reached.
+  # timeout give an upper limit to the amount of time this method will run
+  # Some intervals may be missed if the block takes too long or the time window is too short.
+  def self.wait(interval = 0.5, timeout = 30)
+    raise 'wait expects block' unless block_given?
+
+    end_time = Time.now + timeout
+    until Time.now > end_time
+      result = yield
+      return if result == true
+
+      sleep interval
+    end
+
+    raise "timed out after #{timeout} seconds"
+  end
 end
