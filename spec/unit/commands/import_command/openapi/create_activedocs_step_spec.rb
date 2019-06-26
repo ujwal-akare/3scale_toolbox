@@ -12,6 +12,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
   let(:published) { true }
   let(:skip_openapi_validation) { false }
   let(:oidc_issuer_endpoint) { 'https://client_id:secret@sso.example.com/oidc' }
+  let(:cleaned_issuer) { 'https://sso.example.com/oidc' }
 
   let(:openapi_context) do
     {
@@ -174,7 +175,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
           'schemes' => ['https'],
           'securityDefinitions' => {
             'sec_id' => {
-              'authorizationUrl' => "#{oidc_issuer_endpoint}/protocol/openid-connect/auth"
+              'authorizationUrl' => "#{cleaned_issuer}/protocol/openid-connect/auth"
             }
           },
           'basePath' => new_public_base_path,
@@ -209,8 +210,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
           'schemes' => ['https'],
           'securityDefinitions' => {
             'sec_id' => {
-              'authorizationUrl' => "#{oidc_issuer_endpoint}/protocol/openid-connect/auth",
-              'tokenUrl' => "#{oidc_issuer_endpoint}/protocol/openid-connect/token"
+              'authorizationUrl' => "#{cleaned_issuer}/protocol/openid-connect/auth",
+              'tokenUrl' => "#{cleaned_issuer}/protocol/openid-connect/token"
             }
           },
           'basePath' => new_public_base_path,

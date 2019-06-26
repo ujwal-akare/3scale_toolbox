@@ -77,12 +77,20 @@ module ThreeScaleToolbox
             end
           end
 
+          def cleaned_issuer_endpoint
+            return if oidc_issuer_endpoint.nil?
+
+            issuer_uri = ThreeScaleToolbox::Helper.parse_uri(oidc_issuer_endpoint)
+            issuer_uri.userinfo = ''
+            issuer_uri.to_s
+          end
+
           def authorization_url
-            "#{oidc_issuer_endpoint}/protocol/openid-connect/auth"
+            "#{cleaned_issuer_endpoint}/protocol/openid-connect/auth"
           end
 
           def token_url
-            "#{oidc_issuer_endpoint}/protocol/openid-connect/token"
+            "#{cleaned_issuer_endpoint}/protocol/openid-connect/token"
           end
         end
       end
