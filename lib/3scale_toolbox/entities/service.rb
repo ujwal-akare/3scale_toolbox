@@ -251,6 +251,9 @@ module ThreeScaleToolbox
         end
       end
 
+      def ==(other)
+        remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
+      end
 
       private
 

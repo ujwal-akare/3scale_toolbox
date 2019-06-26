@@ -443,6 +443,66 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
           end
         end
       end
+
+      context 'equality method' do
+        let(:svc1) { described_class.new(id: id1, remote: remote1) }
+        let(:svc2) { described_class.new(id: id2, remote: remote2) }
+        let(:remote1) { instance_double(ThreeScale::API::Client, 'remote1') }
+        let(:remote2) { instance_double(ThreeScale::API::Client, 'remote2') }
+        let(:http_client1) { instance_double(ThreeScale::API::HttpClient, 'httpclient1') }
+        let(:http_client2) { instance_double(ThreeScale::API::HttpClient, 'httpclient2') }
+
+        before :example do
+          allow(remote1).to receive(:http_client).and_return(http_client1)
+          allow(remote2).to receive(:http_client).and_return(http_client2)
+          allow(http_client1).to receive(:endpoint).and_return(endpoint1)
+          allow(http_client2).to receive(:endpoint).and_return(endpoint2)
+        end
+
+        context 'same remote, diff id' do
+          let(:id1) { 1 }
+          let(:id2) { 2 }
+          let(:endpoint1) { 'https://w1.example.com' }
+          let(:endpoint2) { 'https://w1.example.com' }
+
+          it 'are not equal' do
+            expect(svc1).not_to eq(svc2)
+          end
+        end
+
+        context 'same remote, same id' do
+          let(:id1) { 1 }
+          let(:id2) { 1 }
+          let(:endpoint1) { 'https://w1.example.com' }
+          let(:endpoint2) { 'https://w1.example.com' }
+
+          it 'are equal' do
+            expect(svc1).to eq(svc2)
+          end
+        end
+
+        context 'diff remote, same id' do
+          let(:id1) { 1 }
+          let(:id2) { 1 }
+          let(:endpoint1) { 'https://w1.example.com' }
+          let(:endpoint2) { 'https://w2.example.com' }
+
+          it 'are not equal' do
+            expect(svc1).not_to eq(svc2)
+          end
+        end
+
+        context 'diff remote, diff id' do
+          let(:id1) { 1 }
+          let(:id2) { 2 }
+          let(:endpoint1) { 'https://w1.example.com' }
+          let(:endpoint2) { 'https://w2.example.com' }
+
+          it 'are not equal' do
+            expect(svc1).not_to eq(svc2)
+          end
+        end
+      end
     end
   end
 end

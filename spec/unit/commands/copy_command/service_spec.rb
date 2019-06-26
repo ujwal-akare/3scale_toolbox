@@ -25,6 +25,18 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
                                                               'system_name' => source_system_name)
     end
 
+    context 'when source and target service are the same' do
+      before :example do
+        expect(service_class).to receive(:find).with(remote: target_remote, ref: source_system_name)
+                                               .and_return(source_service_obj)
+        expect(source_service_obj).to receive(:id).and_return(1)
+      end
+
+      it 'error raised' do
+        expect { subject.run }.to raise_error(ThreeScaleToolbox::Error, /Source and destination services are the same/)
+      end
+    end
+
     context 'when target service exists' do
       before :example do
         expect(service_class).to receive(:find).with(remote: target_remote, ref: source_system_name)
