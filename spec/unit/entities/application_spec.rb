@@ -105,7 +105,10 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
   context 'instance method' do
     let(:id) { 1774 }
     let(:account_id) { 'accId' }
-    let(:app_attrs) { { 'id' => id, 'name' => 'somename', 'account_id' => account_id } }
+    let(:base_attrs) do
+      { 'id' => id, 'name' => 'somename', 'state' => 'live', 'account_id' => account_id }
+    end
+    let(:app_attrs) { base_attrs }
     let(:remote_app_attrs) { { 'id' => id, 'name' => 'somename' } }
     subject do
       described_class.new(id: id, remote: remote, attrs: app_attrs)
@@ -163,53 +166,77 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
     end
 
     context '#resume' do
-      before :example do
-        expect(remote).to receive(:resume_application).with(account_id, id)
-                                                      .and_return(response_body)
-      end
+      context 'live app' do
+        let(:app_attrs) { base_attrs.merge('state' => 'live') }
 
-      context 'resume returns error' do
-        let(:response_body) { { 'errors' => 'some error' } }
-
-        it 'raises error' do
-          expect { subject.resume }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
-                                                   /Application has not been resumed/)
+        it 'is not resumed' do
+          expect(subject.resume).to eq(app_attrs)
         end
       end
 
-      context 'when application is resumed' do
-        let(:new_remote_attrs) { { 'id' => id, 'state' => 'live' } }
-        let(:response_body) { new_remote_attrs }
+      context 'suspended app' do
+        let(:app_attrs) { base_attrs.merge('state' => 'suspended') }
 
-        it 'attrs are returned' do
-          expect(subject.resume).to eq(new_remote_attrs)
-          expect(subject.attrs).to eq(new_remote_attrs)
+        before :example do
+          expect(remote).to receive(:resume_application).with(account_id, id)
+                                                        .and_return(response_body)
+        end
+
+        context 'resume returns error' do
+          let(:response_body) { { 'errors' => 'some error' } }
+
+          it 'raises error' do
+            expect { subject.resume }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
+                                                     /Application has not been resumed/)
+          end
+        end
+
+        context 'resume request return ok' do
+          let(:new_remote_attrs) { { 'id' => id, 'state' => 'live' } }
+          let(:response_body) { new_remote_attrs }
+
+          it 'new attrs are returned' do
+            expect(subject.resume).to eq(new_remote_attrs)
+            expect(subject.attrs).to eq(new_remote_attrs)
+          end
         end
       end
     end
 
     context '#suspend' do
-      before :example do
-        expect(remote).to receive(:suspend_application).with(account_id, id)
-                                                       .and_return(response_body)
-      end
+      context 'suspended app' do
+        let(:app_attrs) { base_attrs.merge('state' => 'suspended') }
 
-      context 'resume returns error' do
-        let(:response_body) { { 'errors' => 'some error' } }
-
-        it 'raises error' do
-          expect { subject.suspend }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
-                                                    /Application has not been suspended/)
+        it 'is not suspended' do
+          expect(subject.suspend).to eq(app_attrs)
         end
       end
 
-      context 'when application is suspended' do
-        let(:new_remote_attrs) { { 'id' => id, 'state' => 'suspended' } }
-        let(:response_body) { new_remote_attrs }
+      context 'resumed app' do
+        let(:app_attrs) { base_attrs.merge('state' => 'live') }
 
-        it 'attrs are returned' do
-          expect(subject.suspend).to eq(new_remote_attrs)
-          expect(subject.attrs).to eq(new_remote_attrs)
+        before :example do
+          expect(remote).to receive(:suspend_application).with(account_id, id)
+                                                         .and_return(response_body)
+        end
+
+        context 'resume returns error' do
+          let(:response_body) { { 'errors' => 'some error' } }
+
+          it 'raises error' do
+            expect { subject.suspend }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
+                                                      /Application has not been suspended/)
+          end
+        end
+
+        context 'suspend request returns ok' do
+          let(:new_remote_attrs) { { 'id' => id, 'state' => 'suspended' } }
+          let(:response_body) { new_remote_attrs }
+
+          it 'new attrs are returned' do
+            expect(subject.suspend).to eq(new_remote_attrs)
+            expect(subject.attrs).to eq(new_remote_attrs)
+          end
         end
       end
     end

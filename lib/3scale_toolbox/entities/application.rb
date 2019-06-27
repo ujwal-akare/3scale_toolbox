@@ -81,6 +81,8 @@ module ThreeScaleToolbox
       end
 
       def resume
+        return attrs if live?
+
         new_attrs = remote.resume_application(account_id, id)
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Application has not been resumed', errors)
@@ -92,6 +94,8 @@ module ThreeScaleToolbox
       end
 
       def suspend
+        return attrs unless live?
+
         new_attrs = remote.suspend_application(account_id, id)
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Application has not been suspended', errors)
@@ -104,6 +108,10 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_application account_id, id
+      end
+
+      def live?
+        attrs.fetch('state') == 'live'
       end
 
       private
