@@ -3,6 +3,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
   let(:arguments) { { remote: 'https://key@destination.example.com', application: app_ref } }
   let(:options) { {} }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
+  let(:service_id) { 100 }
+  let(:account_id) { 200 }
   let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
   let(:account_class) { class_double(ThreeScaleToolbox::Entities::Account).as_stubbed_const }
   let(:account) { instance_double(ThreeScaleToolbox::Entities::Account) }
@@ -12,6 +14,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:application) { instance_double(ThreeScaleToolbox::Entities::Application) }
   subject { described_class.new(options, arguments, nil) }
+
+  before :example do
+    allow(service).to receive(:id).and_return(service_id)
+    allow(account).to receive(:id).and_return(account_id)
+  end
 
   context '#run' do
     context 'resume and suspend passed' do
@@ -25,7 +32,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
     context 'application found' do
       before :example do
         expect(subject).to receive(:threescale_client).and_return(remote)
-        expect(application_class).to receive(:find).with(remote: remote, ref: app_ref)
+        expect(application_class).to receive(:find).with(remote: remote,
+                                                         service_id: nil,
+                                                         ref: app_ref)
                                                    .and_return(application)
         expect(application).to receive(:id).and_return(1)
       end
@@ -92,7 +101,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
     context 'application not found' do
       before :example do
         expect(subject).to receive(:threescale_client).and_return(remote)
-        expect(application_class).to receive(:find).with(remote: remote, ref: app_ref)
+        expect(application_class).to receive(:find).with(remote: remote, service_id: service_id,
+                                                         ref: app_ref)
                                                    .and_return(nil)
       end
 
@@ -105,6 +115,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
           }
         end
 
+        before :example do
+          expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
+                                                 .and_return(service)
+        end
+
         it 'error raised' do
           expect { subject.run }.to raise_error(ThreeScaleToolbox::Error,
                                                 /--account is required/)
@@ -112,6 +127,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
       end
 
       context 'service opt not given' do
+        let(:service_id) { nil }
         let(:options) do
           {
             account: 'myaccount',
@@ -135,6 +151,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
           }
         end
 
+        before :example do
+          expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
+                                                 .and_return(service)
+        end
+
         it 'error raised' do
           expect { subject.run }.to raise_error(ThreeScaleToolbox::Error,
                                                 /--plan is required/)
@@ -148,6 +169,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
             service: 'myservice',
             plan: 'myplan'
           }
+        end
+
+        before :example do
+          expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
+                                                 .and_return(service)
         end
 
         it 'error raised' do
@@ -165,6 +191,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
             name: 'myname',
             'user-key': 'userKey'
           }
+        end
+
+        before :example do
+          expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
+                                                 .and_return(service)
         end
 
         it 'error raised' do
@@ -186,6 +217,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         before :example do
           expect(account_class).to receive(:find).with(remote: remote, ref: 'myaccount')
                                                  .and_return(nil)
+          expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
+                                                 .and_return(service)
         end
 
         it 'error raised' do
@@ -195,6 +228,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
       end
 
       context 'service not found' do
+        let(:service_id) { nil }
         let(:options) do
           {
             account: 'myaccount',
@@ -205,9 +239,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         end
 
         before :example do
-          expect(account_class).to receive(:find).with(remote: remote, ref: 'myaccount')
-                                                 .and_return(account)
-          expect(account).to receive(:id).and_return(1)
           expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
                                                  .and_return(nil)
         end
@@ -259,7 +290,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         before :example do
           expect(account_class).to receive(:find).with(remote: remote, ref: 'myaccount')
                                                  .and_return(account)
-          expect(account).to receive(:id).and_return('accId')
           expect(service_class).to receive(:find).with(remote: remote, ref: 'myservice')
                                                  .and_return(service)
           expect(plan_class).to receive(:find).with(service: service, ref: 'myplan')
@@ -271,10 +301,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         it 'user_key set to application param' do
           expect(application_class).to receive(:create)
             .with(
-              remote: remote,
-              account_id: 'accId',
-              plan_id: 'planId',
-              app_attrs: hash_including('user_key' => app_ref)
+              remote: remote, account_id: account_id,
+              plan_id: 'planId', app_attrs: hash_including('user_key' => app_ref)
             )
             .and_return(application)
           expect { subject.run }.to output(/Applied application id: 1/).to_stdout
@@ -283,10 +311,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         it 'application_id set to application param' do
           expect(application_class).to receive(:create)
             .with(
-              remote: remote,
-              account_id: 'accId',
-              plan_id: 'planId',
-              app_attrs: hash_including('application_id' => app_ref)
+              remote: remote, account_id: account_id,
+              plan_id: 'planId', app_attrs: hash_including('application_id' => app_ref)
             )
             .and_return(application)
           expect { subject.run }.to output(/Applied application id: 1/).to_stdout
@@ -295,9 +321,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         it 'description is included' do
           expect(application_class).to receive(:create)
             .with(
-              remote: remote,
-              account_id: 'accId',
-              plan_id: 'planId',
+              remote: remote, account_id: account_id, plan_id: 'planId',
               app_attrs: hash_including('description' => 'mydescr')
             )
             .and_return(application)
@@ -307,9 +331,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
         it 'application key is included' do
           expect(application_class).to receive(:create)
             .with(
-              remote: remote,
-              account_id: 'accId',
-              plan_id: 'planId',
+              remote: remote, account_id: account_id, plan_id: 'planId',
               app_attrs: hash_including('application_key' => 'appKey')
             )
             .and_return(application)

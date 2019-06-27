@@ -38,7 +38,8 @@ module ThreeScaleToolbox
           def run
             validate_option_params
 
-            application = Entities::Application.find(remote: remote, ref: application_ref)
+            application = Entities::Application.find(remote: remote, service_id: service_id,
+                                                     ref: application_ref)
             if application.nil?
               validate_creation_option_params
               application = Entities::Application.create(remote: remote,
@@ -69,6 +70,8 @@ module ThreeScaleToolbox
               '--account is required to create' if option_account.nil?
             raise ThreeScaleToolbox::Error, "Application #{application_ref} does not exist." \
               '--service is required to create' if option_service.nil?
+            raise ThreeScaleToolbox::Error, "Service #{option_service} does not exist" if service.nil?
+
             raise ThreeScaleToolbox::Error, "Application #{application_ref} does not exist." \
               '--plan is required to create' if option_plan.nil?
             raise ThreeScaleToolbox::Error, "Application #{application_ref} does not exist." \
@@ -108,15 +111,20 @@ module ThreeScaleToolbox
             end
           end
 
+          def service_id
+            return if service.nil?
+
+            service.id
+          end
+
           def service
-            @service ||= find_service
+            return @service if defined? @service
+
+            @service = find_service
           end
 
           def find_service
-            Entities::Service.find(remote: remote,
-                                   ref: option_service).tap do |svc|
-              raise ThreeScaleToolbox::Error, "Service #{option_service} does not exist" if svc.nil?
-            end
+            return Entities::Service.find(remote: remote, ref: option_service) unless option_service.nil?
           end
 
           def plan

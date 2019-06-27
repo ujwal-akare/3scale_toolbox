@@ -22,7 +22,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
 
     context 'app found by user key' do
       before :example do
-        expect(remote).to receive(:find_application).with(user_key: app_ref)
+        expect(remote).to receive(:find_application).with(user_key: app_ref, service_id: nil)
                                                     .and_return(app_attrs)
       end
 
@@ -35,9 +35,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
 
     context 'app found by app id' do
       before :example do
-        expect(remote).to receive(:find_application).with(user_key: app_ref)
+        expect(remote).to receive(:find_application).with(user_key: app_ref, service_id: nil)
                                                     .and_raise(ThreeScale::API::HttpClient::NotFoundError)
-        expect(remote).to receive(:find_application).with(application_id: app_ref)
+        expect(remote).to receive(:find_application).with(application_id: app_ref, service_id: nil)
                                                     .and_return(app_attrs)
       end
 
@@ -50,16 +50,31 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
 
     context 'app found by id' do
       before :example do
-        expect(remote).to receive(:find_application).with(user_key: app_ref)
+        expect(remote).to receive(:find_application).with(user_key: app_ref, service_id: nil)
                                                     .and_raise(ThreeScale::API::HttpClient::NotFoundError)
-        expect(remote).to receive(:find_application).with(application_id: app_ref)
+        expect(remote).to receive(:find_application).with(application_id: app_ref, service_id: nil)
                                                     .and_raise(ThreeScale::API::HttpClient::NotFoundError)
-        expect(remote).to receive(:find_application).with(id: app_ref)
+        expect(remote).to receive(:find_application).with(id: app_ref, service_id: nil)
                                                     .and_return(app_attrs)
       end
 
       it 'instance returned' do
         app = described_class.find(remote: remote, ref: app_ref)
+        expect(app).not_to be_nil
+        expect(app.id).to eq(application_id)
+      end
+    end
+
+    context 'app found by id and service_id' do
+      let(:service_id) { 100 }
+      before :example do
+        expect(remote).to receive(:find_application).with(user_key: app_ref,
+                                                          service_id: service_id)
+                                                    .and_return(app_attrs)
+      end
+
+      it 'instance returned' do
+        app = described_class.find(remote: remote, service_id: service_id, ref: app_ref)
         expect(app).not_to be_nil
         expect(app.id).to eq(application_id)
       end

@@ -16,37 +16,37 @@ module ThreeScaleToolbox
         # * User_key (API key)
         # * App_id (from app_id/app_key pair)
         # * Client ID (for OAuth and OpenID Connect authentication modes)
-        def find(remote:, ref:)
-          app = find_by_user_key(remote, ref)
+        def find(remote:, service_id: nil, ref:)
+          app = find_by_user_key(remote, service_id, ref)
           return app unless app.nil?
 
-          app = find_by_app_id(remote, ref)
+          app = find_by_app_id(remote, service_id, ref)
           return app unless app.nil?
 
-          app = find_by_id(remote, ref)
+          app = find_by_id(remote, service_id, ref)
           return app unless app.nil?
 
           nil
         end
 
-        def find_by_id(remote, id)
-          generic_find(remote, :id, id)
+        def find_by_id(remote, service_id, id)
+          generic_find(remote, service_id, :id, id)
         end
 
-        def find_by_user_key(remote, user_key)
-          generic_find(remote, :user_key, user_key)
+        def find_by_user_key(remote, service_id, user_key)
+          generic_find(remote, service_id, :user_key, user_key)
         end
 
-        def find_by_app_id(remote, app_id)
-          generic_find(remote, :application_id, app_id)
+        def find_by_app_id(remote, service_id, app_id)
+          generic_find(remote, service_id, :application_id, app_id)
         end
 
         private
 
-        def generic_find(remote, type, ref)
+        def generic_find(remote, service_id, type, ref)
           # find_application criteria only accepts one parameter.
           # Otherwise unexpected behavior
-          attrs = remote.find_application(type => ref)
+          attrs = remote.find_application(service_id: service_id, type => ref)
           if (errors = attrs['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Application find error', errors)
           end
