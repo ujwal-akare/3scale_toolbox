@@ -37,8 +37,7 @@ module ThreeScaleToolbox
               plan = Entities::ApplicationPlan.create(service: service,
                                                       plan_attrs: create_plan_attrs)
             else
-              new_attrs = new_plan_attrs(plan.attrs)
-              plan.update(new_attrs) unless new_attrs.empty?
+              plan.update(new_plan_attrs) unless new_plan_attrs.empty?
             end
 
             plan.make_default if option_default
@@ -72,10 +71,10 @@ module ThreeScaleToolbox
             end
           end
 
-          def new_plan_attrs(current_attrs)
-            plan_basic_attrs.tap do |params|
-              params['state'] = 'published' if option_publish && current_attrs['state'] == 'hidden'
-              params['state'] = 'hidden' if option_hide && current_attrs['state'] == 'published'
+          def new_plan_attrs
+            plan_basic_attrs.clone.tap do |params|
+              params['state'] = 'published' if option_publish
+              params['state'] = 'hidden' if option_hide
             end
           end
 

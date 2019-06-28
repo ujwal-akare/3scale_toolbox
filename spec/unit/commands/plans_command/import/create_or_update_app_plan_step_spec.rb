@@ -14,7 +14,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::CreateOrUpdate
       }
     }
   end
-  let(:expected_plan_attrs) { artifacts_resource['plan'].merge('system_name' => plan_system_name) }
+  let(:expected_plan_attrs) { artifacts_resource['plan'] }
   let(:context) do
     {
       threescale_client: threescale_client,
@@ -42,6 +42,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::CreateOrUpdate
     end
 
     context 'when application plan not found' do
+      let(:expected_plan_attrs) do
+        artifacts_resource['plan'].merge('system_name' => plan_system_name)
+      end
+
       before :example do
         expect(plan_class).to receive(:find).with(hash_including(service: service))
                                             .and_return(nil)

@@ -120,7 +120,15 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
   context 'instance method' do
     let(:id) { 1774 }
     let(:service_id) { 4771 }
-    subject { described_class.new(id: id, service: service) }
+    let(:initial_state) { 'published' }
+    let(:initial_plan_attrs) do
+      {
+        'id' => id, 'state' => initial_state,
+        'system_name' => 'system_name01', 'name' => 'some name'
+      }
+    end
+
+    subject { described_class.new(id: id, service: service, attrs: initial_plan_attrs) }
 
     before :example do
       allow(service).to receive(:id).and_return(service_id)
@@ -278,25 +286,46 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
     end
 
     context '#update' do
-      let(:plan_attrs) { { 'id' => id, 'system_name' => 'system_name01', 'name' => 'some name' } }
-      let(:new_plan_attrs) do
-        { 'id' => id, 'someattr' => 2, 'system_name' => 'system_name01', 'name' => 'some name' }
-      end
-      let(:update_plan_attrs) { { 'name' => 'some name' } }
-
-      before :example do
-        expect(remote).to receive(:update_application_plan).with(service_id, id, update_plan_attrs)
-                                                           .and_return(response_body)
+      context 'empty params' do
+        it 'plan is not updated' do
+          expect(subject.update({})).to eq(initial_plan_attrs)
+        end
       end
 
-      context 'when plan is updated' do
+      context 'when initially published and new state is published' do
+        it 'plan is not updated' do
+          expect(subject.update('state' => 'published')).to eq(initial_plan_attrs)
+        end
+      end
+
+      context 'when initially hidden and new state is hidden' do
+        let(:initial_state) { 'hidden' }
+
+        it 'plan is not updated' do
+          expect(subject.update('state' => 'hidden')).to eq(initial_plan_attrs)
+        end
+      end
+
+      context 'not empty params' do
+        let(:plan_attrs) { { 'id' => id, 'system_name' => 'system_name01', 'name' => 'some name' } }
+        let(:new_plan_attrs) do
+          { 'id' => id, 'someattr' => 2, 'system_name' => 'system_name01', 'name' => 'some name' }
+        end
+        let(:update_plan_attrs) { { 'name' => 'some name' } }
         let(:response_body) { new_plan_attrs }
+
+        before :example do
+          expect(remote).to receive(:update_application_plan).with(service_id, id,
+                                                                   update_plan_attrs)
+                                                             .and_return(response_body)
+        end
 
         it 'plan attrs are returned' do
           expect(subject.update(plan_attrs)).to eq(new_plan_attrs)
         end
 
         context 'attrs include published state' do
+          let(:initial_state) { 'hidden' }
           let(:plan_attrs) { { 'state' => 'published' } }
           let(:update_plan_attrs) { { 'state_event' => 'publish' } }
 
@@ -316,7 +345,15 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       end
 
       context 'operation returns error' do
+        let(:update_plan_attrs) { { 'name' => 'some name' } }
+        let(:plan_attrs) { { 'id' => id, 'system_name' => 'system_name01', 'name' => 'some name' } }
         let(:response_body) { { 'errors' => 'some error' } }
+
+        before :example do
+          expect(remote).to receive(:update_application_plan).with(service_id, id,
+                                                                   update_plan_attrs)
+                                                             .and_return(response_body)
+        end
 
         it 'raises error' do
           expect { subject.update(plan_attrs) }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
