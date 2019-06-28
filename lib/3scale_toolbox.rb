@@ -5,6 +5,7 @@ require 'uri'
 require 'time'
 require 'csv'
 require 'net/http'
+require 'pathname'
 require '3scale/api'
 
 require '3scale_toolbox/version'

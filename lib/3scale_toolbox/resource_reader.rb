@@ -27,8 +27,11 @@ module ThreeScaleToolbox
     end
 
     # Detect format from file extension
-    def read_file(resource)
-      File.read(resource)
+    def read_file(filename)
+      raise ThreeScaleToolbox::Error, "File not found: #{filename} " unless File.file?(filename)
+      raise ThreeScaleToolbox::Error, "File not readable: #{filename} " unless File.readable?(filename)
+
+      File.read(filename)
     end
 
     def read_stdin(_resource)

@@ -85,6 +85,15 @@ RSpec.describe ThreeScaleToolbox::ResourceReader do
       it_behaves_like 'content is read'
     end
 
+    context 'from folder' do
+      let(:resource) { tmp_dir }
+
+      it 'error is raised' do
+        expect { subject.read_content(resource) }.to raise_error(ThreeScaleToolbox::Error,
+                                                                 /File not found/)
+      end
+    end
+
     context 'from URL' do
       let(:resource) { 'https://example.com/petstore.yaml' }
 
