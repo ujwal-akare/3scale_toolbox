@@ -13,7 +13,14 @@ module ThreeScaleToolbox
             end
 
             existing_operations.each do |op|
-              op.set(:metric_id, service_methods_index.fetch(op.method['system_name']))
+              method_attrs = methods_index.fetch(op.method['system_name'])
+              method = Entities::Method.new(
+                id: method_attrs.fetch('id'),
+                parent_id: hits_metric_id,
+                service: service
+              )
+              method.update(op.method)
+              op.set(:metric_id, method.id)
             end
           end
 
@@ -23,18 +30,18 @@ module ThreeScaleToolbox
             @hits_metric_id ||= service.hits['id']
           end
 
-          def service_methods_index
-            @service_methods_index ||= service.methods(hits_metric_id).each_with_object({}) do |method, acc|
-              acc[method['system_name']] = method['id']
+          def methods_index
+            @methods_index ||= service.methods(hits_metric_id).each_with_object({}) do |method, acc|
+              acc[method['system_name']] = method
             end
           end
 
           def missing_operations
-            operations.reject { |op| service_methods_index.key? op.method['system_name'] }
+            operations.reject { |op| methods_index.key? op.method['system_name'] }
           end
 
           def existing_operations
-            operations.select { |op| service_methods_index.key? op.method['system_name'] }
+            operations.select { |op| methods_index.key? op.method['system_name'] }
           end
         end
       end
