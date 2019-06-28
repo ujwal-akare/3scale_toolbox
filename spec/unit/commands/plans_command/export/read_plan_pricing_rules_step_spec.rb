@@ -90,6 +90,17 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
                                                  /referencing to metric id/)
         end
       end
+
+      context 'cost_per_unit is string' do
+        let(:pringrule_for_metric) do
+          { 'cost_per_unit' => '1.0', 'min' => 1, 'max' => 100, 'metric_id' => '01' }
+        end
+
+        it 'cost_per_unit is converted to float' do
+          subject.call
+          expect(result[:pricingrules][0]).to include('cost_per_unit' => 1.0)
+        end
+      end
     end
   end
 end

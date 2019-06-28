@@ -21,15 +21,22 @@ module ThreeScaleToolbox
           private
 
           def missing_pricing_rules
-            ThreeScaleToolbox::Helper.array_difference(resource_pr_processed, plan.pricing_rules) do |a, b|
+            ThreeScaleToolbox::Helper.array_difference(resource_pr_processed, remote_pr_processed) do |a, b|
               ThreeScaleToolbox::Helper.compare_hashes(a, b, %w[metric_id cost_per_unit min max])
+            end
+          end
+
+          def remote_pr_processed
+            plan.pricing_rules.map do |pr|
+              pr.merge('cost_per_unit' => pr.fetch('cost_per_unit').to_f)
             end
           end
 
           def resource_pr_processed
             resource_pricing_rules.map do |pr|
               metric = find_metric_by_system_name(pr.delete('metric_system_name'))
-              pr.merge('metric_id' => metric.fetch('id'))
+              pr.merge('metric_id' => metric.fetch('id'),
+                       'cost_per_unit' => pr.fetch('cost_per_unit').to_f)
             end
           end
         end

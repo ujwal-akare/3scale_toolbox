@@ -9,7 +9,8 @@ module ThreeScaleToolbox
           # add metric system_name out of metric_id
           def call
             result[:pricingrules] = plan.pricing_rules.map do |pr|
-              pr.tap { |e| e['metric'] = metric_info(e, 'PricingRule') }
+              pr.merge('metric' => metric_info(pr, 'PricingRule'),
+                       'cost_per_unit' => pr.fetch('cost_per_unit').to_f)
             end
           end
         end
