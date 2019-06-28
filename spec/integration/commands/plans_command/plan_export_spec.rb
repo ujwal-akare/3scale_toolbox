@@ -23,7 +23,7 @@ RSpec.describe 'Application Plan Export' do
     ThreeScaleToolbox::Entities::ApplicationPlan.create(service: service, plan_attrs: plan_attrs)
   end
   let(:plan_limit_attrs) { { 'period' => 'year', 'value' => 10_000 } }
-  let(:plan_pr_attrs) { { 'cost_per_unit' => '2.0', 'min' => 102, 'max' => 200 } }
+  let(:plan_pr_attrs) { { 'cost_per_unit' => 2.0, 'min' => 102, 'max' => 200 } }
   let(:plan_feature_attrs) do
     {
       'name' => 'Unlimited Greetings', 'system_name' => 'unlimited_greetings',
