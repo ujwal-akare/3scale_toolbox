@@ -50,6 +50,8 @@ module ThreeScaleToolbox
       end
 
       def update(plan_attrs)
+        return attrs if update_plan_attrs(plan_attrs).empty?
+
         new_attrs = remote.update_application_plan(service.id, id,
                                                    update_plan_attrs(plan_attrs))
         if (errors = new_attrs['errors'])
@@ -170,6 +172,10 @@ module ThreeScaleToolbox
         end
       end
 
+      def published?
+        attrs.fetch('state') == 'published'
+      end
+
       private
 
       def read_plan_attrs
@@ -181,17 +187,12 @@ module ThreeScaleToolbox
         plan_attrs
       end
 
-      def update_plan_attrs(source_attrs)
-        # shallow copy is enough
-        source_attrs.clone.tap do |new_plan_attrs|
-          new_plan_attrs.delete('id')
-          new_plan_attrs.delete('links')
-          new_plan_attrs.delete('system_name')
-          # plans are created by default in hidden state
-          # If published is required, 'state_event' attr has to be added
-          state = new_plan_attrs.delete('state')
-          new_plan_attrs['state_event'] = 'publish' if state == 'published'
-          new_plan_attrs['state_event'] = 'hide' if state == 'hidden'
+      def update_plan_attrs(update_attrs)
+        new_attrs = update_attrs.reject { |key, _| %w[id links system_name].include? key }
+        new_attrs.tap do |params|
+          state = params.delete('state')
+          params['state_event'] = 'publish' if state == 'published' && !published?
+          params['state_event'] = 'hide' if state == 'hidden' && published?
         end
       end
 
