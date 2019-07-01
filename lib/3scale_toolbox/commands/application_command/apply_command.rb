@@ -26,6 +26,7 @@ module ThreeScaleToolbox
               option      nil, :account, 'Application\'s account. Required when creating', argument: :required
               option      nil, :service, 'Application\'s service. Required when creating', argument: :required
               option      nil, :plan, 'Application\'s plan. Required when creating', argument: :required
+              option      nil, :'redirect-url', 'OpenID Connect redirect url', argument: :required
               flag        nil, :resume, 'Resume a suspended application'
               flag        nil, :suspend, 'Suspends an application (changes the state to suspended)'
               param       :remote
@@ -87,6 +88,7 @@ module ThreeScaleToolbox
               'user_key' => application_ref,
               'application_id' => application_ref,
               'application_key' => option_app_key,
+              'redirect_url' => option_redirect_url,
             }.compact
           end
 
@@ -97,6 +99,7 @@ module ThreeScaleToolbox
               'name' => option_name,
               'description' => description,
               'user_key' => option_user_key,
+              'redirect_url' => option_redirect_url,
             }.compact
           end
 
@@ -179,6 +182,10 @@ module ThreeScaleToolbox
 
           def application_ref
             arguments[:application]
+          end
+
+          def option_redirect_url
+            options[:'redirect-url']
           end
         end
       end

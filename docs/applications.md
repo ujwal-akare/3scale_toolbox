@@ -55,6 +55,7 @@ OPTIONS
                                       modes) of the application to be
                                       created.
        --description=<value>          Application description
+       --redirect-url=<value>         OpenID Connect redirect url
        --user-key=<value>             User Key (API Key) of the application
                                       to be created.
 ```
@@ -130,6 +131,7 @@ OPTIONS
        --name=<value>                 Application name
        --plan=<value>                 Application's plan. Required when
                                       creating
+       --redirect-url=<value>         OpenID Connect redirect url
        --resume                       Resume a suspended application
        --service=<value>              Application's service. Required when
                                       creating
