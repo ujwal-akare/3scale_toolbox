@@ -16,6 +16,7 @@ module ThreeScaleToolbox
               option      nil, 'application-id', 'App ID or Client ID (for OAuth and OpenID Connect authentication modes) of the application to be created. ', argument: :required
               option      nil, 'application-key', 'App Key(s) or Client Secret (for OAuth and OpenID Connect authentication modes) of the application to be created.' , argument: :required
               option      nil, :description, 'Application description', argument: :required
+              option      nil, :'redirect-url', 'OpenID Connect redirect url', argument: :required
               param       :remote
               param       :account
               param       :service
@@ -45,7 +46,8 @@ module ThreeScaleToolbox
               'description' => description,
               'user_key' => options[:'user-key'],
               'application_id' => options[:'application-id'],
-              'application_key' => options[:'application-key']
+              'application_key' => options[:'application-key'],
+              'redirect_url' => options[:'redirect-url'],
             }.compact
           end
 

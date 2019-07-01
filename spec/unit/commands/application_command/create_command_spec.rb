@@ -113,6 +113,23 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Create::CreateSu
           expect { subject.run }.to output(/Created application id: 200/).to_stdout
         end
       end
+
+      context 'redirect-url opt given' do
+        let(:options) { { 'redirect-url': 'https://example.com/callback' } }
+        let(:expected_app_attrs) do
+          {
+            'redirect_url' => 'https://example.com/callback', 'name' => 'myapp',
+            'description' => 'myapp'
+          }
+        end
+
+        it 'redirect_url param sent' do
+          expect(application_class).to receive(:create).with(hash_including(app_attrs: expected_app_attrs))
+                                                       .and_return(app0)
+
+          expect { subject.run }.to output(/Created application id: 200/).to_stdout
+        end
+      end
     end
   end
 end

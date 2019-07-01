@@ -96,6 +96,15 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
           expect { subject.run }.to output(/Applied application id: 1/).to_stdout
         end
       end
+
+      context 'redirect_url opt given' do
+        let(:options) { { 'redirect-url': 'https://example.com/callback' } }
+
+        it 'application updated with redirect url' do
+          expect(application).to receive(:update).with(hash_including('redirect_url' => 'https://example.com/callback'))
+          expect { subject.run }.to output(/Applied application id: 1/).to_stdout
+        end
+      end
     end
 
     context 'application not found' do
@@ -283,7 +292,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
             plan: 'myplan',
             name: 'myname',
             description: 'mydescr',
-            'application-key': 'appKey'
+            'application-key': 'appKey',
+            'redirect-url': 'https://example.com/callback'
           }
         end
 
@@ -333,6 +343,16 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
             .with(
               remote: remote, account_id: account_id, plan_id: 'planId',
               app_attrs: hash_including('application_key' => 'appKey')
+            )
+            .and_return(application)
+          expect { subject.run }.to output(/Applied application id: 1/).to_stdout
+        end
+
+        it 'redirect-url is included' do
+          expect(application_class).to receive(:create)
+            .with(
+              remote: remote, account_id: account_id, plan_id: 'planId',
+              app_attrs: hash_including('redirect_url' => 'https://example.com/callback')
             )
             .and_return(application)
           expect { subject.run }.to output(/Applied application id: 1/).to_stdout
