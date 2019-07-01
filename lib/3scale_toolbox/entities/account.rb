@@ -20,15 +20,55 @@ module ThreeScaleToolbox
           find_by_text(ref, remote)
         end
 
-        def find_by_text(text, client)
-          account = client.find_account(email: text, buyer_provider_key: text,
-                                        buyer_service_token: text)
+        # ref can be
+        # * Email of the account user.
+        # * Username of the account user.
+        # * ID of the account user.
+        # * [Master API] Provider key of the account
+        # * [Master API] Service token of the account service.
+        #
+        # email, username or user_id fields search with AND logic. Therefore separate requests.
+        # buyer_provider_key, buyer_service_token fields search with OR logic. Same request.
+        def find_by_text(ref, remote)
+          account = find_by_email(remote, ref)
+          return account unless account.nil?
+
+          account = find_by_username(remote, ref)
+          return account unless account.nil?
+
+          account = find_by_user_id(remote, ref)
+          return account unless account.nil?
+
+          account = find_by_provider_or_service_token(remote, ref)
+          return account unless account.nil?
+
+          nil
+        end
+
+        def find_by_email(remote, email)
+          generic_find(remote, email: email)
+        end
+
+        def find_by_username(remote, username)
+          generic_find(remote, username: username)
+        end
+
+        def find_by_user_id(remote, user_id)
+          generic_find(remote, user_id: user_id)
+        end
+
+        def find_by_provider_or_service_token(remote, text)
+          generic_find(remote, buyer_provider_key: text, buyer_service_token: text)
+        end
+
+        def generic_find(remote, criteria)
+          account = remote.find_account(criteria)
           if (errors = account['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new(
               'Account find returned errors', errors
             )
           end
-          new(id: account['id'], remote: client, attrs: account)
+          new(id: account['id'], remote: remote, attrs: account)
         rescue ThreeScale::API::HttpClient::NotFoundError
           nil
         end

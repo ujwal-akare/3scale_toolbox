@@ -30,7 +30,10 @@ OPTIONS
 * A new application is created always. This command is not idempotent command.
 * Required positional params:
   * `<service>` reference. It can be either service `id`, or service `system_name`. Toolbox will figure it out.
-  * `<account>` reference. It can be either account `id`, or `email` or `provider_key`. Toolbox will figure it out.
+  * `<account>` reference. It can be one of the following and the toolbox will figure it out:
+    * Account `id`
+    * `username`, `email` or `user_id` of the admin user of the account 
+    * `provider_key`
   * `<application plan>` reference. It can be either plan `id`, or plan `system_name`. Toolbox will figure it out.
   * `<name>` application name.
 * Several other options can be set. Check `usage`.
@@ -91,6 +94,10 @@ DESCRIPTION
   * User_key (API key)
   * App_id (from app_id/app_key pair)
   * Client ID (for OAuth and OpenID Connect authentication modes)
+* `account` optional argument is required when application is not found and needs to be created. It can be one of the following and the toolbox will figure it out:
+  * Account `id`
+  * `username`, `email` or `user_id` of the admin user of the account 
+  * `provider_key`
 * `name` cannot be used as unique identifier because application name is not unique in 3scale.
 * This is command is `idempotent`.
 * Resume a suspended application by `--resume` flag.
