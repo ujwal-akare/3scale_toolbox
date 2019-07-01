@@ -6,6 +6,7 @@ module ThreeScaleToolbox
           def method
             {
               'friendly_name' => friendly_name,
+              'description' => description,
               'system_name' => system_name
             }
           end
@@ -20,6 +21,10 @@ module ThreeScaleToolbox
 
           def operation_id
             "#{operation[:verb]}#{operation[:path].gsub(/[^\w]/, '')}"
+          end
+
+          def description
+            String(operation[:description])
           end
         end
       end

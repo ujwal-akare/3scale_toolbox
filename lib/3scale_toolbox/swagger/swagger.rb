@@ -23,12 +23,13 @@ module ThreeScaleToolbox
     end
 
     class Operation
-      attr_reader :verb, :operation_id, :path
+      attr_reader :verb, :operation_id, :path, :description
 
-      def initialize(verb:, operation_id:, path:)
+      def initialize(verb:, operation_id:, path:, description:)
         @verb = verb
         @operation_id = operation_id
         @path = path
+        @description = description
       end
     end
 
@@ -83,7 +84,8 @@ module ThreeScaleToolbox
           path_obj.flat_map do |method, operation|
             next unless %w[get head post put patch delete trace options].include? method
 
-            Operation.new(verb: method, path: path, operation_id: operation['operationId'])
+            Operation.new(verb: method, path: path, description: operation['description'],
+                          operation_id: operation['operationId'])
           end.compact
         end
       end

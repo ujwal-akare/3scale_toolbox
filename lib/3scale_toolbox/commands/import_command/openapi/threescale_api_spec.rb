@@ -51,7 +51,8 @@ module ThreeScaleToolbox
                 public_base_path: public_base_path,
                 path: op.path,
                 verb: op.verb,
-                operationId: op.operation_id
+                operationId: op.operation_id,
+                description: op.description,
               )
             end
           end
