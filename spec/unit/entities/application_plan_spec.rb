@@ -8,6 +8,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
 
   context 'ApplicationPlan.create' do
     let(:service_id) { 1000 }
+    let(:plan_id) { 1001 }
     let(:plan_attrs) { { system_name: 'some name' } }
 
     before :example do
@@ -24,9 +25,9 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
 
     it 'plan instance is returned' do
       expect(remote).to receive(:create_application_plan).with(service_id, plan_attrs)
-                                                         .and_return('id' => 'some_id')
+                                                         .and_return('id' => plan_id)
       plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
-      expect(plan_obj.id).to eq('some_id')
+      expect(plan_obj.id).to eq(plan_id)
       expect(plan_obj.remote).to be(remote)
     end
 
@@ -39,9 +40,9 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
           'state_event' => 'publish'
         }
         expect(remote).to receive(:create_application_plan).with(service_id, hash_including(expected_create_attrs))
-                                                           .and_return('id' => 'some_id')
+                                                           .and_return('id' => plan_id)
         plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
-        expect(plan_obj.id).to eq('some_id')
+        expect(plan_obj.id).to eq(plan_id)
         expect(plan_obj.remote).to be(remote)
       end
     end
@@ -52,9 +53,9 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       it 'plan attrs include state_event as hide' do
         expected_create_attrs = { 'system_name' => 'some_name' }
         expect(remote).to receive(:create_application_plan).with(service_id, hash_including(expected_create_attrs))
-                                                           .and_return('id' => 'some_id')
+                                                           .and_return('id' => plan_id)
         plan_obj = described_class.create(service: service, plan_attrs: plan_attrs)
-        expect(plan_obj.id).to eq('some_id')
+        expect(plan_obj.id).to eq(plan_id)
         expect(plan_obj.remote).to be(remote)
       end
     end
@@ -89,8 +90,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       let(:plans) { [plan_attrs] }
 
       before :example do
-        expect(remote).to receive(:show_application_plan).with(service_id, plan_ref)
-                                                         .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_application_plan).and_raise(ThreeScale::API::HttpClient::NotFoundError)
         expect(service).to receive(:plans).and_return(plans)
       end
 
@@ -105,8 +105,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       let(:plans) { [] }
 
       before :example do
-        expect(remote).to receive(:show_application_plan).with(service_id, plan_ref)
-                                                         .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_application_plan).and_raise(ThreeScale::API::HttpClient::NotFoundError)
         expect(service).to receive(:plans).and_return(plans)
       end
 
@@ -378,9 +377,9 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       end
 
       context 'list_applications returns applications' do
-        let(:app01_attrs) { { 'id' => '01', 'name' => 'app01' } }
-        let(:app02_attrs) { { 'id' => '02', 'name' => 'app02' } }
-        let(:app03_attrs) { { 'id' => '03', 'name' => 'app03' } }
+        let(:app01_attrs) { { 'id' => 1, 'name' => 'app01' } }
+        let(:app02_attrs) { { 'id' => 2, 'name' => 'app02' } }
+        let(:app03_attrs) { { 'id' => 3, 'name' => 'app03' } }
         let(:applications) { [app01_attrs, app02_attrs, app03_attrs] }
 
         before :example do
@@ -390,17 +389,17 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
 
         it 'app01 is returned' do
           apps = subject.applications
-          expect(apps.map(&:id)).to include('01')
+          expect(apps.map(&:id)).to include(1)
         end
 
         it 'app02 is returned' do
           apps = subject.applications
-          expect(apps.map(&:id)).to include('02')
+          expect(apps.map(&:id)).to include(2)
         end
 
         it 'app03 is returned' do
           apps = subject.applications
-          expect(apps.map(&:id)).to include('03')
+          expect(apps.map(&:id)).to include(3)
         end
       end
     end

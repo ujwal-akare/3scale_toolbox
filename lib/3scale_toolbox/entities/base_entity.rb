@@ -16,7 +16,7 @@ module ThreeScaleToolbox
       attr_reader :id, :attrs, :remote
 
       def initialize(id:, remote:, attrs: nil, verbose: false)
-        @id = id
+        @id = id.to_i
         @remote = remote
         @attrs = attrs
         @verbose = verbose

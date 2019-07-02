@@ -18,7 +18,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
     end
 
     context 'on success when calling the API' do
-      let(:activedocs_id) { "5" }
+      let(:activedocs_id) { 5 }
       let(:activedocs_system_name) { "exampleactivedocssysname" }
       let(:activedocs_description) { "description" }
       let(:activedocs_attrs) { { "name" => activedocs_name, "system_name" => activedocs_system_name, "description" => activedocs_description } }
@@ -35,8 +35,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
   end
 
   context "ActiveDocs.find" do
-    let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "name1", "id" => "3" } }
-    let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => "4" } }
+    let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "name1", "id" => 3 } }
+    let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => 4 } }
 
     context "ActiveDocs is found by id" do
       let(:activedocs_ref) { "3" }
@@ -74,8 +74,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
 
     context "ActiveDocs is found by id with priority over system_name" do
       let(:activedocs_ref) { "4" }
-      let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "4", "id" => "3" } }
-      let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => "4" } }
+      let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "4", "id" => 3 } }
+      let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => 4 } }
 
       it "an instance is returned" do
         expect(remote).to receive(:list_activedocs).and_return([activedocs_attrs_1, activedocs_attrs_2])
@@ -90,8 +90,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
   context "ActiveDocs.find_by_system_name" do
     context "the specified system_name is found" do
       let(:activedocs_sysname_search) { "name2" }
-      let(:activedocs_res_id) { "7" }
-      let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "name1", "id" => "5" } }
+      let(:activedocs_res_id) { 7 }
+      let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "name1", "id" => 5 } }
       let(:activedocs_attrs_2) { { "name" => activedocs_sysname_search, "system_name" => activedocs_sysname_search, "id" => activedocs_res_id } }
 
       it "an ActiveDocs instance is returned" do
@@ -105,8 +105,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
 
     context "the specified system_name is not found" do
       let(:activedocs_sysname_search) { "name3" }
-      let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "name1", "id" => "5" } }
-      let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => "7" } }
+      let(:activedocs_attrs_1) { { "name" => "name1", "system_name" => "name1", "id" => 5 } }
+      let(:activedocs_attrs_2) { { "name" => "name2", "system_name" => "name2", "id" => 7 } }
 
       it "nil is returned" do
         expect(remote).to receive(:list_activedocs).and_return([activedocs_attrs_1, activedocs_attrs_2])
@@ -117,7 +117,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
   end
 
   context "Instance method" do
-    let(:activedocs_id) { "5" }
+    let(:activedocs_id) { 5 }
 
     subject { described_class.new(id: activedocs_id, remote: remote) }
 
@@ -157,7 +157,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ActiveDocs do
 
     context '#update' do
       let(:params) { { 'name' => 'new name' } }
-      let(:id) { "5" }
+      let(:id) { 5 }
       let(:new_params) { { 'id' => id, 'name' => 'new_name' } }
 
       before :example do

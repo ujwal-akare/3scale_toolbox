@@ -42,7 +42,7 @@ module ThreeScaleToolbox
       attr_reader :id, :remote
 
       def initialize(id:, remote:, attrs: nil)
-        @id = id
+        @id = id.to_i
         @remote = remote
         @attrs = attrs
       end

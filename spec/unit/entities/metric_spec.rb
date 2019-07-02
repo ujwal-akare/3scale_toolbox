@@ -25,9 +25,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
     it 'metric instance is returned' do
       expect(remote).to receive(:create_metric).with(service_id, metric_attrs)
-                                               .and_return('id' => 'some_id')
+                                               .and_return('id' => 1000)
       metric_obj = described_class.create(service: service, attrs: metric_attrs)
-      expect(metric_obj.id).to eq('some_id')
+      expect(metric_obj.id).to eq(1000)
     end
   end
 
@@ -60,8 +60,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
       let(:metrics) { [metric_attrs] }
 
       before :example do
-        expect(remote).to receive(:show_metric).with(service_id, metric_ref)
-                                               .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError)
         expect(service).to receive(:metrics).and_return(metrics)
       end
 
@@ -76,8 +75,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
       let(:metrics) { [] }
 
       before :example do
-        expect(remote).to receive(:show_metric).with(service_id, metric_ref)
-                                               .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError)
         expect(service).to receive(:metrics).and_return(metrics)
       end
 

@@ -28,13 +28,15 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
     end
 
     context 'when remote call succeeds' do
-      let(:remote_response) { { 'id' => 'some_id' } }
+      let(:method_id) { 1002 }
+
+      let(:remote_response) { { 'id' => method_id } }
 
       it 'method instance is returned' do
         method_obj = described_class.create(service: service, parent_id: parent_id,
                                             attrs: method_attrs)
         expect(method_obj).not_to be_nil
-        expect(method_obj.id).to eq('some_id')
+        expect(method_obj.id).to eq(method_id)
       end
     end
   end
@@ -69,8 +71,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
       let(:methods) { [method_attrs] }
 
       before :example do
-        expect(remote).to receive(:show_method).with(service_id, parent_id, method_ref)
-                                               .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError)
         expect(service).to receive(:methods).with(parent_id).and_return(methods)
       end
 
@@ -86,8 +87,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
       let(:methods) { [] }
 
       before :example do
-        expect(remote).to receive(:show_method).with(service_id, parent_id, method_ref)
-                                               .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError)
         expect(service).to receive(:methods).with(parent_id).and_return(methods)
       end
 

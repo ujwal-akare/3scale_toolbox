@@ -30,7 +30,7 @@ module ThreeScaleToolbox
       attr_reader :id, :parent_id, :service, :remote
 
       def initialize(id:, parent_id:, service:, attrs: nil)
-        @id = id
+        @id = id.to_i
         @service = service
         @parent_id = parent_id
         @remote = service.remote
