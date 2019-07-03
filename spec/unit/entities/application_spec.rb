@@ -105,21 +105,22 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
     end
 
     context 'remote returns attrs' do
-      let(:create_app_response) { app_attrs.merge('id' => 'appId') }
+      let(:application_id) { 10001 }
+      let(:create_app_response) { app_attrs.merge('id' => application_id) }
 
       it 'application instance is returned' do
         app = described_class.create(remote: remote, account_id: account_id,
                                      plan_id: plan_id,
                                      app_attrs: app_attrs)
         expect(app).not_to be_nil
-        expect(app.id).to eq('appId')
+        expect(app.id).to eq(application_id)
       end
     end
   end
 
   context 'instance method' do
     let(:id) { 1774 }
-    let(:account_id) { 'accId' }
+    let(:account_id) { 1002 }
     let(:base_attrs) do
       { 'id' => id, 'name' => 'somename', 'state' => 'live', 'account_id' => account_id }
     end

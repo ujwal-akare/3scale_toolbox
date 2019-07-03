@@ -1,5 +1,5 @@
 RSpec.describe ThreeScaleToolbox::Entities::Account do
-  let(:account_ref) { 'accId' }
+  let(:account_ref) { 1000 }
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
   let(:account) { instance_double(ThreeScaleToolbox::Entities::Account) }
   let(:show_account_error) { { 'errors' => 'some error' } }
@@ -160,9 +160,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
     end
 
     context 'list_account_applications returns applications' do
-      let(:app01_attrs) { { 'id' => '01', 'name' => 'app01' } }
-      let(:app02_attrs) { { 'id' => '02', 'name' => 'app02' } }
-      let(:app03_attrs) { { 'id' => '03', 'name' => 'app03' } }
+      let(:app01_attrs) { { 'id' => 1, 'name' => 'app01' } }
+      let(:app02_attrs) { { 'id' => 2, 'name' => 'app02' } }
+      let(:app03_attrs) { { 'id' => 3, 'name' => 'app03' } }
       let(:applications) { [app01_attrs, app02_attrs, app03_attrs] }
 
       before :example do
@@ -172,17 +172,17 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
 
       it 'app01 is returned' do
         apps = subject.applications
-        expect(apps.map(&:id)).to include('01')
+        expect(apps.map(&:id)).to include(1)
       end
 
       it 'app02 is returned' do
         apps = subject.applications
-        expect(apps.map(&:id)).to include('02')
+        expect(apps.map(&:id)).to include(2)
       end
 
       it 'app03 is returned' do
         apps = subject.applications
-        expect(apps.map(&:id)).to include('03')
+        expect(apps.map(&:id)).to include(3)
       end
     end
   end

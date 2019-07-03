@@ -66,7 +66,7 @@ module ThreeScaleToolbox
       attr_reader :id, :remote
 
       def initialize(id:, remote:, attrs: nil)
-        @id = id
+        @id = id.to_i
         @remote = remote
         @attrs = attrs
       end
@@ -180,9 +180,7 @@ module ThreeScaleToolbox
         end
 
         tenant_activedocs.select do |activedoc|
-          # service_id is optional attr. It would return nil and would not match
-          # activedocs endpoints return service_id as integers
-          activedoc['service_id'] == id.to_i
+          activedoc['service_id'] == id
         end
       end
 

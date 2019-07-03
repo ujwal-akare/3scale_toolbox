@@ -2,7 +2,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
   include_context :random_name
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:common_error_response) { { 'errors' => { 'comp' => 'error' } } }
-  let(:positive_response) { { 'errors' => nil, 'id' => 'some_id' } }
+  let(:positive_response) { { 'errors' => nil, 'id' => 1000 } }
 
   context 'Service.create' do
     let(:system_name) { random_lowercase_name }
@@ -63,13 +63,14 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     it 'service instance is returned' do
       expect(remote).to receive(:create_service).and_return(positive_response)
       service_obj = described_class.create(service_info)
-      expect(service_obj.id).to eq('some_id')
+      expect(service_obj.id).to eq(1000)
       expect(service_obj.remote).to be(remote)
     end
   end
 
   context 'Service.find' do
     let(:system_name) { random_lowercase_name }
+    let(:service_id) { 10001 }
     let(:service_info) { { remote: remote, ref: system_name } }
 
     it 'remote call raises unexpected error' do
@@ -86,9 +87,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     it 'service instance is returned when specifying an existing service ID' do
-      expect(remote).to receive(:show_service).and_return({ "id" => system_name, "system_name" => "sysname1" })
-      service_obj = described_class.find(service_info)
-      expect(service_obj.id).to eq(system_name)
+      expect(remote).to receive(:show_service).and_return({ "id" => service_id, "system_name" => "sysname1" })
+      service_obj = described_class.find(remote: remote, ref: service_id)
+      expect(service_obj.id).to eq(service_id)
       expect(service_obj.remote).to be(remote)
     end
 
@@ -101,9 +102,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     it 'service instance is returned from service ID in front of an existing service with the same system-name as the ID' do
-      svc_info = { remote: remote, ref: "3" }
-      expect(remote).to receive(:show_service).and_return({ "id" => svc_info[:ref], "system_name" => "sysname1" })
-      allow(remote).to receive(:list_services).and_return([{ "id" => "4", "system_name" => svc_info[:ref] }, { "id" => "5", "system_name" => "sysname2" }])
+      svc_info = { remote: remote, ref: 3 }
+      expect(remote).to receive(:show_service).and_return("id" => svc_info[:ref], "system_name" => "sysname1")
+      allow(remote).to receive(:list_services).and_return([{ "id" => 4, "system_name" => svc_info[:ref] }, { 'id' => 5, "system_name" => "sysname2" }])
       service_obj = described_class.find(svc_info)
       expect(service_obj.id).to eq(svc_info[:ref])
       expect(service_obj.remote).to be(remote)
@@ -417,9 +418,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         end
 
         context 'list_applications returns applications' do
-          let(:app01_attrs) { { 'id' => '01', 'name' => 'app01' } }
-          let(:app02_attrs) { { 'id' => '02', 'name' => 'app02' } }
-          let(:app03_attrs) { { 'id' => '03', 'name' => 'app03' } }
+          let(:app01_attrs) { { 'id' => 1, 'name' => 'app01' } }
+          let(:app02_attrs) { { 'id' => 2, 'name' => 'app02' } }
+          let(:app03_attrs) { { 'id' => 3, 'name' => 'app03' } }
           let(:applications) { [app01_attrs, app02_attrs, app03_attrs] }
 
           before :example do
@@ -429,17 +430,17 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
           it 'app01 is returned' do
             apps = subject.applications
-            expect(apps.map(&:id)).to include('01')
+            expect(apps.map(&:id)).to include(1)
           end
 
           it 'app02 is returned' do
             apps = subject.applications
-            expect(apps.map(&:id)).to include('02')
+            expect(apps.map(&:id)).to include(2)
           end
 
           it 'app03 is returned' do
             apps = subject.applications
-            expect(apps.map(&:id)).to include('03')
+            expect(apps.map(&:id)).to include(3)
           end
         end
       end
