@@ -31,7 +31,7 @@ namespace :license_finder do
 
   desc 'Generate an CSV report for licenses'
   task :report do
-    system("license_finder report --decisions-file=#{DECISION_FILE} --format=csv")
+    system("license_finder report --decisions-file=#{DECISION_FILE} --quiet --format=xml")
   end
 end
 

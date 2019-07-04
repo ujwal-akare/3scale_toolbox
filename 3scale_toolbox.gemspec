@@ -15,7 +15,14 @@ Gem::Specification.new do |spec|
   spec.description   = %q{3scale tools to manage your API from the terminal.}
   spec.homepage      = 'https://github.com/3scale/3scale_toolbox'
 
-  spec.files         = Dir['{lib}/**/*.rb'] + %w[README.md] + Dir['exe/*'] + Dir['resources/*']
+  spec.files         = Dir['{lib}/**/*.rb']
+  spec.files         += Dir['{exe,resources}/*']
+  spec.files         << 'README.md'
+  spec.files         << 'licenses.xml'
+  spec.files         << 'LICENSE'
+  spec.files         << 'NOTICE'
+  spec.files         << __FILE__
+
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
