@@ -4,6 +4,31 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.12.0]
+
+### Fix
+- Application plan apply: make idempotent for hidden and published [#172](https://github.com/3scale/3scale_toolbox/pull/172)
+- Create application plan: remove --end-user-required flag [#171](https://github.com/3scale/3scale_toolbox/pull/171)
+- Handle remote not found error [#170](https://github.com/3scale/3scale_toolbox/pull/170)
+- Copy/import metric tasks [#169](https://github.com/3scale/3scale_toolbox/pull/169)
+- Make ProxyConfig promote command idempotent [#174](https://github.com/3scale/3scale_toolbox/pull/174)
+- Copy service: copy activedocs idempotent [#179](https://github.com/3scale/3scale_toolbox/pull/179)
+- leaking the SSO Issuer Endpoint secrets in the ActiveDocs [#180](https://github.com/3scale/3scale_toolbox/pull/180)
+- Application apply: make idempotent --resume and --suspend [#185](https://github.com/3scale/3scale_toolbox/pull/185)
+- Create new app if app_id exists in another service [#183](https://github.com/3scale/3scale_toolbox/pull/183)
+- Pricing rules cost_per_unit as float [#187](https://github.com/3scale/3scale_toolbox/pull/187)
+- Application plan import idempotent [#188](https://github.com/3scale/3scale_toolbox/pull/188)
+- Import openapi: create methods process idempotent [#189](https://github.com/3scale/3scale_toolbox/pull/189)
+- Import openapi: include method object description [#189](https://github.com/3scale/3scale_toolbox/pull/189)
+- Impost openapi: raise error when resource is a directory [#190](https://github.com/3scale/3scale_toolbox/pull/190)
+- Entities id treated as integers [#193](https://github.com/3scale/3scale_toolbox/pull/193)
+
+### Added
+- Openapi: override private base url [#168](https://github.com/3scale/3scale_toolbox/pull/168)
+- Search the account by several fields [#191](https://github.com/3scale/3scale_toolbox/pull/191)
+- Applications create commands add redirect url attribute [#192](https://github.com/3scale/3scale_toolbox/pull/192)
+- Add licenses.xml to gem [#194](https://github.com/3scale/3scale_toolbox/pull/194)
+
 ## [0.11.0]
 
 ### Added
@@ -148,7 +173,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.0
 [0.11.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.11.0
 [0.10.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.10.0
 [0.9.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.9.0
