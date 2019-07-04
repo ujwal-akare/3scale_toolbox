@@ -13,7 +13,7 @@
       </dependency>
           <dependency>
         <packageName>3scale_toolbox</packageName>
-        <version>0.11.0</version>
+        <version>0.12.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
