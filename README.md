@@ -27,6 +27,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
 * [Development](#development)
    * [Testing](#testing)
    * [Develop your own core command](#develop-core-command)
+   * [Licenses](#licenses)
 * [Plugins](#plugins)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
@@ -173,6 +174,13 @@ Running the new core command:
 $ 3scale service_list my-3scale-instance
 { ... }
 ```
+### Licenses
+
+It is a requirement that we include a file describing all the licenses used in the product, so that users can examine it.
+
+Run `rake license_finder:check` to check licenses when dependencies change. 
+
+Run `rake license_finder:report > licenses.xml` to update licenses file.
 
 ## Plugins
 
