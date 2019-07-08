@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.12.3]
+
+### Fixed
+- Verbose mode writes to stderr [#197](https://github.com/3scale/3scale_toolbox/pull/197)
+- Fix gemspec file name [#198](https://github.com/3scale/3scale_toolbox/pull/198)
+
+### Changed
+- Dockerfile based on ruby-25-centos7 [#196](https://github.com/3scale/3scale_toolbox/pull/196)
+
 ## [0.12.0]
 
 ### Fix
@@ -173,7 +182,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.12.3...HEAD
+[0.12.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.3
 [0.12.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.0
 [0.11.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.11.0
 [0.10.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.10.0

@@ -13,7 +13,7 @@
       </dependency>
           <dependency>
         <packageName>3scale_toolbox</packageName>
-        <version>0.12.0</version>
+        <version>0.12.3</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -33,7 +33,7 @@
       </dependency>
           <dependency>
         <packageName>bundler</packageName>
-        <version>1.16.6</version>
+        <version>1.16.1</version>
         <licenses>
                       <license>
               <name>unknown</name>
@@ -101,7 +101,7 @@
       </dependency>
           <dependency>
         <packageName>hashdiff</packageName>
-        <version>0.3.8</version>
+        <version>0.4.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -121,7 +121,7 @@
       </dependency>
           <dependency>
         <packageName>license_finder</packageName>
-        <version>5.7.1</version>
+        <version>5.8.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -161,7 +161,7 @@
       </dependency>
           <dependency>
         <packageName>public_suffix</packageName>
-        <version>3.0.3</version>
+        <version>3.1.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -201,7 +201,7 @@
       </dependency>
           <dependency>
         <packageName>rspec-expectations</packageName>
-        <version>3.8.2</version>
+        <version>3.8.3</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -231,7 +231,7 @@
       </dependency>
           <dependency>
         <packageName>rubyzip</packageName>
-        <version>1.2.2</version>
+        <version>1.2.3</version>
         <licenses>
                       <license>
               <name>Simplified BSD</name>
