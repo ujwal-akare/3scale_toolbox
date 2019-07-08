@@ -31,12 +31,12 @@ RSpec.describe ThreeScaleToolbox::ProxyLogger do
   it 'method args in output' do
     expect do
       subject.method01('some_param')
-    end.to output(/args \|\["some_param"\]\|/).to_stdout
+    end.to output(/args \|\["some_param"\]\|/).to_stderr
   end
 
   it 'method return values in output' do
     expect do
       subject.method01('')
-    end.to output(/response \|"result01"\|/).to_stdout
+    end.to output(/response \|"result01"\|/).to_stderr
   end
 end
