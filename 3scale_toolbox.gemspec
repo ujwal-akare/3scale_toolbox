@@ -21,7 +21,9 @@ Gem::Specification.new do |spec|
   spec.files         << 'licenses.xml'
   spec.files         << 'LICENSE'
   spec.files         << 'NOTICE'
-  spec.files         << __FILE__
+  # There is a bug in gem 2.7.6 and __FILE__ cannot be used.
+  # It is expanded in rake release task with full path on the building host
+  spec.files         << '3scale_toolbox.gemspec'
 
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
