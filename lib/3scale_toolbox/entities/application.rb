@@ -12,10 +12,9 @@ module ThreeScaleToolbox
         end
 
         # ref can be
-        # * Application internal id
         # * User_key (API key)
-        # * App_id (from app_id/app_key pair)
-        # * Client ID (for OAuth and OpenID Connect authentication modes)
+        # * App_id (from app_id/app_key pair) / Client ID (for OAuth and OpenID Connect authentication modes)
+        # * Application internal id
         def find(remote:, service_id: nil, ref:)
           app = find_by_user_key(remote, service_id, ref)
           return app unless app.nil?
