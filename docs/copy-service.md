@@ -14,6 +14,9 @@ Components of the service being copied:
 * methods
 * application plans
 * mapping rules
+* policies. Note: If the service to be copied has custom policies make sure
+  that their respective custom policy definitions already exist in the
+  destination where the service is to be copied before performing the copy
 
 3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
