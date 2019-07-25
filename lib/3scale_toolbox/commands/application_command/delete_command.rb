@@ -13,10 +13,9 @@ module ThreeScaleToolbox
               description <<-HEREDOC
               Delete application'
               \n Application param allows:
-              \n * Application internal id
               \n * User_key (API key)
-              \n * App_id (from app_id/app_key pair)
-              \n * Client ID (for OAuth and OpenID Connect authentication modes)
+              \n * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID Connect authentication modes)
+              \n * Application internal id
               HEREDOC
 
               param       :remote

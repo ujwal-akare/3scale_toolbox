@@ -78,23 +78,21 @@ DESCRIPTION
 
     Application param allows:
 
-    * Application internal id
-
     * User_key (API key)
 
-    * App_id (from app_id/app_key pair)
+    * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID
+    Connect authentication modes)
 
-    * Client ID (for OAuth and OpenID Connect authentication modes)
+    * Application internal id
 ```
 
 ### Apply
 
 * Update (create if it does not exist) application.
 * `application` positional argument is application unique identifier. Allowed id's are:
-  * Application internal id
   * User_key (API key)
-  * App_id (from app_id/app_key pair)
-  * Client ID (for OAuth and OpenID Connect authentication modes)
+  * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID Connect authentication modes)
+  * Application internal id
 * `account` optional argument is required when application is not found and needs to be created. It can be one of the following and the toolbox will figure it out:
   * Account `id`
   * `username`, `email` or `user_id` of the admin user of the account 
@@ -118,13 +116,12 @@ DESCRIPTION
 
     Application param allows:
 
-    * Application internal id
-
     * User_key (API key)
 
-    * App_id (from app_id/app_key pair)
+    * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID
+    Connect authentication modes)
 
-    * Client ID (for OAuth and OpenID Connect authentication modes)
+    * Application internal id
 
 OPTIONS
        --account=<value>              Application's account. Required when
@@ -151,10 +148,9 @@ OPTIONS
 ### Delete
 
 * `application` positional argument is application unique identifier. Allowed id's are:
-  * Application internal id
   * User_key (API key)
-  * App_id (from app_id/app_key pair)
-  * Client ID (for OAuth and OpenID Connect authentication modes)
+  * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID Connect authentication modes)
+  * Application internal id
 
 ```shell
 NAME
@@ -169,11 +165,10 @@ DESCRIPTION
 
     Application param allows:
 
-    * Application internal id
-
     * User_key (API key)
 
-    * App_id (from app_id/app_key pair)
+    * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID
+    Connect authentication modes)
 
-    * Client ID (for OAuth and OpenID Connect authentication modes)
+    * Application internal id
 ```
