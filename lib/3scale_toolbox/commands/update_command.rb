@@ -8,7 +8,7 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'update'
           usage       'update <sub-command> [options]'
-          summary     'update super command'
+          summary     '[DEPRECTATED] update super command'
           description 'Update 3scale entities between tenants'
 
           run do |_opts, _args, cmd|
