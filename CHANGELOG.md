@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.12.4]
+
+### Fixed
+- Fix documentation on application specification evaluation order [#203](https://github.com/3scale/3scale_toolbox/pull/203)
+
+### Changed
+- Minor documentation changes [#204](https://github.com/3scale/3scale_toolbox/pull/204),
+  [#205](https://github.com/3scale/3scale_toolbox/pull/205), [#206](https://github.com/3scale/3scale_toolbox/pull/206)
+
 ## [0.12.3]
 
 ### Fixed
@@ -182,7 +191,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.12.3...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.12.4...HEAD
+[0.12.4]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.4
 [0.12.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.3
 [0.12.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.0
 [0.11.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.11.0
