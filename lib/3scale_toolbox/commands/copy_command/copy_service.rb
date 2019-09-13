@@ -38,7 +38,9 @@ module ThreeScaleToolbox
         def run
           target_service = Entities::Service.find(remote: target_remote,
                                                   ref: target_service_ref)
-          if target_service.nil?
+
+          target_service_new = target_service.nil?
+          if target_service_new
             target_service = Entities::Service.create(remote: target_remote,
                                                       service_params: create_service_attrs)
           end
@@ -64,7 +66,7 @@ module ThreeScaleToolbox
             tasks << Tasks::CopyPricingRulesTask.new(context)
             tasks << Tasks::CopyActiveDocsTask.new(context)
           end
-          tasks << Tasks::DestroyMappingRulesTask.new(context) if option_force
+          tasks << Tasks::DestroyMappingRulesTask.new(context) if option_force || target_service_new
           tasks << Tasks::CopyMappingRulesTask.new(context)
           tasks.each(&:call)
 
