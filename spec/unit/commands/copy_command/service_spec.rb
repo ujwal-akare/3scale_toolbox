@@ -149,6 +149,7 @@ RSpec.describe ThreeScaleToolbox::Commands::CopyCommand::CopyServiceSubcommand d
           ThreeScaleToolbox::Tasks::CopyPoliciesTask,
           ThreeScaleToolbox::Tasks::CopyPricingRulesTask,
           ThreeScaleToolbox::Tasks::CopyActiveDocsTask,
+          ThreeScaleToolbox::Tasks::DestroyMappingRulesTask,
           ThreeScaleToolbox::Tasks::CopyMappingRulesTask,
           ThreeScaleToolbox::Tasks::BumpProxyVersionTask,
         ].each do |task_class|
