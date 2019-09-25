@@ -1,0 +1,77 @@
+PATH
+  remote: .
+  specs:
+    3scale_toolbox (0.12.4)
+      3scale-api (~> 0.6.0)
+      cri (~> 2.15)
+      json-schema (~> 2.8)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    3scale-api (0.6.0)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
+    coderay (1.1.2)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
+    cri (2.15.9)
+    diff-lcs (1.3)
+    dotenv (2.7.5)
+    hashdiff (1.0.0)
+    json-schema (2.8.1)
+      addressable (>= 2.4)
+    license_finder (5.10.2)
+      bundler
+      rubyzip
+      thor
+      toml (= 0.2.0)
+      with_env (= 1.1.0)
+      xml-simple
+    method_source (0.9.2)
+    parslet (1.8.2)
+    pry (0.12.2)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    public_suffix (4.0.1)
+    rake (10.5.0)
+    rspec (3.8.0)
+      rspec-core (~> 3.8.0)
+      rspec-expectations (~> 3.8.0)
+      rspec-mocks (~> 3.8.0)
+    rspec-core (3.8.2)
+      rspec-support (~> 3.8.0)
+    rspec-expectations (3.8.4)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.8.0)
+    rspec-mocks (3.8.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.8.0)
+    rspec-support (3.8.2)
+    rubyzip (1.2.4)
+    safe_yaml (1.0.5)
+    thor (0.20.3)
+    toml (0.2.0)
+      parslet (~> 1.8.0)
+    webmock (3.7.5)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
+    with_env (1.1.0)
+    xml-simple (1.1.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  3scale_toolbox!
+  bundler
+  dotenv
+  license_finder (~> 5.5)
+  pry
+  rake (~> 10.0)
+  rspec (~> 3.8)
+  webmock (~> 3.4)
+
+BUNDLED WITH
+   1.16.6
