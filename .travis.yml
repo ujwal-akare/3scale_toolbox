@@ -8,9 +8,19 @@ rvm:
 - 2.6.2
 - 2.5.5
 - 2.4.6
+
 script:
-- bundle exec rake license_finder:check
-- bundle exec rake spec:all
-- bundle exec 3scale help
-- bundle exec 3scale help copy
-- bundle exec 3scale help import
+- bundle exec rake spec:unit
+
+matrix:
+  include:
+    - name: "License check"
+      rvm: 2.5.5
+      script: bundle exec rake license_finder:check
+    - name: "Help test"
+      rvm: 2.5.5
+      script: bundle exec 3scale help
+    - name: "Integration Tests"
+      rvm: 2.5.5
+      script: bundle exec rake spec:integration
+      if: type = cron
