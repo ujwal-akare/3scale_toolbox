@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.13.0]
+
+### Fixed
+- Copy command: delete default mapping rules when service is created [#210](https://github.com/3scale/3scale_toolbox/pull/210)
+
+### Changed
+- Gemfile.lock tracked [#212](https://github.com/3scale/3scale_toolbox/pull/212)
+
 ## [0.12.4]
 
 ### Fixed
@@ -191,7 +199,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.12.4...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.13.0
 [0.12.4]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.4
 [0.12.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.3
 [0.12.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.0
