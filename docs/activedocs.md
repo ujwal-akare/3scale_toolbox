@@ -12,7 +12,7 @@
 * The swagger spec for the ActiveDocs is required. This is controlled with the
   positional parameter `spec`. It can be one of the following values:
   * *Filename* in the available path.
-  * *URL* format. Toolbox will try to download content from given address.
+  * *URL* format (supported schemes are `http` and `https`). Toolbox will try to download content from given address.
   * Read from *stdin* standard input stream. This is controlled by setting
     the `-` value
 * This is not idempotent command. If activedocs with the same name already exists, command will fail.

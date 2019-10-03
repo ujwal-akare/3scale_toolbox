@@ -12,7 +12,7 @@ Features:
 * OpenAPI Specification 2.0 JSON Schema validation. Can be skipped with command flag `--skip-openapi-validation`.
 * OpenAPI definition resource can be provided by one of the following channels:
   * *Filename* in the available path.
-  * *URL* format. Toolbox will try to download from given address.
+  * *URL* format (supported schemes are `http` and `https`). Toolbox will try to download from given address.
   * Read from *stdin* standard input stream.
 * Applied strict matching on mapping rule patterns
 * When there is no security requirement in swagger spec, the service is considered as an "Open API".
