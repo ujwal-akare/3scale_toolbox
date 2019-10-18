@@ -148,6 +148,16 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
           subject
         end
       end
+
+      context 'empty scope array' do
+        let(:scopes) { [] }
+
+        it 'policy chain not updated' do
+          # doubles are strict by default.
+          # if service double receives `update_policies` call, test will fail
+          subject
+        end
+      end
     end
 
     context 'same private and public base paths' do

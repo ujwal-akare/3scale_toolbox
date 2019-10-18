@@ -64,6 +64,9 @@ module ThreeScaleToolbox
 
             return if policies.any? { |policy| policy['name'] == 'keycloak_role_check' }
 
+            # only when there are scopes defined
+            return if security.scopes.empty?
+
             policies << keycloak_policy
           end
 
