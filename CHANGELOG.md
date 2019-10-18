@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.14.0]
+
+### Fixed
+- Several fixes [#215](https://github.com/3scale/3scale_toolbox/pull/215) [#216](https://github.com/3scale/3scale_toolbox/pull/216) [#217](https://github.com/3scale/3scale_toolbox/pull/217)
+
 ## [0.13.0]
 
 ### Fixed
@@ -199,7 +204,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.14.0
 [0.13.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.13.0
 [0.12.4]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.4
 [0.12.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.3
