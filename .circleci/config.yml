@@ -1,0 +1,109 @@
+version: 2.1
+
+commands:
+  install_dependencies:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "Gemfile.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies
+
+      - run:
+          name: Install dependencies
+          command: |
+            bundle install --jobs=3 --retry=3 --path vendor/bundle
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ./vendor/bundle
+    
+  unittests:
+    steps:
+      - install_dependencies
+      - run:
+          name: Run unittests
+          command: |
+            bundle exec rake spec:unit
+jobs:
+  ruby-246-unittest:
+    docker:
+      - image: circleci/ruby:2.4.6
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - unittests
+
+  ruby-255-unittest:
+    docker:
+      - image: circleci/ruby:2.5.5
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - unittests
+
+  ruby-262-unittest:
+    docker:
+      - image: circleci/ruby:2.6.2
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - unittests
+
+  license_check:
+    docker:
+      - image: circleci/ruby:2.5.5
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - install_dependencies
+      - run:
+          name: License check
+          command: |
+            bundle exec rake license_finder:check
+
+  help_test:
+    docker:
+      - image: circleci/ruby:2.5.5
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - install_dependencies
+      - run:
+          name: Help test
+          command: |
+            bundle exec 3scale help
+
+  integration_tests:
+    docker:
+      - image: circleci/ruby:2.5.5
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - install_dependencies
+      - run:
+          name: Integration Tests
+          command: |
+            bundle exec rake spec:integration
+
+workflows:
+  version: 2
+  basic_tests:
+    jobs:
+      - ruby-246-unittest
+      - ruby-255-unittest
+      - ruby-262-unittest
+      - license_check
+      - help_test
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - integration_tests:
+          context: autotestaccount
