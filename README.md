@@ -1,5 +1,5 @@
 # 3scale toolbox
-[![Build Status](https://travis-ci.org/3scale/3scale_toolbox.svg?branch=master)](https://travis-ci.org/3scale/3scale_toolbox)
+[![CircleCI](https://circleci.com/gh/3scale/3scale_toolbox.svg?style=svg)](https://circleci.com/gh/3scale/3scale_toolbox)
 
 This software is licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
 
@@ -35,7 +35,18 @@ See the LICENSE and NOTICE files that should have been provided along with this 
 ## Installation
 Install the toolbox:
 
-    $ gem install 3scale_toolbox
+```
+$ gem install 3scale_toolbox
+```
+
+The [3scale toolbox packaging repo](https://github.com/3scale/3scale_toolbox_packaging)
+provides packages and installation/deployment steps for the following platforms:
+* CentOS/Fedora
+* Ubuntu/Debian
+* Mac OS X
+* Windows
+* Docker
+* Kubernetes / Openshift
 
 ## Usage
 
