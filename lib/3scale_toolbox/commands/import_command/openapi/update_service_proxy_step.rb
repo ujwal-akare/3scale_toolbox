@@ -40,9 +40,9 @@ module ThreeScaleToolbox
           end
 
           def add_api_backend_settings(settings)
-            return if private_base_url.nil?
-
-            settings[:api_backend] = private_base_url
+            settings[:api_backend] = private_base_url if !private_base_url.nil?
+            settings[:secret_token] = backend_api_secret_token if !backend_api_secret_token.nil?
+            settings[:hostname_rewrite] = backend_api_host_header if !backend_api_host_header.nil?
           end
 
           def add_security_proxy_settings(settings)
