@@ -70,6 +70,14 @@ module ThreeScaleToolbox
           def override_private_base_url
             context[:override_private_base_url]
           end
+
+          def backend_api_secret_token
+            context[:backend_api_secret_token]
+          end
+
+          def backend_api_host_header
+            context[:backend_api_host_header]
+          end
         end
       end
     end

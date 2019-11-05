@@ -37,6 +37,8 @@ module ThreeScaleToolbox
               option  nil, 'staging-public-base-url', 'Custom public staging URL', argument: :required
               option  nil, 'production-public-base-url', 'Custom public production URL', argument: :required
               option  nil, 'override-private-base-url', 'Custom private base URL', argument: :required
+              option nil, 'backend-api-secret-token', 'Custom secret token sent by the API gateway to the backend API',argument: :required
+              option nil, 'backend-api-host-header', 'Custom host header sent by the API gateway to the backend API', argument: :required
               param   :openapi_resource
 
               runner OpenAPISubcommand
@@ -83,6 +85,8 @@ module ThreeScaleToolbox
               production_public_base_url: options[:'production-public-base-url'],
               staging_public_base_url: options[:'staging-public-base-url'],
               override_private_base_url: options[:'override-private-base-url'],
+              backend_api_secret_token: options[:'backend-api-secret-token'],
+              backend_api_host_header: options[:'backend-api-host-header'],
             }
           end
 

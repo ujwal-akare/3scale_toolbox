@@ -8,6 +8,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
   let(:staging_public_base_url) { nil }
   let(:override_private_base_url) { nil }
   let(:oidc_issuer_endpoint) { 'https://sso.example.com' }
+  let(:backend_api_secret_token) { nil }
+  let(:backend_api_host_header) { nil }
+
   let(:openapi_context) do
     {
       target: service,
@@ -16,6 +19,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       production_public_base_url: production_public_base_url,
       staging_public_base_url: staging_public_base_url,
       override_private_base_url: override_private_base_url,
+      backend_api_secret_token:backend_api_secret_token,
+      backend_api_host_header: backend_api_host_header,
     }
   end
 
@@ -61,6 +66,26 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'api_backend updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(api_backend: 'https://example.com')).and_return({})
+        expect { subject }.to output.to_stdout
+      end
+    end
+
+    context 'backend api host header set' do
+      let(:backend_api_host_header) { 'example.com'}
+
+      it 'hostname_rewrite updated' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(hostname_rewrite: backend_api_host_header)).and_return({})
+        expect { subject }.to output.to_stdout
+      end
+    end
+
+    context 'backend api secret token set' do
+      let(:backend_api_secret_token) { 'secret_token'}
+
+      it 'secret_token updated' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(secret_token: backend_api_secret_token)).and_return({})
         expect { subject }.to output.to_stdout
       end
     end
