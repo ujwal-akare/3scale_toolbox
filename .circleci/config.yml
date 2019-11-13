@@ -96,6 +96,16 @@ workflows:
       - ruby-262-unittest
       - license_check
       - help_test
+
+  integration:
+    jobs:
+      - manual_approval: # <<< A job that will require manual approval in the CircleCI web application.
+          type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
+          # On approval of the `hold` job, any successive job that requires the `hold` job will run.
+      - integration_tests:
+          context: autotestaccount
+          requires:
+            - manual_approval
   nightly:
     triggers:
       - schedule:
