@@ -14,8 +14,9 @@ RSpec.describe 'OpenAPI Mapping Rule' do
     let(:path) { '/some/path' }
     let(:metric_id) { '1' }
     let(:public_base_path) { '/v1' }
+    let(:prefix_matching) { false }
     let(:operation) do
-      { verb: verb, path: path, metric_id: metric_id, public_base_path: public_base_path }
+      { verb: verb, path: path, metric_id: metric_id, public_base_path: public_base_path, prefix_matching: prefix_matching }
     end
     subject { OpenAPIMappingRuleClass.new(operation).mapping_rule }
 
@@ -39,6 +40,13 @@ RSpec.describe 'OpenAPI Mapping Rule' do
       let(:public_base_path) { '/v1/' }
       it 'pattern removes last /' do
         is_expected.to include('pattern' => '/v1/some/path$')
+      end
+    end
+
+    context 'with prefix_matching enabled' do
+      let(:prefix_matching) { true }
+      it 'contains pattern without "$" at the end' do
+        is_expected.to include('pattern' => '/v1/some/path')
       end
     end
   end
