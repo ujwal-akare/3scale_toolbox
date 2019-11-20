@@ -4,10 +4,12 @@ module ThreeScaleToolbox
       module OpenAPI
         class ThreeScaleApiSpec
           attr_reader :openapi
+          attr_reader :prefix_matching
 
-          def initialize(openapi, base_path = nil)
+          def initialize(openapi, base_path = nil, prefix_matching = false)
             @openapi = openapi
             @base_path = base_path
+            @prefix_matching = prefix_matching
           end
 
           def title
@@ -53,6 +55,7 @@ module ThreeScaleToolbox
                 verb: op.verb,
                 operationId: op.operation_id,
                 description: op.description,
+                prefix_matching: prefix_matching,
               )
             end
           end

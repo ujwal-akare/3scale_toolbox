@@ -17,8 +17,9 @@ module ThreeScaleToolbox
           end
 
           def pattern
-            # apply strict matching
-            "#{raw_pattern}$"
+            res = "#{raw_pattern}"
+            res = "#{res}$" if !operation[:prefix_matching] # apply strict matching
+            res
           end
 
           def raw_pattern

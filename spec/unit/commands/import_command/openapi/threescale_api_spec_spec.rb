@@ -61,16 +61,35 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleAp
     expect(subject.description).to eq(description)
   end
 
-  it 'operations available' do
-    expect(subject.operations).not_to be_nil
-  end
+  context '#operations' do
+    it 'operations available' do
+      expect(subject.operations).not_to be_nil
+    end
 
-  it 'operations parsed as not empty' do
-    expect(subject.operations).not_to be_empty
-  end
+    it 'operations parsed as not empty' do
+      expect(subject.operations).not_to be_empty
+    end
 
-  it 'operations parsed type' do
-    expect(subject.operations[0]).to be_a(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::Operation)
+    it 'operations parsed type' do
+      expect(subject.operations[0]).to be_a(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::Operation)
+    end
+
+    it 'operations have strict matching set by default' do
+      subject.operations.each do |operation|
+        expect(operation.operation).to include(:prefix_matching => false)
+      end
+    end
+
+    context 'with ThreeScaleSpec with prefix matching set' do
+      let(:prefix_matching) { true }
+      subject { described_class.new(openapi, base_path, prefix_matching) }
+
+      it 'returns operations with prefix matching parameter' do
+        subject.operations.each do |operation|
+          expect(operation.operation).to include(:prefix_matching => prefix_matching)
+        end
+      end
+    end
   end
 
   context '#schemes' do
