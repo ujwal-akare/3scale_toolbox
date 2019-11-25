@@ -2,8 +2,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
   include_context :temp_dir
   include_context :resources
 
-  let(:threescaleapispec_class) { class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec).as_stubbed_const }
-  let(:threescaleapispec) { instance_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ThreeScaleApiSpec, 'threescaleapispec') }
   let(:arguments) { { 'openapi_resource': oas_resource } }
   let(:options) { { 'destination': 'https://destination_key@destination.example.com' } }
   subject { described_class.new(options, arguments, nil) }
@@ -13,7 +11,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
 
     context '#run' do
       before :each do
-        expect(threescaleapispec_class).to receive(:new).and_return(threescaleapispec)
         expect(subject).to receive(:threescale_client)
       end
 

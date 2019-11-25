@@ -40,29 +40,29 @@ module ThreeScaleToolbox
           end
 
           def add_api_backend_settings(settings)
-            settings[:api_backend] = private_base_url if !private_base_url.nil?
-            settings[:secret_token] = backend_api_secret_token if !backend_api_secret_token.nil?
-            settings[:hostname_rewrite] = backend_api_host_header if !backend_api_host_header.nil?
+            settings[:api_backend] = private_base_url unless private_base_url.nil?
+            settings[:secret_token] = backend_api_secret_token unless backend_api_secret_token.nil?
+            settings[:hostname_rewrite] = backend_api_host_header unless backend_api_host_header.nil?
           end
 
           def add_security_proxy_settings(settings)
             # nothing to add on proxy settings when no security required in openapi
-            return if security.nil?
+            return if api_spec.security.nil?
 
-            case security.type
+            case (type = api_spec.security[:type])
             when 'oauth2'
               settings[:credentials_location] = 'headers'
               settings[:oidc_issuer_endpoint] = oidc_issuer_endpoint unless oidc_issuer_endpoint.nil?
             when 'apiKey'
               settings[:credentials_location] = credentials_location
-              settings[:auth_user_key] = security.name
+              settings[:auth_user_key] = api_spec.security[:name]
             else
-              raise ThreeScaleToolbox::Error, "Unexpected security scheme type #{security.type}"
+              raise ThreeScaleToolbox::Error, "Unexpected security scheme type #{type}"
             end
           end
 
           def credentials_location
-            case (in_f = security.in_f)
+            case (in_f = api_spec.security[:in_f])
             when 'query'
               'query'
             when 'header'
@@ -73,13 +73,13 @@ module ThreeScaleToolbox
           end
 
           def private_base_url
-              override_private_base_url || private_base_url_from_openapi
+            override_private_base_url || private_base_url_from_openapi
           end
 
           def private_base_url_from_openapi
             return if api_spec.host.nil?
 
-            "#{api_spec.schemes.first || 'https'}://#{api_spec.host}"
+            "#{api_spec.scheme || 'https'}://#{api_spec.host}"
           end
         end
       end

@@ -31,7 +31,21 @@ module ThreeScaleToolbox
             # api_spec.operations are readonly
             # store operations in context
             # each operation can be extended with extra information to be used later
-            context[:operations] ||= api_spec.operations
+            context[:operations] ||= build_3scale_operations
+          end
+
+          def build_3scale_operations
+            api_spec.operations.map do |op|
+              Operation.new(
+                base_path: base_path,
+                public_base_path: public_base_path,
+                path: op[:path],
+                verb: op[:verb],
+                operationId: op[:operation_id],
+                description: op[:description],
+                prefix_matching: prefix_matching,
+              )
+            end
           end
 
           def target_system_name
@@ -41,10 +55,6 @@ module ThreeScaleToolbox
 
           def resource
             context[:api_spec_resource]
-          end
-
-          def security
-            api_spec.security
           end
 
           def oidc_issuer_endpoint
@@ -57,6 +67,10 @@ module ThreeScaleToolbox
 
           def override_private_basepath
             context[:override_private_basepath]
+          end
+
+          def override_public_basepath
+            context[:override_public_basepath]
           end
 
           def production_public_base_url
@@ -77,6 +91,22 @@ module ThreeScaleToolbox
 
           def backend_api_host_header
             context[:backend_api_host_header]
+          end
+
+          def prefix_matching
+            context[:prefix_matching]
+          end
+
+          def base_path
+            api_spec.base_path || '/'
+          end
+
+          def public_base_path
+            override_public_basepath || base_path
+          end
+
+          def private_base_path
+            override_private_basepath || base_path
           end
         end
       end

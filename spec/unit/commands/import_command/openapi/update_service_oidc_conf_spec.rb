@@ -11,8 +11,10 @@ RSpec.shared_examples 'oidc is updated with required flow' do
 end
 
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceOidcConfStep do
-  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
-  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:api_spec) do
+    instance_double(ThreeScaleToolbox::OpenAPI::OAS3, 'api_spec')
+  end
+  let(:service) { instance_double(ThreeScaleToolbox::Entities::Service, 'service') }
   let(:openapi_context) do
     {
       target: service,
@@ -38,10 +40,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
     end
 
     context 'apiKey sec requirement' do
-      let(:security) do
-        ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'apikey', type: 'apiKey',
-                                                            name: 'api_key', in_f: 'query')
-      end
+      let(:security) { { id: 'apikey', type: 'apiKey', name: 'api_key', in_f: 'query' } }
 
       it 'policy chain not updated' do
         # doubles are strict by default.
@@ -55,44 +54,34 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       let(:expected_implicit_flow) { false }
       let(:expected_service_accounts) { false }
       let(:expected_direct_access_grants) { false }
-      let(:security) do
-        ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'oidc', type: 'oauth2', flow: flow)
-      end
+      let(:security) { { id: 'oidc', type: 'oauth2', flow: flow } }
 
       context 'flow implicit' do
-        let(:flow) { 'implicit' }
+        let(:flow) { :implicit_flow_enabled }
         let(:expected_implicit_flow) { true }
 
         it_behaves_like 'oidc is updated with required flow'
       end
 
       context 'flow password' do
-        let(:flow) { 'password' }
+        let(:flow) { :direct_access_grants_enabled }
         let(:expected_direct_access_grants) { true }
 
         it_behaves_like 'oidc is updated with required flow'
       end
 
       context 'flow application' do
-        let(:flow) { 'application' }
+        let(:flow) { :service_accounts_enabled }
         let(:expected_service_accounts) { true }
 
         it_behaves_like 'oidc is updated with required flow'
       end
 
       context 'flow accessCode' do
-        let(:flow) { 'accessCode' }
+        let(:flow) { :standard_flow_enabled }
         let(:expected_standard_flow) { true }
 
         it_behaves_like 'oidc is updated with required flow'
-      end
-
-      context 'unexpected flow' do
-        let(:flow) { 'invalidFlow' }
-
-        it 'raises error' do
-          expect { subject }.to raise_error(ThreeScaleToolbox::Error, /security flow/)
-        end
       end
     end
   end

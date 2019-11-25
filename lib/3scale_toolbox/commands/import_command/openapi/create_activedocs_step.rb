@@ -53,26 +53,13 @@ module ThreeScaleToolbox
             # Other processing steps can work with original openapi spec
             Helper.hash_deep_dup(resource).tap do |activedocs|
               # public production base URL
-              URI(service.proxy.fetch('endpoint')).tap do |uri|
-                activedocs['host'] = "#{uri.host}:#{uri.port}"
-                activedocs['schemes'] = [uri.scheme]
-              end
-
               # the basePath field is updated to a new value only when overriden by optional param
-              activedocs['basePath'] = api_spec.public_base_path
-
+              api_spec.set_server_url(activedocs,
+                                      URI.join(service.proxy.fetch('endpoint'), public_base_path))
               # security definitions
               # just valid for oauth2 when oidc_issuer_endpoint is supplied
-              if !security.nil? && security.type == 'oauth2' && !oidc_issuer_endpoint.nil?
-                # authorizationURL
-                if %w[implicit accessCode].include?(security.flow)
-                  activedocs['securityDefinitions'][security.id]['authorizationUrl'] = authorization_url
-                end
-
-                # tokenUrl
-                if %w[password application accessCode].include?(security.flow)
-                  activedocs['securityDefinitions'][security.id]['tokenUrl'] = token_url
-                end
+              if !api_spec.security.nil? && api_spec.security[:type] == 'oauth2' && !oidc_issuer_endpoint.nil?
+                api_spec.set_oauth2_urls(activedocs, api_spec.security[:id], authorization_url, token_url)
               end
             end
           end

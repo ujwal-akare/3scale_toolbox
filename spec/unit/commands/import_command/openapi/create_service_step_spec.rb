@@ -1,5 +1,7 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServiceStep do
-  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
+  let(:api_spec) do
+    instance_double(ThreeScaleToolbox::OpenAPI::OAS3, 'api_spec')
+  end
   let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }
   let(:service_id) { '100' }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
@@ -30,7 +32,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
     before :example do
       allow(api_spec).to receive(:title).and_return(title)
       allow(api_spec).to receive(:description).and_return(description)
-      allow(api_spec).to receive(:backend_version).and_return('oidc')
+      allow(api_spec).to receive(:service_backend_version).and_return('oidc')
     end
 
     context 'when service exists' do

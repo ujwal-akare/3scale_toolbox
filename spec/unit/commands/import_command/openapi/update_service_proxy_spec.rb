@@ -1,7 +1,9 @@
 RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceProxyStep do
-  let(:api_spec) { instance_double('ThreeScaleToolbox::ImportCommand::OpenAPI::ThreeScaleApiSpec') }
-  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
-  let(:schemes) { [] }
+  let(:api_spec) do
+    instance_double(ThreeScaleToolbox::OpenAPI::OAS3, 'api_spec')
+  end
+  let(:service) { instance_double(ThreeScaleToolbox::Entities::Service, 'service') }
+  let(:scheme) { nil }
   let(:host) { nil }
   let(:security) { nil }
   let(:production_public_base_url) { nil }
@@ -19,7 +21,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       production_public_base_url: production_public_base_url,
       staging_public_base_url: staging_public_base_url,
       override_private_base_url: override_private_base_url,
-      backend_api_secret_token:backend_api_secret_token,
+      backend_api_secret_token: backend_api_secret_token,
       backend_api_host_header: backend_api_host_header,
     }
   end
@@ -28,7 +30,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
     subject { described_class.new(openapi_context).call }
 
     before :each do
-      allow(api_spec).to receive(:schemes).and_return(schemes)
+      allow(api_spec).to receive(:scheme).and_return(scheme)
       allow(api_spec).to receive(:host).and_return(host)
       allow(api_spec).to receive(:security).and_return(security)
       allow(service).to receive(:id).and_return(1000)
@@ -102,10 +104,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
 
     context 'apiKey sec requirement' do
       let(:key_name) { 'some_name' }
-      let(:security) do
-        ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'apikey', type: 'apiKey',
-                                                            name: key_name, in_f: cred_location)
-      end
+      let(:security) { { id: 'apikey', type: 'apiKey', name: key_name, in_f: cred_location } }
 
       context 'cred location query' do
         let(:cred_location) { 'query' }
@@ -143,10 +142,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
     end
 
     context 'oauth2 sec requirement' do
-      let(:security) do
-        ThreeScaleToolbox::Swagger::SecurityRequirement.new(id: 'oidc', type: 'oauth2',
-                                                            flow: 'implicit')
-      end
+      let(:security) { { id: 'oidc', type: 'oauth2', flow: :implicit_flow_enabled } }
 
       it 'updates proxy' do
         expect(service).to receive(:update_proxy)
