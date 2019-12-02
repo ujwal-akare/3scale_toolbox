@@ -94,8 +94,8 @@ OPTIONS
                                        on the Developer Portal. Otherwise it
                                        will be hidden
     -s --name=<value>                  Specify the name of the ActiveDocs
-       --skip-swagger-validations      Specify it to skip validation of the
-                                       Swagger specification
+       --skip-swagger-validations      Skip validation of the Swagger
+                                       specification. true or false
 
 OPTIONS FOR ACTIVEDOCS
     -c --config-file=<value>           3scale toolbox configuration file

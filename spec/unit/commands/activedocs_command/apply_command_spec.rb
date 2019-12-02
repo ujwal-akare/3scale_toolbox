@@ -3,7 +3,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
   let(:activedocs) { instance_double(ThreeScaleToolbox::Entities::ActiveDocs) }
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
   let(:remote_name) { "myremote" }
-  let(:options) { {} }
+  let(:default_options) { { publish: false, hide: false } }
+  let(:options) { default_options }
   let(:activedocs_ref) { "activedocsref" }
   let(:activedocs_id) { "1" }
   let(:arguments) do
@@ -21,7 +22,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
 
   context '#run' do
     context 'when --publish and --hide set' do
-      let(:options) { { publish: true, hide: true } }
+      let(:options) { default_options.merge(publish: true, hide: true) }
       it 'error raised' do
         expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(activedocs)
         expect { subject.run }.to raise_error(ThreeScaleToolbox::Error, /mutually exclusive/)
@@ -49,11 +50,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
         activedocs_body_content = YAML.safe_load(activedocs_body_str)
         JSON.pretty_generate(activedocs_body_content)
       end
-      let(:general_options) { { :'openapi-spec' => "-" } }
+      let(:general_options) { default_options.merge(:'openapi-spec' => "-") }
 
       context 'when activedocs not found' do
-        let (:activedocs_attrs) { { "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
-        let (:options) { general_options }
+        let(:activedocs_attrs) { { "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
+        let(:options) { general_options }
         before :example do
           expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(nil)
           expect(STDIN).to receive(:read).and_return(activedocs_body_str)
@@ -69,13 +70,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
         include_examples 'activedocs created'
 
         context 'when name in options' do
-          let(:options) { general_options.merge({ name: 'new name' }) }
+          let(:options) { general_options.merge(name: 'new name') }
           let(:activedocs_attrs) { { "name" => options[:name], "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
           include_examples 'activedocs created'
         end
 
         context 'when service-id in options' do
-          let(:options) { general_options.merge({ :'service-id' => '7' }) }
+          let(:options) { general_options.merge(:'service-id' => '7') }
           let(:activedocs_attrs) { { "service_id" => options[:'service-id'], "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
           include_examples 'activedocs created'
         end
@@ -87,16 +88,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
           expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(activedocs)
         end
 
-        context 'with no options' do
-          let(:options) { {} }
-
+        context 'with default options' do
           it 'activedocs not updated' do
             expect { subject.run }.to output(/Applied ActiveDocs id: #{activedocs_id}/).to_stdout
           end
         end
 
         context 'with options' do
-          let(:options) { { name: 'some name', description: 'some descr', :'skip-swagger-validations' => true, :'service-id' => "5" } }
+          let(:options) { default_options.merge(name: 'some name', description: 'some descr', :'skip-swagger-validations' => true, :'service-id' => "5") }
           let(:activedocs_attrs) do
             {
               'name' => options[:name],
@@ -113,7 +112,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
         end
 
         context 'with publish option' do
-          let(:options) { { publish: true } }
+          let(:options) { default_options.merge(publish: true) }
           let(:activedocs_attrs) { { "published" => true } }
 
           it 'activedocs published' do
@@ -123,7 +122,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
         end
 
         context 'with hide option' do
-          let(:options) { { hide: true } }
+          let(:options) { default_options.merge(hide: true) }
           let(:activedocs_attrs) { { "published" => false } }
 
           it 'activedocs hidden' do
