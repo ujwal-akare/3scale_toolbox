@@ -26,6 +26,7 @@ RSpec.shared_context :oas3_resources do
         version: "1.0.0"
       servers:
         - url: https://petstore.swagger.io/v1
+        - url: https://petstore2.swagger.io/v2
       paths:
         /pet:
           get:
@@ -35,6 +36,41 @@ RSpec.shared_context :oas3_resources do
                 description: "invalid input"
     YAML
   end
+
+  let(:server_templates_oas3_content) do
+    <<~YAML
+      ---
+      openapi: "3.0.0"
+      info:
+        title: "some title"
+        version: "1.0.0"
+      servers:
+        - url: https://petstore{version}.swagger.io/v1/{basev1}
+          variables:
+            basev1:
+              default: petstorev1
+            unusedvar:
+              default: unused
+            version:
+              default: v1
+        - url: https://staging.petstore{version}.swagger.io/v0/{basev1}
+          variables:
+            basev1:
+              default: petstorev0
+            unusedvar:
+              default: unused
+            version:
+              default: v0
+      paths:
+        /pet:
+          get:
+            operationId: "getPet"
+            responses:
+              405:
+                description: "invalid input"
+    YAML
+  end
+
 
   let(:path_extensions_oas3_content) do
     <<~YAML

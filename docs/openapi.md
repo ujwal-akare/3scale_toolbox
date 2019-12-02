@@ -5,7 +5,6 @@ Features:
 * OpenAPI __2.0__ specification (f.k.a. __swagger__)
 * OpenAPI __3.0.2__ specification
   * Limitations:
-    * `servers` variables not supported.
     * Only first `server.url` element in `servers` list parsed as private url. As OpenAPI `basePath` property, `server.url` element's path component will be used.
     * Toolbox will not parse servers in path item or operation objects.
     * Supported security schemes: apiKey, oauth2 (any flow type).

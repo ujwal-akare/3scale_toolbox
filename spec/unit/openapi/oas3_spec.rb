@@ -90,8 +90,42 @@ RSpec.describe ThreeScaleToolbox::OpenAPI::OAS3 do
     context 'parsed from servers list' do
       let(:content) { servers_oas3_content }
 
-      it 'available' do
+      it 'only first element taken' do
         expect(subject.base_path).to eq('/v1')
+      end
+    end
+
+    context 'template servers' do
+      let(:content) { server_templates_oas3_content }
+
+      it 'template rendered' do
+        expect(subject.base_path).to eq('/v1/petstorev1')
+      end
+    end
+  end
+
+  context '#host' do
+    context 'missing servers' do
+      let(:content) { basic_oas3_content }
+
+      it 'should return /' do
+        expect(subject.host).to be_nil
+      end
+    end
+
+    context 'parsed from servers list' do
+      let(:content) { servers_oas3_content }
+
+      it 'only first element taken' do
+        expect(subject.host).to eq('petstore.swagger.io')
+      end
+    end
+
+    context 'template servers' do
+      let(:content) { server_templates_oas3_content }
+
+      it 'template rendered' do
+        expect(subject.host).to eq('petstorev1.swagger.io')
       end
     end
   end

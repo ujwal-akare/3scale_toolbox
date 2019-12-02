@@ -121,8 +121,30 @@ module ThreeScaleToolbox
 
       def server_objects
         servers.map do |s|
-          yield Helper.parse_uri(s['url'])
+          yield Helper.parse_uri rendered_url(s)
         end
+      end
+
+      # OAS3 server object variable substitution
+      def rendered_url(server_object)
+        template = erbfying_template(server_object.fetch('url'))
+        vars = server_object_variables(server_object['variables'])
+        ERB.new(template).result(OpenStruct.new(vars).instance_eval { binding })
+      end
+
+      def server_object_variables(variables)
+        vars = (variables || {}).each_with_object({}) do |(key, value), a|
+          a[key] = value['default']
+        end
+        JSON.parse(vars.to_json, symbolize_names: true)
+      end
+
+      def erbfying_template(template)
+        # A URL is composed from a limited set of characters belonging to the US-ASCII character set.
+        # These characters include digits (0-9), letters(A-Z, a-z), and a few special characters ("-", ".", "_", "~").
+        # https://www.urlencoder.io/learn/
+        tmp = template.gsub '{', '<%='
+        tmp.gsub '}', '%>'
       end
 
       def servers
