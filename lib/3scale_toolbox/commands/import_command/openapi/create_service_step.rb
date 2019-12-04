@@ -33,7 +33,7 @@ module ThreeScaleToolbox
             default_service_settings.tap do |svc|
               svc['name'] = service_name
               svc['description'] = service_description
-              svc['backend_version'] = backend_version
+              svc['backend_version'] = api_spec.service_backend_version
               svc['system_name'] = service_system_name
               svc['deployment_option'] = 'self_managed' if !production_public_base_url.nil? || !staging_public_base_url.nil?
             end
@@ -49,10 +49,6 @@ module ThreeScaleToolbox
 
           def service_description
             api_spec.description
-          end
-
-          def backend_version
-            api_spec.backend_version
           end
         end
       end

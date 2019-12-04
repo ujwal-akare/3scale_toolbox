@@ -22,12 +22,32 @@
                   </licenses>
       </dependency>
           <dependency>
+        <packageName>activesupport</packageName>
+        <version>6.0.1</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
         <packageName>addressable</packageName>
         <version>2.7.0</version>
         <licenses>
                       <license>
               <name>Apache 2.0</name>
               <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>builder</packageName>
+        <version>3.2.3</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
             </license>
                   </licenses>
       </dependency>
@@ -52,6 +72,16 @@
                   </licenses>
       </dependency>
           <dependency>
+        <packageName>concurrent-ruby</packageName>
+        <version>1.1.5</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
         <packageName>crack</packageName>
         <version>0.4.3</version>
         <licenses>
@@ -64,6 +94,16 @@
           <dependency>
         <packageName>cri</packageName>
         <version>2.15.9</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>deep_merge</packageName>
+        <version>1.2.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -100,8 +140,38 @@
                   </licenses>
       </dependency>
           <dependency>
+        <packageName>hansi</packageName>
+        <version>0.2.0</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>hash-deep-merge</packageName>
+        <version>0.1.1</version>
+        <licenses>
+                      <license>
+              <name>CC0 1.0 Universal</name>
+              <url>http://creativecommons.org/publicdomain/zero/1.0</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
         <packageName>hashdiff</packageName>
         <version>1.0.0</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>i18n</packageName>
+        <version>1.7.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -132,6 +202,66 @@
           <dependency>
         <packageName>method_source</packageName>
         <version>0.9.2</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>mini_portile2</packageName>
+        <version>2.4.0</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>minitest</packageName>
+        <version>5.13.0</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>mustermann</packageName>
+        <version>1.0.3</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>mustermann-contrib</packageName>
+        <version>1.0.3</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>nokogiri</packageName>
+        <version>1.10.5</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>oas_parser</packageName>
+        <version>0.22.4</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -260,8 +390,28 @@
                   </licenses>
       </dependency>
           <dependency>
+        <packageName>thread_safe</packageName>
+        <version>0.3.6</version>
+        <licenses>
+                      <license>
+              <name>Apache 2.0</name>
+              <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
         <packageName>toml</packageName>
         <version>0.2.0</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>tzinfo</packageName>
+        <version>1.2.5</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -296,6 +446,16 @@
                       <license>
               <name>ruby</name>
               <url>http://www.ruby-lang.org/en/LICENSE.txt</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
+        <packageName>zeitwerk</packageName>
+        <version>2.2.1</version>
+        <licenses>
+                      <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/mit-license</url>
             </license>
                   </licenses>
       </dependency>

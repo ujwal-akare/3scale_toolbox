@@ -22,6 +22,8 @@ WebMock.disable_net_connect!
 require '3scale_toolbox'
 require_relative 'helpers'
 require_relative 'shared_contexts'
+require_relative 'shared_oas3_contexts'
+require_relative 'shared_swagger_contexts'
 require_relative 'shared_examples'
 require_relative 'custom_matchers'
 

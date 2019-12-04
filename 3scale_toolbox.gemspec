@@ -39,4 +39,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency '3scale-api', '~> 0.6.0'
   spec.add_dependency 'cri', '~> 2.15'
   spec.add_dependency 'json-schema', '~> 2.8'
+  spec.add_dependency 'oas_parser', '~> 0.20'
 end

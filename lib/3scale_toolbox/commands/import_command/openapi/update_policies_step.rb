@@ -33,7 +33,7 @@ module ThreeScaleToolbox
 
           def add_anonymous_access_policy(policies)
             # only on 'open api' security req
-            return unless security.nil?
+            return unless api_spec.security.nil?
 
             return if policies.any? { |policy| policy['name'] == 'default_credentials' }
 
@@ -60,12 +60,12 @@ module ThreeScaleToolbox
 
           def add_rh_sso_keycloak_role_check_policy(policies)
             # only applies to oauth2 sec type
-            return if security.nil? || security.type != 'oauth2'
+            return if api_spec.security.nil? || api_spec.security[:type] != 'oauth2'
 
             return if policies.any? { |policy| policy['name'] == 'keycloak_role_check' }
 
             # only when there are scopes defined
-            return if security.scopes.empty?
+            return if api_spec.security[:scopes].empty?
 
             policies << keycloak_policy
           end
@@ -79,7 +79,7 @@ module ThreeScaleToolbox
                 scopes: [
                   {
                     realm_roles: [],
-                    client_roles: security.scopes.map { |scope| { 'name': scope } }
+                    client_roles: api_spec.security[:scopes].map { |scope| { 'name': scope } }
                   }
                 ]
               },
@@ -88,7 +88,7 @@ module ThreeScaleToolbox
           end
 
           def add_url_rewritting_policy(policies)
-            return if private_base_path == api_spec.public_base_path
+            return if private_base_path == public_base_path
 
             url_rewritting_policy_idx = policies.find_index do |policy|
               policy['name'] == 'url_rewriting'
@@ -99,10 +99,6 @@ module ThreeScaleToolbox
             else
               policies[url_rewritting_policy_idx] = url_rewritting_policy
             end
-          end
-
-          def private_base_path
-            override_private_basepath || api_spec.base_path
           end
 
           def url_rewritting_policy
@@ -128,11 +124,11 @@ module ThreeScaleToolbox
           end
 
           def url_rewritting_policy_regex
-            "^#{api_spec.public_base_path}"
+            "^#{public_base_path}"
           end
 
           def url_rewritting_policy_replace
-            "#{private_base_path}"
+            private_base_path
           end
         end
       end

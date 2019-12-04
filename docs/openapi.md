@@ -3,21 +3,32 @@
 Features:
 
 * OpenAPI __2.0__ specification (f.k.a. __swagger__)
+* OpenAPI __3.0.2__ specification
+  * Limitations:
+    * Only first `server.url` element in `servers` list parsed as private url. As OpenAPI `basePath` property, `server.url` element's path component will be used.
+    * Toolbox will not parse servers in path item or operation objects.
+    * Supported security schemes: apiKey, oauth2 (any flow type).
+    * Multiple flows in security scheme object not supported.
 * Update existing service or create a new one. Service's `system_name` can be passed as option parameter and defaults to *info.title* field from openapi spec.
 * Create methods in the 'Definition' section. Method names are taken from `operation.operationId` field.
-* Attach newly created methods to the *Hits* metric.
-* All existing *mapping rules* are deleted before importing new API definition. Methods not deleted if exist before running the command.
-* Create mapping rules and show them under `API > Integration`.
 * Create ActiveDocs.
-* OpenAPI Specification 2.0 JSON Schema validation. Can be skipped with command flag `--skip-openapi-validation`.
+* Set service integration configuration based on openapi spec.
+  * Mapping Rules
+    * All existing *mapping rules* are deleted before importing new API definition. Methods not deleted if exist before running the command.
+    * Create mapping rules and show them under `API > Integration`.
+    * Applied strict matching on mapping rule patterns. Prefix matching can be applied with command flat `--prefix-matching`.
+  * Authentication settings
+    * Just one top level security requirement supported. Operation level security requirements not supported.
+    * Supported security schemes: apiKey, oauth2 (any flow type).
+  * Policies
+    * When there is no security requirement spec, the service is considered as an "Open API". `default_credentials` policy will be added (also called as `anonymous_policy`). `default_credentials` policy will be configured with userkey provided in optional parameter `--default-credentials-userkey`.
+    * RH-SSO/Keycloak role check policy set for oauth2 security requirements.
+    * URL rewriting policy set when public and private base paths do not match.
+* OpenAPI Specification JSON Schema validation (3.0.2 and 2.0). Can be skipped with command flag `--skip-openapi-validation`.
 * OpenAPI definition resource can be provided by one of the following channels:
   * *Filename* in the available path.
   * *URL* format (supported schemes are `http` and `https`). Toolbox will try to download from given address.
   * Read from *stdin* standard input stream.
-* Applied strict matching on mapping rule patterns
-* When there is no security requirement in swagger spec, the service is considered as an "Open API".
-Toolbox will then add `default_credentials` policy (also called as `anonymous_policy`) if not yet in policy chain (to be idempotent).
-`default_credentials` policy will be configured with userkey provided in optional parameter `--default-credentials-userkey`.
 
 ### Usage
 
@@ -37,6 +48,12 @@ DESCRIPTION
 OPTIONS
        --activedocs-hidden                        Create ActiveDocs in hidden
                                                   state
+       --backend-api-host-header=<value>          Custom host header sent by
+                                                  the API gateway to the
+                                                  backend API
+       --backend-api-secret-token=<value>         Custom secret token sent by
+                                                  the API gateway to the
+                                                  backend API
     -d --destination=<value>                      3scale target instance.
                                                   Format:
                                                   "http[s]://<authentication>@3scale_domain"
@@ -48,6 +65,10 @@ OPTIONS
                                                   the private URLs
        --override-public-basepath=<value>         Override the basepath for
                                                   the public URLs
+       --prefix-matching                          Use prefix matching instead
+                                                  of strict matching on
+                                                  mapping rules derived from
+                                                  openapi operations
        --production-public-base-url=<value>       Custom public production
                                                   URL
        --skip-openapi-validation                  Skip OpenAPI schema

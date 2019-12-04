@@ -2,7 +2,6 @@ require '3scale_toolbox/commands/import_command/openapi/method'
 require '3scale_toolbox/commands/import_command/openapi/mapping_rule'
 require '3scale_toolbox/commands/import_command/openapi/operation'
 require '3scale_toolbox/commands/import_command/openapi/step'
-require '3scale_toolbox/commands/import_command/openapi/threescale_api_spec'
 require '3scale_toolbox/commands/import_command/openapi/create_method_step'
 require '3scale_toolbox/commands/import_command/openapi/create_mapping_rule_step'
 require '3scale_toolbox/commands/import_command/openapi/create_service_step'
@@ -72,10 +71,9 @@ module ThreeScaleToolbox
           end
 
           def create_context
-            openapi_resource = load_resource(arguments[:openapi_resource])
             {
               api_spec_resource: openapi_resource,
-              api_spec: ThreeScaleApiSpec.new(load_openapi(openapi_resource), options[:'override-public-basepath'], options[:'prefix-matching']),
+              api_spec: openapi_parser,
               threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name],
               activedocs_published: !options[:'activedocs-hidden'],
@@ -83,16 +81,34 @@ module ThreeScaleToolbox
               default_credentials_userkey: options[:'default-credentials-userkey'],
               skip_openapi_validation: options[:'skip-openapi-validation'],
               override_private_basepath: options[:'override-private-basepath'],
+              override_public_basepath: options[:'override-public-basepath'],
               production_public_base_url: options[:'production-public-base-url'],
               staging_public_base_url: options[:'staging-public-base-url'],
               override_private_base_url: options[:'override-private-base-url'],
               backend_api_secret_token: options[:'backend-api-secret-token'],
               backend_api_host_header: options[:'backend-api-host-header'],
+              prefix_matching: options[:'prefix-matching'],
             }
           end
 
-          def load_openapi(openapi_resource)
-            Swagger.build(openapi_resource, validate: !options[:'skip-openapi-validation'])
+          def openapi_resource
+            @openapi_resource ||= load_resource(openapi_path)
+          end
+
+          def openapi_path
+            arguments[:openapi_resource]
+          end
+
+          def validate
+            !options[:'skip-openapi-validation']
+          end
+
+          def openapi_parser
+            if openapi_resource.key?('openapi')
+              ThreeScaleToolbox::OpenAPI::OAS3.build(openapi_path, openapi_resource, validate: validate)
+            else
+              ThreeScaleToolbox::OpenAPI::Swagger.build(openapi_resource, validate: validate)
+            end
           rescue JSON::Schema::ValidationError => e
             raise ThreeScaleToolbox::Error, "OpenAPI schema validation failed: #{e.message}"
           end
