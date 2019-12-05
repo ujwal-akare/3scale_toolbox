@@ -59,7 +59,7 @@ RSpec.describe 'ActiveDocs Apply command' do
     let (:command_line_str) { "activedocs apply #{remote} #{activedocs_ref} #{options}" }
     before :example do
       ThreeScaleToolbox::Entities::ActiveDocs::create(remote: api3scale_client,
-                                                      attrs: { "name" => activedocs_ref, "body" => activedocs_body_pretty_json, "published" => true, "description" => "olddescription" })
+                                                      attrs: { "name" => activedocs_ref, "body" => activedocs_body_pretty_json, "published" => true, "description" => "olddescription", "skip_swagger_validations" => true })
     end
 
     it "is updated" do
@@ -70,6 +70,7 @@ RSpec.describe 'ActiveDocs Apply command' do
       expect(res.attrs.fetch("body")).to eq(activedocs_body_pretty_json)
       expect(res.attrs.fetch("published")).to eq(false)
       expect(res.attrs.fetch("description")).to eq("newdescription")
+      expect(res.attrs.fetch("skip_swagger_validations")).to eq(true)
     end
 
     after :example do

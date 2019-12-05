@@ -20,7 +20,7 @@ module ThreeScaleToolbox
               option :i, :'service-id', "Specify the Service ID associated to the ActiveDocs", argument: :required
               option :p, :'publish', "Specify it to publish the ActiveDocs on the Developer Portal. Otherwise it will be hidden", argument: :forbidden
               option nil, :'hide', "Specify it to hide the ActiveDocs on the Developer Portal", argument: :forbidden
-              option nil, :'skip-swagger-validations', "Specify it to skip validation of the Swagger specification", argument: :forbidden
+              option nil, :'skip-swagger-validations', "Skip validation of the Swagger specification. true or false", argument: :required, transform: ThreeScaleToolbox::Helper::BooleanTransformer.new
               option :d, :'description', "Specify the description of the ActiveDocs", argument: :required
               option :s, :'name', "Specify the name of the ActiveDocs", argument: :required
               option nil, :'openapi-spec', "Specify the swagger spec. Can be a file, an URL or '-' to read from stdin. This option is mandatory when applying the ActiveDoc for the first time", argument: :required
