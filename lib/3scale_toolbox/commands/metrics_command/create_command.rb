@@ -2,6 +2,20 @@ module ThreeScaleToolbox
   module Commands
     module MetricsCommand
       module Create
+        class CustomPrinter
+          attr_reader :option_disabled
+
+          def initialize(options)
+            @option_disabled = options[:disabled]
+          end
+
+          def print_record(metric)
+            puts "Created metric id: #{metric['id']}. Disabled: #{option_disabled}"
+          end
+
+          def print_collection(collection) end
+        end
+
         class CreateSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -16,6 +30,8 @@ module ThreeScaleToolbox
               flag        nil, :disabled, 'Disables this metric in all application plans'
               option      nil, :unit, 'Metric unit. Default hit', argument: :required
               option      nil, :description, 'Metric description', argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :service_ref
               param       :metric_name
@@ -30,7 +46,8 @@ module ThreeScaleToolbox
               attrs: metric_attrs
             )
             metric.disable if option_disabled
-            puts "Created metric id: #{metric.id}. Disabled: #{option_disabled}"
+
+            printer.print_record metric.attrs
           end
 
           private
@@ -69,6 +86,15 @@ module ThreeScaleToolbox
 
           def service_ref
             arguments[:service_ref]
+          end
+
+          def printer
+            if options.key?(:output)
+              options.fetch(:output)
+            else
+              # keep backwards compatibility
+              CustomPrinter.new(disabled: option_disabled)
+            end
           end
         end
       end
