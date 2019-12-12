@@ -2,6 +2,31 @@ module ThreeScaleToolbox
   module Commands
     module PlansCommand
       module Apply
+        class CustomPrinter
+          attr_reader :option_default, :option_disabled, :option_enabled,
+                      :option_publish, :option_hide
+
+          def initialize(options)
+            @option_default = options[:default]
+            @option_disabled = options[:disabled]
+            @option_enabled = options[:enabled]
+            @option_publish = options[:publish]
+            @option_hide = options[:hide]
+          end
+
+          def print_record(plan)
+            output_msg_array = ["Applied application plan id: #{plan['id']}"]
+            output_msg_array << "Default: #{option_default}"
+            output_msg_array << 'Disabled' if option_disabled
+            output_msg_array << 'Enabled' if option_enabled
+            output_msg_array << 'Published' if option_publish
+            output_msg_array << 'Hidden' if option_hide
+            puts output_msg_array.join('; ')
+          end
+
+          def print_collection(collection) end
+        end
+
         class ApplySubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -22,6 +47,8 @@ module ThreeScaleToolbox
               option      nil, 'cost-per-month', 'Cost per month', argument: :required, transform: method(:Float)
               option      nil, 'setup-fee', 'Setup fee', argument: :required, transform: method(:Float)
               option      nil, 'trial-period-days', 'Trial period days', argument: :required, transform: method(:Integer)
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :service_ref
               param       :plan_ref
@@ -44,13 +71,7 @@ module ThreeScaleToolbox
             plan.disable if option_disabled
             plan.enable if option_enabled
 
-            output_msg_array = ["Applied application plan id: #{plan.id}"]
-            output_msg_array << "Default: #{option_default}"
-            output_msg_array << 'Disabled' if option_disabled
-            output_msg_array << 'Enabled' if option_enabled
-            output_msg_array << 'Published' if option_publish
-            output_msg_array << 'Hidden' if option_hide
-            puts output_msg_array.join('; ')
+            printer.print_record plan.attrs
           end
 
           private
@@ -129,6 +150,14 @@ module ThreeScaleToolbox
 
           def plan_ref
             arguments[:plan_ref]
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output,
+                          CustomPrinter.new(default: option_default, disabled: option_disabled,
+                                            enabled: option_enabled, publish: option_publish,
+                                            hide: option_hide))
           end
         end
       end
