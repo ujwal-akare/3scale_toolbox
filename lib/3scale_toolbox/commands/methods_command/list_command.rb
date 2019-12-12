@@ -14,6 +14,7 @@ module ThreeScaleToolbox
               summary     'list methods'
               description 'List methods'
 
+              ThreeScaleToolbox::CLI.output_flag(self)
               param       :remote
               param       :service_ref
 
@@ -22,21 +23,17 @@ module ThreeScaleToolbox
           end
 
           def run
-            print_header
-            print_data
+            printer.print_collection service_methods
           end
 
           private
 
-          def print_header
-            puts FIELDS_TO_SHOW.map(&:upcase).join("\t")
+          def service_methods
+            @service_methods ||= service.methods service_hits_id
           end
 
-          def print_data
-            hits = service.hits
-            service.methods(hits.fetch('id')).each do |method|
-              puts FIELDS_TO_SHOW.map { |field| method.fetch(field, '(empty)') }.join("\t")
-            end
+          def service_hits_id
+            @service_hits_id ||= service.hits.fetch('id')
           end
 
           def service
@@ -56,6 +53,11 @@ module ThreeScaleToolbox
 
           def service_ref
             arguments[:service_ref]
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CLI::CustomTablePrinter.new(FIELDS_TO_SHOW))
           end
         end
       end
