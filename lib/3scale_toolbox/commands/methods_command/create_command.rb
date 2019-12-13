@@ -2,6 +2,20 @@ module ThreeScaleToolbox
   module Commands
     module MethodsCommand
       module Create
+        class CustomPrinter
+          attr_reader :option_disabled
+
+          def initialize(options)
+            @option_disabled = options[:disabled]
+          end
+
+          def print_record(method)
+            puts "Created method id: #{method['id']}. Disabled: #{option_disabled}"
+          end
+
+          def print_collection(collection) end
+        end
+
         class CreateSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -15,6 +29,8 @@ module ThreeScaleToolbox
               option      :t, 'system-name', 'Method system name', argument: :required
               flag        nil, :disabled, 'Disables this method in all application plans'
               option      nil, :description, 'Method description', argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :service_ref
               param       :method_name
@@ -31,7 +47,8 @@ module ThreeScaleToolbox
               attrs: method_attrs
             )
             method.disable if option_disabled
-            puts "Created method id: #{method.id}. Disabled: #{option_disabled}"
+
+            printer.print_record method.attrs
           end
 
           private
@@ -65,6 +82,15 @@ module ThreeScaleToolbox
 
           def service_ref
             arguments[:service_ref]
+          end
+
+          def printer
+            if options.key?(:output)
+              options.fetch(:output)
+            else
+              # keep backwards compatibility
+              CustomPrinter.new(disabled: option_disabled)
+            end
           end
         end
       end
