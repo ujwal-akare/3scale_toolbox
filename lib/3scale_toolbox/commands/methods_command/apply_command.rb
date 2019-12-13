@@ -2,6 +2,24 @@ module ThreeScaleToolbox
   module Commands
     module MethodsCommand
       module Apply
+        class CustomPrinter
+          attr_reader :option_disabled, :option_enabled
+
+          def initialize(options)
+            @option_disabled = options[:disabled]
+            @option_enabled = options[:enabled]
+          end
+
+          def print_record(method)
+            output_msg_array = ["Applied method id: #{method['id']}"]
+            output_msg_array << 'Disabled' if option_disabled
+            output_msg_array << 'Enabled' if option_enabled
+            puts output_msg_array.join('; ')
+          end
+
+          def print_collection(collection) end
+        end
+
         class ApplySubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -16,6 +34,8 @@ module ThreeScaleToolbox
               flag        nil, :disabled, 'Disables this method in all application plans'
               flag        nil, :enabled, 'Enables this method in all application plans'
               option      nil, :description, 'Method description', argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :service_ref
               param       :method_ref
@@ -39,10 +59,7 @@ module ThreeScaleToolbox
             method.disable if option_disabled
             method.enable if option_enabled
 
-            output_msg_array = ["Applied method id: #{method.id}"]
-            output_msg_array << 'Disabled' if option_disabled
-            output_msg_array << 'Enabled' if option_enabled
-            puts output_msg_array.join('; ')
+            printer.print_record method.attrs
           end
 
           private
@@ -93,6 +110,15 @@ module ThreeScaleToolbox
 
           def method_ref
             arguments[:method_ref]
+          end
+
+          def printer
+            if options.key?(:output)
+              options.fetch(:output)
+            else
+              # keep backwards compatibility
+              CustomPrinter.new(disabled: option_disabled, enabled: option_enabled)
+            end
           end
         end
       end
