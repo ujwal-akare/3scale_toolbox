@@ -2,6 +2,14 @@ module ThreeScaleToolbox
   module Commands
     module ApplicationCommand
       module Create
+        class CustomPrinter
+          def print_record(application)
+            puts "Created application id: #{application['id']}"
+          end
+
+          def print_collection(collection) end
+        end
+
         class CreateSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -17,6 +25,8 @@ module ThreeScaleToolbox
               option      nil, 'application-key', 'App Key(s) or Client Secret (for OAuth and OpenID Connect authentication modes) of the application to be created.' , argument: :required
               option      nil, :description, 'Application description', argument: :required
               option      nil, :'redirect-url', 'OpenID Connect redirect url', argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :account
               param       :service
@@ -35,7 +45,7 @@ module ThreeScaleToolbox
               app_attrs: app_attrs
             )
 
-            puts "Created application id: #{application.id}"
+            printer.print_record application.attrs
           end
 
           private
@@ -104,6 +114,15 @@ module ThreeScaleToolbox
 
           def remote
             @remote ||= threescale_client(arguments[:remote])
+          end
+
+          def printer
+            if options.key?(:output)
+              options.fetch(:output)
+            else
+              # keep backwards compatibility
+              CustomPrinter.new
+            end
           end
         end
       end
