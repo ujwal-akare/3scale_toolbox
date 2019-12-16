@@ -11,16 +11,17 @@ module ThreeScaleToolbox
               usage       'list <remote>'
               summary     'List ActiveDocs'
               description 'List all defined ActiveDocs'
-              runner ListSubcommand
 
+              ThreeScaleToolbox::CLI.output_flag(self)
               param :remote
               option :s, :'service-ref', "Filter the ActiveDocs by Service reference", argument: :required
+
+              runner ListSubcommand
             end
           end
 
           def run
-            activedocs = remote.list_activedocs
-            print_activedocs_data(activedocs, ACTIVEDOCS_FIELDS_TO_SHOW)
+            printer.print_collection filtered_activedocs
           end
 
           private
@@ -34,13 +35,9 @@ module ThreeScaleToolbox
             @remote ||= threescale_client(arguments[:remote])
           end
 
-          def print_activedocs_data(activedocs, fields_to_show)
-            print_header(fields_to_show)
-            print_results(activedocs, fields_to_show)
-          end
-
-          def print_header(fields_to_show)
-            puts fields_to_show.map { |e| e.upcase }.join("\t")
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CLI::CustomTablePrinter.new(ACTIVEDOCS_FIELDS_TO_SHOW))
           end
 
           def service_ref_filter
@@ -55,13 +52,9 @@ module ThreeScaleToolbox
             res
           end
 
-          def filtered_activedocs(activedocs)
-            filters.reduce(activedocs) { |current_list, filter| filter.filter(current_list) }
-          end
-
-          def print_results(activedocs, fields_to_show)
-            filtered_activedocs(activedocs).each do |activedoc|
-              puts fields_to_show.map { |field| activedoc.fetch(field, '(empty)') }.join("\t")
+          def filtered_activedocs
+            filters.reduce(remote.list_activedocs) do |current_list, filter|
+              filter.filter(current_list)
             end
           end
         end
