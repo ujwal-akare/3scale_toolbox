@@ -2,6 +2,14 @@ module ThreeScaleToolbox
   module Commands
     module ActiveDocsCommand
       module Create
+        class CustomPrinter
+          def print_record(activedocs)
+            puts "ActiveDocs '#{activedocs['name']}' has been created with ID: #{activedocs['id']}"
+          end
+
+          def print_collection(collection) end
+        end
+
         class CreateSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
           include ThreeScaleToolbox::ResourceReader
@@ -12,23 +20,25 @@ module ThreeScaleToolbox
               usage       'create <remote> <activedocs-name> <spec>'
               summary     'Create an ActiveDocs'
               description 'Create an ActiveDocs'
-              runner CreateSubcommand
-
-              param   :remote
-              param   :activedocs_name
-              param   :activedocs_spec
 
               option :i, :'service-id', "Specify the Service ID associated to the ActiveDocs", argument: :required
               option :p, :'published', "Specify it to publish the ActiveDoc on the Developer Portal. Otherwise it will be hidden", argument: :forbidden
               option nil, :'skip-swagger-validations', "Specify it to skip validation of the Swagger specification", argument: :forbidden
               option :d, :'description', "Specify the description of the ActiveDocs", argument: :required
               option :s, :'system-name', "Specify the system-name of the ActiveDocs", argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
+
+              param   :remote
+              param   :activedocs_name
+              param   :activedocs_spec
+
+              runner CreateSubcommand
             end
           end
 
           def run
-            res = Entities::ActiveDocs::create(remote: remote, attrs: activedocs_attrs)
-            puts "ActiveDocs '#{activedocs_name}' has been created with ID: #{res.id}"
+            res = Entities::ActiveDocs.create(remote: remote, attrs: activedocs_attrs)
+            printer.print_record res.attrs
           end
 
           private
@@ -57,6 +67,15 @@ module ThreeScaleToolbox
               "name" => activedocs_name,
               "body" => activedocs_json_spec,
             }.compact
+          end
+
+          def printer
+            if options.key?(:output)
+              options.fetch(:output)
+            else
+              # keep backwards compatibility
+              CustomPrinter.new
+            end
           end
         end
       end
