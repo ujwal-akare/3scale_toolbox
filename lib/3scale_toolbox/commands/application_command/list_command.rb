@@ -14,10 +14,12 @@ module ThreeScaleToolbox
               summary     'list applications'
               description 'List applications'
 
-              param       :remote
               option      nil, :account, 'Filter by account', argument: :required
               option      nil, :service, 'Filter by service', argument: :required
               option      nil, :plan, 'Filter by application plan. Service option required', argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
+
+              param       :remote
 
               runner ListSubcommand
             end
@@ -35,8 +37,8 @@ module ThreeScaleToolbox
                            else
                              provider_account_applications
                            end
-            print_header
-            print_data(applications)
+
+            printer.print_collection applications.map(&:attrs)
           end
 
           private
@@ -70,16 +72,6 @@ module ThreeScaleToolbox
 
           def option_plan
             options[:plan]
-          end
-
-          def print_header
-            puts FIELDS_TO_SHOW.map(&:upcase).join("\t")
-          end
-
-          def print_data(applications)
-            applications.each do |app|
-              puts FIELDS_TO_SHOW.map { |field| app.attrs.fetch(field, '(empty)') }.join("\t")
-            end
           end
 
           def service
@@ -116,6 +108,11 @@ module ThreeScaleToolbox
 
           def remote
             @remote ||= threescale_client(arguments[:remote])
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CLI::CustomTablePrinter.new(FIELDS_TO_SHOW))
           end
         end
       end
