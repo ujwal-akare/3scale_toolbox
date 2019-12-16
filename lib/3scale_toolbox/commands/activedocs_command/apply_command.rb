@@ -2,6 +2,24 @@ module ThreeScaleToolbox
   module Commands
     module ActiveDocsCommand
       module Apply
+        class CustomPrinter
+          attr_reader :option_publish, :option_hide
+
+          def initialize(options)
+            @option_publish = options[:publish]
+            @option_hide = options[:hide]
+          end
+
+          def print_record(active_docs)
+            output_msg_array = ["Applied ActiveDocs id: #{active_docs['id']}"]
+            output_msg_array << 'Published' if option_publish
+            output_msg_array << 'Hidden' if option_hide
+            puts output_msg_array.join(';')
+          end
+
+          def print_collection(collection) end
+        end
+
         class ApplySubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
           include ThreeScaleToolbox::ResourceReader
@@ -12,10 +30,6 @@ module ThreeScaleToolbox
               usage       'apply <remote> <activedocs_id_or_system_name>'
               summary     'Update activedocs'
               description 'Create or update an ActiveDocs'
-              runner ApplySubcommand
-
-              param   :remote
-              param   :activedocs_id_or_system_name
 
               option :i, :'service-id', "Specify the Service ID associated to the ActiveDocs", argument: :required
               option :p, :'publish', "Specify it to publish the ActiveDocs on the Developer Portal. Otherwise it will be hidden", argument: :forbidden
@@ -24,22 +38,26 @@ module ThreeScaleToolbox
               option :d, :'description', "Specify the description of the ActiveDocs", argument: :required
               option :s, :'name', "Specify the name of the ActiveDocs", argument: :required
               option nil, :'openapi-spec', "Specify the swagger spec. Can be a file, an URL or '-' to read from stdin. This option is mandatory when applying the ActiveDoc for the first time", argument: :required
+
+              param   :remote
+              param   :activedocs_id_or_system_name
+
+              ThreeScaleToolbox::CLI.output_flag(self)
+
+              runner ApplySubcommand
             end
           end
 
           def run
-            res = activedocs
             validate_option_params
+            res = activedocs
             if !res
-              res = Entities::ActiveDocs::create(remote: remote, attrs: create_activedocs_attrs)
+              res = Entities::ActiveDocs.create(remote: remote, attrs: create_activedocs_attrs)
             else
               res.update(activedocs_attrs) unless activedocs_attrs.empty?
             end
 
-            output_msg_array = ["Applied ActiveDocs id: #{res.id}"]
-            output_msg_array << "Published" if option_publish
-            output_msg_array << "Hidden" if option_hide
-            puts output_msg_array.join(";")
+            printer.print_record res.attrs
           end
 
           private
@@ -119,6 +137,17 @@ module ThreeScaleToolbox
               "name" => ref,
               "body" => activedocs_json_spec,
             ) { |_key, oldval, _newval| oldval } # receiver of the merge message has key priority
+          end
+
+          def printer
+            if options.key?(:output)
+              options.fetch(:output)
+            else
+              # keep backwards compatibility
+              CustomPrinter.new(
+                publish: option_publish, hide: option_hide
+              )
+            end
           end
         end
       end
