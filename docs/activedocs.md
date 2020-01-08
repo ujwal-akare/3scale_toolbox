@@ -121,6 +121,9 @@ USAGE
 DESCRIPTION
     List all defined ActiveDocs
 
+OPTIONS
+    -s --service-ref=<value>      Filter the ActiveDocs by Service reference
+
 OPTIONS FOR ACTIVEDOCS
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
