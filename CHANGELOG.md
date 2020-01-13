@@ -4,6 +4,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.15.0]
+
+### Added
+- Allow filtering activedocs by Service ID [#225](https://github.com/3scale/3scale_toolbox/pull/225)
+- OpenAPI 3 support [#226](https://github.com/3scale/3scale_toolbox/pull/226)
+- Add prefix matching flag for mapping rules in import openapi command [#224](https://github.com/3scale/3scale_toolbox/pull/224)
+- Add custom host header and secret token options for import openapi [#221](https://github.com/3scale/3scale_toolbox/pull/221)
+- Deprecate ruby 2.4 [#232](https://github.com/3scale/3scale_toolbox/pull/232)
+
+### Fixed
+- Make activedocs apply command not set *skip_swagger_validations* on activedocs update [#227](https://github.com/3scale/3scale_toolbox/pull/227)
+- copy service command copies oidc conf [#228](https://github.com/3scale/3scale_toolbox/pull/228)
+
 ## [0.14.0]
 
 ### Fixed
@@ -204,7 +217,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.15.0
 [0.14.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.14.0
 [0.13.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.13.0
 [0.12.4]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.12.4
