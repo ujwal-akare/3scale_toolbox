@@ -27,14 +27,6 @@ commands:
           command: |
             bundle exec rake spec:unit
 jobs:
-  ruby-246-unittest:
-    docker:
-      - image: circleci/ruby:2.4.6
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - unittests
-
   ruby-255-unittest:
     docker:
       - image: circleci/ruby:2.5.5
@@ -91,7 +83,6 @@ workflows:
   version: 2
   basic_tests:
     jobs:
-      - ruby-246-unittest
       - ruby-255-unittest
       - ruby-262-unittest
       - license_check

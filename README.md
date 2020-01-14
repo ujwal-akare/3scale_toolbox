@@ -9,6 +9,7 @@ See the LICENSE and NOTICE files that should have been provided along with this 
 3scale toolbox is a set of tools to help you manage your 3scale product. Using the [3scale API Ruby Client](https://github.com/3scale/3scale-api-ruby).
 
 ## Table of contents
+* [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
    * [Copy a service](docs/copy-service.md)
@@ -31,6 +32,12 @@ See the LICENSE and NOTICE files that should have been provided along with this 
 * [Plugins](#plugins)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
+
+## Requirements
+Supported Ruby interpreters
+
+* MRI 2.5
+* MRI 2.6
 
 ## Installation
 Install the toolbox:
@@ -189,7 +196,7 @@ $ 3scale service_list my-3scale-instance
 
 It is a requirement that we include a file describing all the licenses used in the product, so that users can examine it.
 
-Run `rake license_finder:check` to check licenses when dependencies change. 
+Run `rake license_finder:check` to check licenses when dependencies change.
 
 Run `rake license_finder:report > licenses.xml` to update licenses file.
 
