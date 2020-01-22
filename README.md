@@ -12,7 +12,8 @@ See the LICENSE and NOTICE files that should have been provided along with this 
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
-   * [Copy a service](docs/copy-service.md)
+   * [Copy service](docs/copy-service.md)
+   * [Copy backend](docs/copy-backend.md)
    * [Import from CSV](docs/import-csv.md)
    * [Import from OpenAPI definition](docs/openapi.md)
    * [Export/Import Application Plan](docs/export-import-app-plan.md)
@@ -73,6 +74,7 @@ COMMANDS
     activedocs           activedocs super command
     application          application super command
     application-plan     application-plan super command
+    backend              backdend super command
     copy                 copy super command
     help                 show help
     import               import super command
