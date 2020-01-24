@@ -1,7 +1,6 @@
 RSpec.describe 'Backend copy' do
   include_context :real_api3scale_client
   include_context :random_name
-  include_context :toolbox_tasks_helper
 
   let(:target_system_name) { "backend_#{random_lowercase_name}_#{Time.now.getutc.to_i}" }
   let(:source_url) { client_url }

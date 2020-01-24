@@ -22,12 +22,14 @@ Components of the service being copied:
 
 3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
+**Note** Both command calls `3scale copy service` or `3scale service copy` refer to the same command.
+
 ```shell
 NAME
-    service - copy service
+    copy - Copy service
 
 USAGE
-    3scale copy service [opts] -s <src> -d <dst>
+    3scale service copy [opts] -s <src> -d <dst>
     <source-service>
 
 DESCRIPTION
@@ -68,5 +70,5 @@ OPTIONS
 ```
 
 ```shell
-3scale copy service --source=s1 --destination=s2 my_service
+3scale service copy --source=s1 --destination=s2 my_service
 ```

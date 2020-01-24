@@ -1,5 +1,4 @@
 RSpec.shared_examples 'service copied' do
-  include_context :toolbox_tasks_helper
   include_context :copied_metrics
   include_context :copied_plans
 
@@ -42,17 +41,13 @@ RSpec.shared_examples 'service copied' do
     # service settings
     compare_keys = ThreeScaleToolbox::Entities::Service::VALID_PARAMS - ['system_name']
 
-    expect(
-      # looking forward to Hash.slice on ruby 2.5
-      target_service_new.attrs.select { |k, _| compare_keys.include?(k) }
-    ).to eq(source_service.attrs.select { |k, _| compare_keys.include?(k) })
+    source_settings = source_service.attrs.slice(compare_keys)
+    target_settings = target_service_new.attrs.slice(compare_keys)
+    expect(target_settings).to eq(source_settings)
 
     # proxy settings
     compare_keys = %w[api_backend auth_app_key auth_app_id auth_user_key credentials_location]
-    expect(
-      # looking forward to Hash.slice on ruby 2.5
-      target_service_new.proxy.select { |k, _| compare_keys.include?(k) }
-    ).to eq(source_service.proxy.select { |k, _| compare_keys.include?(k) })
+    expect(target_service_new.proxy.slice(compare_keys)).to eq(source_service.proxy.slice(compare_keys))
 
     # service methods
     source_hits_id = source_service.hits['id']

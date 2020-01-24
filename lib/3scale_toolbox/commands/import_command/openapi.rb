@@ -51,7 +51,7 @@ module ThreeScaleToolbox
             # other tasks might read proxy settings (CreateActiveDocsStep does)
             tasks << UpdateServiceProxyStep.new(context)
             tasks << CreateMethodsStep.new(context)
-            tasks << Tasks::DestroyMappingRulesTask.new(context)
+            tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::DestroyMappingRulesTask.new(context)
             tasks << CreateMappingRulesStep.new(context)
             tasks << CreateActiveDocsStep.new(context)
             tasks << UpdateServiceOidcConfStep.new(context)
@@ -61,7 +61,7 @@ module ThreeScaleToolbox
             tasks.each(&:call)
 
             # This should be the last step
-            Tasks::BumpProxyVersionTask.new(service: context[:target]).call
+            ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::BumpProxyVersionTask.new(service: context[:target]).call
           end
 
           private
@@ -88,6 +88,7 @@ module ThreeScaleToolbox
               backend_api_secret_token: options[:'backend-api-secret-token'],
               backend_api_host_header: options[:'backend-api-host-header'],
               prefix_matching: options[:'prefix-matching'],
+              delete_mapping_rules: true,
             }
           end
 

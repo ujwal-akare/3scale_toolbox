@@ -77,15 +77,6 @@ RSpec.shared_context :real_api3scale_client do
   end
 end
 
-RSpec.shared_context :real_copy_clients do
-  include_context :real_api3scale_client
-  include_context :random_name
-
-  let(:target_system_name) { "service_#{random_lowercase_name}_#{Time.now.getutc.to_i}" }
-  let(:source_client) { ThreeScale::API::Client.new(http_client) }
-  let(:target_client) { ThreeScale::API::Client.new(http_client) }
-end
-
 RSpec.shared_context :real_copy_cleanup do
   after :example do
     # delete source activedocs
@@ -110,18 +101,14 @@ RSpec.shared_context :import_oas_real_cleanup do
   end
 end
 
-RSpec.shared_context :toolbox_tasks_helper do
-  let(:tasks_helper) do
-    Class.new { include ThreeScaleToolbox::Tasks::Helper }.new
-  end
-end
-
 RSpec.shared_context :copied_plans do
   # source and target has to be provided by loader context
   let(:source_plans) { source_service.plans }
   let(:target_plans) { target_service.plans }
   let(:plan_keys) { %w[name system_name custom state] }
-  let(:plan_mapping_arr) { tasks_helper.application_plan_mapping(source_plans, target_plans) }
+  let(:plan_mapping_arr) do
+    ThreeScaleToolbox::Helper.application_plan_mapping(source_plans, target_plans)
+  end
   let(:plan_mapping) { plan_mapping_arr.to_h }
 end
 
@@ -130,7 +117,9 @@ RSpec.shared_context :copied_metrics do
   let(:source_metrics) { source_service.metrics }
   let(:target_metrics) { target_service.metrics }
   let(:metric_keys) { %w[name system_name unit] }
-  let(:metrics_mapping) { tasks_helper.metrics_mapping(source_metrics, target_metrics) }
+  let(:metrics_mapping) do
+    ThreeScaleToolbox::Helper.metrics_mapping(source_metrics, target_metrics)
+  end
 end
 
 RSpec.shared_context :oas_common_context do

@@ -1,4 +1,4 @@
-require '3scale_toolbox/commands/copy_command/copy_service'
+require '3scale_toolbox/commands/copy_command/service_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -16,7 +16,7 @@ module ThreeScaleToolbox
           end
         end
       end
-      add_subcommand(CopyServiceSubcommand)
+      add_subcommand(ServiceSubcommand)
     end
   end
 end
