@@ -60,7 +60,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
       let(:metrics) { [metric_attrs] }
 
       before :example do
-        expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(service).to receive(:metrics).and_return(metrics)
       end
 
@@ -75,7 +75,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
       let(:metrics) { [] }
 
       before :example do
-        expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(service).to receive(:metrics).and_return(metrics)
       end
 

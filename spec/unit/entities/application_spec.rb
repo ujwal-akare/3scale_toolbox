@@ -36,7 +36,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
     context 'app found by app id' do
       before :example do
         expect(remote).to receive(:find_application).with(user_key: app_ref, service_id: nil)
-                                                    .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                    .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_application).with(application_id: app_ref, service_id: nil)
                                                     .and_return(app_attrs)
       end
@@ -51,9 +51,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Application do
     context 'app found by id' do
       before :example do
         expect(remote).to receive(:find_application).with(user_key: app_ref, service_id: nil)
-                                                    .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                    .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_application).with(application_id: app_ref, service_id: nil)
-                                                    .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                    .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_application).with(id: app_ref, service_id: nil)
                                                     .and_return(app_attrs)
       end
