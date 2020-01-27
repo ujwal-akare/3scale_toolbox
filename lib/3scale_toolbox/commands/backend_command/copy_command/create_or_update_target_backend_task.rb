@@ -10,13 +10,15 @@ module ThreeScaleToolbox
             backend = Entities::Backend.find(remote: target_remote, ref: target_backend_ref)
 
             if backend == source_backend
-              raise ThreeScaleToolbox::Error, 'Source and destination backends are the same: ' \
-                "ID: #{source_backend.id} system_name: #{source_backend.attrs['system_name']}"
             end
 
             if backend.nil?
               backend = Entities::Backend.create(remote: target_remote,
                                                  attrs: create_attrs)
+            elsif backend == source_backend
+              message = 'source and destination backends are the same: ' \
+                "ID: #{source_backend.id} system_name: #{source_backend.attrs['system_name']}"
+              warn "\e[1m\e[31mWarning: #{message}\e[0m"
             else
               backend.update update_attrs
             end
