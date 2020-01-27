@@ -249,6 +249,19 @@ module ThreeScaleToolbox
         end
       end
 
+      def backend_usage_list
+        resp = remote.list_backend_usages id
+        if resp.respond_to?(:has_key?) && (errors = resp['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Product backend usage not read', errors)
+        end
+
+        resp.map do |backend_usage_attrs|
+          Entities::BackendUsage.new(id: backend_usage_attrs.fetch('id'),
+                                     product: self,
+                                     attrs: backend_usage_attrs)
+        end
+      end
+
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end

@@ -47,6 +47,10 @@ module ThreeScaleToolbox
         @attrs ||= fetch_backend_attrs
       end
 
+      def system_name
+        attrs['system_name']
+      end
+
       def metrics
         # cache result to reuse
         metric_and_method_list = metrics_and_methods
