@@ -4,14 +4,14 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopySubcommand do
   let(:source_backend) { 'backend01' }
   let(:source_remote_obj) { instance_double(ThreeScale::API::Client, 'source_remote_obj') }
   let(:target_remote_obj) { instance_double(ThreeScale::API::Client, 'target_remote_obj') }
-  let(:arguments) do
+  let(:arguments) { { source_backend: source_backend } }
+  let(:options) do
     {
-      source_remote: source_remote,
-      target_remote: target_remote,
-      source_backend: source_backend
+      target_system_name: 'other_system_name',
+      source: source_remote,
+      destination: target_remote
     }
   end
-  let(:options) { { target_system_name: 'other_system_name' } }
   let(:expected_context) do
     {
       source_remote: source_remote_obj,

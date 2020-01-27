@@ -18,8 +18,8 @@ NAME
     copy - Copy backend
 
 USAGE
-    3scale backend copy [opts] <source_remote>
-    <target_remote> <source_backend>
+    3scale backend copy [opts] -s <source_remote>
+    -d <target_remote> <source_backend>
 
 DESCRIPTION
     This command makes a copy of the referenced backend. Target backend will
@@ -36,10 +36,14 @@ DESCRIPTION
     mapping rules
 
 OPTIONS
+    -d --destination=<value>             3scale target instance. Url or
+                                         remote name
+    -s --source=<value>                  3scale source instance. Url or
+                                         remote name
     -t --target_system_name=<value>      Target system name. Default to
                                          source system name
 ```
 
 ```shell
-3scale backend copy [-t target_system_name] 3scale1 3scale2 backend_01
+3scale backend copy [-t target_system_name] -s 3scale1 -d 3scale2 backend_01
 ```

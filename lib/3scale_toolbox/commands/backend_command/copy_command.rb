@@ -13,7 +13,7 @@ module ThreeScaleToolbox
         def self.command
           Cri::Command.define do
             name        'copy'
-            usage       'copy [opts] <source_remote> <target_remote> <source_backend>'
+            usage       'copy [opts] -s <source_remote> -d <target_remote> <source_backend>'
             summary     'Copy backend'
             description <<-HEREDOC
             This command makes a copy of the referenced backend.
@@ -25,9 +25,9 @@ module ThreeScaleToolbox
             \nmapping rules
             HEREDOC
 
+            option  :s, :source, '3scale source instance. Url or remote name', argument: :required
+            option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
             option  :t, 'target_system_name', 'Target system name. Default to source system name', argument: :required
-            param   :source_remote
-            param   :target_remote
             param   :source_backend
 
             runner CopySubcommand
@@ -52,8 +52,8 @@ module ThreeScaleToolbox
 
         def create_context
           {
-            source_remote: threescale_client(arguments[:source_remote]),
-            target_remote: threescale_client(arguments[:target_remote]),
+            source_remote: threescale_client(fetch_required_option(:source)),
+            target_remote: threescale_client(fetch_required_option(:destination)),
             source_backend_ref: arguments[:source_backend],
             option_target_system_name: options[:target_system_name]
           }

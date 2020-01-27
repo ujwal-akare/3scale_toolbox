@@ -8,7 +8,7 @@ RSpec.describe 'Backend copy' do
   let(:destination_url) { client_url }
   let(:command_line_str) do
     "backend copy -t #{target_system_name}" \
-      " #{source_url} #{destination_url} #{source_backend.id}"
+      " -s #{source_url} -d #{destination_url} #{source_backend.id}"
   end
   let(:command_line_args) { command_line_str.split }
   subject { ThreeScaleToolbox::CLI.run(command_line_args) }
