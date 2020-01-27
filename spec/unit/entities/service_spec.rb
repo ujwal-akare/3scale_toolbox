@@ -74,14 +74,13 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     let(:service_info) { { remote: remote, ref: system_name } }
 
     it 'remote call raises unexpected error' do
-      expect(remote).to receive(:show_service).and_raise(StandardError)
+      expect(remote).to receive(:list_services).and_raise(StandardError)
       expect do
         described_class.find(service_info)
       end.to raise_error(StandardError)
     end
 
     it 'returns nil when the service does not exist' do
-      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       expect(remote).to receive(:list_services).and_return([{ "system_name" => "sysname1" }, { "system_name" => "sysname2" }])
       expect(described_class.find(service_info)).to be_nil
     end
@@ -94,9 +93,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     it 'service instance is returned when specifying an existing system-name' do
-      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       expect(remote).to receive(:list_services).and_return([{ "id" => 3, "system_name" => system_name }, { "id" => 7, "system_name" => "sysname1" }])
       service_obj = described_class.find(service_info)
+      expect(service_obj).to be
       expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
     end
@@ -358,7 +357,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
       context "when production environment is requested" do
         let(:owned_proxy_config_production_0) { { "id" => 0, "environment" => "production", "version" => 0} }
-        let(:owned_proxy_config_production_1) { { "id" => 1, "environment" => "production", "version" => 1} }  
+        let(:owned_proxy_config_production_1) { { "id" => 1, "environment" => "production", "version" => 1} }
         let(:environment) { "production" }
         it 'returns the expected ProxyConfig entities' do
           expect(remote).to receive(:proxy_config_list).with(id, environment).and_return([owned_proxy_config_production_0, owned_proxy_config_production_1])
