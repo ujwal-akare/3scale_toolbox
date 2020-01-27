@@ -3,14 +3,16 @@ module ThreeScaleToolbox
     ##
     # BackendUsage represents Product - Backend mapping entry
     class BackendUsage
-      VALID_PARAMS = %w[path backend_api_id].freeze
-      public_constant :VALID_PARAMS
+      CREATE_PARAMS = %w[path backend_api_id].freeze
+      public_constant :CREATE_PARAMS
+      UPDATE_PARAMS = %w[path].freeze
+      public_constant :UPDATE_PARAMS
 
       class << self
         def create(product:, attrs:)
           resp = product.remote.create_backend_usage(
             product.id,
-            Helper.filter_params(VALID_PARAMS, attrs)
+            Helper.filter_params(CREATE_PARAMS, attrs)
           )
           if (errors = resp['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend usage has not been created',
@@ -60,7 +62,7 @@ module ThreeScaleToolbox
       def update(usage_attrs)
         new_attrs = remote.update_backend_usage(
           product.id, id,
-          Helper.filter_params(VALID_PARAMS, usage_attrs)
+          Helper.filter_params(UPDATE_PARAMS, usage_attrs)
         )
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend usage not been updated', errors)

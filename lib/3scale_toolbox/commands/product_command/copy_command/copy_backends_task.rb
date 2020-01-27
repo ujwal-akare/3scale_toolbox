@@ -19,8 +19,8 @@ module ThreeScaleToolbox
           private
 
           def create_backend(backend_usage)
-            backend = Entities::Backend.new(id: backend_usage.backend_id, remote: source_remote)
-            backend_context = create_backend_context(backend.system_name)
+            source_backend = Entities::Backend.new(id: backend_usage.backend_id, remote: source_remote)
+            backend_context = create_backend_context(source_backend.system_name)
 
             tasks = []
             tasks << Commands::BackendCommand::CopyCommand::CreateOrUpdateTargetBackendTask.new(backend_context)
@@ -30,22 +30,14 @@ module ThreeScaleToolbox
             tasks << Commands::BackendCommand::CopyCommand::CopyMappingRulesTask.new(backend_context)
             tasks.each(&:call)
 
-            create_or_update_target_backend_usage(backend_context[:target_backend], backend_usage)
-          end
-
-          def create_or_update_target_backend_usage(target_backend, backend_usage)
-            target_usage = Entities::BackendUsage.find_by_path(product: target,
-                                                               path: backend_usage.path)
-            if target_usage.nil?
-              attrs = {
-                'backend_api_id' => target_backend.id,
-                'service_id' => target.id,
-                'path' => backend_usage.path
-              }
-              Entities::BackendUsage.create(product: target, attrs: attrs)
-            elsif target_usage.backend_id != target_backend.id
-              target_usage.update('backend_api_id' => target_backend.id)
-            end
+            # CreateOrUpdate task will keep reference of the target backend in
+            # backend_context[:target_backend]
+            attrs = {
+              'backend_api_id' => backend_context[:target_backend].id,
+              'service_id' => target.id,
+              'path' => backend_usage.path
+            }
+            Entities::BackendUsage.create(product: target, attrs: attrs)
           end
 
           def source

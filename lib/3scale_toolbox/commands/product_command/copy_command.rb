@@ -1,3 +1,4 @@
+require '3scale_toolbox/commands/product_command/copy_command/delete_target_backend_usages_task'
 require '3scale_toolbox/commands/product_command/copy_command/copy_backends_task'
 
 module ThreeScaleToolbox
@@ -39,6 +40,7 @@ module ThreeScaleToolbox
         def run
           tasks = []
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CreateOrUpdateTargetServiceTask.new(context)
+          tasks << CopyCommand::DeleteTargetBackendUsagesTask.new(context)
           tasks << CopyCommand::CopyBackendsTask.new(context)
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyServiceProxyTask.new(context)
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMethodsTask.new(context)
