@@ -5,31 +5,32 @@ module ThreeScaleToolbox
         class ShowSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
+          FIELDS = %w[
+            id name state system_name end_user_registration_required
+            backend_version deployment_option support_email description
+            created_at updated_at
+          ]
+
           def self.command
             Cri::Command.define do
               name        'show'
               usage       'show <remote> <service-id_or_system-name>'
               summary     'Show the information of a service'
               description "Show the information of a service"
-              runner ShowSubcommand
 
+              ThreeScaleToolbox::CLI.output_flag(self)
               param   :remote
               param   :service_id_or_system_name
+
+              runner ShowSubcommand
             end
           end
 
           def run
-            print_header
-            print_data
+            printer.print_record service.attrs
           end
 
           private
-
-          SERVICE_FIELDS_TO_SHOW = %w[
-            id name state system_name end_user_registration_required
-            backend_version deployment_option support_email description
-            created_at updated_at
-          ]
 
           def remote
             @remote ||= threescale_client(arguments[:remote])
@@ -49,12 +50,8 @@ module ThreeScaleToolbox
             end
           end
 
-          def print_header
-            puts SERVICE_FIELDS_TO_SHOW.map { |e| e.upcase }.join("\t")
-          end
-
-          def print_data
-            puts SERVICE_FIELDS_TO_SHOW.map { |field| service.attrs.fetch(field, '(empty)') }.join("\t")
+          def printer
+            options.fetch(:output, CLI::CustomTablePrinter.new(FIELDS))
           end
         end
       end
