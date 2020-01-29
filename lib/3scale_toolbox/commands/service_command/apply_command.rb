@@ -2,6 +2,16 @@ module ThreeScaleToolbox
   module Commands
     module ServiceCommand
       module Apply
+        class CustomPrinter
+          attr_reader :option_default, :option_disabled
+
+          def print_record(service)
+            puts "Applied Service id: #{service['id']}"
+          end
+
+          def print_collection(collection) end
+        end
+
         class ApplySubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -11,29 +21,31 @@ module ThreeScaleToolbox
               usage       'apply <remote> <service-id_or_system-name>'
               summary     'Update service'
               description "Update (create if it does not exist) service"
-              runner ApplySubcommand
 
               param   :remote
               param   :service_id_or_system_name
 
+              ThreeScaleToolbox::CLI.output_flag(self)
               option :d, :'deployment-mode', "Specify the deployment mode of the service", argument: :required
               option :n, :name, "Specify the name of the metric", argument: :required
               option :a, :'authentication-mode', "Specify authentication mode of the service ('1' for API key, '2' for App Id / App Key, 'oauth' for OAuth mode, 'oidc' for OpenID Connect)", argument: :required
               option nil, :description, "Specify the description of the service", argument: :required
               option nil, :'support-email', "Specify the support email of the service", argument: :required
+
+              runner ApplySubcommand
             end
           end
 
           def run
-            res = service
-            if res.nil?
-              res = Entities::Service.create(remote: remote, service_params: create_service_attrs)
+            service = Entities::Service.find(remote: remote, ref: ref)
+            if service.nil?
+              service = Entities::Service.create(remote: remote,
+                                                 service_params: create_attrs)
             else
-              res.update(service_attrs) unless service_attrs.empty?
+              service.update(update_attrs) unless update_attrs.empty?
             end
 
-            output_msg_array = ["Applied Service id: #{res.id}"]
-            puts output_msg_array
+            printer.print_record service.attrs
           end
 
           private
@@ -46,15 +58,7 @@ module ThreeScaleToolbox
             @ref ||= arguments[:service_id_or_system_name]
           end
 
-          def service
-            @service ||= find_service
-          end
-
-          def find_service
-            Entities::Service::find(remote: remote, ref: ref)
-          end
-
-          def service_attrs
+          def base_service_attrs
             {
               "deployment_option" => options[:'deployment-mode'],
               "backend_version" => options[:'authentication-mode'],
@@ -64,11 +68,20 @@ module ThreeScaleToolbox
             }.compact
           end
 
-          def create_service_attrs
-            service_attrs.merge(
+          def update_attrs
+            base_service_attrs
+          end
+
+          def create_attrs
+            base_service_attrs.merge(
               "system_name" => ref,
               "name" => ref
             ) { |_key, oldval, _newval| oldval } # receiver of the merge message has key priority
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CustomPrinter.new)
           end
         end
       end
