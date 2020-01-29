@@ -4,7 +4,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Show::ShowSubcommand
     let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
     let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
     let(:remote_name) { "myremote" }
-    let(:options) {}
+    let(:options) { {} }
 
     subject { described_class.new(options, arguments, nil) }
 

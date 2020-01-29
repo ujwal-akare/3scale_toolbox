@@ -48,7 +48,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::List::ListSubcomm
           let(:options) { {:'service-ref' => "name1"}}
 
           before :example do
-            expect(service_ref_filter_class). to receive(:new).with(remote, options[:'service-ref'], "service_id").and_return(service_ref_filter)
+            expect(service_ref_filter_class).to receive(:new).with(remote, options[:'service-ref'], "service_id").and_return(service_ref_filter)
             expect(service_ref_filter).to receive(:filter).with(activedocs_arr).and_return([activedocs_1])
           end
 

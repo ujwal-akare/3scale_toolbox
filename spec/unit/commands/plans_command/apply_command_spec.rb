@@ -6,7 +6,9 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
     }
   end
   let(:options) { {} }
+  let(:plan_id) { 1 }
   let(:basic_plan_attrs) { { 'name' => 'someplan' } }
+  let(:plan_attrs) { basic_plan_attrs.merge('id' => plan_id) }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
@@ -33,6 +35,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
       before :example do
         expect(service_class).to receive(:find).and_return(service)
         expect(subject).to receive(:threescale_client).and_return(remote)
+        allow(plan).to receive(:attrs).and_return(plan_attrs)
       end
 
       context 'when service not found' do
@@ -45,15 +48,14 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
       end
 
       context 'when plan not found' do
-        let(:plan_attrs) { { 'name' => 'someplan', 'system_name' => 'someplan' } }
+        let(:create_attrs) { { 'name' => 'someplan', 'system_name' => 'someplan' } }
 
         before :example do
           expect(plan_class).to receive(:find).and_return(nil)
-          expect(plan).to receive(:id).and_return(1)
         end
 
         it 'plan created' do
-          expect(plan_class).to receive(:create).with(service: service, plan_attrs: plan_attrs)
+          expect(plan_class).to receive(:create).with(service: service, plan_attrs: create_attrs)
                                                 .and_return(plan)
           expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
         end
@@ -63,7 +65,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
         let(:current_attrs) { {} }
         before :example do
           expect(plan_class).to receive(:find).and_return(plan)
-          expect(plan).to receive(:id).and_return(1)
         end
 
         context 'with no options' do
@@ -83,7 +84,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
               'trial-period-days': 2
             }
           end
-          let(:plan_attrs) do
+          let(:update_attrs) do
             {
               'approval_required' => 'b',
               'cost_per_month' => 0,
@@ -93,7 +94,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Apply::ApplySubcommand
           end
 
           it 'plan updated' do
-            expect(plan).to receive(:update).with(plan_attrs)
+            expect(plan).to receive(:update).with(update_attrs)
             expect { subject.run }.to output(/Applied application plan id: 1/).to_stdout
           end
         end

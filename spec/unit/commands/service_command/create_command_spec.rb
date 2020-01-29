@@ -5,6 +5,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcom
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
     let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
+    let(:service_id) { 1 }
+    let(:service_name) { 'some_name' }
+    let(:service_attrs) { { 'id' => service_id, 'name' => service_name } }
     let(:remote_name) { "myremote" }
 
     let(:options) { {} }
@@ -12,6 +15,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcom
     subject { described_class.new(options, arguments, nil) }
 
     before :example do
+      allow(service).to receive(:attrs).and_return(service_attrs)
       expect(subject).to receive(:threescale_client).with(remote_name).and_return(remote)
     end
 
@@ -34,10 +38,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcom
       let(:service_name) { "a_service_name" }
       let(:service_create_params) { { "name" => service_name } }
       let(:service_create_args) { { remote: remote, service_params: service_create_params } }
-      let(:service_id) { "1" }
       shared_examples "successfully creates the service with it" do
         it do
-          expect(service).to receive(:id).and_return(service_id)
           expect(service_class).to receive(:create).with(service_create_args).and_return(service)
           expect do
             subject.run

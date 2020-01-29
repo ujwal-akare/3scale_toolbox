@@ -7,6 +7,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:activedocs_class) { class_double(ThreeScaleToolbox::Entities::ActiveDocs).as_stubbed_const }
     let(:activedocs) { instance_double(ThreeScaleToolbox::Entities::ActiveDocs) }
+    let(:activedocs_id) { 1 }
+    let(:activedocs_name) { 'a_activedocs_name' }
+    let(:activedocs_attrs) { { 'id' => activedocs_id, 'name' => activedocs_name } }
     let(:remote_name) { "myremote" }
 
     let(:options) { {} }
@@ -14,6 +17,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
     subject { described_class.new(options, arguments, nil) }
 
     before :example do
+      allow(activedocs).to receive(:attrs).and_return(activedocs_attrs)
       expect(subject).to receive(:threescale_client).with(remote_name).and_return(remote)
     end
 
@@ -34,8 +38,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
 
     context "activedocs name parameter and spec are specified" do
       let(:arguments) { { remote: remote_name, activedocs_name: activedocs_name, activedocs_spec: "-" } }
-      let(:activedocs_id) { "1" }
-      let(:activedocs_name) { "a_activedocs_name" }
       let(:activedoc_body_str) do
         <<~YAML
           ---
@@ -54,7 +56,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Create::CreateSub
 
       shared_examples "successfully creates the activedocs with it" do
         it do
-          expect(activedocs).to receive(:id).and_return(activedocs_id)
           expect(STDIN).to receive(:read).and_return(activedoc_body_str)
           expect(activedocs_class).to receive(:create).with(activedocs_create_args).and_return(activedocs)
           expect do

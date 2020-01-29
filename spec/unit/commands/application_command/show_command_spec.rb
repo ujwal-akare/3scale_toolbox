@@ -1,6 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Show::ShowSubcommand do
   let(:arguments) { { application: 'someapp', remote: 'https://key@destination.example.com' } }
-  let(:options) {}
+  let(:options) { {} }
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
   let(:application_class) { class_double(ThreeScaleToolbox::Entities::Application).as_stubbed_const }
   let(:application) { instance_double(ThreeScaleToolbox::Entities::Application) }

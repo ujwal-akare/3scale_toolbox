@@ -9,7 +9,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ProxyConfigCommand::Show::ShowSubcom
     let(:proxy_config_env) { "production" }
     let(:remote_name) { "myremote" }
     let(:arguments) { {remote: remote_name, service: service_ref , environment: proxy_config_env} }
-    let(:options) { {} }
+    let(:options) { { 'config-version': 'latest' } }
 
     subject { described_class.new(options, arguments, nil) }
 

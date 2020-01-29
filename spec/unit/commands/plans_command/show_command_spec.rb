@@ -5,7 +5,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Show::ShowSubcommand d
       remote: 'https://destination_key@destination.example.com'
     }
   end
-  let(:options) {}
+  let(:options) { {} }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }

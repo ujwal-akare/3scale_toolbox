@@ -11,6 +11,8 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Create::CreateSubcom
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
   let(:metric_class) { class_double(ThreeScaleToolbox::Entities::Metric).as_stubbed_const }
   let(:metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:metric_id) { 1 }
+  let(:metric_attrs) { { 'id' => metric_id } }
   let(:expected_basic_attrs) do
     {
       'friendly_name' => arguments[:metric_name],
@@ -23,6 +25,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Create::CreateSubcom
     before :example do
       expect(service_class).to receive(:find).and_return(service)
       expect(subject).to receive(:threescale_client).and_return(remote)
+      allow(metric).to receive(:attrs).and_return(metric_attrs)
     end
 
     context 'when service not found' do
@@ -39,7 +42,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Create::CreateSubcom
       before :example do
         expect(metric_class).to receive(:create).with(service: service, attrs: expected_attrs)
                                                 .and_return(metric)
-        expect(metric).to receive(:id).and_return('1')
       end
 
       it do

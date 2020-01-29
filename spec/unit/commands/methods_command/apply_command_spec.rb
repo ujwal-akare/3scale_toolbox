@@ -13,6 +13,8 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
   let(:method) { instance_double(ThreeScaleToolbox::Entities::Method) }
   let(:hits_id) { 1 }
   let(:hits) { { 'id' => hits_id } }
+  let(:method_id) { 1 }
+  let(:method_attrs) { { 'id' => method_id } }
   subject { described_class.new(options, arguments, nil) }
 
   context '#run' do
@@ -27,6 +29,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
       before :example do
         expect(service_class).to receive(:find).and_return(service)
         expect(subject).to receive(:threescale_client).and_return(remote)
+        allow(method).to receive(:attrs).and_return(method_attrs)
       end
 
       context 'when service not found' do
@@ -39,7 +42,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
       end
 
       context 'when method not found' do
-        let(:method_attrs) do
+        let(:create_attrs) do
           {
             'friendly_name' => arguments[:method_ref],
             'system_name' => arguments[:method_ref]
@@ -52,20 +55,19 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
                                                       parent_id: hits_id,
                                                       ref: arguments[:method_ref])
                                                 .and_return(nil)
-          expect(method).to receive(:id).and_return(1)
         end
 
         it 'method created' do
           expect(method_class).to receive(:create).with(service: service,
                                                         parent_id: hits_id,
-                                                        attrs: method_attrs)
+                                                        attrs: create_attrs)
                                                   .and_return(method)
           expect { subject.run }.to output(/Applied method id: 1/).to_stdout
         end
 
         context 'when name in options' do
           let(:options) { { name: 'new name' } }
-          let(:method_attrs) do
+          let(:create_attrs) do
             {
               'friendly_name' => options[:name],
               'system_name' => arguments[:method_ref]
@@ -75,7 +77,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
           it 'friendly_name overriden' do
             expect(method_class).to receive(:create).with(service: service,
                                                           parent_id: hits_id,
-                                                          attrs: method_attrs)
+                                                          attrs: create_attrs)
                                                     .and_return(method)
             expect { subject.run }.to output(/Applied method id: 1/).to_stdout
           end
@@ -89,7 +91,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
                                                       parent_id: hits_id,
                                                       ref: arguments[:method_ref])
                                                 .and_return(method)
-          expect(method).to receive(:id).and_return(1)
         end
 
         context 'with no options' do
@@ -102,7 +103,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
 
         context 'with options' do
           let(:options) { { name: 'some name', description: 'some descr' } }
-          let(:method_attrs) do
+          let(:update_attrs) do
             {
               'friendly_name' => options[:name],
               'description' => options[:description]
@@ -110,7 +111,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
           end
 
           it 'method updated' do
-            expect(method).to receive(:update).with(method_attrs)
+            expect(method).to receive(:update).with(update_attrs)
             expect { subject.run }.to output(/Applied method id: 1/).to_stdout
           end
         end
