@@ -74,7 +74,7 @@ COMMANDS
     activedocs           activedocs super command
     application          application super command
     application-plan     application-plan super command
-    backend              backdend super command
+    backend              backend super command
     copy                 copy super command
     help                 show help
     import               import super command

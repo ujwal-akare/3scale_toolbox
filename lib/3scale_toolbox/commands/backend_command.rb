@@ -8,7 +8,7 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'backend'
           usage       'backend <sub-command> [options]'
-          summary     'backdend super command'
+          summary     'backend super command'
           description 'Backend commands'
 
           run do |_opts, _args, cmd|

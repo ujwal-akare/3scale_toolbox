@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class BackendMetric
-      VALID_PARAMS = %w[friendly_name system_name unit].freeze
+      VALID_PARAMS = %w[friendly_name system_name unit description].freeze
       public_constant :VALID_PARAMS
 
       class << self
