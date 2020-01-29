@@ -32,10 +32,11 @@ OPTIONS
        --approval-required=<value>      Applications require approval. true
                                         or false
        --cost-per-month=<value>         Cost per month
-    -d --default                        Make default application plan
+       --default                        Make default application plan
        --disabled                       Disables all methods and metrics in
                                         this application plan
-    -p --published                      Publish application plan
+    -o --output=<value>                 Output format. One of: json|yaml
+    -p --publish                        Publish application plan
        --setup-fee=<value>              Setup fee
     -t --system-name=<value>            Application plan system name
        --trial-period-days=<value>      Trial period days
@@ -86,6 +87,7 @@ OPTIONS
        --enabled                        Enable application plan
        --hide                           Hide application plan
     -n --name=<value>                   Plan name
+    -o --output=<value>                 Output format. One of: json|yaml
     -p --publish                        Publish application plan
        --setup-fee=<value>              Setup fee
        --trial-period-days=<value>      Trial period days
@@ -114,6 +116,9 @@ USAGE
 
 DESCRIPTION
     List application plans
+
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
 
 OPTIONS FOR APPLICATION-PLAN
     -c --config-file=<value>      3scale toolbox configuration file (default:
@@ -161,6 +166,9 @@ USAGE
 
 DESCRIPTION
     show application plan
+
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
 
 OPTIONS FOR APPLICATION-PLAN
     -c --config-file=<value>      3scale toolbox configuration file (default:

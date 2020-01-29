@@ -17,9 +17,12 @@ USAGE
 DESCRIPTION
     List all defined Proxy Configurations
 
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
+
 OPTIONS FOR PROXY-CONFIG
     -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  /home/msoriano/.3scalerc.yaml)
+                                  $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
     -k --insecure                 Proceed and operate even for server
                                   connections otherwise considered insecure
@@ -43,11 +46,12 @@ DESCRIPTION
 OPTIONS
        --config-version=<value>      Specify the Proxy Configuration version.
                                      If not specified it gets the latest
-                                     version
+                                     version (default: latest)
+    -o --output=<value>              Output format. One of: json|yaml
 
 OPTIONS FOR PROXY-CONFIG
     -c --config-file=<value>         3scale toolbox configuration file
-                                     (default: /home/msoriano/.3scalerc.yaml)
+                                     (default: $HOME/.3scalerc.yaml)
     -h --help                        show help for this command
     -k --insecure                    Proceed and operate even for server
                                      connections otherwise considered
@@ -70,7 +74,7 @@ DESCRIPTION
 
 OPTIONS FOR PROXY-CONFIG
     -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  /home/msoriano/.3scalerc.yaml)
+                                  $HOME/.3scalerc.yaml)
     -h --help                     show help for this command
     -k --insecure                 Proceed and operate even for server
                                   connections otherwise considered insecure

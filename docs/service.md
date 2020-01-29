@@ -33,6 +33,7 @@ OPTIONS
                                           service
        --description=<value>              Specify the description of the
                                           service
+    -o --output=<value>                   Output format. One of: json|yaml
     -s --system-name=<value>              Specify the system-name of the
                                           service
        --support-email=<value>            Specify the support email of the
@@ -78,6 +79,7 @@ OPTIONS
        --description=<value>              Specify the description of the
                                           service
     -n --name=<value>                     Specify the name of the metric
+    -o --output=<value>                   Output format. One of: json|yaml
        --support-email=<value>            Specify the support email of the
                                           service
 
@@ -105,6 +107,9 @@ USAGE
 DESCRIPTION
     List all services
 
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
+
 OPTIONS FOR SERVICE
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
@@ -126,6 +131,9 @@ USAGE
 
 DESCRIPTION
     Show the information of a service
+
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
 
 OPTIONS FOR SERVICE
     -c --config-file=<value>      3scale toolbox configuration file (default:

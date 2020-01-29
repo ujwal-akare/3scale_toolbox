@@ -29,6 +29,7 @@ OPTIONS
        --description=<value>      Method description
        --disabled                 Disables this method in all application
                                   plans
+    -o --output=<value>           Output format. One of: json|yaml
     -t --system-name=<value>      Method system name
 
 OPTIONS FOR METHOD
@@ -69,6 +70,7 @@ OPTIONS
        --enabled                  Enables this method in all application
                                   plans
     -n --name=<value>             Method name
+    -o --output=<value>           Output format. One of: json|yam
 
 OPTIONS FOR METHOD
     -c --config-file=<value>      3scale toolbox configuration file (default:
@@ -91,6 +93,9 @@ USAGE
 
 DESCRIPTION
     List methods
+
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
 
 OPTIONS FOR METHOD
     -c --config-file=<value>      3scale toolbox configuration file (default:

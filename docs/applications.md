@@ -20,9 +20,19 @@ DESCRIPTION
 
 OPTIONS
        --account=<value>          Filter by account
+    -o --output=<value>           Output format. One of: json|yaml
        --plan=<value>             Filter by application plan. Service option
                                   required
        --service=<value>          Filter by service
+
+OPTIONS FOR APPLICATION
+    -c --config-file=<value>      3scale toolbox configuration file (default:
+                                  $HOME/.3scalerc.yaml)
+    -h --help                     show help for this command
+    -k --insecure                 Proceed and operate even for server
+                                  connections otherwise considered insecure
+    -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 ### Create
@@ -32,7 +42,7 @@ OPTIONS
   * `<service>` reference. It can be either service `id`, or service `system_name`. Toolbox will figure it out.
   * `<account>` reference. It can be one of the following and the toolbox will figure it out:
     * Account `id`
-    * `username`, `email` or `user_id` of the admin user of the account 
+    * `username`, `email` or `user_id` of the admin user of the account
     * `provider_key`
   * `<application plan>` reference. It can be either plan `id`, or plan `system_name`. Toolbox will figure it out.
   * `<name>` application name.
@@ -58,9 +68,19 @@ OPTIONS
                                       modes) of the application to be
                                       created.
        --description=<value>          Application description
+    -o --output=<value>               Output format. One of: json|yaml
        --redirect-url=<value>         OpenID Connect redirect url
        --user-key=<value>             User Key (API Key) of the application
                                       to be created.
+
+OPTIONS FOR APPLICATION
+    -c --config-file=<value>      3scale toolbox configuration file (default:
+                                  $HOME/.3scalerc.yaml)
+    -h --help                     show help for this command
+    -k --insecure                 Proceed and operate even for server
+                                  connections otherwise considered insecure
+    -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 ### Show
@@ -84,6 +104,18 @@ DESCRIPTION
     Connect authentication modes)
 
     * Application internal id
+
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
+
+OPTIONS FOR APPLICATION
+    -c --config-file=<value>      3scale toolbox configuration file (default:
+                                  $HOME/.3scalerc.yaml)
+    -h --help                     show help for this command
+    -k --insecure                 Proceed and operate even for server
+                                  connections otherwise considered insecure
+    -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 ### Apply
@@ -95,7 +127,7 @@ DESCRIPTION
   * Application internal id
 * `account` optional argument is required when application is not found and needs to be created. It can be one of the following and the toolbox will figure it out:
   * Account `id`
-  * `username`, `email` or `user_id` of the admin user of the account 
+  * `username`, `email` or `user_id` of the admin user of the account
   * `provider_key`
 * `name` cannot be used as unique identifier because application name is not unique in 3scale.
 * This is command is `idempotent`.
@@ -133,6 +165,7 @@ OPTIONS
                                       does not exist.
        --description=<value>          Application description
        --name=<value>                 Application name
+    -o --output=<value>               Output format. One of: json|yaml
        --plan=<value>                 Application's plan. Required when
                                       creating
        --redirect-url=<value>         OpenID Connect redirect url
@@ -143,6 +176,15 @@ OPTIONS
                                       state to suspended)
        --user-key=<value>             User Key (API Key) of the application
                                       to be created.
+
+OPTIONS FOR APPLICATION
+    -c --config-file=<value>      3scale toolbox configuration file (default:
+                                  $HOME/.3scalerc.yaml)
+    -h --help                     show help for this command
+    -k --insecure                 Proceed and operate even for server
+                                  connections otherwise considered insecure
+    -v --version                  Prints the version of this command
+       --verbose                  Verbose mode
 ```
 
 ### Delete
