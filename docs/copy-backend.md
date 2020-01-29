@@ -2,7 +2,7 @@
 
 This command makes a copy of the referenced backend.
 Target backend will be searched by source backend system name. System name can be overriden with `--target-system-name` option.
-If a backend with the selected `system_name` is not found, it will be created.
+If a backend with the selected `system-name` is not found, it will be created.
 
 Components of the backend being copied:
 
@@ -10,6 +10,8 @@ Components of the backend being copied:
 * metrics
 * methods
 * mapping rules
+
+If a backend with the selected `system-name` is found, it will be updated. Only missing metrics, methods and mapping rules will be created new.
 
 3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 
@@ -25,7 +27,7 @@ DESCRIPTION
     This command makes a copy of the referenced backend. Target backend will
     be searched by source backend system name. System name can be overriden
     with `--target-system-name` option. If a backend with the selected
-    `system_name` is not found, it will be created.
+    `system-name` is not found, it will be created.
 
     Components of the backend being copied:
 
@@ -34,6 +36,10 @@ DESCRIPTION
     methods
 
     mapping rules
+
+    If a backend with the selected `system-name` is found, it will be
+    updated. Only missing metrics, methods and mapping rules will be created
+    new.
 
 OPTIONS
     -d --destination=<value>             3scale target instance. Url or

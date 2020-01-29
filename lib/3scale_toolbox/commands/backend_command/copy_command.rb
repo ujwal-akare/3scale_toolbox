@@ -23,6 +23,7 @@ module ThreeScaleToolbox
             \nmetrics
             \nmethods
             \nmapping rules
+            \n\n If a backend with the selected `system-name` is found, it will be updated. Only missing metrics, methods and mapping rules will be created new.
             HEREDOC
 
             option  :s, :source, '3scale source instance. Url or remote name', argument: :required
