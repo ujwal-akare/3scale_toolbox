@@ -9,9 +9,6 @@ module ThreeScaleToolbox
           def run
             backend = Entities::Backend.find(remote: target_remote, ref: target_backend_ref)
 
-            if backend == source_backend
-            end
-
             if backend.nil?
               backend = Entities::Backend.create(remote: target_remote,
                                                  attrs: create_attrs)
