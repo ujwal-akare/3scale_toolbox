@@ -140,14 +140,8 @@ module ThreeScaleToolbox
           end
 
           def printer
-            if options.key?(:output)
-              options.fetch(:output)
-            else
-              # keep backwards compatibility
-              CustomPrinter.new(
-                publish: option_publish, hide: option_hide
-              )
-            end
+            # keep backwards compatibility
+            options.fetch(:output, CustomPrinter.new(publish: option_publish, hide: option_hide))
           end
         end
       end
