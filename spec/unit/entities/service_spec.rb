@@ -81,7 +81,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     it 'returns nil when the service does not exist' do
-      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       expect(remote).to receive(:list_services).and_return([{ "system_name" => "sysname1" }, { "system_name" => "sysname2" }])
       expect(described_class.find(service_info)).to be_nil
     end
@@ -94,7 +94,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     it 'service instance is returned when specifying an existing system-name' do
-      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+      expect(remote).to receive(:show_service).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       expect(remote).to receive(:list_services).and_return([{ "id" => 3, "system_name" => system_name }, { "id" => 7, "system_name" => "sysname1" }])
       service_obj = described_class.find(service_info)
       expect(service_obj.id).to eq(3)

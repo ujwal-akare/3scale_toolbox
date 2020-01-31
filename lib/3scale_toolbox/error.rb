@@ -26,4 +26,7 @@ module ThreeScaleToolbox
       "#{super}. Errors: #{apierrors}"
     end
   end
+
+  class InvalidIdError < Error
+  end
 end

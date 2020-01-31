@@ -13,6 +13,7 @@ require '3scale_toolbox/commands/account_command'
 require '3scale_toolbox/commands/proxy_config_command'
 require '3scale_toolbox/commands/policy_registry_command'
 require '3scale_toolbox/commands/application_command'
+require '3scale_toolbox/commands/backend_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -31,6 +32,7 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::ProxyConfigCommand,
       ThreeScaleToolbox::Commands::PolicyRegistryCommand,
       ThreeScaleToolbox::Commands::ApplicationCommand,
+      ThreeScaleToolbox::Commands::BackendCommand
     ].freeze
   end
 end

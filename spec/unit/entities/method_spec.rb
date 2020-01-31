@@ -71,7 +71,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
       let(:methods) { [method_attrs] }
 
       before :example do
-        expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(service).to receive(:methods).with(parent_id).and_return(methods)
       end
 
@@ -87,7 +87,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
       let(:methods) { [] }
 
       before :example do
-        expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+        expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(service).to receive(:methods).with(parent_id).and_return(methods)
       end
 

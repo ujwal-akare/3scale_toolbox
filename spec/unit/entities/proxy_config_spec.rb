@@ -26,7 +26,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ProxyConfig do
     end
 
     it "returns nil when it is not found" do
-      expect(remote).to receive(:show_proxy_config).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+      expect(remote).to receive(:show_proxy_config).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       pc_obj = described_class.find(service: service, environment: proxy_config_env, version: proxy_config_version)
       expect(pc_obj).to be_nil
     end
@@ -45,7 +45,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ProxyConfig do
     end
 
     it "returns nil when it is not found" do
-      expect(remote).to receive(:proxy_config_latest).and_raise(ThreeScale::API::HttpClient::NotFoundError)
+      expect(remote).to receive(:proxy_config_latest).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       expect(service).to receive(:remote).and_return(remote)
 
       pc_obj = described_class.find_latest(service: service, environment: proxy_config_env)
@@ -59,7 +59,7 @@ RSpec.describe ThreeScaleToolbox::Entities::ProxyConfig do
     before :example do
       expect(service).to receive(:remote).and_return(remote)
     end
-    
+
     context "#attrs" do
 
       it 'calls show_proxy_config method' do

@@ -191,4 +191,63 @@ module Helpers
 
     raise "timed out after #{timeout} seconds"
   end
+
+  class BackendFactory
+    private_class_method :new
+    attr_reader :backend
+
+    def self.new_backend(client)
+      new(client).backend
+    end
+
+    private
+
+    def initialize(client)
+      @backend = create_backend(client)
+      create_metrics
+      create_methods
+      create_mapping_rules
+    end
+
+    def create_backend(client)
+      attrs = {
+        'name' => "API_TEST_#{Helpers.random_lowercase_name}_#{Time.now.getutc.to_i}",
+        'private_endpoint' => "https://#{Helpers.random_lowercase_name}.example.com"
+      }
+
+      ThreeScaleToolbox::Entities::Backend.create(remote: client, attrs: attrs)
+    end
+
+    def create_methods
+      hits_id = backend.hits.id
+      2.times.each do
+        method = { 'system_name' => Helpers.random_lowercase_name,
+                   'friendly_name' => Helpers.random_lowercase_name }
+        ThreeScaleToolbox::Entities::BackendMethod.create(backend: backend, parent_id: hits_id,
+                                                          attrs: method)
+      end
+    end
+
+    def create_metrics
+      2.times.each do
+        name = Helpers.random_lowercase_name
+        metric = { 'friendly_name' => name, 'system_name' => name, 'unit' => '1' }
+        ThreeScaleToolbox::Entities::BackendMetric.create(backend: backend, attrs: metric)
+      end
+    end
+
+    def create_mapping_rules
+      hits_id = backend.hits.id
+      # mapping rules (only mapping rules for hits metric)
+      2.times.each do |idx|
+        attrs = {
+          'metric_id' => hits_id, 'pattern' => "/rule#{idx}",
+          'http_method' => 'GET',
+          'delta' => 1
+        }
+
+        ThreeScaleToolbox::Entities::BackendMappingRule.create(backend: backend, attrs: attrs)
+      end
+    end
+  end
 end

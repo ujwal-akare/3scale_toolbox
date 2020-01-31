@@ -21,7 +21,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
     context 'show_account raises NotFoundError' do
       before :example do
         expect(remote).to receive(:show_account).with(account_ref)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       end
 
       it 'find_by_example is called' do
@@ -76,7 +76,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
     context 'account found by username' do
       before :example do
         expect(remote).to receive(:find_account).with(email: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(username: text).and_return(account_attrs)
       end
 
@@ -90,9 +90,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
     context 'account found by user_id' do
       before :example do
         expect(remote).to receive(:find_account).with(email: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(username: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(user_id: text).and_return(account_attrs)
       end
 
@@ -106,11 +106,11 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
     context 'account found by provider key' do
       before :example do
         expect(remote).to receive(:find_account).with(email: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(username: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(user_id: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(buyer_provider_key: text,
                                                       buyer_service_token: text)
                                                 .and_return(account_attrs)
@@ -126,14 +126,14 @@ RSpec.describe ThreeScaleToolbox::Entities::Account do
     context 'account not found' do
       before :example do
         expect(remote).to receive(:find_account).with(email: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(username: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(user_id: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(remote).to receive(:find_account).with(buyer_provider_key: text,
                                                       buyer_service_token: text)
-                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError)
+                                                .and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
       end
 
       it 'nil returned' do
