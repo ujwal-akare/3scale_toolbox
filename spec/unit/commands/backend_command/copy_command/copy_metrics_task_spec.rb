@@ -32,32 +32,14 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
 
       it 'metric with same system_name not created' do
         allow(metric_src_0).to receive(:system_name).and_return('system_name_0')
-        allow(metric_src_0).to receive(:friendly_name).and_return('friendly_name_0')
         allow(metric_src_1).to receive(:system_name).and_return('system_name_1')
-        allow(metric_src_1).to receive(:friendly_name).and_return('friendly_name_1')
         # same as metric_src_0
         allow(metric_tgt).to receive(:system_name).and_return('system_name_0')
-        allow(metric_tgt).to receive(:friendly_name).and_return('friendly_name_2')
 
         expect(metric_src_1).to receive(:attrs).and_return(metric_src_1_attrs)
         expect(backendmetric_class).to receive(:create).with(backend: target_backend,
                                                              attrs: metric_src_1_attrs)
 
-        subject.run
-      end
-
-      it 'metric with same friendly_name not created' do
-        allow(metric_src_0).to receive(:system_name).and_return('system_name_0')
-        allow(metric_src_0).to receive(:friendly_name).and_return('friendly_name_0')
-        allow(metric_src_1).to receive(:system_name).and_return('system_name_1')
-        allow(metric_src_1).to receive(:friendly_name).and_return('friendly_name_1')
-        allow(metric_tgt).to receive(:system_name).and_return('system_name_2')
-        # same as metric_src_0
-        allow(metric_tgt).to receive(:friendly_name).and_return('friendly_name_0')
-
-        expect(metric_src_1).to receive(:attrs).and_return(metric_src_1_attrs)
-        expect(backendmetric_class).to receive(:create).with(backend: target_backend,
-                                                             attrs: metric_src_1_attrs)
         subject.run
       end
     end

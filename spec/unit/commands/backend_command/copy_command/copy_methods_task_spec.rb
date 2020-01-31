@@ -38,34 +38,15 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
 
       it 'method with same system_name not created' do
         allow(method_src_0).to receive(:system_name).and_return('system_name_0')
-        allow(method_src_0).to receive(:friendly_name).and_return('friendly_name_0')
         allow(method_src_1).to receive(:system_name).and_return('system_name_1')
-        allow(method_src_1).to receive(:friendly_name).and_return('friendly_name_1')
         # same as method_src_0
         allow(method_tgt).to receive(:system_name).and_return('system_name_0')
-        allow(method_tgt).to receive(:friendly_name).and_return('friendly_name_2')
 
         expect(method_src_1).to receive(:attrs).and_return(method_src_1_attrs)
         expect(backendmethod_class).to receive(:create).with(backend: target_backend,
                                                              parent_id: target_hits_id,
                                                              attrs: method_src_1_attrs)
 
-        subject.run
-      end
-
-      it 'method with same friendly_name not created' do
-        allow(method_src_0).to receive(:system_name).and_return('system_name_0')
-        allow(method_src_0).to receive(:friendly_name).and_return('friendly_name_0')
-        allow(method_src_1).to receive(:system_name).and_return('system_name_1')
-        allow(method_src_1).to receive(:friendly_name).and_return('friendly_name_1')
-        allow(method_tgt).to receive(:system_name).and_return('system_name_2')
-        # same as method_src_0
-        allow(method_tgt).to receive(:friendly_name).and_return('friendly_name_0')
-
-        expect(method_src_1).to receive(:attrs).and_return(method_src_1_attrs)
-        expect(backendmethod_class).to receive(:create).with(backend: target_backend,
-                                                             parent_id: target_hits_id,
-                                                             attrs: method_src_1_attrs)
         subject.run
       end
     end

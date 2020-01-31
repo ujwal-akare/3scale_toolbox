@@ -19,8 +19,8 @@ module ThreeScaleToolbox
           end
 
           def missing_metrics
-            @missing_metrics ||= ThreeScaleToolbox::Helper.array_difference(source_metrics, target_metrics) do |metric, target|
-              metric.system_name == target.system_name || metric.friendly_name == target.friendly_name
+            @missing_metrics ||= ThreeScaleToolbox::Helper.array_difference(source_metrics, target_metrics) do |source, target|
+              source.system_name == target.system_name
             end
           end
         end

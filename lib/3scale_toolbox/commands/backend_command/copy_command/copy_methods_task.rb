@@ -29,8 +29,8 @@ module ThreeScaleToolbox
           end
 
           def missing_methods
-            @missing_methods ||= ThreeScaleToolbox::Helper.array_difference(source_methods, target_methods) do |method, target|
-              method.system_name == target.system_name || method.friendly_name == target.friendly_name
+            @missing_methods ||= ThreeScaleToolbox::Helper.array_difference(source_methods, target_methods) do |source, target|
+              source.system_name == target.system_name
             end
           end
         end
