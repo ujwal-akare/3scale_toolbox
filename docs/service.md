@@ -1,10 +1,11 @@
-## Metric
+## Service
 
 * [Create new service](#create)
 * [Apply service](#apply)
 * [List services](#list)
 * [Show service](#show)
 * [Delete service](#delete)
+* [Copy service](copy-service.md)
 
 ### Create
 
