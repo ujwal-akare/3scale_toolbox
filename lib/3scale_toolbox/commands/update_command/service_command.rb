@@ -11,9 +11,9 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'service'
             usage       'service [opts] -s <src> -d <dst> <src_service_id> <dst_service_id>'
-            summary     '[DEPRECTATED] update service'
+            summary     '[DEPRECATED] update service'
             description <<-HEREDOC
-            This command has been deprecated. Use '3scale copy service' instead.
+            This command has been deprecated. Use '3scale service copy' instead.
             \n Update existing service, update proxy settings, metrics, methods, application plans and mapping rules.'
             HEREDOC
 
@@ -30,6 +30,7 @@ module ThreeScaleToolbox
         end
 
         def run
+          warn "\e[1m\e[31mThis command has been deprecated. Use '3scale service copy' instead\e[0m"
           source_service = Entities::Service.new(
             id: arguments[:src_service_id],
             remote: threescale_client(fetch_required_option(:source))

@@ -85,7 +85,7 @@ COMMANDS
     proxy-config         proxy-config super command
     remote               remotes super command
     service              services super command
-    update               [DEPRECTATED] update super command
+    update               [DEPRECATED] update super command
 
 OPTIONS
     -c --config-file=<value>      3scale toolbox configuration file (default:
