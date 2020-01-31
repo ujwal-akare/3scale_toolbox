@@ -19,18 +19,18 @@ module ThreeScaleToolbox
             \n Components of the product being copied:
             \nproduct configuration
             \nproduct settings
-            \nproduct methods&metrics
-            \nproduct mapping rules
-            \nproduct application plans & pricing rules & limits
-            \nproduct application usage rules
-            \nproduct policies
-            \nproduct backends
-            \nproduct activedocs
+            \nproduct methods&metrics: Only missing metrics&methods will be created.
+            \nproduct mapping rules: Only missing mapping rules will be created.
+            \nproduct application plans & pricing rules & limits: Only missing application plans & pricing rules & limits will be created.
+            \nproduct application usage rules 
+            \nproduct policies 
+            \nproduct backends: Only missing backends will be created.
+            \nproduct activedocs: Only missing activedocs will be created.
             HEREDOC
 
             option  :s, :source, '3scale source instance. Url or remote name', argument: :required
             option  :d, :destination, '3scale target instance. Url or remote name', argument: :required
-            option  :t, 'target-syste-name', 'Target system name. Default to source system name', argument: :required
+            option  :t, 'target-system-name', 'Target system name. Default to source system name', argument: :required
             param   :source_product
 
             runner CopySubcommand
