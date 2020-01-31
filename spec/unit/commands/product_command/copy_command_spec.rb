@@ -7,7 +7,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ProductCommand::CopySubcommand do
   let(:arguments) { { source_product: source_product } }
   let(:options) do
     {
-      target_system_name: 'other_system_name',
+      'target-system-name': 'other_system_name',
       source: source_remote,
       destination: target_remote
     }
