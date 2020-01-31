@@ -21,6 +21,8 @@ module ThreeScaleToolbox
               \n * Application internal id
               HEREDOC
 
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :application
 
@@ -29,23 +31,10 @@ module ThreeScaleToolbox
           end
 
           def run
-            print_header
-            print_data
+            printer.print_record application.attrs
           end
 
           private
-
-          def print_header
-            puts FIELDS_TO_SHOW.map(&:upcase).join("\t")
-          end
-
-          def print_data
-            puts FIELDS_TO_SHOW.map { |field| app_attrs.fetch(field, '(empty)') }.join("\t")
-          end
-
-          def app_attrs
-            @app_attrs ||= application.attrs
-          end
 
           def application
             @application ||= find_application
@@ -63,6 +52,11 @@ module ThreeScaleToolbox
 
           def remote
             @remote ||= threescale_client(arguments[:remote])
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CLI::CustomTablePrinter.new(FIELDS_TO_SHOW))
           end
         end
       end

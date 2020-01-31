@@ -2,6 +2,24 @@ module ThreeScaleToolbox
   module Commands
     module ApplicationCommand
       module Apply
+        class CustomPrinter
+          attr_reader :option_resume, :option_suspend
+
+          def initialize(options)
+            @option_resume = options[:resume]
+            @option_suspend = options[:suspend]
+          end
+
+          def print_record(application)
+            output_msg_array = ["Applied application id: #{application['id']}"]
+            output_msg_array << 'Resumed' if option_resume
+            output_msg_array << 'Suspended' if option_suspend
+            puts output_msg_array.join('; ')
+          end
+
+          def print_collection(collection) end
+        end
+
         class ApplySubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -28,6 +46,8 @@ module ThreeScaleToolbox
               option      nil, :'redirect-url', 'OpenID Connect redirect url', argument: :required
               flag        nil, :resume, 'Resume a suspended application'
               flag        nil, :suspend, 'Suspends an application (changes the state to suspended)'
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :application
 
@@ -52,10 +72,8 @@ module ThreeScaleToolbox
 
             application.resume if option_resume
             application.suspend if option_suspend
-            output_msg_array = ["Applied application id: #{application.id}"]
-            output_msg_array << 'Resumed' if option_resume
-            output_msg_array << 'Suspended' if option_suspend
-            puts output_msg_array.join('; ')
+
+            printer.print_record application.attrs
           end
 
           private
@@ -185,6 +203,11 @@ module ThreeScaleToolbox
 
           def option_redirect_url
             options[:'redirect-url']
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CustomPrinter.new(resume: option_resume, suspend: option_suspend))
           end
         end
       end

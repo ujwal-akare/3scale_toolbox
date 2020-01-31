@@ -5,6 +5,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Apply::ApplySubcomma
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
     let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
+    let(:svc_id) { 1 }
+    let(:service_name) { 'some_name' }
+    let(:service_attrs) { { 'id' => svc_id, 'name' => service_name } }
     let(:remote_name) { "myremote" }
 
     let(:options) { {} }
@@ -12,19 +15,18 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Apply::ApplySubcomma
     subject { described_class.new(options, arguments, nil) }
 
     before :example do
+      allow(service).to receive(:attrs).and_return(service_attrs)
       expect(subject).to receive(:threescale_client).with(remote_name).and_return(remote)
     end
 
     context "when the service is not found" do
       let(:arguments) { { remote: remote_name, service_id_or_system_name: svc_ref } }
-      let(:svc_id) { "4" }
       let(:svc_ref) { "unexistingservice" }
       let(:svc_params) { { "name" => svc_ref, "system_name" => svc_ref } }
 
       shared_examples "successfully creates the service with the specified parameter and options" do
         it do
           expect(service_class).to receive(:find).with(remote: remote, ref: svc_ref).and_return(nil)
-          expect(service).to receive(:id).and_return(svc_id)
           expect(service_class).to receive(:create).with(remote: remote, service_params: svc_params).and_return(service)
           expect { subject.run }.to output(/Applied Service id: #{svc_id}/).to_stdout
         end
@@ -70,12 +72,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Apply::ApplySubcomma
 
     context "when the service already exists" do
       let(:svc_ref) { "existingservice" }
-      let(:svc_id) { "4" }
       let(:arguments) { { remote: remote_name, service_id_or_system_name: svc_ref } }
 
       before :example do
         expect(service_class).to receive(:find).with(remote: remote, ref: svc_ref).and_return(service)
-        expect(service).to receive(:id).and_return(svc_id)
       end
 
       context "with no options" do

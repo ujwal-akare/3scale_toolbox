@@ -15,6 +15,7 @@ module ThreeScaleToolbox
               summary     'show application plan'
               description 'show application plan'
 
+              ThreeScaleToolbox::CLI.output_flag(self)
               param       :remote
               param       :service_ref
               param       :plan_ref
@@ -24,26 +25,13 @@ module ThreeScaleToolbox
           end
 
           def run
-            print_header
-            print_data
+            printer.print_record plan.attrs
           end
 
           private
 
-          def print_header
-            puts FIELDS_TO_SHOW.map(&:upcase).join("\t")
-          end
-
-          def print_data
-            puts FIELDS_TO_SHOW.map { |field| plan_attrs.fetch(field, '(empty)') }.join("\t")
-          end
-
           def service
             @service ||= find_service
-          end
-
-          def plan_attrs
-            @plan_attrs ||= plan.attrs
           end
 
           def plan
@@ -73,6 +61,10 @@ module ThreeScaleToolbox
 
           def plan_ref
             arguments[:plan_ref]
+          end
+
+          def printer
+            options.fetch(:output, CLI::CustomTablePrinter.new(FIELDS_TO_SHOW))
           end
         end
       end

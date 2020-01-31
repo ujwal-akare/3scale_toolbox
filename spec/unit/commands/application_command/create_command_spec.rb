@@ -17,10 +17,16 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Create::CreateSu
   let(:plan) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
   let(:application_class) { class_double(ThreeScaleToolbox::Entities::Application).as_stubbed_const }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
+  let(:app0_id) { 200 }
+  let(:app0_attrs) { { 'id' => app0_id } }
   let(:app0) { instance_double(ThreeScaleToolbox::Entities::Application) }
   subject { described_class.new(options, arguments, nil) }
 
   context '#run' do
+    before :each do
+      allow(app0).to receive(:attrs).and_return(app0_attrs)
+    end
+
     context 'when account not found' do
       let(:account) { nil }
 
@@ -85,7 +91,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Create::CreateSu
         expect(plan_class).to receive(:find).with(service: service, ref: 'myplan')
                                             .and_return(plan)
         expect(plan).to receive(:id).and_return(100)
-        expect(app0).to receive(:id).and_return(200)
       end
 
       it 'application belongs to given plan' do

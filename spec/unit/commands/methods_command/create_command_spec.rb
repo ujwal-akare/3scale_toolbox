@@ -14,12 +14,15 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Create::CreateSubcom
   let(:hits_id) { 1 }
   let(:hits) { { 'id' => hits_id } }
   let(:expected_basic_attrs) { { 'friendly_name' => arguments[:method_name] } }
+  let(:method_id) { 1 }
+  let(:method_attrs) { { 'id' => method_id } }
   subject { described_class.new(options, arguments, nil) }
 
   context '#run' do
     before :example do
-      expect(service_class).to receive(:find).and_return(service)
       expect(subject).to receive(:threescale_client).and_return(remote)
+      expect(service_class).to receive(:find).and_return(service)
+      allow(method).to receive(:attrs).and_return(method_attrs)
     end
 
     context 'when service not found' do
@@ -39,7 +42,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Create::CreateSubcom
                                                       parent_id: hits_id,
                                                       attrs: expected_attrs)
                                                 .and_return(method)
-        expect(method).to receive(:id).and_return('1')
       end
 
       it do

@@ -13,11 +13,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
   let(:application_class) { class_double(ThreeScaleToolbox::Entities::Application).as_stubbed_const }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:application) { instance_double(ThreeScaleToolbox::Entities::Application) }
+  let(:app_id) { 1 }
+  let(:app_attrs) { { 'id' => app_id } }
   subject { described_class.new(options, arguments, nil) }
 
   before :example do
     allow(service).to receive(:id).and_return(service_id)
     allow(account).to receive(:id).and_return(account_id)
+    allow(application).to receive(:attrs).and_return(app_attrs)
   end
 
   context '#run' do
@@ -36,7 +39,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
                                                          service_id: nil,
                                                          ref: app_ref)
                                                    .and_return(application)
-        expect(application).to receive(:id).and_return(1)
       end
 
       context 'no app attrs' do
@@ -305,7 +307,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
           expect(plan_class).to receive(:find).with(service: service, ref: 'myplan')
                                               .and_return(plan)
           expect(plan).to receive(:id).and_return('planId')
-          expect(application).to receive(:id).and_return(1)
         end
 
         it 'user_key set to application param' do

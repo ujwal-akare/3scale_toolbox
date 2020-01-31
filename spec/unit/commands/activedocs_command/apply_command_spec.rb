@@ -7,6 +7,17 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
   let(:options) { default_options }
   let(:activedocs_ref) { "activedocsref" }
   let(:activedocs_id) { "1" }
+  let(:activedocs_attrs) { { 'id' => activedocs_id, "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
+  let(:activedocs_body_str) do
+    <<~YAML
+      ---
+      value1: "content1"
+    YAML
+  end
+  let(:activedocs_body_pretty_json) do
+    activedocs_body_content = YAML.safe_load(activedocs_body_str)
+    JSON.pretty_generate(activedocs_body_content)
+  end
   let(:arguments) do
     {
       remote: remote_name,
@@ -17,14 +28,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
   subject { described_class.new(options, arguments, nil) }
 
   before :example do
-    expect(subject).to receive(:threescale_client).with(remote_name).and_return(remote)
+    allow(activedocs).to receive(:attrs).and_return(activedocs_attrs)
+    allow(subject).to receive(:threescale_client).with(remote_name).and_return(remote)
   end
 
   context '#run' do
     context 'when --publish and --hide set' do
       let(:options) { default_options.merge(publish: true, hide: true) }
       it 'error raised' do
-        expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(activedocs)
         expect { subject.run }.to raise_error(ThreeScaleToolbox::Error, /mutually exclusive/)
       end
     end
@@ -40,29 +51,25 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
     end
 
     context 'valid params' do
-      let(:activedocs_body_str) do
-        <<~YAML
-          ---
-          value1: "content1"
-        YAML
-      end
-      let(:activedocs_body_pretty_json) do
-        activedocs_body_content = YAML.safe_load(activedocs_body_str)
-        JSON.pretty_generate(activedocs_body_content)
-      end
       let(:general_options) { default_options.merge(:'openapi-spec' => "-") }
 
       context 'when activedocs not found' do
-        let(:activedocs_attrs) { { "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
+        let(:create_attrs) do
+          {
+            'name' => activedocs_ref,
+            'system_name' => activedocs_ref,
+            'body' => activedocs_body_pretty_json
+          }
+        end
         let(:options) { general_options }
         before :example do
           expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(nil)
           expect(STDIN).to receive(:read).and_return(activedocs_body_str)
         end
+
         shared_examples 'activedocs created' do
           it do
-            expect(activedocs).to receive(:id).and_return(activedocs_id)
-            expect(activedocs_class).to receive(:create).with(remote: remote, attrs: activedocs_attrs).and_return(activedocs)
+            expect(activedocs_class).to receive(:create).with(remote: remote, attrs: create_attrs).and_return(activedocs)
             expect { subject.run }.to output(/Applied ActiveDocs id: #{activedocs_id}/).to_stdout
           end
         end
@@ -71,20 +78,19 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
 
         context 'when name in options' do
           let(:options) { general_options.merge(name: 'new name') }
-          let(:activedocs_attrs) { { "name" => options[:name], "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
+          let(:create_attrs) { { "name" => options[:name], "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
           include_examples 'activedocs created'
         end
 
         context 'when service-id in options' do
           let(:options) { general_options.merge(:'service-id' => '7') }
-          let(:activedocs_attrs) { { "service_id" => options[:'service-id'], "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
+          let(:create_attrs) { { "service_id" => options[:'service-id'], "name" => activedocs_ref, "system_name" => activedocs_ref, "body" => activedocs_body_pretty_json } }
           include_examples 'activedocs created'
         end
       end
 
       context 'when activedocs found' do
         before :example do
-          expect(activedocs).to receive(:id).and_return(activedocs_id)
           expect(activedocs_class).to receive(:find).with(remote: remote, ref: activedocs_ref).and_return(activedocs)
         end
 
@@ -96,7 +102,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
 
         context 'with options' do
           let(:options) { default_options.merge(name: 'some name', description: 'some descr', :'skip-swagger-validations' => true, :'service-id' => "5") }
-          let(:activedocs_attrs) do
+          let(:update_attrs) do
             {
               'name' => options[:name],
               'description' => options[:description],
@@ -106,7 +112,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ActiveDocsCommand::Apply::ApplySubco
           end
 
           it 'activedocs updated' do
-            expect(activedocs).to receive(:update).with(activedocs_attrs)
+            expect(activedocs).to receive(:update).with(update_attrs)
             expect { subject.run }.to output(/Applied ActiveDocs id: #{activedocs_id}/).to_stdout
           end
         end

@@ -10,6 +10,8 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:metric_class) { class_double(ThreeScaleToolbox::Entities::Metric).as_stubbed_const }
+  let(:metric_id) { 1 }
+  let(:metric_attrs) { { 'id' => metric_id } }
   let(:metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
   subject { described_class.new(options, arguments, nil) }
 
@@ -25,6 +27,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
       before :example do
         expect(service_class).to receive(:find).and_return(service)
         expect(subject).to receive(:threescale_client).and_return(remote)
+        allow(metric).to receive(:attrs).and_return(metric_attrs)
       end
 
       context 'when service not found' do
@@ -37,7 +40,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
       end
 
       context 'when metric not found' do
-        let(:metric_attrs) do
+        let(:create_attrs) do
           {
             'friendly_name' => arguments[:metric_ref],
             'unit' => 'hit',
@@ -47,18 +50,17 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
 
         before :example do
           expect(metric_class).to receive(:find).and_return(nil)
-          expect(metric).to receive(:id).and_return(1)
         end
 
         it 'metric created' do
-          expect(metric_class).to receive(:create).with(service: service, attrs: metric_attrs)
+          expect(metric_class).to receive(:create).with(service: service, attrs: create_attrs)
                                                   .and_return(metric)
           expect { subject.run }.to output(/Applied metric id: 1/).to_stdout
         end
 
         context 'when name in options' do
           let(:options) { { name: 'new name' } }
-          let(:metric_attrs) do
+          let(:create_attrs) do
             {
               'friendly_name' => options[:name],
               'unit' => 'hit',
@@ -67,7 +69,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
           end
 
           it 'friendly_name overriden' do
-            expect(metric_class).to receive(:create).with(service: service, attrs: metric_attrs)
+            expect(metric_class).to receive(:create).with(service: service, attrs: create_attrs)
                                                     .and_return(metric)
             expect { subject.run }.to output(/Applied metric id: 1/).to_stdout
           end
@@ -75,7 +77,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
 
         context 'when unit in options' do
           let(:options) { { unit: 'new unit' } }
-          let(:metric_attrs) do
+          let(:create_attrs) do
             {
               'friendly_name' => arguments[:metric_ref],
               'unit' => 'new unit',
@@ -84,7 +86,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
           end
 
           it 'unit overriden' do
-            expect(metric_class).to receive(:create).with(service: service, attrs: metric_attrs)
+            expect(metric_class).to receive(:create).with(service: service, attrs: create_attrs)
                                                     .and_return(metric)
             expect { subject.run }.to output(/Applied metric id: 1/).to_stdout
           end
@@ -94,7 +96,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
       context 'when metric found' do
         before :example do
           expect(metric_class).to receive(:find).and_return(metric)
-          expect(metric).to receive(:id).and_return(1)
         end
 
         context 'with no options' do
@@ -107,10 +108,10 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
 
         context 'with options' do
           let(:options) { { unit: 'bla', description: 'some descr' } }
-          let(:metric_attrs) { Hash[options.map { |k, v| [k.to_s, v] }] }
+          let(:update_attrs) { Hash[options.map { |k, v| [k.to_s, v] }] }
 
           it 'metric updated' do
-            expect(metric).to receive(:update).with(metric_attrs)
+            expect(metric).to receive(:update).with(update_attrs)
             expect { subject.run }.to output(/Applied metric id: 1/).to_stdout
           end
         end

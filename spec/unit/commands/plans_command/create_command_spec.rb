@@ -6,7 +6,9 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
     }
   end
   let(:options) { {} }
+  let(:plan_id) { 1 }
   let(:basic_plan_attrs) { { 'name' => 'someplan' } }
+  let(:plan_attrs) { basic_plan_attrs.merge('id' => plan_id) }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
@@ -17,6 +19,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
   context '#run' do
     before :example do
       expect(service_class).to receive(:find).and_return(service)
+      allow(plan).to receive(:attrs).and_return(plan_attrs)
       expect(subject).to receive(:threescale_client).and_return(remote)
     end
 
@@ -30,12 +33,11 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
     end
 
     context 'when app plan created' do
-      let(:plan_attrs) { basic_plan_attrs }
+      let(:create_attrs) { basic_plan_attrs }
 
       before :example do
-        expect(plan_class).to receive(:create).with(service: service, plan_attrs: plan_attrs)
+        expect(plan_class).to receive(:create).with(service: service, plan_attrs: create_attrs)
                                               .and_return(plan)
-        expect(plan).to receive(:id).and_return('1')
       end
 
       it do
@@ -62,7 +64,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
 
       context 'with publish option' do
         let(:options) { { publish: true } }
-        let(:plan_attrs) { basic_plan_attrs.merge('state' => 'published') }
+        let(:create_attrs) { basic_plan_attrs.merge('state' => 'published') }
 
         it 'plan made public' do
           expect { subject.run }.to output(/Created application plan id: 1/).to_stdout
@@ -89,7 +91,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Create::CreateSubcomma
             'trial_period_days' => 2
           }
         end
-        let(:plan_attrs) { basic_plan_attrs.merge(expected_params) }
+        let(:create_attrs) { basic_plan_attrs.merge(expected_params) }
 
         it 'plan created with expected params' do
           expect { subject.run }.to output(/Created application plan id: 1/).to_stdout

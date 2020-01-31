@@ -5,7 +5,7 @@ module ThreeScaleToolbox
         class ListSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
-          FIELDS_TO_SHOW = %w[id name system_name].freeze
+          FIELDS = %w[id name system_name].freeze
 
           def self.command
             Cri::Command.define do
@@ -14,6 +14,7 @@ module ThreeScaleToolbox
               summary     'list application plans'
               description 'List application plans'
 
+              ThreeScaleToolbox::CLI.output_flag(self)
               param       :remote
               param       :service_ref
 
@@ -22,21 +23,10 @@ module ThreeScaleToolbox
           end
 
           def run
-            print_header
-            print_data
+            printer.print_collection service.plans
           end
 
           private
-
-          def print_header
-            puts FIELDS_TO_SHOW.map(&:upcase).join("\t")
-          end
-
-          def print_data
-            service.plans.each do |plan|
-              puts FIELDS_TO_SHOW.map { |field| plan.fetch(field, '(empty)') }.join("\t")
-            end
-          end
 
           def service
             @service ||= find_service
@@ -55,6 +45,11 @@ module ThreeScaleToolbox
 
           def service_ref
             arguments[:service_ref]
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CLI::CustomTablePrinter.new(FIELDS))
           end
         end
       end

@@ -29,7 +29,8 @@ OPTIONS
        --description=<value>      Metric description
        --disabled                 Disables this metric in all application
                                   plans
-    -t --system-name=<value>      Application plan system name
+    -o --output=<value>           Output format. One of: json|yaml
+    -t --system-name=<value>      Metric system name
        --unit=<value>             Metric unit. Default hit
 
 OPTIONS FOR METRIC
@@ -70,6 +71,7 @@ OPTIONS
        --enabled                  Enables this metric in all application
                                   plans
     -n --name=<value>             Metric name
+    -o --output=<value>           Output format. One of: json|yaml
        --unit=<value>             Metric unit. Default hit
 
 OPTIONS FOR METRIC
@@ -93,6 +95,9 @@ USAGE
 
 DESCRIPTION
     List metrics
+
+OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
 
 OPTIONS FOR METRIC
     -c --config-file=<value>      3scale toolbox configuration file (default:

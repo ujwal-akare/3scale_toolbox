@@ -34,6 +34,7 @@ OPTIONS
                                        ActiveDocs
     -i --service-id=<value>            Specify the Service ID associated to
                                        the ActiveDocs
+    -o --output=<value>                Output format. One of: json|yaml
     -p --published                     Specify it to publish the ActiveDoc on
                                        the Developer Portal. Otherwise it
                                        will be hidden
@@ -79,23 +80,28 @@ DESCRIPTION
     Create or update an ActiveDocs
 
 OPTIONS
-    -d --description=<value>           Specify the description of the
-                                       ActiveDocs
-       --hide                          Specify it to hide the ActiveDocs on
-                                       the Developer Portal
-    -i --service-id=<value>            Specify the Service ID associated to
-                                       the ActiveDocs
-       --openapi-spec=<value>          Specify the swagger spec. Can be a
-                                       file, an URL or '-' to read from
-                                       stdin. This option is mandatory when
-                                       applying the ActiveDoc for the first
-                                       time
-    -p --publish                       Specify it to publish the ActiveDocs
-                                       on the Developer Portal. Otherwise it
-                                       will be hidden
-    -s --name=<value>                  Specify the name of the ActiveDocs
-       --skip-swagger-validations      Skip validation of the Swagger
-                                       specification. true or false
+    -d --description=<value>                   Specify the description of the
+                                               ActiveDocs
+       --hide                                  Specify it to hide the
+                                               ActiveDocs on the Developer
+                                               Portal
+    -i --service-id=<value>                    Specify the Service ID
+                                               associated to the ActiveDocs
+    -o --output=<value>                        Output format. One of:
+                                               json|yaml
+       --openapi-spec=<value>                  Specify the swagger spec. Can
+                                               be a file, an URL or '-' to
+                                               read from stdin. This option
+                                               is mandatory when applying the
+                                               ActiveDoc for the first time
+    -p --publish                               Specify it to publish the
+                                               ActiveDocs on the Developer
+                                               Portal. Otherwise it will be
+                                               hidden
+    -s --name=<value>                          Specify the name of the
+                                               ActiveDocs
+       --skip-swagger-validations=<value>      Skip validation of the Swagger
+                                               specification. true or false
 
 OPTIONS FOR ACTIVEDOCS
     -c --config-file=<value>           3scale toolbox configuration file
@@ -122,6 +128,7 @@ DESCRIPTION
     List all defined ActiveDocs
 
 OPTIONS
+    -o --output=<value>           Output format. One of: json|yaml
     -s --service-ref=<value>      Filter the ActiveDocs by Service reference
 
 OPTIONS FOR ACTIVEDOCS

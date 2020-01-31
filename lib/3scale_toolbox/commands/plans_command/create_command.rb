@@ -2,6 +2,21 @@ module ThreeScaleToolbox
   module Commands
     module PlansCommand
       module Create
+        class CustomPrinter
+          attr_reader :option_default, :option_disabled
+
+          def initialize(option_default, option_disabled)
+            @option_default = option_default
+            @option_disabled = option_disabled
+          end
+
+          def print_record(plan)
+            puts "Created application plan id: #{plan['id']}. Default: #{option_default}; Disabled: #{option_disabled}"
+          end
+
+          def print_collection(collection) end
+        end
+
         class CreateSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
@@ -20,6 +35,8 @@ module ThreeScaleToolbox
               option      nil, 'cost-per-month', 'Cost per month', argument: :required, transform: method(:Float)
               option      nil, 'setup-fee', 'Setup fee', argument: :required, transform: method(:Float)
               option      nil, 'trial-period-days', 'Trial period days', argument: :required, transform: method(:Integer)
+              ThreeScaleToolbox::CLI.output_flag(self)
+
               param       :remote
               param       :service_ref
               param       :plan_name
@@ -32,7 +49,7 @@ module ThreeScaleToolbox
             plan = create_application_plan
             plan.make_default if option_default
             plan.disable if option_disabled
-            puts "Created application plan id: #{plan.id}. Default: #{option_default}; Disabled: #{option_disabled}"
+            printer.print_record plan.attrs
           end
 
           private
@@ -90,6 +107,11 @@ module ThreeScaleToolbox
 
           def service_ref
             arguments[:service_ref]
+          end
+
+          def printer
+            # keep backwards compatibility
+            options.fetch(:output, CustomPrinter.new(option_default, option_disabled))
           end
         end
       end

@@ -3,7 +3,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::List::ListSubcommand
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:remote_name) { "myremote" }
 
-    let(:options) {}
+    let(:options) { {} }
     let(:arguments) { { remote: remote_name } }
 
     subject { described_class.new(options, arguments, nil) }
