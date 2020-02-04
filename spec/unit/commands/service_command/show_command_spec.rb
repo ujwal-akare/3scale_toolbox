@@ -1,4 +1,4 @@
-RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Show::ShowSubcommand do
+RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::ShowSubcommand do
   context '#run' do
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }

@@ -25,11 +25,11 @@ module ThreeScaleToolbox
         end
       end
 
-      add_subcommand(List::ListSubcommand)
-      add_subcommand(Show::ShowSubcommand)
-      add_subcommand(Delete::DeleteSubcommand)
-      add_subcommand(Create::CreateSubcommand)
-      add_subcommand(Apply::ApplySubcommand)
+      add_subcommand(ListSubcommand)
+      add_subcommand(ShowSubcommand)
+      add_subcommand(DeleteSubcommand)
+      add_subcommand(CreateSubcommand)
+      add_subcommand(ApplySubcommand)
       add_subcommand(CopySubcommand)
     end
   end
