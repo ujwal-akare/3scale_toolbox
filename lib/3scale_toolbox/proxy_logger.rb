@@ -9,7 +9,7 @@ module ThreeScaleToolbox
       result = @subject.public_send(name, *args)
     ensure
       end_time = ::Process.clock_gettime(::Process::CLOCK_MONOTONIC) - start_time
-      ::Kernel.warn "-- call #{name} args |#{args.inspect[0..200]}| response |#{result.inspect[0..200]}| - (#{end_time}s)"
+      ::Kernel.warn "-- call #{name} args |#{args.inspect[0..2000]}| response |#{result.inspect[0..2000]}| - (#{end_time}s)"
       result
     end
 

@@ -1,4 +1,4 @@
-require '3scale_toolbox/commands/update_command/update_service'
+require '3scale_toolbox/commands/update_command/service_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -16,7 +16,7 @@ module ThreeScaleToolbox
           end
         end
       end
-      add_subcommand(UpdateServiceSubcommand)
+      add_subcommand(ServiceSubcommand)
     end
   end
 end

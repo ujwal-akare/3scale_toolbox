@@ -1,4 +1,4 @@
-RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Create::CreateSubcommand do
+RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CreateSubcommand do
   include_context :random_name
 
   context '#run' do

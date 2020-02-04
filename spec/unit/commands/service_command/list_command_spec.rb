@@ -1,4 +1,4 @@
-RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::List::ListSubcommand do
+RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::ListSubcommand do
   context '#run' do
     let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
     let(:remote_name) { "myremote" }

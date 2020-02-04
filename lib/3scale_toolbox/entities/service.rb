@@ -24,7 +24,7 @@ module ThreeScaleToolbox
         # ref can be system_name or service_id
         def find(remote:, ref:)
           new(id: ref, remote: remote).tap(&:attrs)
-        rescue ThreeScale::API::HttpClient::NotFoundError
+        rescue ThreeScaleToolbox::InvalidIdError, ThreeScale::API::HttpClient::NotFoundError
           find_by_system_name(remote: remote, system_name: ref)
         end
 
@@ -72,7 +72,7 @@ module ThreeScaleToolbox
       end
 
       def attrs
-        @attrs ||= service_attrs
+        @attrs ||= fetch_attrs
       end
 
       def update_proxy(proxy)
@@ -262,7 +262,9 @@ module ThreeScaleToolbox
         hits_metric
       end
 
-      def service_attrs
+      def fetch_attrs
+        raise ThreeScaleToolbox::InvalidIdError if id.zero?
+
         svc = remote.show_service id
         if (errors = svc['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service attrs not read', errors)

@@ -1,4 +1,4 @@
-RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::Delete::DeleteSubcommand do
+RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::DeleteSubcommand do
   include_context :random_name
 
   context '#run' do
