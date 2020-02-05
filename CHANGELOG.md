@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.16.0]
+
+### Added
+- Provide a parseable output (JSON / YAML) as optional parameter in several commands [#229](https://github.com/3scale/3scale_toolbox/pull/229)
+- Backend copy command [#233](https://github.com/3scale/3scale_toolbox/pull/233)
+- Product copy command [#235](https://github.com/3scale/3scale_toolbox/pull/235)
+
 ## [0.15.0]
 
 ### Added
@@ -217,7 +224,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.16.0
 [0.15.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.15.0
 [0.14.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.14.0
 [0.13.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.13.0
