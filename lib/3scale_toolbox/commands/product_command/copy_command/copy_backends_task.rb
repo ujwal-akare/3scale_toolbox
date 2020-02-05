@@ -34,9 +34,10 @@ module ThreeScaleToolbox
             # backend_context[:target_backend]
             attrs = {
               'backend_api_id' => backend_context[:target_backend].id,
-              'service_id' => target.id,
               'path' => backend_usage.path
             }
+            # It is assumed there is no target backend usage with this backend_source's path
+            # DeleteExistingTargetBackendUsagesTask should provide that
             Entities::BackendUsage.create(product: target, attrs: attrs)
           end
 

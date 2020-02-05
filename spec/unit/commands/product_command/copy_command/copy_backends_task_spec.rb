@@ -1,7 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::CopyBackendsTask do
   let(:source) { instance_double(ThreeScaleToolbox::Entities::Service, 'source')  }
   let(:target) { instance_double(ThreeScaleToolbox::Entities::Service, 'target')  }
-  let(:target_id) { 987 }
   let(:source_remote) { instance_double(ThreeScale::API::Client, 'source_remote') }
   let(:target_remote) { instance_double(ThreeScale::API::Client, 'target_remote') }
   let(:backend_usage_01) { instance_double(ThreeScaleToolbox::Entities::BackendUsage)  }
@@ -22,7 +21,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::CopyBac
   context '#call' do
     before :each do
       expect(source).to receive(:backend_usage_list).and_return(backend_usage_list)
-      expect(target).to receive(:id).and_return(target_id)
       expect(backend_usage_01).to receive(:backend_id).and_return(source_backend_id)
       expect(backend_usage_01).to receive(:path).and_return('/v1')
       expect(source_remote).to receive(:backend).with(source_backend_id).and_return(backend_01_attrs)
@@ -52,7 +50,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::CopyBac
         product: target,
         attrs: {
           'backend_api_id' => target_backend_id,
-          'service_id' => target_id,
           'path' => '/v1'
         }
       )

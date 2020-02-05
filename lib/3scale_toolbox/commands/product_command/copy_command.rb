@@ -40,7 +40,7 @@ module ThreeScaleToolbox
         def run
           tasks = []
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CreateOrUpdateTargetServiceTask.new(context)
-          tasks << CopyCommand::DeleteTargetBackendUsagesTask.new(context)
+          tasks << CopyCommand::DeleteExistingTargetBackendUsagesTask.new(context)
           tasks << CopyCommand::CopyBackendsTask.new(context)
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyServiceProxyTask.new(context)
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMethodsTask.new(context)

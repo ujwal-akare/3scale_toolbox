@@ -24,7 +24,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ProductCommand::CopySubcommand do
       # Task stubs
       [
         ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CreateOrUpdateTargetServiceTask,
-        ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::DeleteTargetBackendUsagesTask,
+        ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::DeleteExistingTargetBackendUsagesTask,
         ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::CopyBackendsTask,
         ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyServiceProxyTask,
         ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMethodsTask,
