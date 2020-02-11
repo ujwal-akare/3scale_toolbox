@@ -82,6 +82,7 @@ COMMANDS
     method               method super command
     metric               metric super command
     policy-registry      policy-registry super command
+    product              product super command
     proxy-config         proxy-config super command
     remote               remotes super command
     service              services super command
