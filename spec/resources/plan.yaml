@@ -8,7 +8,6 @@ plan:
   cancellation_period: 0
   approval_required: false
   system_name: basic
-  end_user_required: false
 limits:
 - period: year
   value: 10000
