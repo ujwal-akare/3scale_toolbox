@@ -1,9 +1,7 @@
 # 3scale toolbox
 [![CircleCI](https://circleci.com/gh/3scale/3scale_toolbox.svg?style=svg)](https://circleci.com/gh/3scale/3scale_toolbox)
-
-This software is licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
-
-See the LICENSE and NOTICE files that should have been provided along with this software for details.
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![GitHub release](https://img.shields.io/github/v/release/3scale/3scale_toolbox.svg)](https://github.com/3scale/3scale_toolbox/releases/latest)
 
 ## Description
 3scale toolbox is a set of tools to help you manage your 3scale product. Using the [3scale API Ruby Client](https://github.com/3scale/3scale-api-ruby).
