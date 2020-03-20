@@ -21,7 +21,7 @@
    * Create, Apply, List, Delete [Method](docs/method.md)
    * Create, Apply, List, Show, Delete [Service](docs/service.md)
    * Create, Apply, List, Delete [ActiveDocs](docs/activedocs.md)
-   * List, Show, Promote [Proxy Configuration](docs/proxy-config.md)
+   * List, Show, Promote, Export [Proxy Configuration](docs/proxy-config.md)
    * [Copy Policy Registry](docs/copy-policy-registry.md)
    * Create, Apply, List, Show, Delete, Suspend, Resume [Applications](docs/applications.md)
    * [Remotes](docs/remotes.md)

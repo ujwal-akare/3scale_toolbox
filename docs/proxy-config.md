@@ -3,6 +3,7 @@
 * [List Proxy Configurations](#list)
 * [Show Proxy Configuration](#show)
 * [Promote Proxy Configuration](#promote)
+* [Export Proxy Configuration](#export)
 
 ### List
 
@@ -80,4 +81,27 @@ OPTIONS FOR PROXY-CONFIG
                                   connections otherwise considered insecure
     -v --version                  Prints the version of this command
        --verbose                  Verbose mode
+```
+
+### Export
+
+```shell
+NAME
+    export - Export proxy configuration for the entire provider account
+
+USAGE
+    3scale proxy-config export <remote>
+
+DESCRIPTION
+    Export proxy configuration for the entire provider account
+
+    Can be used as 3scale apicast configuration file
+
+
+    https://github.com/3scale/apicast/blob/master/doc/parameters.md#threescale_config_file
+
+OPTIONS
+       --environment=<value>      Gateway environment. Must be 'sandbox' or
+                                  'production' (default: sandbox)
+    -o --output=<value>           Output format. One of: json|yaml
 ```
