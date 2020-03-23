@@ -20,10 +20,9 @@ module ThreeScaleToolbox
 
       def handle_error(error)
         if expected_error?(error)
-          warn
-          warn "\e[1m\e[31mError: #{error.message}\e[0m"
+          warn error_serialize(error)
         else
-          print_error(error)
+          print_unexpected_error(error)
         end
       end
 
@@ -36,21 +35,12 @@ module ThreeScaleToolbox
         end
       end
 
-      def print_error(error)
-        write_error(error, $stderr)
-
+      def print_unexpected_error(error)
         File.open('crash.log', 'w') do |io|
           write_verbose_error(error, io)
         end
 
-        write_section_header($stderr, 'Detailed information')
-        warn
-        warn 'A detailed crash log has been written to ./crash.log.'
-      end
-
-      def write_error(error, stream)
-        write_error_message(error, stream)
-        write_stack_trace(error, stream)
+        warn error_serialize(UnexpectedError.new(error))
       end
 
       def write_error_message(error, stream)
@@ -112,6 +102,19 @@ module ThreeScaleToolbox
 
         stream.puts "===== #{title.upcase}:"
         stream.puts
+      end
+
+      def error_serialize(error)
+        JSON.pretty_generate format_error(error)
+      end
+
+      def format_error(error)
+        {
+          code: error.code,
+          message: error.message,
+          class: error.kind,
+          stacktrace: error.stacktrace
+        }.compact
       end
     end
   end
