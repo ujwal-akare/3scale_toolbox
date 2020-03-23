@@ -7,24 +7,23 @@ module ThreeScaleToolbox
           ##
           # Writes Plan limits
           def call
-            missing_limits.each do |limit|
-              metric_id = limit.delete('metric_id')
-              limit_obj = plan.create_limit(metric_id, limit)
-              if (errors = limit_obj['errors'])
-                raise ThreeScaleToolbox::Error, "Plan limit has not been created. #{errors}"
-              end
+            # SET semantics
+            # First, delete existing limits
+            # Second, add new limits
+            plan.limits.each do |limit|
+              metric_id = limit.fetch('metric_id')
+              plan.delete_limit metric_id, limit.fetch('id')
+              puts "Deleted existing plan limit: [metric: #{metric_id}, #{limit}]"
+            end
 
+            resource_limits_processed.each do |limit|
+              metric_id = limit.delete('metric_id')
+              plan.create_limit(metric_id, limit)
               puts "Created plan limit: [metric: #{metric_id}, #{limit}]"
             end
           end
 
           private
-
-          def missing_limits
-            ThreeScaleToolbox::Helper.array_difference(resource_limits_processed, plan.limits) do |a, b|
-              ThreeScaleToolbox::Helper.compare_hashes(a, b, %w[metric_id period])
-            end
-          end
 
           def resource_limits_processed
             resource_limits.map do |limit|
