@@ -30,6 +30,7 @@
    * [Develop your own core command](#develop-core-command)
    * [Licenses](#licenses)
 * [Plugins](#plugins)
+* [Error Reporting](docs/errors.md)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
 
