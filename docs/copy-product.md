@@ -7,7 +7,7 @@ If a product with the selected `system-name` is not found, it will be created.
 
 Components of the backend being copied:
 * product configuration
-* product settings
+* product settings: Staging/Production Public Base URL only copied for self-managed deployments.
 * product methods&metrics: Only missing metrics&methods will be created.
 * product mapping rules: Only missing mapping rules will be created.
 * product application plans & pricing rules & limits: Only missing application plans & pricing rules & limits will be created.
