@@ -8,6 +8,7 @@ Components of the service being copied:
 
 * service settings
 * proxy settings
+* proxy settings: Staging/Production Public Base URL only copied for self-managed deployments.
 * pricing rules
 * activedocs
 * metrics

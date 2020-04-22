@@ -13,10 +13,9 @@ module ThreeScaleToolbox
 
           def target_proxy_attrs
             if source.attrs['deployment_option'] == 'hosted'
-              # for services with "hosted" deployment config,
-              # apicast gateway addresses should not be copied.
-              # Gateway addresses includes service's id and if copied, the service will not
-              # have visibility.
+              # For services with "hosted" deployment config, 
+              # "Public Base URL" should not be copied, mainly because public base URL is self-assigned.
+              # Two 3scale products (aka services) cannot be served using the same public base URL.
               source_proxy.dup.delete_if { |key, _v| %w[endpoint sandbox_endpoint].include? key }
             else
               source_proxy
