@@ -7,24 +7,23 @@ module ThreeScaleToolbox
           ##
           # Writes Plan pricing rules
           def call
-            missing_pricing_rules.each do |pr|
-              metric_id = pr.delete('metric_id')
-              resp = plan.create_pricing_rule(metric_id, pr)
-              if (errors = resp['errors'])
-                raise ThreeScaleToolbox::Error, "Plan pricing rule has not been created. #{errors}"
-              end
+            # SET semantics
+            # First, delete existing pricing rules
+            # Second, add new pricing rules
+            remote_pr_processed.each do |pr|
+              metric_id = pr.fetch('metric_id')
+              plan.delete_pricing_rule metric_id, pr.fetch('id')
+              puts "Deleted existing plan pricing rule: [metric: #{metric_id}, #{pr}]"
+            end
 
+            resource_pr_processed.each do |pr|
+              metric_id = pr.delete('metric_id')
+              plan.create_pricing_rule(metric_id, pr)
               puts "Created plan pricing rule: [metric: #{metric_id}, #{pr}]"
             end
           end
 
           private
-
-          def missing_pricing_rules
-            ThreeScaleToolbox::Helper.array_difference(resource_pr_processed, remote_pr_processed) do |a, b|
-              ThreeScaleToolbox::Helper.compare_hashes(a, b, %w[metric_id cost_per_unit min max])
-            end
-          end
 
           def remote_pr_processed
             plan.pricing_rules.map do |pr|

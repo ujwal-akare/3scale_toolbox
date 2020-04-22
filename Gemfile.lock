@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     3scale_toolbox (0.16.0)
-      3scale-api (~> 1.0)
+      3scale-api (~> 1.1)
       cri (~> 2.15)
       json-schema (~> 2.8)
       oas_parser (~> 0.20)
@@ -10,8 +10,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    3scale-api (1.0.0)
-    activesupport (6.0.2.1)
+    3scale-api (1.1.0)
+    activesupport (6.0.2.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -21,7 +21,7 @@ GEM
       public_suffix (>= 2.0.2, < 5.0)
     builder (3.2.4)
     coderay (1.1.2)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.6)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     cri (2.15.10)
@@ -45,19 +45,20 @@ GEM
     method_source (0.9.2)
     mini_portile2 (2.4.0)
     minitest (5.14.0)
-    mustermann (1.0.3)
-    mustermann-contrib (1.0.3)
+    mustermann (1.1.1)
+      ruby2_keywords (~> 0.0.1)
+    mustermann-contrib (1.1.1)
       hansi (~> 0.2.0)
-      mustermann (= 1.0.3)
+      mustermann (= 1.1.1)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
-    oas_parser (0.23.0)
+    oas_parser (0.25.0)
       activesupport (>= 4.0.0)
       addressable (~> 2.3)
       builder (~> 3.2.3)
       deep_merge (~> 1.2.1)
       hash-deep-merge
-      mustermann-contrib (~> 1.0.3s)
+      mustermann-contrib (~> 1.1.1)
       nokogiri
     parslet (1.8.2)
     pry (0.12.2)
@@ -78,13 +79,14 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.2)
+    ruby2_keywords (0.0.2)
     rubyzip (2.0.0)
     safe_yaml (1.0.5)
     thor (0.20.3)
     thread_safe (0.3.6)
     toml (0.2.0)
       parslet (~> 1.8.0)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     webmock (3.7.5)
       addressable (>= 2.3.6)
@@ -92,7 +94,7 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     with_env (1.1.0)
     xml-simple (1.1.5)
-    zeitwerk (2.2.2)
+    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby

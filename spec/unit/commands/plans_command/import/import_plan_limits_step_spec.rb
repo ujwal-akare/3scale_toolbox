@@ -8,6 +8,9 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
   let(:plan_class) { class_double('ThreeScaleToolbox::Entities::ApplicationPlan').as_stubbed_const }
   let(:plan) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
   let(:resource_limits) { [] }
+  let(:hits_metric_id) { 1 }
+  let(:hits_metric) { { 'id' => hits_metric_id, 'system_name' => 'hits' } }
+  let(:service_metrics) { [hits_metric] }
   let(:plan_limits) { [] }
   let(:artifacts_resource) do
     {
@@ -32,43 +35,33 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
                                                                ref: plan_system_name))
                                           .and_return(plan)
       allow(plan).to receive(:limits).and_return(plan_limits)
+      allow(service).to receive(:metrics).and_return(service_metrics)
+      allow(service).to receive(:hits).and_return(hits_metric)
     end
 
-    context 'no missing limits' do
-      it 'then no limits created' do
-        expect { subject.call }.not_to output.to_stdout
+    context 'existing limits' do
+      let(:plan_limit) { { 'id' => 32, 'metric_id' => hits_metric_id } }
+      let(:plan_limits) { [plan_limit] }
+
+      it 'deleted' do
+        expect(plan).to receive(:delete_limit).with(hits_metric_id, plan_limit.fetch('id'))
+        subject.call
       end
     end
 
-    context 'with missing limits' do
+    context 'imported limits' do
       let(:resource_limit) do
         {
           'period' => 'year', 'value' => 1000, 'metric_system_name' => 'hits'
         }
       end
       let(:resource_limits) { [resource_limit] }
-      let(:metric_id) { 1 }
-      let(:service_metric) { { 'id' => metric_id, 'system_name' => 'hits' } }
-      let(:service_metrics) { [service_metric] }
 
-      before :example do
-        expect(service).to receive(:metrics).and_return(service_metrics)
-        expect(service).to receive(:hits).and_return(service_metric)
-      end
-
-      it 'then limits are created' do
-        expected_limit_attrs = resource_limit.reject { |k, _v| k == 'metric_system_name' }
-        expect(plan).to receive(:create_limit).with(metric_id, hash_including(expected_limit_attrs))
+      it 'created' do
+        expected_attrs = resource_limit.reject { |k, _v| k == 'metric_system_name' }
+        expect(plan).to receive(:create_limit).with(hits_metric_id, hash_including(expected_attrs))
                                               .and_return('id' => 1000)
-        expect { subject.call }.to output(/Created plan limit/).to_stdout
-      end
-
-      context 'and create_limit returns error' do
-        it 'then error raised' do
-          expect(plan).to receive(:create_limit).and_return('errors' => 'some error')
-          expect { subject.call }.to raise_error(ThreeScaleToolbox::Error,
-                                                 /Plan limit has not been created/)
-        end
+        subject.call
       end
     end
   end

@@ -18,6 +18,7 @@ Specific to `import` command:
 * If application plan cannot be found in remote service, it will be created.
 * Optional param `-p, --plan` to override remote target application plan `id` or `system_name`. If not specified by `-p` option, by default, application plan will be referenced by plan attribute `system_name` from yaml content.
 * Any metric or method from yaml content that cannot be found in remote service, will be created.
+* Imported resource as the source of truth. All existing pricing rules and limits will be deleted before importing new ones.
 
 ### Export Appliation Plan Usage
 
