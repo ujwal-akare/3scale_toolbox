@@ -97,7 +97,14 @@ RSpec.shared_context :import_oas_real_cleanup do
     service.activedocs.each do |activedoc|
       service.remote.delete_activedocs(activedoc['id'])
     end
+    backend_usage_list = service.backend_usage_list
+    # backend cannot be deleted if used by any product
+    # remove first product
     service.delete
+    backend_usage_list.each do |backend_usage|
+      backend = ThreeScaleToolbox::Entities::Backend.find(remote: api3scale_client, ref: backend_usage.backend_id)
+      backend.delete unless backend.nil?
+    end
   end
 end
 
