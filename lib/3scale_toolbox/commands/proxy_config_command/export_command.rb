@@ -40,10 +40,8 @@ module ThreeScaleToolbox
           def proxy_config_list
             service_list.map do |service|
               pc = Entities::ProxyConfig.find_latest(service: service, environment: environment)
-              raise ThreeScaleToolbox::Error, "ProxyConfig for environment #{environment} in service #{service.id} does not exist" if pc.nil?
-
-              pc.attrs['content']
-            end
+              pc.attrs['content'] unless pc.nil?
+            end.compact
           end
 
           def service_list
