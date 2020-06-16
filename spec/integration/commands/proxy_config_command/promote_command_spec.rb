@@ -14,7 +14,8 @@ RSpec.describe 'ProxyConfig Promote command' do
     context "That hasn't been promoted" do
       before :example do
         svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
-        svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage1" })
+        # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
+        svc.update_proxy('api_backend' => 'https://example.com')
       end
       after :example do
         res = ThreeScaleToolbox::Entities::Service::find(remote: api3scale_client, ref: service_ref)
@@ -30,7 +31,8 @@ RSpec.describe 'ProxyConfig Promote command' do
     context "That has already been promoted" do
       before :example do
         svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
-        svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage1" })
+        # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
+        svc.update_proxy('api_backend' => 'https://example.com')
         pc_sandbox_1 = nil
         Helpers.wait do
           pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)

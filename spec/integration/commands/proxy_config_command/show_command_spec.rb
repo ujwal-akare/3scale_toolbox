@@ -11,8 +11,8 @@ RSpec.describe 'ProxyConfig Show command' do
   context "With the specified service existing" do
     before :example do
       svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
-
-      svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage1" })
+      # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
+      svc.update_proxy('api_backend' => 'https://example.com')
       pc_sandbox_1 = nil
       Helpers.wait do
         pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)

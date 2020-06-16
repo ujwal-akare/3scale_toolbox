@@ -101,6 +101,7 @@ RSpec.shared_context :import_oas_real_cleanup do
     # backend cannot be deleted if used by any product
     # remove first product
     service.delete
+    Helpers.wait { ThreeScaleToolbox::Entities::Service.find(remote: api3scale_client, ref: service.id).nil? }
     backend_usage_list.each do |backend_usage|
       backend = ThreeScaleToolbox::Entities::Backend.find(remote: api3scale_client, ref: backend_usage.backend_id)
       backend.delete unless backend.nil?
