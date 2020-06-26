@@ -2,6 +2,8 @@ RSpec.describe 'ProxyConfig Promote command' do
   include_context :real_api3scale_client
   include_context :random_name
   include_context :resources
+  include_context :proxy_config_real_cleanup
+
   subject { ThreeScaleToolbox::CLI.run(command_line_str.split) }
   let(:remote) { client_url }
   let(:service_ref) { "svc_#{random_lowercase_name}" }
@@ -16,10 +18,6 @@ RSpec.describe 'ProxyConfig Promote command' do
         svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
         # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
         svc.update_proxy('api_backend' => 'https://example.com')
-      end
-      after :example do
-        res = ThreeScaleToolbox::Entities::Service::find(remote: api3scale_client, ref: service_ref)
-        res.delete if !res.nil?
       end
 
       it "promotes the configuration version into production" do
@@ -39,11 +37,6 @@ RSpec.describe 'ProxyConfig Promote command' do
           !pc_sandbox_1.nil? 
         end
         pc_sandbox_1.promote(to: environment_prod)
-      end
-
-      after :example do
-        res = ThreeScaleToolbox::Entities::Service::find(remote: api3scale_client, ref: service_ref)
-        res.delete if !res.nil?
       end
 
       it "results in not being promoted and a warning shown" do

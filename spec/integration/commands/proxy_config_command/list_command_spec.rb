@@ -2,6 +2,8 @@ RSpec.describe 'ProxyConfig List command' do
   include_context :real_api3scale_client
   include_context :random_name
   include_context :resources
+  include_context :proxy_config_real_cleanup
+
   subject { ThreeScaleToolbox::CLI.run(command_line_str.split) }
   let(:remote) { client_url }
   let(:service_ref) { "svc_#{random_lowercase_name}" }
@@ -31,11 +33,6 @@ RSpec.describe 'ProxyConfig List command' do
       pc_sandbox_2.promote(to: "production")
 
       svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage3" })
-    end
-
-    after :example do
-      res = ThreeScaleToolbox::Entities::Service::find(remote: api3scale_client, ref: service_ref)
-      res.delete if !res.nil?
     end
 
     context "listing sandbox Proxy configurations" do
