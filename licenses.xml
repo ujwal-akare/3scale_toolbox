@@ -3,7 +3,7 @@
   <dependencies>
           <dependency>
         <packageName>3scale-api</packageName>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -13,7 +13,7 @@
       </dependency>
           <dependency>
         <packageName>3scale_toolbox</packageName>
-        <version>0.16.0</version>
+        <version>0.17.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -23,7 +23,7 @@
       </dependency>
           <dependency>
         <packageName>activesupport</packageName>
-        <version>6.0.2.1</version>
+        <version>6.0.3.2</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -53,7 +53,7 @@
       </dependency>
           <dependency>
         <packageName>bundler</packageName>
-        <version>1.16.1</version>
+        <version>1.17.3</version>
         <licenses>
                       <license>
               <name>unknown</name>
@@ -73,7 +73,7 @@
       </dependency>
           <dependency>
         <packageName>concurrent-ruby</packageName>
-        <version>1.1.5</version>
+        <version>1.1.6</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -161,7 +161,7 @@
       </dependency>
           <dependency>
         <packageName>hashdiff</packageName>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -171,7 +171,7 @@
       </dependency>
           <dependency>
         <packageName>i18n</packageName>
-        <version>1.8.2</version>
+        <version>1.8.3</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -191,7 +191,7 @@
       </dependency>
           <dependency>
         <packageName>license_finder</packageName>
-        <version>5.10.2</version>
+        <version>5.11.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -201,7 +201,7 @@
       </dependency>
           <dependency>
         <packageName>method_source</packageName>
-        <version>0.9.2</version>
+        <version>1.0.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -221,7 +221,7 @@
       </dependency>
           <dependency>
         <packageName>minitest</packageName>
-        <version>5.14.0</version>
+        <version>5.14.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -231,7 +231,7 @@
       </dependency>
           <dependency>
         <packageName>mustermann</packageName>
-        <version>1.0.3</version>
+        <version>1.1.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -241,7 +241,7 @@
       </dependency>
           <dependency>
         <packageName>mustermann-contrib</packageName>
-        <version>1.0.3</version>
+        <version>1.1.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -251,7 +251,7 @@
       </dependency>
           <dependency>
         <packageName>nokogiri</packageName>
-        <version>1.10.7</version>
+        <version>1.10.9</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -261,7 +261,7 @@
       </dependency>
           <dependency>
         <packageName>oas_parser</packageName>
-        <version>0.23.0</version>
+        <version>0.25.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -281,7 +281,7 @@
       </dependency>
           <dependency>
         <packageName>pry</packageName>
-        <version>0.12.2</version>
+        <version>0.13.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -291,7 +291,7 @@
       </dependency>
           <dependency>
         <packageName>public_suffix</packageName>
-        <version>4.0.1</version>
+        <version>4.0.4</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -301,7 +301,7 @@
       </dependency>
           <dependency>
         <packageName>rake</packageName>
-        <version>10.5.0</version>
+        <version>13.0.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -311,7 +311,7 @@
       </dependency>
           <dependency>
         <packageName>rspec</packageName>
-        <version>3.8.0</version>
+        <version>3.9.0</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -321,7 +321,7 @@
       </dependency>
           <dependency>
         <packageName>rspec-core</packageName>
-        <version>3.8.2</version>
+        <version>3.9.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -331,7 +331,7 @@
       </dependency>
           <dependency>
         <packageName>rspec-expectations</packageName>
-        <version>3.8.4</version>
+        <version>3.9.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -341,7 +341,7 @@
       </dependency>
           <dependency>
         <packageName>rspec-mocks</packageName>
-        <version>3.8.1</version>
+        <version>3.9.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -351,7 +351,7 @@
       </dependency>
           <dependency>
         <packageName>rspec-support</packageName>
-        <version>3.8.2</version>
+        <version>3.9.2</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -360,8 +360,18 @@
                   </licenses>
       </dependency>
           <dependency>
+        <packageName>ruby2_keywords</packageName>
+        <version>0.0.2</version>
+        <licenses>
+                      <license>
+              <name>ruby</name>
+              <url>http://www.ruby-lang.org/en/LICENSE.txt</url>
+            </license>
+                  </licenses>
+      </dependency>
+          <dependency>
         <packageName>rubyzip</packageName>
-        <version>2.0.0</version>
+        <version>2.3.0</version>
         <licenses>
                       <license>
               <name>Simplified BSD</name>
@@ -381,7 +391,7 @@
       </dependency>
           <dependency>
         <packageName>thor</packageName>
-        <version>0.20.3</version>
+        <version>1.0.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -411,7 +421,7 @@
       </dependency>
           <dependency>
         <packageName>tzinfo</packageName>
-        <version>1.2.6</version>
+        <version>1.2.7</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -421,7 +431,7 @@
       </dependency>
           <dependency>
         <packageName>webmock</packageName>
-        <version>3.7.5</version>
+        <version>3.8.3</version>
         <licenses>
                       <license>
               <name>MIT</name>
@@ -451,7 +461,7 @@
       </dependency>
           <dependency>
         <packageName>zeitwerk</packageName>
-        <version>2.2.2</version>
+        <version>2.3.1</version>
         <licenses>
                       <license>
               <name>MIT</name>
