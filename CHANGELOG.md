@@ -4,6 +4,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.17.0]
+
+### Added
+- Standard way to report errors [#246](https://github.com/3scale/3scale_toolbox/pull/246)
+- Proxy config export command [#244](https://github.com/3scale/3scale_toolbox/pull/244)
+
+### Fixed
+- Update service deprecated message [#238](https://github.com/3scale/3scale_toolbox/pull/238)
+- Application plan import: input resource as source of truth [#245](https://github.com/3scale/3scale_toolbox/pull/245)
+- Service copy command: do not copy endpoint url hosted services [#250](https://github.com/3scale/3scale_toolbox/pull/250)
+
 ## [0.16.0]
 
 ### Added
@@ -224,7 +235,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.17.0
 [0.16.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.16.0
 [0.15.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.15.0
 [0.14.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.14.0
