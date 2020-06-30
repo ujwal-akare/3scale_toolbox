@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    3scale_toolbox (0.16.0)
+    3scale_toolbox (0.17.0)
       3scale-api (~> 1.1)
       cri (~> 2.15)
       json-schema (~> 2.8)
@@ -11,7 +11,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     3scale-api (1.1.0)
-    activesupport (6.0.3.1)
+    activesupport (6.0.3.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -31,7 +31,7 @@ GEM
     hansi (0.2.0)
     hash-deep-merge (0.1.1)
     hashdiff (1.0.1)
-    i18n (1.8.2)
+    i18n (1.8.3)
       concurrent-ruby (~> 1.0)
     json-schema (2.8.1)
       addressable (>= 2.4)
@@ -94,7 +94,7 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     with_env (1.1.0)
     xml-simple (1.1.5)
-    zeitwerk (2.3.0)
+    zeitwerk (2.3.1)
 
 PLATFORMS
   ruby
