@@ -43,6 +43,14 @@ jobs:
       - checkout
       - unittests
 
+  ruby-270-unittest:
+    docker:
+      - image: circleci/ruby:2.7.0
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - unittests
+
   license_check:
     docker:
       - image: circleci/ruby:2.5.5
@@ -85,6 +93,7 @@ workflows:
     jobs:
       - ruby-255-unittest
       - ruby-262-unittest
+      - ruby-270-unittest
       - license_check
       - help_test
 
