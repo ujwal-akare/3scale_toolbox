@@ -1,7 +1,7 @@
 ## Service copy
 
 This command makes a copy of the referenced service.
-Target service will be searched by source service system name. System name can be overriden with `--target_system_name` option.
+Target service will be searched by the source service system name. System name can be overridden with `--target_system_name` option.
 If a service with the selected `system_name` is not found, it will be created.
 
 Components of the service being copied:
@@ -35,7 +35,7 @@ USAGE
 
 DESCRIPTION
     This command makes a copy of the referenced service. Target service will
-    be searched by source service system name. System name can be overriden
+    be searched by the source service system name. System name can be overridden
     with `--target_system_name` option. If a service with the selected
     `system_name` is not found, it will be created.
 
