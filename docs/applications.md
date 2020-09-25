@@ -121,15 +121,15 @@ OPTIONS FOR APPLICATION
 ### Apply
 
 * Update (create if it does not exist) application.
-* `application` positional argument is application unique identifier. Allowed id's are:
+* `application` positional argument is the application unique identifier. Allowed ids are:
   * User_key (API key)
   * App_id (from app_id/app_key pair) or Client ID (for OAuth and OpenID Connect authentication modes)
   * Application internal id
-* `account` optional argument is required when application is not found and needs to be created. It can be one of the following and the toolbox will figure it out:
+* `account` optional argument is required when the application is not found and needs to be created. It can be one of the following and the toolbox will figure it out:
   * Account `id`
   * `username`, `email` or `user_id` of the admin user of the account
   * `provider_key`
-* `name` cannot be used as unique identifier because application name is not unique in 3scale.
+* `name` cannot be used as a unique identifier because the application name is not unique in 3scale.
 * This is command is `idempotent`.
 * Resume a suspended application by `--resume` flag.
 * Suspends an application (changes the state to suspended) by `--suspend` flag.
