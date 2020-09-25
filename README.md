@@ -120,7 +120,7 @@ rake spec:integration
 
 Integration tests can be run locally or against a real 3scale account.
 When details of the account are set via environment variables,
-integration tests are run agains given account.
+integration tests are run against the given account.
 Otherwise, tests are run locally with mocked 3scale clients.
 
 The easiest way to set everything up is it to have a `.env` file in the root of the project with the following environment variables (set your own values):
@@ -163,7 +163,7 @@ end
 A few things worth highlighting:
 - Your module must include the *ThreeScaleToolbox::Command* module. It allows your command to be added to the toobox command tree.
 - You must implement the `command` module function and return an instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
-- `threescale_client` helper method returns *3scale API* client instance. All the process remote parsing, fetching from remote list and client instantiation is done out of the box.
+- `threescale_client` helper method returns *3scale API* client instance. All the process remote parsing, fetching from the remote list and client instantiation is done out of the box.
 
 Then register the core command in `lib/3scale_toolbox/commands.rb`
 ```

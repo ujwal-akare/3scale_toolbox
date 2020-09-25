@@ -9,7 +9,7 @@
 ### Create
 
 * Creates a new application plan
-* Only application plan name is required. `system-name` can be override with optional parameter.
+* Only application plan name is required. `system-name` can be overridden with an optional parameter.
 * `service` positional argument is a service reference. It can be either service `id`, or service `system_name`. Toolbox will figure it out.
 * This is not idempotent command. If application plan with the same name already exists, command will fail.
 * Set as `default` application plan by `--default` flag.
@@ -55,7 +55,7 @@ OPTIONS FOR APPLICATION-PLAN
 
 ### Apply
 
-* Update existing application plan. Create new one if it does not exist.
+* Update existing application plan. Create a new one if it does not exist.
 * `service` positional argument is a service reference. It can be either service `id`, or service `system_name`. Toolbox will figure it out.
 * `plan` positional argument is a plan reference. It can be either plan `id`, or plan `system_name`. Toolbox will figure it out.
 * This is command is `idempotent`.
