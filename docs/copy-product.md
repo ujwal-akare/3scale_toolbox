@@ -1,8 +1,8 @@
 ## Copy Product
 
 This command makes a copy of the referenced product.
-Target product will be searched by source product system name.
-System name can be overriden with `--target-system-name` option.
+Target product will be searched by the source product system name.
+System name can be overridden with `--target-system-name` option.
 If a product with the selected `system-name` is not found, it will be created.
 
 Components of the backend being copied:
@@ -28,7 +28,7 @@ USAGE
 
 DESCRIPTION
     This command makes a copy of the referenced product. Target product will
-    be searched by source product system name. System name can be overriden
+    be searched by the source product system name. System name can be overridden
     with `--target-system-name` option. If a product with the selected
     `system_name` is not found, it will be created.
 
