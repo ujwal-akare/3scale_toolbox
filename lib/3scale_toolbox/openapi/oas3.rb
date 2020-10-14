@@ -64,7 +64,7 @@ module ThreeScaleToolbox
 
       def host
         # If there are many? take first
-        server_objects(&:host).first
+        server_objects { |url| "#{url.host}:#{url.port}" }.first
       end
 
       def scheme

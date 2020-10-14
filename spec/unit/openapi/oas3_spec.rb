@@ -117,7 +117,15 @@ RSpec.describe ThreeScaleToolbox::OpenAPI::OAS3 do
       let(:content) { servers_oas3_content }
 
       it 'only first element taken' do
-        expect(subject.host).to eq('petstore.swagger.io')
+        expect(subject.host).to eq('petstore.swagger.io:443')
+      end
+    end
+
+    context 'includes port' do
+      let(:content) { servers_port_oas3_content }
+
+      it do
+        expect(subject.host).to eq('petstore.swagger.io:8080')
       end
     end
 
@@ -125,7 +133,7 @@ RSpec.describe ThreeScaleToolbox::OpenAPI::OAS3 do
       let(:content) { server_templates_oas3_content }
 
       it 'template rendered' do
-        expect(subject.host).to eq('petstorev1.swagger.io')
+        expect(subject.host).to eq('petstorev1.swagger.io:443')
       end
     end
   end
