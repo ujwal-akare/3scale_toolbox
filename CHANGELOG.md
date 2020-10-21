@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.17.1]
+
+### Fixed
+- When parsing oas3, fix custom ports for backend url Update service deprecated message [#265](https://github.com/3scale/3scale_toolbox/pull/265)
+
 ## [0.17.0]
 
 ### Added
@@ -235,7 +240,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.17.1...HEAD
+[0.17.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.17.1
 [0.17.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.17.0
 [0.16.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.16.0
 [0.15.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.15.0
