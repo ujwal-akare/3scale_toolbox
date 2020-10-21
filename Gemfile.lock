@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    3scale_toolbox (0.17.0)
+    3scale_toolbox (0.17.1)
       3scale-api (~> 1.1)
       cri (~> 2.15)
       json-schema (~> 2.8)
