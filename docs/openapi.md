@@ -9,10 +9,10 @@ Features:
     * Toolbox will not parse servers in path item or operation objects.
     * Supported security schemes: apiKey, oauth2 (any flow type).
     * Multiple flows in security scheme object not supported.
-* Update existing service or create a new one. Service's `system_name` can be passed as option parameter and defaults to *info.title* field from openapi spec.
+* Update existing product or create a new one. Product's `system_name` can be passed as option parameter and defaults to *info.title* field from openapi spec.
 * Create methods in the 'Definition' section. Method names are taken from `operation.operationId` field.
 * Create ActiveDocs.
-* Set service integration configuration based on openapi spec.
+* Set product integration settings based on openapi spec.
   * Mapping Rules
     * All existing *mapping rules* are deleted before importing new API definition. Methods not deleted if exist before running the command.
     * Create mapping rules and show them under `API > Integration`.
@@ -21,9 +21,11 @@ Features:
     * Just one top level security requirement supported. Operation level security requirements not supported.
     * Supported security schemes: apiKey, oauth2 (any flow type).
   * Policies
-    * When there is no security requirement spec, the service is considered as an "Open API". `default_credentials` policy will be added (also called as `anonymous_policy`). `default_credentials` policy will be configured with userkey provided in optional parameter `--default-credentials-userkey`.
+    * When there is no security requirement spec, the product is considered as an "Open API". `default_credentials` policy will be added (also called as `anonymous_policy`). `default_credentials` policy will be configured with userkey provided in optional parameter `--default-credentials-userkey`.
     * RH-SSO/Keycloak role check policy set for oauth2 security requirements.
     * URL rewriting policy set when public and private base paths do not match.
+  * Deployment mode
+    * When `--production-public-base-url` or `--staging-public-base-url` (or both) option params are provided, implicitly the customer is asking for "APIcast self-managed" deploment mode. Otherwise, default deployment mode will be set, that is, "APIcast 3scale managed".
 * OpenAPI Specification JSON Schema validation (3.0.2 and 2.0). Can be skipped with command flag `--skip-openapi-validation`.
 * OpenAPI definition resource can be provided by one of the following channels:
   * *Filename* in the available path.
