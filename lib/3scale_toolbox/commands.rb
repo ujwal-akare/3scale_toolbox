@@ -15,6 +15,7 @@ require '3scale_toolbox/commands/policy_registry_command'
 require '3scale_toolbox/commands/application_command'
 require '3scale_toolbox/commands/backend_command'
 require '3scale_toolbox/commands/product_command'
+require '3scale_toolbox/commands/policies_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -35,6 +36,7 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::ApplicationCommand,
       ThreeScaleToolbox::Commands::BackendCommand,
       ThreeScaleToolbox::Commands::ProductCommand,
+      ThreeScaleToolbox::Commands::PoliciesCommand,
     ].freeze
   end
 end
