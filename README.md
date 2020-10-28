@@ -24,6 +24,7 @@
    * List, Show, Promote, Export [Proxy Configuration](docs/proxy-config.md)
    * [Copy Policy Registry](docs/copy-policy-registry.md)
    * Create, Apply, List, Show, Delete, Suspend, Resume [Applications](docs/applications.md)
+   * [Export/Import Product Policy Chain](docs/export-import-policy-chain.md)
    * [Remotes](docs/remotes.md)
 * [Development](#development)
    * [Testing](#testing)
