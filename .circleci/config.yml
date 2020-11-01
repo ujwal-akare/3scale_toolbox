@@ -1,6 +1,17 @@
 version: 2.1
 
 commands:
+  setup-bundler:
+    steps:
+      - run:
+          name: setup bundler
+          command: |
+            sudo gem update --system
+            sudo gem uninstall bundler
+            sudo rm /usr/local/bin/bundle || true
+            sudo rm /usr/local/bin/bundler || true
+            sudo gem install bundler
+
   install_dependencies:
     steps:
       - restore_cache:
@@ -18,7 +29,7 @@ commands:
           key: v2-dependencies-{{ checksum "Gemfile.lock" }}
           paths:
             - ./vendor/bundle
-    
+
   unittests:
     steps:
       - install_dependencies
@@ -30,17 +41,23 @@ jobs:
   ruby-255-unittest:
     docker:
       - image: circleci/ruby:2.5.5
+        environment:
+          BUNDLER_VERSION: 2.1.4
     working_directory: ~/repo
     steps:
       - checkout
+      - setup-bundler
       - unittests
 
   ruby-262-unittest:
     docker:
       - image: circleci/ruby:2.6.2
+        environment:
+          BUNDLER_VERSION: 2.1.4
     working_directory: ~/repo
     steps:
       - checkout
+      - setup-bundler
       - unittests
 
   ruby-270-unittest:
@@ -54,9 +71,12 @@ jobs:
   license_check:
     docker:
       - image: circleci/ruby:2.5.5
+        environment:
+          BUNDLER_VERSION: 2.1.4
     working_directory: ~/repo
     steps:
       - checkout
+      - setup-bundler
       - install_dependencies
       - run:
           name: License check
@@ -66,9 +86,12 @@ jobs:
   help_test:
     docker:
       - image: circleci/ruby:2.5.5
+        environment:
+          BUNDLER_VERSION: 2.1.4
     working_directory: ~/repo
     steps:
       - checkout
+      - setup-bundler
       - install_dependencies
       - run:
           name: Help test
@@ -78,9 +101,12 @@ jobs:
   integration_tests:
     docker:
       - image: circleci/ruby:2.5.5
+        environment:
+          BUNDLER_VERSION: 2.1.4
     working_directory: ~/repo
     steps:
       - checkout
+      - setup-bundler
       - install_dependencies
       - run:
           name: Integration Tests
