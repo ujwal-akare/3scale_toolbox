@@ -25,11 +25,11 @@ Features:
     * RH-SSO/Keycloak role check policy set for oauth2 security requirements.
     * URL rewriting policy set when public and private base paths do not match.
   * Deployment mode
-    * When `--production-public-base-url` or `--staging-public-base-url` (or both) option params are provided, implicitly the customer is asking for "APIcast self-managed" deploment mode. Otherwise, default deployment mode will be set, that is, "APIcast 3scale managed".
+    * When `--production-public-base-url` or `--staging-public-base-url` (or both) option params are provided, implicitly the customer is asking for "APIcast self-managed" deployment mode. Otherwise, default deployment mode will be set, that is, "APIcast 3scale managed".
 * OpenAPI Specification JSON Schema validation (3.0.2 and 2.0). Can be skipped with command flag `--skip-openapi-validation`.
 * OpenAPI definition resource can be provided by one of the following channels:
   * *Filename* in the available path.
-  * *URL* format (supported schemes are `http` and `https`). Toolbox will try to download from given address.
+  * *URL* format (supported schemes are `http` and `https`). Toolbox will try to download from a given address.
   * Read from *stdin* standard input stream.
 
 ### Usage
@@ -81,7 +81,7 @@ OPTIONS
 
 ### OpenAPI definition from filename in path
 
-Allowed formats are `json` and `yaml`. Format is automatically detected from filename __extension__.
+Allowed formats are `json` and `yaml`. The format is automatically detected from filename __extension__.
 
 ```shell
 $ 3scale import openapi -d <destination> /path/to/your/spec/file.[json|yaml|yml]
@@ -89,7 +89,7 @@ $ 3scale import openapi -d <destination> /path/to/your/spec/file.[json|yaml|yml]
 
 ### OpenAPI definition from URI
 
-Allowed formats are `json` and `yaml`. Format is automatically detected from URL's path __extension__.
+Allowed formats are `json` and `yaml`. The format is automatically detected from URL's path __extension__.
 
 ```shell
 $ 3scale import openapi -d <destination> http[s]://domain/resource/path.[json|yaml|yml]
@@ -99,7 +99,7 @@ $ 3scale import openapi -d <destination> http[s]://domain/resource/path.[json|ya
 
 Command line parameter for the openapi resource is `-`.
 
-Allowed formats are `json` and `yaml`. Format is automatically detected internally with parsers.
+Allowed formats are `json` and `yaml`. The format is automatically detected internally with parsers.
 
 ```shell
 $ tool_to_read_openapi_from_source | 3scale import openapi -d <destination> -
