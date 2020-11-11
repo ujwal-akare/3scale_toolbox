@@ -14,7 +14,7 @@ If the requested operation cannot be completed, the Unix return code is *1* and 
 
 ### Error Report Fields
 
-When an error occurs, the toolbox writes to *stderr* an structured error report with some fields.
+When an error occurs, the toolbox writes to *stderr* a structured error report with some fields.
 
 ```
 {
@@ -43,7 +43,7 @@ The error is managed by the toolbox. This means the error is created by the tool
 #### Unmanaged Error
 
 The error is not managed by the toolbox. But still, the error is not a *panic* error.
-The application has been able to handled it and generate detailed report for the user to inspect.
+The application has been able to handle it and generate a detailed report for the user to inspect.
 For example, `RuntimeError` or `ZeroDivisionError` are included in this class of errors.
 
 **For this type of errors, the toolbox generates a detailed report in `crash.log` file in the current working directory.**

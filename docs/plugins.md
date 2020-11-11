@@ -1,6 +1,6 @@
 # Developing 3scale Toolbox CLI plugins
 
-3scale toolbox is based on the [cri](https://github.com/ddfreyne/cri) library for building command line tools.
+3scale toolbox is based on the [cri](https://github.com/ddfreyne/cri) library for building command-line tools.
 
 The plugin system also uses [cri](https://github.com/ddfreyne/cri) to leverage its easy to develop, flexible and extensible plugin system.
 
@@ -10,14 +10,14 @@ Plugins must be named ‘3scale_toolbox_plugin’ (.rb, .so, etc) and placed in 
 Plugins may add commands to *3scale* toolbox or may add *subcommands* to any existing command.
 Subcommands may be added to main commands or other subcommands as children.
 
-Nothing better than few examples to illustrate.
+Nothing better than a few examples to illustrate.
 
 ## Plugin command
 
 Let's create a plugin to add a `supercool` command. The simplest command ever,
-but useful to ilustrate basic command code skeleton or structure.
+but useful to illustrate basic command code skeleton or structure.
 
-Source code can be find [here](https://github.com/eguzki/3scale_toolbox_plugin_demo)
+Source code can be found [here](https://github.com/eguzki/3scale_toolbox_plugin_demo)
 
 ```
 $ cat lib/3scale_toolbox_plugin.rb
@@ -44,7 +44,7 @@ $ RUBYOPT=-Ilib 3scale supercool
 Doing lots of things!
 ```
 A few things worth highlighting:
-- Your module must include the *ThreeScaleToolbox::Command* module. It allows your command to be added to the toobox command tree.
+- Your module must include the *ThreeScaleToolbox::Command* module. It allows your command to be added to the toolbox command tree.
 - You must implement the `command` module function and return an instance of `Cri::Command` from [cri](https://github.com/ddfreyne/cri)
 - Add your command to `3scale` toolbox command tree by calling `ThreeScaleToolbox::CLI.add_command`
 

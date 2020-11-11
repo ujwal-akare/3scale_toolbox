@@ -20,7 +20,7 @@ Specific to `import` command:
 * Any metric or method from yaml content that cannot be found in remote service, will be created.
 * Imported resource as the source of truth. All existing pricing rules and limits will be deleted before importing new ones.
 
-### Export Appliation Plan Usage
+### Export Application Plan Usage
 
 ```shell
 NAME
@@ -46,7 +46,7 @@ OPTIONS FOR APPLICATION-PLAN
        --verbose                  Verbose mode
 ```
 
-### Import Appliation Plan Usage
+### Import Application Plan Usage
 
 ```shell
 NAME

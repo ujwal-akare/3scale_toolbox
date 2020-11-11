@@ -5,8 +5,8 @@ Common description:
 * Product can be referenced by `id` or `system_name`.
 
 Specific to `export` command:
-* Read only operation on remote product.
-* Command `output` can be `stdout` or file. If not specified by `-f` option, by default, content will be written on `stdout`.
+* Read only operation on the remote product.
+* Command `output` can be `stdout` or file. If not specified by `-f` option, by default, the content will be written on `stdout`.
 * Command output format can be `json` or `yaml` using `-o` option. Defaults to `yaml`
 
 Specific to `import` command:
