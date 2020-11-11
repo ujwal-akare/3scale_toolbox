@@ -10,8 +10,8 @@
 ### Create
 
 * Creates a new service
-* Only service name is required. `system-name` can be override with optional parameter.
-* This is not idempotent command. If service with the same name already exists, command will fail.
+* Only service name is required. `system-name` can be overridden with an optional parameter.
+* This is not idempotent command. If service with the same name already exists, the command will fail.
 * Several other options can be set. Check `usage`
 
 ```shell
