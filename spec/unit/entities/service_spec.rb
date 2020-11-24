@@ -20,7 +20,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     it 'throws error on remote error' do
       expect(remote).to receive(:create_service).and_return(common_error_response)
       expect do
-        described_class.create(service_info)
+        described_class.create(**service_info)
       end.to raise_error(ThreeScaleToolbox::Error, /Service has not been created/)
     end
 
@@ -38,7 +38,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
                                                   .and_return(invalid_deployment_error_response)
         expect(remote).to receive(:create_service).with(hash_excluding('deployment_option'))
                                                   .and_return(positive_response)
-        service_obj = described_class.create(service_info)
+        service_obj = described_class.create(**service_info)
         expect(service_obj.id).to eq(positive_response['id'])
       end
 
@@ -48,7 +48,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         expect(remote).to receive(:create_service).with(hash_excluding('deployment_option'))
                                                   .and_return(common_error_response)
         expect do
-          described_class.create(service_info)
+          described_class.create(**service_info)
         end.to raise_error(ThreeScaleToolbox::Error, /Service has not been created/)
       end
     end
@@ -56,13 +56,13 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     it 'throws deployment option error' do
       expect(remote).to receive(:create_service).and_return(common_error_response)
       expect do
-        described_class.create(service_info)
+        described_class.create(**service_info)
       end.to raise_error(ThreeScaleToolbox::Error, /Service has not been created/)
     end
 
     it 'service instance is returned' do
       expect(remote).to receive(:create_service).and_return(positive_response)
-      service_obj = described_class.create(service_info)
+      service_obj = described_class.create(**service_info)
       expect(service_obj.id).to eq(1000)
       expect(service_obj.remote).to be(remote)
     end
@@ -76,13 +76,13 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     it 'remote call raises unexpected error' do
       expect(remote).to receive(:list_services).and_raise(StandardError)
       expect do
-        described_class.find(service_info)
+        described_class.find(**service_info)
       end.to raise_error(StandardError)
     end
 
     it 'returns nil when the service does not exist' do
       expect(remote).to receive(:list_services).and_return([{ "system_name" => "sysname1" }, { "system_name" => "sysname2" }])
-      expect(described_class.find(service_info)).to be_nil
+      expect(described_class.find(**service_info)).to be_nil
     end
 
     it 'service instance is returned when specifying an existing service ID' do
@@ -94,7 +94,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     it 'service instance is returned when specifying an existing system-name' do
       expect(remote).to receive(:list_services).and_return([{ "id" => 3, "system_name" => system_name }, { "id" => 7, "system_name" => "sysname1" }])
-      service_obj = described_class.find(service_info)
+      service_obj = described_class.find(**service_info)
       expect(service_obj).to be
       expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
@@ -104,7 +104,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       svc_info = { remote: remote, ref: 3 }
       expect(remote).to receive(:show_service).and_return("id" => svc_info[:ref], "system_name" => "sysname1")
       allow(remote).to receive(:list_services).and_return([{ "id" => 4, "system_name" => svc_info[:ref] }, { 'id' => 5, "system_name" => "sysname2" }])
-      service_obj = described_class.find(svc_info)
+      service_obj = described_class.find(**svc_info)
       expect(service_obj.id).to eq(svc_info[:ref])
       expect(service_obj.remote).to be(remote)
     end
@@ -117,18 +117,18 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     it 'an exception is raised when remote is not configured' do
       expect(remote).to receive(:list_services).and_raise(StandardError)
       expect do
-        described_class.find_by_system_name(service_info)
+        described_class.find_by_system_name(**service_info)
       end.to raise_error(StandardError)
     end
 
     it 'returns nil when the service does not exist' do
       expect(remote).to receive(:list_services).and_return([{ "system_name" => "sysname1" }, { "system_name" => "sysname2" }])
-      expect(described_class.find_by_system_name(service_info)).to be_nil
+      expect(described_class.find_by_system_name(**service_info)).to be_nil
     end
 
     it 'service instance is returned when specifying an existing system-name' do
       expect(remote).to receive(:list_services).and_return([{ "id" => 3, "system_name" => system_name }, { "id" => 7, "system_name" => "sysname1" }])
-      service_obj = described_class.find_by_system_name(service_info)
+      service_obj = described_class.find_by_system_name(**service_info)
       expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
     end
