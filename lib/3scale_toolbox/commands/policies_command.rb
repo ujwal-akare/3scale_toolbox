@@ -9,7 +9,7 @@ module ThreeScaleToolbox
         Cri::Command.define do
           name        'policies'
           usage       'policies <sub-command> [options]'
-          summary     'product super command'
+          summary     'policies super command'
           description 'Policies commands'
 
           run do |_opts, _args, cmd|
