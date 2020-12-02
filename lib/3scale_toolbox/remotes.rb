@@ -35,14 +35,14 @@ module ThreeScaleToolbox
       end
     end
 
-    def delete(key)
+    def delete(key, &block)
       value = nil
       update do |rmts|
         # block should return rmts
         # but main method should return deleted value
         rmts.tap do |r|
           value = if block_given?
-                    r.delete(key, &Proc.new)
+                    r.delete(key, &block)
                   else
                     r.delete(key)
                   end

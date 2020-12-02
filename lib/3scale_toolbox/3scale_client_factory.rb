@@ -22,7 +22,7 @@ module ThreeScaleToolbox
         remote = remotes.fetch(remote_str)
       end
 
-      client = remote_client(remote.merge(verify_ssl: verify_ssl))
+      client = remote_client(**remote.merge(verify_ssl: verify_ssl))
       return ProxyLogger.new(client) if verbose
 
       client
