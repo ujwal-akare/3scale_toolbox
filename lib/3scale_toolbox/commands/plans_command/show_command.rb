@@ -5,7 +5,7 @@ module ThreeScaleToolbox
         class ShowSubcommand < Cri::CommandRunner
           include ThreeScaleToolbox::Command
 
-          FIELDS_TO_SHOW = %w[id name system_name approval_required end_user_required
+          FIELDS_TO_SHOW = %w[id name system_name approval_required
                               cost_per_month setup_fee trial_period_days].freeze
 
           def self.command
