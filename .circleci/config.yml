@@ -37,6 +37,12 @@ commands:
           name: Run unittests
           command: |
             bundle exec rake spec:unit
+
+  setup-docker:
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+
 jobs:
   ruby-255-unittest:
     docker:
@@ -113,6 +119,16 @@ jobs:
           command: |
             bundle exec rake spec:integration
 
+  docker_container_help_test:
+    docker:
+    - image: docker:stable
+    steps:
+      - setup-docker
+      - run:
+          name: Docker container help test
+          command: |
+            docker run --rm -t quay.io/redhat/3scale-toolbox:master 3scale help
+
 workflows:
   version: 2
   basic_tests:
@@ -143,3 +159,4 @@ workflows:
     jobs:
       - integration_tests:
           context: supertestaccount
+      - docker_container_help_test
