@@ -1,14 +1,15 @@
-FROM centos/ruby-25-centos7:latest
+FROM ruby:2.7
 MAINTAINER Eguzki Astiz Lezaun <eastizle@redhat.com>
 
-USER root
-WORKDIR /opt/app-root/src
+WORKDIR /usr/src/app
 COPY . .
-RUN /bin/bash -l -c "gem build 3scale_toolbox.gemspec"
-RUN /bin/bash -l -c "gem install 3scale_toolbox-*.gem --no-document"
+RUN gem build 3scale_toolbox.gemspec
+RUN gem install 3scale_toolbox-*.gem --no-document
+RUN adduser  --home /home/toolboxuser toolboxuser
+WORKDIR /home/toolboxuser
 
 # clean up
-RUN rm -rf /opt/app-root/src/*
+RUN rm -rf /usr/src/app
 
 # Drop privileges
-USER default
+USER toolboxuser
