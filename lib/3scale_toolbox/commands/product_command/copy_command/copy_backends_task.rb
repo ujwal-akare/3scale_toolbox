@@ -20,7 +20,7 @@ module ThreeScaleToolbox
 
           def create_backend(backend_usage)
             source_backend = Entities::Backend.new(id: backend_usage.backend_id, remote: source_remote)
-            backend_context = create_backend_context(source_backend.system_name)
+            backend_context = create_backend_context(source_backend)
 
             tasks = []
             tasks << Commands::BackendCommand::CopyCommand::CreateOrUpdateTargetBackendTask.new(backend_context)
@@ -57,11 +57,12 @@ module ThreeScaleToolbox
             context[:target_remote]
           end
 
-          def create_backend_context(source_backend_system_name)
+          def create_backend_context(source_backend)
             {
               source_remote: source_remote,
               target_remote: target_remote,
-              source_backend_ref: source_backend_system_name
+              source_backend: source_backend,
+              source_backend_ref: source_backend.id
             }
           end
         end
