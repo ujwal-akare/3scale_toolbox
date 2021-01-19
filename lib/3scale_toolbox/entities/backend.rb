@@ -22,16 +22,44 @@ module ThreeScaleToolbox
         end
 
         def find_by_system_name(remote:, system_name:)
-          list = remote.list_backends
-
-          if list.respond_to?(:has_key?) && (errors = list['errors'])
-            raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend list not read', errors)
+          attrs = list_backends(remote: remote).find do |backend|
+            backend['system_name'] == system_name
           end
-
-          attrs = list.find { |backend| backend['system_name'] == system_name }
           return if attrs.nil?
 
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
+        end
+
+        private
+
+        def list_backends(remote:)
+          backends_enum(remote: remote).reduce([], :concat)
+        end
+
+        def backends_enum(remote:)
+          Enumerator.new do |yielder|
+            page = 1
+            loop do
+              list = remote.list_backends(
+                page: page,
+                per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE
+              )
+
+              if list.respond_to?(:has_key?) && (errors = list['errors'])
+                raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend list not read', errors)
+              end
+
+              break if list.nil?
+
+              yielder << list
+
+              # The API response does not tell how many pages there are available
+              # If one page is not fully filled, it means that it is the last page.
+              break if list.length < ThreeScale::API::MAX_BACKENDS_PER_PAGE
+
+              page += 1
+            end
+          end
         end
       end
 
