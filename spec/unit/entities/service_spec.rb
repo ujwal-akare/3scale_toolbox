@@ -132,6 +132,116 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       expect(service_obj.id).to eq(3)
       expect(service_obj.remote).to be(remote)
     end
+
+    context 'when remote returns error' do
+      before :each do
+        expect(remote).to receive(:list_services).and_return('errors' => 'some error')
+      end
+
+      it 'ThreeScaleApiError is raised' do
+        expect { described_class.find_by_system_name(**service_info) }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError)
+      end
+    end
+
+    context 'when service list length is' do
+      subject { described_class.find_by_system_name(remote: remote, system_name: system_name) }
+      let(:expected_service_id) { 0 }
+
+      context 'MAX_SERVICES_PER_PAGE - 1' do
+        let(:service_response) do
+          # the latest service is the one with the searched system_name
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE - 2).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end + [{ 'id' => expected_service_id, 'system_name' => system_name }]
+        end
+
+        it 'then 1 remote call' do
+          expect(remote).to receive(:list_services).with(page: 1, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response)
+
+          expect(subject.id).to eq expected_service_id
+        end
+      end
+
+      context 'MAX_SERVICES_PER_PAGE' do
+        let(:service_response01) do
+          # the latest service is the one with the searched system_name
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE - 1).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end + [{ 'id' => expected_service_id, 'system_name' => system_name }]
+        end
+        let(:service_response02) { [] }
+
+        it 'then 2 remote call' do
+            expect(remote).to receive(:list_services).with(page: 1, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response01)
+            expect(remote).to receive(:list_services).with(page: 2, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response02)
+
+            expect(subject.id).to eq expected_service_id
+        end
+      end
+
+      context 'MAX_SERVICES_PER_PAGE + 1' do
+        let(:service_response01) do
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end
+        end
+        # the latest service is the one with the searched system_name
+        let(:service_response02) { [{ 'id' => expected_service_id, 'system_name' => system_name }] }
+
+        it 'then 2 remote call' do
+            expect(remote).to receive(:list_services).with(page: 1, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response01)
+            expect(remote).to receive(:list_services).with(page: 2, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response02)
+
+            expect(subject.id).to eq expected_service_id
+        end
+      end
+
+      context '2 * MAX_SERVICES_PER_PAGE' do
+        let(:service_response01) do
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end
+        end
+        let(:service_response02) do
+          # the latest service is the one with the searched system_name
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE - 1).map do |idx|
+            { 'id' => ThreeScale::API::MAX_SERVICES_PER_PAGE + idx, 'system_name' => (ThreeScale::API::MAX_SERVICES_PER_PAGE + idx).to_s }
+          end + [{ 'id' => expected_service_id, 'system_name' => system_name }]
+        end
+        let(:service_response03) { [] }
+
+        it 'then 3 remote call' do
+            expect(remote).to receive(:list_services).with(page: 1, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response01)
+            expect(remote).to receive(:list_services).with(page: 2, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response02)
+            expect(remote).to receive(:list_services).with(page: 3, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response03)
+
+            expect(subject.id).to eq expected_service_id
+        end
+      end
+
+      context '2 * MAX_SERVICES_PER_PAGE + 1' do
+        let(:service_response01) do
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end
+        end
+        let(:service_response02) do
+          # the latest service is the one with the searched system_name
+          (1..ThreeScale::API::MAX_SERVICES_PER_PAGE).map do |idx|
+            { 'id' => ThreeScale::API::MAX_SERVICES_PER_PAGE + idx, 'system_name' => (ThreeScale::API::MAX_SERVICES_PER_PAGE + idx).to_s }
+          end
+        end
+        let(:service_response03) { [{ 'id' => expected_service_id, 'system_name' => system_name }] }
+
+        it 'then 3 remote call' do
+            expect(remote).to receive(:list_services).with(page: 1, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response01)
+            expect(remote).to receive(:list_services).with(page: 2, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response02)
+            expect(remote).to receive(:list_services).with(page: 3, per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE).and_return(service_response03)
+
+            expect(subject.id).to eq expected_service_id
+        end
+      end
+    end
   end
 
   context 'instance method' do

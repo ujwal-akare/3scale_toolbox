@@ -29,16 +29,12 @@ module ThreeScaleToolbox
         end
 
         def find_by_system_name(remote:, system_name:)
-          service_list = remote.list_services
-
-          if service_list.respond_to?(:has_key?) && (errors = service_list['errors'])
-            raise ThreeScaleToolbox::ThreeScaleApiError.new('Service list not read', errors)
+          attrs = list_services(remote: remote).find do |svc|
+            svc['system_name'] == system_name
           end
+          return if attrs.nil?
 
-          service_attrs = service_list.find { |svc| svc['system_name'] == system_name }
-          return if service_attrs.nil?
-
-          new(id: service_attrs.fetch('id'), remote: remote, attrs: service_attrs)
+          new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         end
 
         private
@@ -60,6 +56,36 @@ module ThreeScaleToolbox
 
         def filtered_service_params(original_params)
           Helper.filter_params(VALID_PARAMS, original_params)
+        end
+
+        def list_services(remote:)
+          services_enum(remote: remote).reduce([], :concat)
+        end
+
+        def services_enum(remote:)
+          Enumerator.new do |yielder|
+            page = 1
+            loop do
+              list = remote.list_services(
+                page: page,
+                per_page: ThreeScale::API::MAX_SERVICES_PER_PAGE
+              )
+
+              if list.respond_to?(:has_key?) && (errors = list['errors'])
+                raise ThreeScaleToolbox::ThreeScaleApiError.new('Service list not read', errors)
+              end
+
+              break if list.nil?
+
+              yielder << list
+
+              # The API response does not tell how many pages there are available
+              # If one page is not fully filled, it means that it is the last page.
+              break if list.length < ThreeScale::API::MAX_SERVICES_PER_PAGE
+
+              page += 1
+            end
+          end
         end
       end
 
