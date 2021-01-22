@@ -10,6 +10,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
   let(:staging_public_base_url) { nil }
   let(:override_private_base_url) { nil }
   let(:oidc_issuer_endpoint) { 'https://sso.example.com' }
+  let(:oidc_issuer_type) { nil }
   let(:backend_api_secret_token) { nil }
   let(:backend_api_host_header) { nil }
 
@@ -18,6 +19,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       target: service,
       api_spec: api_spec,
       oidc_issuer_endpoint: oidc_issuer_endpoint,
+      oidc_issuer_type: oidc_issuer_type,
       production_public_base_url: production_public_base_url,
       staging_public_base_url: staging_public_base_url,
       override_private_base_url: override_private_base_url,
@@ -148,6 +150,32 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
         expect(service).to receive(:update_proxy)
           .with(hash_including(
                   credentials_location: 'headers',
+                  oidc_issuer_endpoint: oidc_issuer_endpoint
+                )).and_return({})
+        subject
+      end
+    end
+
+    context 'oidc issuer type (default) set' do
+      let(:security) { { id: 'oidc', type: 'oauth2', flow: :implicit_flow_enabled } }
+
+      it 'updates proxy with correct default oidc type' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(
+                  oidc_issuer_endpoint: oidc_issuer_endpoint
+                )).and_return({})
+        subject
+      end
+    end
+
+    context 'correct oidc issuer type set' do
+      let(:security) { { id: 'oidc', type: 'oauth2', flow: :implicit_flow_enabled } }
+      let(:oidc_issuer_type) {'rest'}
+      
+      it 'updates proxy with correct oidc type' do
+        expect(service).to receive(:update_proxy)
+          .with(hash_including(
+                  oidc_issuer_type: oidc_issuer_type,
                   oidc_issuer_endpoint: oidc_issuer_endpoint
                 )).and_return({})
         subject

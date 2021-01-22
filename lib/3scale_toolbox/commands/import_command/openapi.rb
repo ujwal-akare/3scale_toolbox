@@ -30,6 +30,7 @@ module ThreeScaleToolbox
               flag    nil, 'activedocs-hidden', 'Create ActiveDocs in hidden state'
               flag    nil, 'skip-openapi-validation', 'Skip OpenAPI schema validation'
               flag    nil, 'prefix-matching', 'Use prefix matching instead of strict matching on mapping rules derived from openapi operations'
+              option  nil, 'oidc-issuer-type', 'OIDC Issuer Type (rest, keycloak)', argument: :optional
               option  nil, 'oidc-issuer-endpoint', 'OIDC Issuer Endpoint', argument: :required
               option  nil, 'default-credentials-userkey', 'Default credentials policy userkey', argument: :required
               option  nil, 'override-private-basepath', 'Override the basepath for the private URLs', argument: :required
@@ -77,6 +78,7 @@ module ThreeScaleToolbox
               threescale_client: threescale_client(fetch_required_option(:destination)),
               target_system_name: options[:target_system_name],
               activedocs_published: !options[:'activedocs-hidden'],
+              oidc_issuer_type: options[:'oidc-issuer-type'],
               oidc_issuer_endpoint: options[:'oidc-issuer-endpoint'],
               default_credentials_userkey: options[:'default-credentials-userkey'],
               skip_openapi_validation: options[:'skip-openapi-validation'],

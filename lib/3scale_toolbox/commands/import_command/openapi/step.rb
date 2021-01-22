@@ -57,6 +57,10 @@ module ThreeScaleToolbox
             context[:api_spec_resource]
           end
 
+          def oidc_issuer_type
+            context[:oidc_issuer_type]
+          end
+
           def oidc_issuer_endpoint
             context[:oidc_issuer_endpoint]
           end
