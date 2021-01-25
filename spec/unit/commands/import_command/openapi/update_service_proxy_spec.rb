@@ -161,8 +161,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
 
       it 'updates proxy with correct default oidc type' do
         expect(service).to receive(:update_proxy)
-          .with(hash_including(
-                  oidc_issuer_endpoint: oidc_issuer_endpoint
+          .with(hash_excluding(
+                  :oidc_issuer_type
                 )).and_return({})
         subject
       end
