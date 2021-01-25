@@ -99,6 +99,105 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
         expect(subject.id).to eq 1
       end
     end
+
+    context 'when backend list length is' do
+      let(:expected_backend_id) { 0 }
+
+      context 'MAX_BACKENDS_PER_PAGE - 1' do
+        let(:backend_response) do
+          # the latest backend is the one with the searched system_name
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE - 2).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end + [{ 'id' => expected_backend_id, 'system_name' => system_name }]
+        end
+
+        it 'then 1 remote call' do
+          expect(remote).to receive(:list_backends).with(page: 1, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response)
+
+          expect(subject.id).to eq expected_backend_id
+        end
+      end
+
+      context 'MAX_BACKENDS_PER_PAGE' do
+        let(:backend_response01) do
+          # the latest backend is the one with the searched system_name
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE - 1).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end + [{ 'id' => expected_backend_id, 'system_name' => system_name }]
+        end
+        let(:backend_response02) { [] }
+
+        it 'then 2 remote call' do
+            expect(remote).to receive(:list_backends).with(page: 1, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response01)
+            expect(remote).to receive(:list_backends).with(page: 2, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response02)
+
+            expect(subject.id).to eq expected_backend_id
+        end
+      end
+
+      context 'MAX_BACKENDS_PER_PAGE + 1' do
+        let(:backend_response01) do
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end
+        end
+        # the latest backend is the one with the searched system_name
+        let(:backend_response02) { [{ 'id' => expected_backend_id, 'system_name' => system_name }] }
+
+        it 'then 2 remote call' do
+            expect(remote).to receive(:list_backends).with(page: 1, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response01)
+            expect(remote).to receive(:list_backends).with(page: 2, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response02)
+
+            expect(subject.id).to eq expected_backend_id
+        end
+      end
+
+      context '2 * MAX_BACKENDS_PER_PAGE' do
+        let(:backend_response01) do
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end
+        end
+        let(:backend_response02) do
+          # the latest backend is the one with the searched system_name
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE - 1).map do |idx|
+            { 'id' => ThreeScale::API::MAX_BACKENDS_PER_PAGE + idx, 'system_name' => (ThreeScale::API::MAX_BACKENDS_PER_PAGE + idx).to_s }
+          end + [{ 'id' => expected_backend_id, 'system_name' => system_name }]
+        end
+        let(:backend_response03) { [] }
+
+        it 'then 3 remote call' do
+            expect(remote).to receive(:list_backends).with(page: 1, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response01)
+            expect(remote).to receive(:list_backends).with(page: 2, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response02)
+            expect(remote).to receive(:list_backends).with(page: 3, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response03)
+
+            expect(subject.id).to eq expected_backend_id
+        end
+      end
+
+      context '2 * MAX_BACKENDS_PER_PAGE + 1' do
+        let(:backend_response01) do
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE).map do |idx|
+            { 'id' => idx, 'system_name' => idx.to_s }
+          end
+        end
+        let(:backend_response02) do
+          # the latest backend is the one with the searched system_name
+          (1..ThreeScale::API::MAX_BACKENDS_PER_PAGE).map do |idx|
+            { 'id' => ThreeScale::API::MAX_BACKENDS_PER_PAGE + idx, 'system_name' => (ThreeScale::API::MAX_BACKENDS_PER_PAGE + idx).to_s }
+          end
+        end
+        let(:backend_response03) { [{ 'id' => expected_backend_id, 'system_name' => system_name }] }
+
+        it 'then 3 remote call' do
+            expect(remote).to receive(:list_backends).with(page: 1, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response01)
+            expect(remote).to receive(:list_backends).with(page: 2, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response02)
+            expect(remote).to receive(:list_backends).with(page: 3, per_page: ThreeScale::API::MAX_BACKENDS_PER_PAGE).and_return(backend_response03)
+
+            expect(subject.id).to eq expected_backend_id
+        end
+      end
+    end
   end
 
   context 'instance method' do

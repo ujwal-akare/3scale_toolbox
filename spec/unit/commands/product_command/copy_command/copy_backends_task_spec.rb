@@ -23,7 +23,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ProductCommand::CopyCommand::CopyBac
       expect(source).to receive(:backend_usage_list).and_return(backend_usage_list)
       expect(backend_usage_01).to receive(:backend_id).and_return(source_backend_id)
       expect(backend_usage_01).to receive(:path).and_return('/v1')
-      expect(source_remote).to receive(:backend).with(source_backend_id).and_return(backend_01_attrs)
 
       create_task = double('create task')
       allow(ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CreateOrUpdateTargetBackendTask).to receive(:new) do |backend_context|

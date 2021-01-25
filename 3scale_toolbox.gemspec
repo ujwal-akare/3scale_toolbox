@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 3.4'
   spec.required_ruby_version = '>= 2.5'
 
-  spec.add_dependency '3scale-api', '~> 1.1'
+  spec.add_dependency '3scale-api', '~> 1.3'
   spec.add_dependency 'cri', '~> 2.15'
   spec.add_dependency 'json-schema', '~> 2.8'
   spec.add_dependency 'oas_parser', '~> 0.20'
