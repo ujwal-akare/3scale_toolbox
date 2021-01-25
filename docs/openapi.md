@@ -62,6 +62,8 @@ OPTIONS
        --default-credentials-userkey=<value>      Default credentials policy
                                                   userkey
        --oidc-issuer-endpoint=<value>             OIDC Issuer Endpoint
+       --oidc-issuer-type=<value>                 OIDC Issuer Type (rest,
+                                                  keycloak)
        --override-private-base-url=<value>        Custom private base URL
        --override-private-basepath=<value>        Override the basepath for
                                                   the private URLs

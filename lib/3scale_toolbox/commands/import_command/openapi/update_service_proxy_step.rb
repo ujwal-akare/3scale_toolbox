@@ -52,6 +52,7 @@ module ThreeScaleToolbox
             case (type = api_spec.security[:type])
             when 'oauth2'
               settings[:credentials_location] = 'headers'
+              settings[:oidc_issuer_type] = oidc_issuer_type unless oidc_issuer_type.nil?
               settings[:oidc_issuer_endpoint] = oidc_issuer_endpoint unless oidc_issuer_endpoint.nil?
             when 'apiKey'
               settings[:credentials_location] = credentials_location
