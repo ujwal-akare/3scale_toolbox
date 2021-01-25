@@ -614,5 +614,24 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         end
       end
     end
+
+    context '#proxy_deploy' do
+      let(:proxy_attrs) do
+        {
+          'service_id' => id,
+          'endpoint' => 'https://example.com:443',
+        }
+      end
+
+      it 'calls proxy_deploy method' do
+        expect(remote).to receive(:proxy_deploy).with(id).and_return(proxy_attrs)
+        expect(subject.proxy_deploy).to eq(proxy_attrs)
+      end
+
+      it 'raises error on remote error' do
+        expect(remote).to receive(:proxy_deploy).with(id).and_return(common_error_response)
+        expect { subject.proxy_deploy }.to raise_error(ThreeScaleToolbox::Error)
+      end
+    end
   end
 end

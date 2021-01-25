@@ -288,6 +288,15 @@ module ThreeScaleToolbox
         end
       end
 
+      def proxy_deploy
+        proxy_attrs = remote.proxy_deploy id
+        if proxy_attrs.respond_to?(:has_key?) && (errors = proxy_attrs['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Proxy configuration not deployed', errors)
+        end
+
+        proxy_attrs
+      end
+
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end

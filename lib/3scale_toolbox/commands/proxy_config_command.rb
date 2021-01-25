@@ -5,6 +5,7 @@ require '3scale_toolbox/commands/proxy_config_command/list_command'
 require '3scale_toolbox/commands/proxy_config_command/show_command'
 require '3scale_toolbox/commands/proxy_config_command/promote_command'
 require '3scale_toolbox/commands/proxy_config_command/export_command'
+require '3scale_toolbox/commands/proxy_config_command/deploy_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -28,6 +29,7 @@ module ThreeScaleToolbox
       add_subcommand(Show::ShowSubcommand)
       add_subcommand(Promote::PromoteSubcommand)
       add_subcommand(Export::ExportSubcommand)
+      add_subcommand(DeploySubcommand)
     end
   end
 end
