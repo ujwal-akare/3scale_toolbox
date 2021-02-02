@@ -145,7 +145,7 @@ workflows:
           type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
           # On approval of the `hold` job, any successive job that requires the `hold` job will run.
       - integration_tests:
-          context: supertestaccount
+          context: autotestaccount
           requires:
             - manual_approval
   nightly:
@@ -158,5 +158,5 @@ workflows:
                 - master
     jobs:
       - integration_tests:
-          context: supertestaccount
+          context: autotestaccount
       - docker_container_help_test
