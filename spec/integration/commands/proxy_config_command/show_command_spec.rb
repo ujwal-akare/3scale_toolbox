@@ -26,6 +26,7 @@ RSpec.describe 'ProxyConfig Show command' do
 
       svc
     end
+    let(:hits_id) { service.hits.fetch('id') }
 
     before :example do
       pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 1)
@@ -33,10 +34,11 @@ RSpec.describe 'ProxyConfig Show command' do
 
       pc.promote(to: "production")
 
-      ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: { friendly_name: "mymetric_#{random_lowercase_name}",
-                                                                            unit: "1",
-                                                                          }
-                                                )
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
       api3scale_client.proxy_deploy service.id
 
       pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 2)
@@ -44,10 +46,11 @@ RSpec.describe 'ProxyConfig Show command' do
 
       pc.promote(to: "production")
 
-      ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: { friendly_name: "mymetric_#{random_lowercase_name}",
-                                                                            unit: "1",
-                                                                          }
-                                                )
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
       api3scale_client.proxy_deploy service.id
     end
 

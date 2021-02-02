@@ -24,6 +24,7 @@ RSpec.describe 'ProxyConfig List command' do
 
       svc
   end
+  let(:hits_id) { service.hits.fetch('id') }
 
   context "With multiple existing Proxy Configurations" do
     before :example do
@@ -32,10 +33,11 @@ RSpec.describe 'ProxyConfig List command' do
 
       pc.promote(to: "production")
 
-      ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: { friendly_name: "mymetric_#{random_lowercase_name}",
-                                                                            unit: "1",
-                                                                          }
-                                                )
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
 
       api3scale_client.proxy_deploy service.id
 
@@ -44,10 +46,11 @@ RSpec.describe 'ProxyConfig List command' do
 
       pc.promote(to: "production")
 
-      ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: { friendly_name: "mymetric_#{random_lowercase_name}",
-                                                                            unit: "1",
-                                                                          }
-                                                )
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
       api3scale_client.proxy_deploy service.id
     end
 
