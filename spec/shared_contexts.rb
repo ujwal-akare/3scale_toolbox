@@ -46,7 +46,7 @@ RSpec.shared_context :plugin do
 end
 
 RSpec.shared_context :allow_net_connect do
-  around :context do |example|
+  around :example do |example|
     WebMock.allow_net_connect!
     example.run
     WebMock.disable_net_connect!

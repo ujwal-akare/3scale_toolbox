@@ -90,7 +90,6 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       let(:plans) { [plan_attrs] }
 
       before :example do
-        expect(remote).to receive(:show_application_plan).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(service).to receive(:plans).and_return(plans)
       end
 
@@ -105,7 +104,6 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       let(:plans) { [] }
 
       before :example do
-        expect(remote).to receive(:show_application_plan).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
         expect(service).to receive(:plans).and_return(plans)
       end
 

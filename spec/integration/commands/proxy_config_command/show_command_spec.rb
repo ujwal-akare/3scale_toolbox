@@ -11,26 +11,47 @@ RSpec.describe 'ProxyConfig Show command' do
   let(:environment_prod) { "production" }
 
   context "With the specified service existing" do
-    before :example do
+    let(:service) do
       svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
-      # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
-      svc.update_proxy('api_backend' => 'https://example.com')
-      pc_sandbox_1 = nil
-      Helpers.wait do
-        pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)
-        !pc_sandbox_1.nil?
-      end
-      pc_sandbox_1.promote(to: "production")
+      backend = ThreeScaleToolbox::Entities::Backend::create(remote: api3scale_client,
+                                                             attrs: { 'name' => "mybackend_#{random_lowercase_name}",
+                                                                      'private_endpoint' => 'https://example.com'
+                                                                    }
+                                                            )
+      ThreeScaleToolbox::Entities::BackendUsage::create(product: svc, attrs: { 'backend_api_id' => backend.id,
+                                                                               'path' => '/v3'
+                                                                              }
+                                                       )
+      api3scale_client.proxy_deploy svc.id
 
-      svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage2" })
-      pc_sandbox_2 = nil
-      Helpers.wait do
-        pc_sandbox_2 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 2)
-        !pc_sandbox_2.nil?
-      end
-      pc_sandbox_2.promote(to: "production")
+      svc
+    end
+    let(:hits_id) { service.hits.fetch('id') }
 
-      svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage3" })
+    before :example do
+      pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 1)
+      expect(pc).not_to be_nil
+
+      pc.promote(to: "production")
+
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
+      api3scale_client.proxy_deploy service.id
+
+      pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 2)
+      expect(pc).not_to be_nil
+
+      pc.promote(to: "production")
+
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
+      api3scale_client.proxy_deploy service.id
     end
 
     context "and with environment set to sandbox" do
@@ -38,11 +59,12 @@ RSpec.describe 'ProxyConfig Show command' do
 
       context "without specifying a config-version" do
         let(:expected_config_version) { 3 }
-        let(:command_line_str) { "proxy-config show #{remote} #{service_ref} #{environment}" }
+        let(:command_line_str) { "proxy-config show #{remote} #{service.id} #{environment}" }
         it "returns the latest available version" do
           expect { subject }.to output(/"version": #{expected_config_version}/).to_stdout
           expect(subject).to eq(0)
         end
+
         it "returns the specified environment" do
           expect { subject }.to output(/"environment": "#{environment}"/).to_stdout
           expect(subject).to eq(0)
@@ -52,7 +74,7 @@ RSpec.describe 'ProxyConfig Show command' do
       context "specifying a config-version" do
         let(:config_version) { 2 }
         let(:expected_config_version) { config_version }
-        let(:command_line_str) { "proxy-config show #{remote} #{service_ref} #{environment} --config-version #{config_version}" }
+        let(:command_line_str) { "proxy-config show #{remote} #{service.id} #{environment} --config-version #{config_version}" }
 
         it "returns the specified version" do
           expect { subject }.to output(/"version": #{expected_config_version}/).to_stdout
@@ -70,7 +92,7 @@ RSpec.describe 'ProxyConfig Show command' do
 
       context "without specifying a config-version" do
         let(:expected_config_version) { 2 }
-        let(:command_line_str) { "proxy-config show #{remote} #{service_ref} #{environment}" }
+        let(:command_line_str) { "proxy-config show #{remote} #{service.id} #{environment}" }
 
         it "returns the latest available version" do
           expect { subject }.to output(/"version": #{expected_config_version}/).to_stdout
@@ -85,7 +107,7 @@ RSpec.describe 'ProxyConfig Show command' do
       context "specifying a config-version" do
         let(:config_version) { 1 }
         let(:expected_config_version) { config_version }
-        let(:command_line_str) { "proxy-config show #{remote} #{service_ref} #{environment} --config-version #{config_version}" }
+        let(:command_line_str) { "proxy-config show #{remote} #{service.id} #{environment} --config-version #{config_version}" }
 
         it "returns the specified version" do
           expect { subject }.to output(/"version": #{expected_config_version}/).to_stdout

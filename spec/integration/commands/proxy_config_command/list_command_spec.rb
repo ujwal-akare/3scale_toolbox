@@ -9,40 +9,59 @@ RSpec.describe 'ProxyConfig List command' do
   let(:service_ref) { "svc_#{random_lowercase_name}" }
   let(:environment_sandbox) { "sandbox" }
   let(:environment_prod) { "production" }
-  
+  let(:service) do
+      svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
+      backend = ThreeScaleToolbox::Entities::Backend::create(remote: api3scale_client,
+                                                             attrs: { 'name' => "mybackend_#{random_lowercase_name}",
+                                                                      'private_endpoint' => 'https://example.com'
+                                                                    }
+                                                            )
+      ThreeScaleToolbox::Entities::BackendUsage::create(product: svc, attrs: { 'backend_api_id' => backend.id,
+                                                                               'path' => '/v3'
+                                                                              }
+                                                       )
+      api3scale_client.proxy_deploy svc.id
+
+      svc
+  end
+  let(:hits_id) { service.hits.fetch('id') }
+
   context "With multiple existing Proxy Configurations" do
     before :example do
-      svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
+      pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 1)
+      expect(pc).not_to be_nil
 
-      # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
-      svc.update_proxy('api_backend' => 'https://example.com')
-      pc_sandbox_1 = nil
-      Helpers.wait do
-        pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)
-        !pc_sandbox_1.nil? 
-      end
+      pc.promote(to: "production")
 
-      pc_sandbox_1.promote(to: "production")
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
 
-      svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage2" })
-      pc_sandbox_2 = nil
-      Helpers.wait do
-        pc_sandbox_2 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 2)
-        !pc_sandbox_2.nil? 
-      end
-      pc_sandbox_2.promote(to: "production")
+      api3scale_client.proxy_deploy service.id
 
-      svc.update_proxy({ "error_auth_failed" => "exampleautherrormessage3" })
+      pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 2)
+      expect(pc).not_to be_nil
+
+      pc.promote(to: "production")
+
+      service.create_mapping_rule('pattern' => "/pets/#{random_lowercase_name}$",
+                                'http_method' => 'GET',
+                                'delta' => 1,
+                                'metric_id' => hits_id
+                               )
+      api3scale_client.proxy_deploy service.id
     end
 
     context "listing sandbox Proxy configurations" do
-      let (:command_line_str) { "proxy-config list #{remote} #{service_ref} #{environment_sandbox}" }
+      let (:command_line_str) { "proxy-config list #{remote} #{service.id} #{environment_sandbox}" }
 
       it "lists proxy_config sandbox version 1" do
         expect { subject }.to output(/.*1.*#{environment_sandbox}.*/).to_stdout
         expect(subject).to eq(0)
       end
-  
+
       it "lists proxy_config sandbox version 2" do
         expect { subject }.to output(/.*2.*#{environment_sandbox}.*/).to_stdout
         expect(subject).to eq(0)
@@ -55,13 +74,13 @@ RSpec.describe 'ProxyConfig List command' do
     end
 
     context "listing production Proxy configurations" do
-      let (:command_line_str) { "proxy-config list #{remote} #{service_ref} #{environment_prod}" }
+      let (:command_line_str) { "proxy-config list #{remote} #{service.id} #{environment_prod}" }
 
       it "lists proxy_config production version 1" do
         expect { subject }.to output(/.*1.*#{environment_prod}.*/).to_stdout
         expect(subject).to eq(0)
       end
-  
+
       it "lists proxy_config production version 2" do
         expect { subject }.to output(/.*2.*#{environment_prod}.*/).to_stdout
         expect(subject).to eq(0)

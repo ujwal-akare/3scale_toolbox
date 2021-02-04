@@ -11,37 +11,50 @@ RSpec.describe 'ProxyConfig Promote command' do
   let(:environment_prod) { "production" }
 
   context "Trying to promote a Proxy configuration version" do
-    let (:command_line_str) { "proxy-config promote #{remote} #{service_ref}" }
+    let(:service) do
+      svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
+      backend = ThreeScaleToolbox::Entities::Backend::create(remote: api3scale_client,
+                                                             attrs: { 'name' => "mybackend_#{random_lowercase_name}",
+                                                                      'private_endpoint' => 'https://example.com'
+                                                                    }
+                                                            )
+      ThreeScaleToolbox::Entities::BackendUsage::create(product: svc, attrs: { 'backend_api_id' => backend.id,
+                                                                               'path' => '/v3'
+                                                                              }
+                                                       )
+      api3scale_client.proxy_deploy svc.id
+
+      svc
+    end
+    let(:command_line_str) { "proxy-config promote #{remote} #{service.id}" }
 
     context "That hasn't been promoted" do
-      before :example do
-        svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
-        # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
-        svc.update_proxy('api_backend' => 'https://example.com')
-      end
-
       it "promotes the configuration version into production" do
-        expect { subject }.to output("Proxy Configuration version 1 promoted to '#{environment_prod}'\n").to_stdout
         expect(subject).to eq(0)
+
+        pc = ThreeScaleToolbox::Entities::ProxyConfig::find_latest(service: service, environment: environment_prod)
+        expect(pc).not_to be_nil
+        expect(pc.version).to eq(1)
       end
     end
 
     context "That has already been promoted" do
       before :example do
-        svc = ThreeScaleToolbox::Entities::Service::create(remote: api3scale_client, service_params: {"name" => service_ref})
-        # Service needs backend api. Otherwise proxy config will not be promoted to sandbox
-        svc.update_proxy('api_backend' => 'https://example.com')
-        pc_sandbox_1 = nil
-        Helpers.wait do
-          pc_sandbox_1 = ThreeScaleToolbox::Entities::ProxyConfig::find(service: svc, environment: environment_sandbox, version: 1)
-          !pc_sandbox_1.nil? 
-        end
-        pc_sandbox_1.promote(to: environment_prod)
+        pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 1)
+        expect(pc).not_to be_nil
+
+        pc.promote(to: environment_prod)
+        
+        pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_prod, version: 1)
+        expect(pc).not_to be_nil
       end
 
       it "results in not being promoted and a warning shown" do
-        expect { subject }.to output(/warning*/).to_stderr
         expect(subject).to eq(0)
+
+        pc = ThreeScaleToolbox::Entities::ProxyConfig::find_latest(service: service, environment: environment_prod)
+        expect(pc).not_to be_nil
+        expect(pc.version).to eq(1)
       end
     end
   end

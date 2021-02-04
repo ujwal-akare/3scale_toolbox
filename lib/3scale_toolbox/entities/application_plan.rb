@@ -14,7 +14,7 @@ module ThreeScaleToolbox
         # ref can be system_name or service_id
         def find(service:, ref:)
           new(id: ref, service: service).tap(&:attrs)
-        rescue ThreeScale::API::HttpClient::NotFoundError
+        rescue ThreeScaleToolbox::InvalidIdError, ThreeScale::API::HttpClient::NotFoundError
           find_by_system_name(service: service, system_name: ref)
         end
 
@@ -206,6 +206,8 @@ module ThreeScaleToolbox
       private
 
       def read_plan_attrs
+        raise ThreeScaleToolbox::InvalidIdError if id.zero?
+
         plan_attrs = remote.show_application_plan service.id, id
         if (errors = plan_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Application plan not read', errors)
