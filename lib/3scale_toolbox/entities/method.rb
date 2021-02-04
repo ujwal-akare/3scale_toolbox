@@ -38,7 +38,15 @@ module ThreeScaleToolbox
       end
 
       def system_name
-        attrs['system_name'] 
+        attrs['system_name']
+      end
+
+      def friendly_name
+        attrs['friendly_name']
+      end
+
+      def description
+        attrs['description']
       end
 
       def disable
@@ -65,6 +73,11 @@ module ThreeScaleToolbox
         remote.delete_method service.id, hits_id, id
       end
 
+      def to_crd
+        {
+          'friendlyName' => friendly_name,
+          'description' => description,
+        }
       private
 
       def hits_id

@@ -109,6 +109,10 @@ module ThreeScaleToolbox
         attrs['name']
       end
 
+      def description
+        attrs['description']
+      end
+
       def update_proxy(proxy)
         new_proxy_attrs = remote.update_proxy id, proxy
 
@@ -343,7 +347,15 @@ module ThreeScaleToolbox
           },
           'spec' => {
             'name' => name,
-            'system_name' => system_name
+            'system_name' => system_name,
+            'description' => description,
+            'mappingRules' => mapping_rule_objects.map(&:to_crd),
+            'metrics' => metric_objects.each_with_object({}) do |metric, hash|
+              hash[metric.system_name] = metric.to_crd
+            end,
+            'methods' => method_objects(hits_object).each_with_object({}) do |method, hash|
+              hash[method.system_name] = method.to_crd
+            end
           }
         }
       end

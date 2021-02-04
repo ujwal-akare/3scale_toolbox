@@ -40,6 +40,18 @@ module ThreeScaleToolbox
         attrs['system_name']
       end
 
+      def friendly_name
+        attrs['friendly_name']
+      end
+
+      def unit
+        attrs['unit']
+      end
+
+      def description
+        attrs['description']
+      end
+
       def disable
         # For each plan, get limits for the current metric
         # if already disabled -> NOOP
@@ -76,6 +88,14 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_metric service.id, id
+      end
+
+      def to_crd
+        {
+          'friendlyName' => friendly_name,
+          'unit' => unit,
+          'description' => description,
+        }
       end
 
       private

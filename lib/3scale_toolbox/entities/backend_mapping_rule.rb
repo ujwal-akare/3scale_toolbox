@@ -49,7 +49,7 @@ module ThreeScaleToolbox
       end
 
       def metric_id
-        @attrs['metric_id']
+        attrs['metric_id']
       end
 
       def pattern
@@ -88,7 +88,7 @@ module ThreeScaleToolbox
           'httpMethod' => http_method,
           'pattern' => pattern,
           'metricMethodRef' => metricMethodRef,
-          'increment' => delta, 
+          'increment' => delta,
           'last' => last,
         }
       end
@@ -110,12 +110,10 @@ module ThreeScaleToolbox
         # TODO each mapping rule will request metric or method metadata, use some cache
         # or metrics and methods index
         begin
-          backend_metric = ThreeScaleToolbox::Entities::BackendMetric.new(id: metric_id, backend: backend)
+          backend_metric = BackendMetric.new(id: metric_id, backend: backend)
           backend_metric.system_name
         rescue ThreeScale::API::HttpClient::NotFoundError
-          backend_method = ThreeScaleToolbox::Entities::BackendMethod.new(
-            id: metric_id, backend: backend, parent_id: backend.hits.fetch('id')
-          )
+          backend_method = BackendMethod.new(id: metric_id, backend: backend, parent_id: backend.hits.id)
           backend_method.system_name
         end
       end
