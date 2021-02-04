@@ -32,6 +32,22 @@ module ThreeScaleToolbox
         @attrs ||= mapping_rule_attrs
       end
 
+      def http_method
+        attrs['http_method']
+      end
+
+      def pattern
+        attrs['pattern']
+      end
+
+      def delta
+        attrs['delta']
+      end
+
+      def last
+        attrs['last']
+      end
+
       def metric_id
         @attrs['metric_id']
       end
@@ -67,6 +83,16 @@ module ThreeScaleToolbox
         remote.delete_backend_mapping_rule backend.id, id
       end
 
+      def to_crd
+        {
+          'httpMethod' => http_method,
+          'pattern' => pattern,
+          'metricMethodRef' => metricMethodRef,
+          'increment' => delta, 
+          'last' => last,
+        }
+      end
+
       private
 
       def mapping_rule_attrs
@@ -78,6 +104,20 @@ module ThreeScaleToolbox
         end
 
         mapping_rule
+      end
+
+      def metricMethodRef
+        # TODO each mapping rule will request metric or method metadata, use some cache
+        # or metrics and methods index
+        begin
+          backend_metric = ThreeScaleToolbox::Entities::BackendMetric.new(id: metric_id, backend: backend)
+          backend_metric.system_name
+        rescue ThreeScale::API::HttpClient::NotFoundError
+          backend_method = ThreeScaleToolbox::Entities::BackendMethod.new(
+            id: metric_id, backend: backend, parent_id: backend.hits.fetch('id')
+          )
+          backend_method.system_name
+        end
       end
     end
   end

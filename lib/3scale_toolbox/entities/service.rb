@@ -339,7 +339,7 @@ module ThreeScaleToolbox
               '3scale_toolbox_created_at' => Time.now.utc.iso8601,
               '3scale_toolbox_version' => ThreeScaleToolbox::VERSION
             },
-            'name' => system_name,
+            'name' => crd_name
           },
           'spec' => {
             'name' => name,
@@ -374,6 +374,13 @@ module ThreeScaleToolbox
         end
 
         new_attrs
+      end
+
+      def crd_name
+        # Should be DNS1123 subdomain name
+        # TODO run validation for DNS1123
+        # https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
+        "#{system_name.gsub(/[^[a-zA-Z0-9\-\.]]/, '.')}.#{Helper.random_lowercase_name}"
       end
     end
   end

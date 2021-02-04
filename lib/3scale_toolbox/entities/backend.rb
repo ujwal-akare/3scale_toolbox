@@ -79,6 +79,10 @@ module ThreeScaleToolbox
         attrs['system_name']
       end
 
+      def description
+        attrs['description']
+      end
+
       def name
         attrs['name']
       end
@@ -161,12 +165,20 @@ module ThreeScaleToolbox
               '3scale_toolbox_created_at' => Time.now.utc.iso8601,
               '3scale_toolbox_version' => ThreeScaleToolbox::VERSION
             },
-            'name' => system_name
+            'name' => crd_name
           },
           'spec' => {
             'name' => name,
             'system_name' => system_name,
-            'privateBaseURL' => private_endpoint
+            'privateBaseURL' => private_endpoint,
+            'description' => description,
+            'mappingRules' => mapping_rules.map(&:to_crd),
+            'metrics' => metrics.each_with_object({}) do |metric, hash|
+              hash[metric.system_name] = metric.to_crd
+            end,
+            'methods' => methods(hits).each_with_object({}) do |method, hash|
+              hash[method.system_name] = method.to_crd
+            end
           }
         }
       end
@@ -191,6 +203,13 @@ module ThreeScaleToolbox
         end
 
         backend
+      end
+
+      def crd_name
+        # Should be DNS1123 subdomain name
+        # TODO run validation for DNS1123
+        # https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
+        "#{system_name.gsub(/[^[a-zA-Z0-9\-\.]]/, '.')}.#{Helper.random_lowercase_name}"
       end
     end
   end

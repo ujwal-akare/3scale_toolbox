@@ -42,11 +42,19 @@ module ThreeScaleToolbox
       end
 
       def system_name
-        @attrs['system_name']
+        attrs['system_name']
       end
 
       def friendly_name
-        @attrs['friendly_name']
+        attrs['friendly_name']
+      end
+
+      def unit
+        attrs['unit']
+      end
+
+      def description
+        attrs['description']
       end
 
       def update(m_attrs)
@@ -62,6 +70,14 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_backend_metric backend.id, id
+      end
+
+      def to_crd
+        {
+          'friendlyName' => friendly_name,
+          'unit' => unit,
+          'description' => description,
+        }
       end
 
       private

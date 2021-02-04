@@ -65,6 +65,10 @@ module ThreeScaleToolbox
           [source, target]
         end.reject { |key, _| key.nil? }
       end
+
+      def random_lowercase_name(length=8)
+        [*('a'..'z')].sample(length).join
+      end
     end
 
     class BooleanTransformer
