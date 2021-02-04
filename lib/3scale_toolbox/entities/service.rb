@@ -220,7 +220,12 @@ module ThreeScaleToolbox
       end
 
       def policies
-        remote.show_policies id
+        policy_chain = remote.show_policies id
+        if policy_chain.respond_to?(:has_key?) && (errors = policy_chain['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service policies not read', errors)
+        end
+
+        policy_chain
       end
 
       def update_policies(params)
@@ -355,7 +360,8 @@ module ThreeScaleToolbox
             end,
             'methods' => method_objects(hits_object).each_with_object({}) do |method, hash|
               hash[method.system_name] = method.to_crd
-            end
+            end,
+            'policies' => policies
           }
         }
       end
