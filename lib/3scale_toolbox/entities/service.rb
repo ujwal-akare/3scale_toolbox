@@ -101,6 +101,14 @@ module ThreeScaleToolbox
         @attrs ||= fetch_attrs
       end
 
+      def system_name
+        attrs['system_name']
+      end
+
+      def name
+        attrs['name']
+      end
+
       def update_proxy(proxy)
         new_proxy_attrs = remote.update_proxy id, proxy
 
@@ -320,6 +328,24 @@ module ThreeScaleToolbox
 
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
+      end
+
+      def to_crd
+        {
+          'apiVersion' => 'capabilities.3scale.net/v1beta1',
+          'kind' => 'Product',
+          'metadata' => {
+            'annotations' => {
+              '3scale_toolbox_created_at' => Time.now.utc.iso8601,
+              '3scale_toolbox_version' => ThreeScaleToolbox::VERSION
+            },
+            'name' => system_name,
+          },
+          'spec' => {
+            'name' => name,
+            'system_name' => system_name
+          }
+        }
       end
 
       private

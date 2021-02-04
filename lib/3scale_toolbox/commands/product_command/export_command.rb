@@ -1,7 +1,3 @@
-require '3scale_toolbox/commands/product_command/export_command/step'
-require '3scale_toolbox/commands/product_command/export_command/read_product'
-require '3scale_toolbox/commands/product_command/export_command/serialize'
-
 module ThreeScaleToolbox
   module Commands
     module ProductCommand
@@ -24,24 +20,60 @@ module ThreeScaleToolbox
         end
 
         def run
-          tasks = []
-          tasks << ReadProductStep.new(context)
-          tasks << SerializeStep.new(context)
-          tasks.each(&:call)
+          select_output do |output|
+            output.write(serialized_object.to_yaml)
+          end
         end
 
         private
 
-        def context
-          @context ||= create_context
+        def remote
+          @remote ||= threescale_client(arguments[:remote])
         end
 
-        def create_context
+        def serialized_object
           {
-            file: options[:file],
-            threescale_client: threescale_client(arguments[:remote]),
-            product_ref: arguments[:product_ref]
+            'apiVersion' => 'v1',
+            'kind' => 'List',
+            'items' => [product.to_crd] + backends.map(&:to_crd)
           }
+        end
+
+        def select_output
+          ios = if file
+                  File.open(file, 'w')
+                else
+                  $stdout
+                end
+          begin
+            yield(ios)
+          ensure
+            ios.close
+          end
+        end
+
+        def product
+          @product ||= find_product
+        end
+
+        def backends
+          product.backend_usage_list.map do |backend_usage|
+            Entities::Backend.new(id: backend_usage.backend_id, remote: remote)
+          end
+        end
+
+        def product_ref
+          arguments[:product_ref]
+        end
+
+        def find_product
+          Entities::Service.find(remote: remote, ref: product_ref).tap do |prd|
+            raise ThreeScaleToolbox::Error, "Product #{product_ref} does not exist" if prd.nil?
+          end
+        end
+
+        def file
+          options[:file]
         end
       end
     end

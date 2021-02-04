@@ -79,6 +79,14 @@ module ThreeScaleToolbox
         attrs['system_name']
       end
 
+      def name
+        attrs['name']
+      end
+
+      def private_endpoint
+        attrs['private_endpoint']
+      end
+
       def metrics
         metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |item, method|
           method.id == item.fetch('id', nil)
@@ -142,6 +150,25 @@ module ThreeScaleToolbox
 
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
+      end
+
+      def to_crd
+        {
+          'apiVersion' => 'capabilities.3scale.net/v1beta1',
+          'kind' => 'Backend',
+          'metadata' => {
+            'annotations' => {
+              '3scale_toolbox_created_at' => Time.now.utc.iso8601,
+              '3scale_toolbox_version' => ThreeScaleToolbox::VERSION
+            },
+            'name' => system_name
+          },
+          'spec' => {
+            'name' => name,
+            'system_name' => system_name,
+            'privateBaseURL' => private_endpoint
+          }
+        }
       end
 
       private
