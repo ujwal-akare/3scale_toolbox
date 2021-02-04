@@ -1,4 +1,5 @@
 require '3scale_toolbox/commands/product_command/copy_command'
+require '3scale_toolbox/commands/product_command/export_command'
 
 module ThreeScaleToolbox
   module Commands
@@ -17,6 +18,7 @@ module ThreeScaleToolbox
         end
       end
       add_subcommand(CopySubcommand)
+      add_subcommand(ExportSubcommand)
     end
   end
 end
