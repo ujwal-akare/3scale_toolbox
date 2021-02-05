@@ -358,10 +358,13 @@ module ThreeScaleToolbox
             'metrics' => metric_objects.each_with_object({}) do |metric, hash|
               hash[metric.system_name] = metric.to_crd
             end,
-            'methods' => method_objects(hits_object).each_with_object({}) do |method, hash|
+            'methods' => method_objects(hits.fetch('id')).each_with_object({}) do |method, hash|
               hash[method.system_name] = method.to_crd
             end,
             'policies' => policies
+            #'applicationPlans' => application_plans.each_with_object({}) do |app_plan, hash|
+            #  hash[app_plan.system_name] = app_plan.to_crd
+            #end,
           }
         }
       end
