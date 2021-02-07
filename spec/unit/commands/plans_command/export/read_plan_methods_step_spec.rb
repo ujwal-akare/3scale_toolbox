@@ -12,9 +12,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanMethod
   let(:resource_limits) { [limit_1, limit_2, limit_3] }
   let(:resource_pricingrules) { [pr_1, pr_2, pr_3] }
   let(:service_methods) { [method_1, method_2, method_4, method_6] }
+  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:service_class) { class_double('ThreeScaleToolbox::Entities::Service').as_stubbed_const }
   let(:context) do
     {
-      service_methods: service_methods,
       result: {
         limits: resource_limits,
         pricingrules: resource_pricingrules
@@ -26,6 +27,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanMethod
 
   context '#call' do
     before :example do
+      expect(service_class).to receive(:find).and_return(service)
+      allow(service).to receive(:hits).and_return({'id' => 1})
+      allow(service).to receive(:methods).and_return(service_methods)
+
       subject.call
     end
 

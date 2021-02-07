@@ -59,9 +59,9 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanLimits
       let(:hits_metric) { { 'id' => hits_id, 'unit' => '1' } }
 
       before :example do
-        expect(service).to receive(:metrics).and_return(service_metrics)
-        expect(service).to receive(:hits).and_return(hits_metric)
-        expect(service).to receive(:methods).with(hits_id).and_return(service_methods)
+        allow(service).to receive(:metrics).and_return(service_metrics)
+        allow(service).to receive(:hits).and_return(hits_metric)
+        allow(service).to receive(:methods).with(hits_id).and_return(service_methods)
       end
 
       it 'limit addded' do

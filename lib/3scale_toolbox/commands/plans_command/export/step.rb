@@ -45,14 +45,6 @@ module ThreeScaleToolbox
             context[:plan] ||= find_plan
           end
 
-          def service_metrics
-            context[:service_metrics] ||= service.metrics
-          end
-
-          def service_methods
-            context[:service_methods] ||= service.methods(service_hits['id'])
-          end
-
           def metric_info(elem, elem_name)
             if (method = find_method(elem.fetch('metric_id')))
               { 'type' => 'method', 'system_name' => method.fetch('system_name') }
@@ -80,15 +72,11 @@ module ThreeScaleToolbox
           end
 
           def find_metric(id)
-            service_metrics.find { |metric| metric['id'] == id }
+            service.metrics.find { |metric| metric['id'] == id }
           end
 
           def find_method(id)
-            service_methods.find { |method| method['id'] == id }
-          end
-
-          def service_hits
-            context[:service_hits] ||= service.hits
+            service.methods(service.hits.fetch('id')).find { |method| method['id'] == id }
           end
         end
       end

@@ -59,9 +59,9 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
       end
 
       before :example do
-        expect(service).to receive(:hits).and_return(hits_metric)
-        expect(service).to receive(:metrics).and_return(service_metrics)
-        expect(service).to receive(:methods).and_return(service_methods)
+        allow(service).to receive(:hits).and_return(hits_metric)
+        allow(service).to receive(:metrics).and_return(service_metrics)
+        allow(service).to receive(:methods).and_return(service_methods)
       end
 
       it 'pricingrules addded' do
