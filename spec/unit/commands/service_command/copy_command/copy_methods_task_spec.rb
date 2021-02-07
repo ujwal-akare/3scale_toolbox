@@ -54,7 +54,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
       it 'it calls create_method method' do
         # original method has been filtered
         expect(method_class).to receive(:create).with(service: target,
-                                                      parent_id: target_hits_metric_id,
                                                       attrs: hash_including('system_name' => method_0['system_name'],
                                                                             'friendly_name' => method_0['friendly_name']))
         expect { subject.call }.to output(/created 1 missing methods/).to_stdout

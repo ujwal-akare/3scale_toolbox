@@ -5,35 +5,34 @@ module ThreeScaleToolbox
       public_constant :VALID_PARAMS
 
       class << self
-        def create(backend:, parent_id:, attrs:)
-          method = backend.remote.create_backend_method(backend.id, parent_id,
+        def create(backend:, attrs:)
+          method = backend.remote.create_backend_method(backend.id, backend.hits.id,
                                                         Helper.filter_params(VALID_PARAMS, attrs))
           if (errors = method['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend Method has not been created',
                                                             errors)
           end
 
-          new(id: method.fetch('id'), parent_id: parent_id, backend: backend, attrs: method)
+          new(id: method.fetch('id'), backend: backend, attrs: method)
         end
 
         # ref can be system_name or method_id
-        def find(backend:, parent_id:, ref:)
-          new(id: ref, parent_id: parent_id, backend: backend).tap(&:attrs)
+        def find(backend:, ref:)
+          new(id: ref, backend: backend).tap(&:attrs)
         rescue ThreeScaleToolbox::InvalidIdError, ThreeScale::API::HttpClient::NotFoundError
-          find_by_system_name(backend: backend, parent_id: parent_id, system_name: ref)
+          find_by_system_name(backend: backend, system_name: ref)
         end
 
-        def find_by_system_name(backend:, parent_id:, system_name:)
-          backend.methods(parent_id).find { |m| m.system_name == system_name }
+        def find_by_system_name(backend:, system_name:)
+          backend.methods.find { |m| m.system_name == system_name }
         end
       end
 
-      attr_reader :id, :parent_id, :backend, :remote
+      attr_reader :id, :backend, :remote
 
-      def initialize(id:, parent_id:, backend:, attrs: nil)
+      def initialize(id:, backend:, attrs: nil)
         @id = id.to_i
         @backend = backend
-        @parent_id = parent_id
         @remote = backend.remote
         @attrs = process_attrs(attrs)
       end
@@ -51,7 +50,7 @@ module ThreeScaleToolbox
       end
 
       def update(m_attrs)
-        new_attrs = remote.update_backend_method(backend.id, parent_id, id,
+        new_attrs = remote.update_backend_method(backend.id, hits_id, id,
                                                  Helper.filter_params(VALID_PARAMS, m_attrs))
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend Method has not been updated',
@@ -63,10 +62,14 @@ module ThreeScaleToolbox
       end
 
       def delete
-        remote.delete_backend_method backend.id, parent_id, id
+        remote.delete_backend_method backend.id, hits_id, id
       end
 
       private
+
+      def hits_id
+        backend.hits.id
+      end
 
       def process_attrs(metric_attrs)
         return if metric_attrs.nil?
@@ -78,7 +81,7 @@ module ThreeScaleToolbox
       def method_attrs
         raise ThreeScaleToolbox::InvalidIdError if id.zero?
 
-        method = remote.backend_method backend.id, parent_id, id
+        method = remote.backend_method backend.id, hits_id, id
         if (errors = method['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend method not read', errors)
         end

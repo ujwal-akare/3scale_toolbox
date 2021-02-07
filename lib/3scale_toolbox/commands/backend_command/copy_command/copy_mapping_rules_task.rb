@@ -24,8 +24,8 @@ module ThreeScaleToolbox
           end
 
           def build_metrics_mapping
-            target_mm = target_backend.metrics + target_backend.methods(target_backend.hits)
-            source_mm = source_backend.metrics + source_backend.methods(source_backend.hits)
+            target_mm = target_backend.metrics + target_backend.methods
+            source_mm = source_backend.metrics + source_backend.methods
             target_mm.map do |target|
               source = source_mm.find do |m|
                 m.system_name == target.system_name

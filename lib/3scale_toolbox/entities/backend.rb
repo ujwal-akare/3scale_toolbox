@@ -80,7 +80,7 @@ module ThreeScaleToolbox
       end
 
       def metrics
-        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods(hits)) do |item, method|
+        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |item, method|
           method.id == item.fetch('id', nil)
         end
 
@@ -97,12 +97,9 @@ module ThreeScaleToolbox
       end
 
       # @api public
-      # @param [Object] parent_metric_id BackendMetric hits object
       # @return [List]
-      def methods(parent_metric)
-        return [] if parent_metric.nil?
-
-        method_attr_list = remote.list_backend_methods id, parent_metric.id
+      def methods
+        method_attr_list = remote.list_backend_methods id, hits.id
         if method_attr_list.respond_to?(:has_key?) && (errors = method_attr_list['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend methods not read', errors)
         end
@@ -110,7 +107,6 @@ module ThreeScaleToolbox
         method_attr_list.map do |method_attrs|
           BackendMethod.new(id: method_attrs.fetch('id'),
                             backend: self,
-                            parent_id: parent_metric.id,
                             attrs: method_attrs)
         end
       end

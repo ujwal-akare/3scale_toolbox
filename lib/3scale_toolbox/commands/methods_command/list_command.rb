@@ -23,18 +23,10 @@ module ThreeScaleToolbox
           end
 
           def run
-            printer.print_collection service_methods
+            printer.print_collection service.methods
           end
 
           private
-
-          def service_methods
-            @service_methods ||= service.methods service_hits_id
-          end
-
-          def service_hits_id
-            @service_hits_id ||= service.hits.fetch('id')
-          end
 
           def service
             @service ||= find_service

@@ -284,13 +284,26 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
         end
       end
     end
+
     context '#methods' do
-      let(:hits_id) { 1 }
-      let(:hits) { instance_double(ThreeScaleToolbox::Entities::BackendMetric, 'hits') }
-      subject { backend.methods hits }
+      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
+      let(:metrics) do
+        [
+          { 'id' => 10, 'system_name' => 'metric_10' },
+          hits_metric,
+          { 'id' => 20, 'system_name' => 'metric_20' }
+        ]
+      end
+      let(:methods) do
+        [
+          { 'id' => 101, 'system_name' => 'method_101' },
+          { 'id' => 201, 'system_name' => 'method_201' }
+        ]
+      end
+      subject { backend.methods }
 
       before :each do
-        allow(hits).to receive(:id).and_return(hits_id)
+        expect(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
       end
 
       context 'when remote returns error' do

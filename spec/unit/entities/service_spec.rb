@@ -307,8 +307,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     context '#methods' do
       it 'calls list_methods method' do
+        allow(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
         expect(remote).to receive(:list_methods).with(id, hits_metric['id']).and_return(methods)
-        expect(subject.methods(hits_metric['id'])).to eq(methods)
+        expect(subject.methods).to eq(methods)
       end
     end
 

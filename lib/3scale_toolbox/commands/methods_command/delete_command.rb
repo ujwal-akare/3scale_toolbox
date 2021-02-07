@@ -44,7 +44,7 @@ module ThreeScaleToolbox
 
           def find_method
             hits = service.hits
-            Entities::Method.find(service: service, parent_id: hits.fetch('id'), ref: method_ref).tap do |p|
+            Entities::Method.find(service: service, ref: method_ref).tap do |p|
               raise ThreeScaleToolbox::Error, "Method #{method_ref} does not exist" if p.nil?
             end
           end

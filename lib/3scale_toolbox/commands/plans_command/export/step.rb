@@ -76,7 +76,7 @@ module ThreeScaleToolbox
           end
 
           def find_method(id)
-            service.methods(service.hits.fetch('id')).find { |method| method['id'] == id }
+            service.methods.find { |method| method['id'] == id }
           end
         end
       end

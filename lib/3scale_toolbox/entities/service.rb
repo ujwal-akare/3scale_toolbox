@@ -121,9 +121,7 @@ module ThreeScaleToolbox
       end
 
       def metrics
-        hits_id = hits.fetch('id')
-
-        ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods(hits_id)) do |metric, method|
+        ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |metric, method|
           ThreeScaleToolbox::Helper.compare_hashes(metric, method, %w[id])
         end
       end
@@ -135,8 +133,8 @@ module ThreeScaleToolbox
         hits_metric
       end
 
-      def methods(parent_metric_id)
-        service_methods = remote.list_methods id, parent_metric_id
+      def methods
+        service_methods = remote.list_methods id, hits.fetch('id')
         if service_methods.respond_to?(:has_key?) && (errors = service_methods['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service methods not read', errors)
         end

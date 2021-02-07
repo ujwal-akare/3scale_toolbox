@@ -30,7 +30,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
         'links' => []
       }
     end
-    let(:metric_hits) { { 'id' => 0, 'name' => 'hits', 'system_name' => 'hits' } }
     let(:metric_0) do
       {
         'id' => 1,
@@ -101,10 +100,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
       let(:target_plans) { [plan_0] }
       before :each do
         expect(source).to receive(:metrics).and_return([metric_0])
-        expect(source).to receive(:hits).and_return(metric_hits)
         expect(source).to receive(:methods).and_return([])
         expect(target).to receive(:metrics).and_return([metric_1])
-        expect(target).to receive(:hits).and_return(metric_hits)
         expect(target).to receive(:methods).and_return([])
       end
 

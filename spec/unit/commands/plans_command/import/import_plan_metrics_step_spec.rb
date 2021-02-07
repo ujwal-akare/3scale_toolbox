@@ -65,8 +65,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricsS
       let(:service_metrics) { [hits_metric] }
 
       it 'then method is created' do
-        expect(method_class).to receive(:create).with(hash_including(parent_id: hits_id,
-                                                                     attrs: resource_method))
+        expect(method_class).to receive(:create).with(hash_including(attrs: resource_method))
                                                 .and_return(method)
         expect(method).to receive(:attrs).and_return(resource_method)
         expect { subject.call }.to output(/Created method/).to_stdout

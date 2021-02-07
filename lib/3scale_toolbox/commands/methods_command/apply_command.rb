@@ -47,11 +47,9 @@ module ThreeScaleToolbox
           def run
             validate_option_params
             hits = service.hits
-            method = Entities::Method.find(service: service, parent_id: hits.fetch('id'),
-                                           ref: method_ref)
+            method = Entities::Method.find(service: service, ref: method_ref)
             if method.nil?
-              method = Entities::Method.create(service: service, parent_id: hits.fetch('id'),
-                                               attrs: create_method_attrs)
+              method = Entities::Method.create(service: service, attrs: create_method_attrs)
             else
               method.update(method_attrs) unless method_attrs.empty?
             end

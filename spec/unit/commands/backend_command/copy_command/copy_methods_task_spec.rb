@@ -4,7 +4,6 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
   let(:target_backend) { instance_double(ThreeScaleToolbox::Entities::Backend, 'target_backend') }
   let(:source_hits_metric) { instance_double(ThreeScaleToolbox::Entities::BackendMetric) }
   let(:target_hits_metric) { instance_double(ThreeScaleToolbox::Entities::BackendMetric) }
-  let(:target_hits_id) { 12345 }
   let(:source_methods) { [] }
   let(:target_methods) { [] }
   let(:context)  do
@@ -21,7 +20,6 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
       allow(source_backend).to receive(:hits).and_return(source_hits_metric)
       allow(target_backend).to receive(:methods).and_return(target_methods)
       allow(target_backend).to receive(:hits).and_return(target_hits_metric)
-      allow(target_hits_metric).to receive(:id).and_return(target_hits_id)
     end
 
     it 'no method created' do
@@ -43,9 +41,7 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
         allow(method_tgt).to receive(:system_name).and_return('system_name_0')
 
         expect(method_src_1).to receive(:attrs).and_return(method_src_1_attrs)
-        expect(backendmethod_class).to receive(:create).with(backend: target_backend,
-                                                             parent_id: target_hits_id,
-                                                             attrs: method_src_1_attrs)
+        expect(backendmethod_class).to receive(:create).with(backend: target_backend, attrs: method_src_1_attrs)
 
         subject.run
       end

@@ -40,10 +40,8 @@ module ThreeScaleToolbox
           end
 
           def run
-            hits = service.hits
             method = ThreeScaleToolbox::Entities::Method.create(
               service: service,
-              parent_id: hits.fetch('id'),
               attrs: method_attrs
             )
             method.disable if option_disabled

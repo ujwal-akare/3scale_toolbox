@@ -61,7 +61,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanLimits
       before :example do
         allow(service).to receive(:metrics).and_return(service_metrics)
         allow(service).to receive(:hits).and_return(hits_metric)
-        allow(service).to receive(:methods).with(hits_id).and_return(service_methods)
+        allow(service).to receive(:methods).and_return(service_methods)
       end
 
       it 'limit addded' do

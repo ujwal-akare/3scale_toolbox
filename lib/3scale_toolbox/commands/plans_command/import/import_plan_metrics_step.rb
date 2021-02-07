@@ -20,21 +20,18 @@ module ThreeScaleToolbox
           end
 
           def missing_methods
-            ThreeScaleToolbox::Helper.array_difference(resource_methods, service.methods(service.hits.fetch('id'))) do |a, b|
+            ThreeScaleToolbox::Helper.array_difference(resource_methods, service.methods) do |a, b|
               ThreeScaleToolbox::Helper.compare_hashes(a, b, ['system_name'])
             end
           end
 
           def create_metric(metric_attrs)
-            metric = ThreeScaleToolbox::Entities::Metric.create(service: service,
-                                                                attrs: metric_attrs)
+            metric = ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: metric_attrs)
             puts "Created metric: #{metric.attrs['system_name']}"
           end
 
           def create_method(method_attrs)
-            method = ThreeScaleToolbox::Entities::Method.create(service: service,
-                                                                parent_id: service.hits['id'],
-                                                                attrs: method_attrs)
+            method = ThreeScaleToolbox::Entities::Method.create(service: service, attrs: method_attrs)
             puts "Created method: #{method.attrs['system_name']}"
           end
         end

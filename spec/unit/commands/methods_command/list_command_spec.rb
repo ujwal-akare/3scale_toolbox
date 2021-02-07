@@ -8,8 +8,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::List::ListSubcommand
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
-  let(:hits_id) { 1 }
-  let(:hits) { { 'id' => hits_id, 'friendly_name' => 'hits' } }
   subject { described_class.new(options, arguments, nil) }
 
   context '#run' do
@@ -33,8 +31,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::List::ListSubcommand
       let(:methods) { [method_0, method_1] }
 
       before :example do
-        expect(service).to receive(:hits).and_return(hits)
-        expect(service).to receive(:methods).with(hits_id).and_return(methods)
+        expect(service).to receive(:methods).and_return(methods)
       end
 
       it 'method_0 in the list' do

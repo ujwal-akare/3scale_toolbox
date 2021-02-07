@@ -37,11 +37,11 @@ module ThreeScaleToolbox
           end
 
           def source_metrics_and_methods
-            source.metrics + source.methods(source.hits.fetch('id'))
+            source.metrics + source.methods
           end
 
           def target_metrics_and_methods
-            target.metrics + target.methods(target.hits.fetch('id'))
+            target.metrics + target.methods
           end
 
           def source_remote

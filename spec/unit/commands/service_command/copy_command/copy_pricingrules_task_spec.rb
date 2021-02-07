@@ -6,7 +6,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
     let(:target_remote) { instance_double('ThreeScale::API::Client', 'target_remote') }
     let(:plan_0) { { 'id' => 0, 'name' => 'plan_0', 'system_name' => 'plan_0' } }
     let(:plan_1) { { 'id' => 1, 'name' => 'plan_1', 'system_name' => 'plan_1' } }
-    let(:metric_hits) { { 'id' => 0, 'name' => 'hits', 'system_name' => 'hits' } }
     let(:metric_0) { { 'id' => 1, 'name' => 'metric_0', 'system_name' => 'metric_0' } }
     let(:metric_1) { { 'id' => 2, 'name' => 'metric_0', 'system_name' => 'metric_0' } }
     let(:pricing_rule_0) do
@@ -53,10 +52,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
     context 'application plans match' do
       before :each do
         expect(source).to receive(:metrics).and_return([metric_0])
-        expect(source).to receive(:hits).and_return(metric_hits)
         expect(source).to receive(:methods).and_return([])
         expect(target).to receive(:metrics).and_return([metric_1])
-        expect(target).to receive(:hits).and_return(metric_hits)
         expect(target).to receive(:methods).and_return([])
         expect(source_remote).to receive(:list_pricingrules_per_application_plan).and_return(source_pricingrules)
         expect(target_remote).to receive(:list_pricingrules_per_application_plan).and_return(target_pricingrules)

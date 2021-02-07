@@ -1,17 +1,20 @@
 RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
   let(:backend) { instance_double(ThreeScaleToolbox::Entities::Backend, 'backend') }
+  let(:hits_obj) { double }
   let(:backend_id) { 100 }
   let(:hits_id) { 666 }
 
   before :each do
     allow(backend).to receive(:id).and_return(backend_id)
+    allow(hits_obj).to receive(:id).and_return(hits_id)
+    allow(backend).to receive(:hits).and_return(hits_obj)
     allow(backend).to receive(:remote).and_return(remote)
   end
 
   context 'BackendMethod.create' do
     let(:attrs) { { 'friendly_name' => 'some name' } }
-    subject { described_class.create(backend: backend, parent_id: hits_id, attrs: attrs) }
+    subject { described_class.create(backend: backend, attrs: attrs) }
 
     context 'when remote returns error' do
       before :each do
@@ -40,7 +43,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
 
   context 'BackendMethod.find' do
     let(:ref) { 1234 }
-    subject { described_class.find(backend: backend, parent_id: hits_id, ref: ref) }
+    subject { described_class.find(backend: backend, ref: ref) }
 
     context 'when backendmethod does not exist' do
       before :each do
@@ -68,7 +71,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
       let(:ref) { 'some_system_name' }
       let(:metric_attrs) { { 'system_name' => "#{ref}.#{backend_id}" } }
       let(:metric_id) { 1 }
-      let(:backend_method) { described_class.new(id: metric_id, parent_id: hits_id, backend: backend, attrs: metric_attrs) }
+      let(:backend_method) { described_class.new(id: metric_id, backend: backend, attrs: metric_attrs) }
       before :each do
         expect(backend).to receive(:methods).and_return([backend_method])
       end
@@ -81,11 +84,11 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
 
   context 'BackendMethod.find_by_system_name' do
     let(:system_name) { 'some_system_name' }
-    subject { described_class.find_by_system_name(backend: backend, parent_id: hits_id, system_name: system_name) }
+    subject { described_class.find_by_system_name(backend: backend, system_name: system_name) }
 
     context 'when backend is not found' do
       before :each do
-        expect(backend).to receive(:methods).with(hits_id).and_return([])
+        expect(backend).to receive(:methods).and_return([])
       end
 
       it 'returns nil' do
@@ -96,7 +99,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
     context 'when backendmethod is found' do
       let(:metric_attrs) { { 'system_name' => "#{system_name}.#{backend_id}" } }
       let(:metric_id) { 1 }
-      let(:backend_method) { described_class.new(id: metric_id, parent_id: hits_id, backend: backend, attrs: metric_attrs) }
+      let(:backend_method) { described_class.new(id: metric_id, backend: backend, attrs: metric_attrs) }
       before :each do
         expect(backend).to receive(:methods).and_return([backend_method])
       end
@@ -118,7 +121,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
         'system_name' => "#{system_name}.#{backend_id}"
       }
     end
-    let(:backend_method) { described_class.new(id: backend_method_id, parent_id: hits_id, backend: backend, attrs: attrs) }
+    let(:backend_method) { described_class.new(id: backend_method_id, backend: backend, attrs: attrs) }
 
     context '#attrs' do
       subject { backend_method.attrs }
