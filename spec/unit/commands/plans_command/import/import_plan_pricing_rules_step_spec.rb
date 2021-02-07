@@ -10,8 +10,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
   let(:plan_pricingrules) { [] }
   let(:resource_pricingrules) { [] }
   let(:hits_metric_id) { 1 }
-  let(:service_metric) { { 'id' => hits_metric_id, 'system_name' => 'hits' } }
-  let(:service_metrics) { [service_metric] }
+  let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:service_metrics) { [hits_metric] }
   let(:artifacts_resource) do
     {
       'pricingrules' => resource_pricingrules
@@ -29,6 +29,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
 
   context '#call' do
     before :example do
+      allow(hits_metric).to receive(:id).and_return(hits_metric_id)
+      allow(hits_metric).to receive(:system_name).and_return('hits')
       expect(service_class).to receive(:find).with(hash_including(service_info))
                                              .and_return(service)
       expect(plan_class).to receive(:find).with(hash_including(service: service,
@@ -36,7 +38,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
                                           .and_return(plan)
       allow(plan).to receive(:pricing_rules).and_return(plan_pricingrules)
       allow(service).to receive(:metrics).and_return(service_metrics)
-      allow(service).to receive(:hits).and_return(service_metric)
+      allow(service).to receive(:hits).and_return(hits_metric)
     end
 
     context 'existing pricingrules' do

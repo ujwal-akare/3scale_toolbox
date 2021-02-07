@@ -85,15 +85,6 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
       end
     end
 
-    context '#metric_id=' do
-      let(:other_metric_id) { 777 }
-
-      it 'sets new metric_id' do
-        mapping_rule.metric_id = other_metric_id
-        expect(mapping_rule.metric_id).to eq other_metric_id
-      end
-    end
-
     context '#update' do
       let(:new_pattern) { '/new_pattern' }
       let(:new_attrs) { { 'pattern' => new_pattern, 'unexpected_attrs': 3 } }

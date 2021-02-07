@@ -93,7 +93,9 @@ module ThreeScaleToolbox
         metric_list = metrics_and_methods.map do |metric_attrs|
           BackendMetric.new(id: metric_attrs.fetch('id'), backend: self, attrs: metric_attrs)
         end
-        metric_list.find { |metric| metric.system_name == 'hits' }
+        metric_list.find { |metric| metric.system_name == 'hits' }.tap do |hits_metric|
+          raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
+        end
       end
 
       # @api public

@@ -26,7 +26,7 @@ RSpec.describe 'OpenAPI prefix matching test' do
     expect(expected_mapping_rules.size).to be > 0
     # expect Set(service.mapping_rules) == Set(expected_mapping_rules)
     # with a custom identity method for mapping_rules
-    expect(expected_mapping_rules).to be_subset_of(service.mapping_rules).comparing_keys(mapping_rule_keys)
-    expect(service.mapping_rules).to be_subset_of(expected_mapping_rules).comparing_keys(mapping_rule_keys)
+    expect(expected_mapping_rules).to be_subset_of(service.mapping_rules.map(&:attrs)).comparing_keys(mapping_rule_keys)
+    expect(service.mapping_rules.map(&:attrs)).to be_subset_of(expected_mapping_rules).comparing_keys(mapping_rule_keys)
   end
 end

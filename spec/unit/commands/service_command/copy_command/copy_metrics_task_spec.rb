@@ -3,33 +3,18 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
     let(:metric_class) { class_double('ThreeScaleToolbox::Entities::Metric').as_stubbed_const }
-    let(:metric_0) do
-      {
-        'id' => 0,
-        'name' => 'metric_0',
-        'system_name' => 'metric 0',
-        'unit' => '1',
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
-      }
-    end
-    let(:metric_1) do
-      {
-        'id' => 1,
-        'name' => 'metric_1',
-        'system_name' => 'metric 1',
-        'unit' => '10',
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
-      }
-    end
+    let(:metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+    let(:metric_0_attrs) { { 'system_name' => 'metric_0', 'name' => 'metric_0' } }
+    let(:metric_1) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+
     subject { described_class.new(source: source, target: target) }
 
     before :each do
       allow(source).to receive(:metrics).and_return(source_metrics)
       allow(target).to receive(:metrics).and_return(target_metrics)
+      allow(metric_0).to receive(:attrs).and_return(metric_0_attrs)
+      allow(metric_0).to receive(:system_name).and_return(metric_0_attrs.fetch('system_name'))
+      allow(metric_1).to receive(:system_name).and_return('metric_1')
     end
 
     context 'no missing metrics' do
@@ -47,10 +32,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
       let(:target_metrics) { [metric_1] }
 
       it 'it calls create_metric method' do
-        expect(metric_class).to receive(:create).with(service: target,
-                                                      attrs: hash_including('name' => metric_0['name'],
-                                                                            'system_name' => metric_0['system_name'],
-                                                                            'unit' => metric_0['unit']))
+        expect(metric_class).to receive(:create).with(service: target, attrs: hash_including(metric_0_attrs))
         expect { subject.call }.to output(/created 1 metrics/).to_stdout
       end
     end

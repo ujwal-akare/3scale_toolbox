@@ -41,7 +41,7 @@ RSpec.describe 'Application Plan Import' do
     file_method = file_methods[0]
     service_metrics = service.metrics
     expect(service_metrics).not_to be_empty
-    service_methods = service.methods(service.hits.fetch('id'))
+    service_methods = service.methods
     expect(service_methods).not_to be_empty
     service_all_metrics = service_metrics + service_methods
 
@@ -61,10 +61,10 @@ RSpec.describe 'Application Plan Import' do
     expect(remote_plan_limit).to include(file_limit.clone.tap { |h| h.delete('metric_system_name') })
     ## check metric_id refer to a metric with metric_system_name from file limit
     limit_metric = service_all_metrics.find do |m|
-      m.fetch('id') == remote_plan_limit.fetch('metric_id')
+      m.id == remote_plan_limit.fetch('metric_id')
     end
     expect(limit_metric).not_to be_nil
-    expect(limit_metric['system_name']).to eq(file_limit.fetch('metric_system_name'))
+    expect(limit_metric.system_name).to eq(file_limit.fetch('metric_system_name'))
 
     # check import plan pricing rules
     remote_plan_prs = remote_plan_client.pricing_rules
@@ -74,10 +74,10 @@ RSpec.describe 'Application Plan Import' do
     expect(remote_plan_pr).to include(file_pricingrule.clone.tap { |h| h.delete('metric_system_name') })
     ## check metric_id refer to a metric with metric_system_name from file pricing rule
     pr_metric = service_all_metrics.find do |m|
-      m.fetch('id') == remote_plan_pr.fetch('metric_id')
+      m.id == remote_plan_pr.fetch('metric_id')
     end
     expect(pr_metric).not_to be_nil
-    expect(pr_metric['system_name']).to eq(file_pricingrule.fetch('metric_system_name'))
+    expect(pr_metric.system_name).to eq(file_pricingrule.fetch('metric_system_name'))
 
     # check imported plan features
     remote_plan_features = remote_plan_client.features
@@ -86,9 +86,9 @@ RSpec.describe 'Application Plan Import' do
     expect(remote_plan_feature).to include(file_feature)
 
     # check imported methods are subset of service methods
-    expect(file_methods).to be_subset_of(service_methods).comparing_keys(file_method.keys)
+    expect(file_methods).to be_subset_of(service_methods.map(&:attrs)).comparing_keys(file_method.keys)
 
     ## check imported metrics are subset of service metrics
-    expect(file_metrics).to be_subset_of(service_all_metrics).comparing_keys(file_metric.keys)
+    expect(file_metrics).to be_subset_of(service_all_metrics.map(&:attrs)).comparing_keys(file_metric.keys)
   end
 end

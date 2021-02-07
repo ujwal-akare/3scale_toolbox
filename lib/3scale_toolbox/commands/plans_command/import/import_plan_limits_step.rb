@@ -30,7 +30,7 @@ module ThreeScaleToolbox
               metric = find_metric_by_system_name(limit.delete('metric_system_name'))
               # this ImportMetricLimitsStep step is assuming all metrics/methods have been created
               # in previous step, so finding metric should always succeed.
-              limit.merge('metric_id' => metric.fetch('id'))
+              limit.merge('metric_id' => metric.id)
             end
           end
         end

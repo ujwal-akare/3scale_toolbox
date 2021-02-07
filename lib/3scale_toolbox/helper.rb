@@ -52,23 +52,18 @@ module ThreeScaleToolbox
       end
 
       def metrics_mapping(source_metrics, target_metrics)
-        target_metrics.map do |target|
-          source = source_metrics.find do |m|
-            compare_hashes(m, target, ['system_name'])
-          end || {}
-
-          [source['id'], target['id']]
-        end.to_h
+        tmp = target_metrics.map do |target|
+          source = source_metrics.find { |m| target.system_name == m.system_name }
+          [source, target]
+        end
+        tmp.reject { |key, _| key.nil? }.map { |s,d| [s.id, d.id] }.to_h
       end
 
       def application_plan_mapping(source_app_plans, target_app_plans)
-        mapping = target_app_plans.map do |target|
-          source = source_app_plans.find do |app_plan|
-            compare_hashes(app_plan, target, ['system_name'])
-          end || {}
-          [source['id'], target]
-        end
-        mapping.reject { |key, _| key.nil? }
+        target_app_plans.map do |target|
+          source = source_app_plans.find { |app_plan| app_plan.system_name == target.system_name }
+          [source, target]
+        end.reject { |key, _| key.nil? }
       end
     end
 

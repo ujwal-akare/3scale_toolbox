@@ -19,10 +19,7 @@ module ThreeScaleToolbox
         end
 
         def find_by_system_name(service:, system_name:)
-          plan = service.plans.find { |p| p['system_name'] == system_name }
-          return if plan.nil?
-
-          new(id: plan.fetch('id'), service: service, attrs: plan)
+          service.plans.find { |p| p.system_name == system_name }
         end
 
         def create_plan_attrs(source_attrs)
@@ -47,6 +44,10 @@ module ThreeScaleToolbox
 
       def attrs
         @attrs ||= read_plan_attrs
+      end
+
+      def system_name
+        attrs['system_name']
       end
 
       def update(plan_attrs)
@@ -80,7 +81,7 @@ module ThreeScaleToolbox
 
         eternity_limits = limits.select { |limit| limit.fetch('period') == 'eternity' }
         eternity_metric_ids = eternity_limits.map { |limit| limit.fetch('metric_id') }
-        service_metric_ids = service.metrics.map { |metric| metric.fetch('id') }
+        service_metric_ids = service.metrics.map { |metric| metric.id }
         metric_ids_without_eternity = service_metric_ids - eternity_metric_ids
 
         # create eternity zero limit for each metric without eternity limit set

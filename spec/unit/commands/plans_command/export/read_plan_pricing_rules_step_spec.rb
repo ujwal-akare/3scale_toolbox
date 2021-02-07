@@ -5,6 +5,12 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
   let(:service_info) { { remote: threescale_client, ref: service_system_name } }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
   let(:plan_class) { class_double('ThreeScaleToolbox::Entities::ApplicationPlan').as_stubbed_const }
+  let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:hits_metric_id) { 1 }
+  let(:method_0) { instance_double(ThreeScaleToolbox::Entities::Method) }
+  let(:method_0_id) { 2 }
+  let(:metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:metric_0_id) { 3 }
   let(:plan) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
   let(:plan_system_name) { 'myplan' }
   let(:plan_pricingrules) { [] }
@@ -16,10 +22,21 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
     }
   end
   let(:result) { context[:result] }
+  let(:service_metrics) { [] }
+  let(:service_methods) { [] }
   subject { described_class.new(context) }
 
   context '#call' do
     before :example do
+      allow(hits_metric).to receive(:id).and_return(hits_metric_id)
+      allow(hits_metric).to receive(:system_name).and_return('hits')
+      allow(method_0).to receive(:id).and_return(method_0_id)
+      allow(method_0).to receive(:system_name).and_return('method_01')
+      allow(metric_0).to receive(:system_name).and_return('metric_01')
+      allow(metric_0).to receive(:id).and_return(metric_0_id)
+      allow(service).to receive(:metrics).and_return(service_metrics)
+      allow(service).to receive(:methods).and_return(service_methods)
+      allow(service).to receive(:hits).and_return(hits_metric)
       expect(service_class).to receive(:find).with(hash_including(service_info))
                                              .and_return(service)
       expect(plan_class).to receive(:find).with(hash_including(service: service,
@@ -38,31 +55,14 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
 
     context 'when there are pricingrules' do
       let(:pringrule_for_metric) do
-        { 'cost_per_unit' => 1.0, 'min' => 1, 'max' => 100, 'metric_id' => '01' }
+        { 'cost_per_unit' => 1.0, 'min' => 1, 'max' => 100, 'metric_id' => metric_0_id }
       end
       let(:pringrule_for_method) do
-        { 'cost_per_unit' => 2.0, 'min' => 1, 'max' => 100, 'metric_id' => '02' }
+        { 'cost_per_unit' => 2.0, 'min' => 1, 'max' => 100, 'metric_id' => method_0_id }
       end
       let(:plan_pricingrules) { [pringrule_for_metric, pringrule_for_method] }
-      let(:service_methods) do
-        [
-          { 'id' => '02', 'name' => 'Method 01', 'system_name' => 'method_01' }
-        ]
-      end
-      let(:hits_metric) { { 'id' => '100', 'system_name' => 'hits' } }
-      # service metrics include service methods
-      let(:service_metrics) do
-        service_methods + [
-          { 'id' => '01', 'name' => 'Metric 01', 'system_name' => 'metric_01' },
-          hits_metric
-        ]
-      end
-
-      before :example do
-        allow(service).to receive(:hits).and_return(hits_metric)
-        allow(service).to receive(:metrics).and_return(service_metrics)
-        allow(service).to receive(:methods).and_return(service_methods)
-      end
+      let(:service_methods) { [ method_0 ] }
+      let(:service_metrics) { [metric_0, hits_metric] }
 
       it 'pricingrules addded' do
         subject.call
@@ -93,7 +93,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
 
       context 'cost_per_unit is string' do
         let(:pringrule_for_metric) do
-          { 'cost_per_unit' => '1.0', 'min' => 1, 'max' => 100, 'metric_id' => '01' }
+          { 'cost_per_unit' => '1.0', 'min' => 1, 'max' => 100, 'metric_id' => metric_0_id }
         end
 
         it 'cost_per_unit is converted to float' do

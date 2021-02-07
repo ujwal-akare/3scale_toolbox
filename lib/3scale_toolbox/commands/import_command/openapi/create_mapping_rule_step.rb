@@ -7,7 +7,8 @@ module ThreeScaleToolbox
 
           def call
             operations.each do |op|
-              service.create_mapping_rule(op.mapping_rule)
+              Entities::MappingRule.create(service: service,
+                                           attrs: op.mapping_rule)
               puts "Created #{op.http_method} #{op.pattern} endpoint"
             end
           end

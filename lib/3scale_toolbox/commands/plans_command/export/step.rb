@@ -47,9 +47,9 @@ module ThreeScaleToolbox
 
           def metric_info(elem, elem_name)
             if (method = find_method(elem.fetch('metric_id')))
-              { 'type' => 'method', 'system_name' => method.fetch('system_name') }
+              { 'type' => 'method', 'system_name' => method.system_name }
             elsif (metric = find_metric(elem.fetch('metric_id')))
-              { 'type' => 'metric', 'system_name' => metric.fetch('system_name') }
+              { 'type' => 'metric', 'system_name' => metric.system_name }
             else
               raise ThreeScaleToolbox::Error, "Unexpected error. #{elem_name} #{elem['id']} " \
                 "referencing to metric id #{elem.fetch('metric_id')} which has not been found"
@@ -72,11 +72,11 @@ module ThreeScaleToolbox
           end
 
           def find_metric(id)
-            service.metrics.find { |metric| metric['id'] == id }
+            service.metrics.find { |metric| metric.id == id }
           end
 
           def find_method(id)
-            service.methods.find { |method| method['id'] == id }
+            service.methods.find { |method| method.id == id }
           end
         end
       end

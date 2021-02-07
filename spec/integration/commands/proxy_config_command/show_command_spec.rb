@@ -26,7 +26,7 @@ RSpec.describe 'ProxyConfig Show command' do
 
       svc
     end
-    let(:hits_id) { service.hits.fetch('id') }
+    let(:hits_id) { service.hits.id }
 
     before :example do
       pc = ThreeScaleToolbox::Entities::ProxyConfig::find(service: service, environment: environment_sandbox, version: 1)

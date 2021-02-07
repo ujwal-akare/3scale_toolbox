@@ -16,13 +16,10 @@ RSpec.describe 'OpenAPI import basepath diff' do
   let(:account_name) { "account_#{random_lowercase_name}" }
   let(:account) { api3scale_client.signup(name: account_name, username: account_name) }
   let(:application_plan) do
-    api3scale_client.create_application_plan(service_id,
-                                             'name' => "appplan_#{random_lowercase_name}")
+    ThreeScaleToolbox::Entities::ApplicationPlan.create(service: service, plan_attrs: {'name' => "appplan_#{random_lowercase_name}"})
   end
   let(:application) do
-    api3scale_client.create_application(account['id'],
-                                        plan_id: application_plan['id'],
-                                        user_key: random_lowercase_name)
+    api3scale_client.create_application(account['id'], plan_id: application_plan.id, user_key: random_lowercase_name)
   end
   let(:api_key) { application['user_key'] }
 

@@ -15,13 +15,13 @@ module ThreeScaleToolbox
 
           def missing_metrics
             ThreeScaleToolbox::Helper.array_difference(resource_metrics, service.metrics) do |a, b|
-              ThreeScaleToolbox::Helper.compare_hashes(a, b, ['system_name'])
+              a['system_name'] == b.system_name
             end
           end
 
           def missing_methods
             ThreeScaleToolbox::Helper.array_difference(resource_methods, service.methods) do |a, b|
-              ThreeScaleToolbox::Helper.compare_hashes(a, b, ['system_name'])
+              a['system_name'] == b.system_name
             end
           end
 

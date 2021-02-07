@@ -3,13 +3,13 @@ module ThreeScaleToolbox
     class Method
       class << self
         def create(service:, attrs:)
-          method = service.remote.create_method service.id, service.hits.fetch('id'), attrs
-          if (errors = method['errors'])
+          method_attrs = service.remote.create_method service.id, service.hits.id, attrs
+          if (errors = method_attrs['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Method has not been created', errors)
 
           end
 
-          new(id: method.fetch('id'), service: service, attrs: method)
+          new(id: method_attrs.fetch('id'), service: service, attrs: method_attrs)
         end
 
         # ref can be system_name or method_id
@@ -20,10 +20,7 @@ module ThreeScaleToolbox
         end
 
         def find_by_system_name(service:, system_name:)
-          method = service.methods.find { |m| m['system_name'] == system_name }
-          return if method.nil?
-
-          new(id: method.fetch('id'), service: service, attrs: method)
+          service.methods.find { |m| m.system_name == system_name }
         end
       end
 
@@ -38,6 +35,10 @@ module ThreeScaleToolbox
 
       def attrs
         @attrs ||= method_attrs
+      end
+
+      def system_name
+        attrs['system_name'] 
       end
 
       def disable
@@ -67,7 +68,7 @@ module ThreeScaleToolbox
       private
 
       def hits_id
-        service.hits.fetch('id')
+        service.hits.id
       end
 
       def method_attrs

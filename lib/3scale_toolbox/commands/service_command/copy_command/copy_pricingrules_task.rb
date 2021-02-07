@@ -7,21 +7,14 @@ module ThreeScaleToolbox
 
           def call
             plan_mapping = Helper.application_plan_mapping(source.plans, target.plans)
-            plan_mapping.each do |plan_id, target_plan|
-              pricing_rules_source = source.remote.list_pricingrules_per_application_plan(plan_id)
-              pricing_rules_target = target.remote.list_pricingrules_per_application_plan(target_plan['id'])
-              missing_pricing_rules = missing_pricing_rules(pricing_rules_source, pricing_rules_target,
-                                                            metrics_map)
+            plan_mapping.each do |source_plan, target_plan|
+              missing_pricing_rules = compute_missing_pricing_rules(source_plan.pricing_rules, target_plan.pricing_rules)
               missing_pricing_rules.each do |pricing_rule|
                 pricing_rule.delete('links')
-                target.remote.create_pricingrule(
-                  target_plan['id'],
-                  metrics_map.fetch(pricing_rule['metric_id']),
-                  pricing_rule
-                )
+                target_plan.create_pricing_rule(metrics_map.fetch(pricing_rule['metric_id']), pricing_rule)
               end
               puts "Missing #{missing_pricing_rules.size} pricing rules from target application plan " \
-                "#{target_plan['id']}. Source plan #{plan_id}"
+                "#{target_plan.id}. Source plan #{source_plan.id}"
             end
           end
 
@@ -31,10 +24,10 @@ module ThreeScaleToolbox
             @metrics_map ||= Helper.metrics_mapping(source_metrics_and_methods, target_metrics_and_methods)
           end
 
-          def missing_pricing_rules(source_pricing_rules, target_pricing_rules, metrics_map)
-            ThreeScaleToolbox::Helper.array_difference(source_pricing_rules, target_pricing_rules) do |src, target|
-              ThreeScaleToolbox::Helper.compare_hashes(src, target, %w[cost_per_unit min max]) &&
-                metrics_map.fetch(src.fetch('metric_id')) == target.fetch('metric_id')
+          def compute_missing_pricing_rules(source_pricing_rules, target_pricing_rules)
+            ThreeScaleToolbox::Helper.array_difference(source_pricing_rules, target_pricing_rules) do |src, target_pr|
+              ThreeScaleToolbox::Helper.compare_hashes(src, target_pr, %w[cost_per_unit min max]) &&
+                metrics_map.fetch(src.fetch('metric_id')) == target_pr.fetch('metric_id')
             end
           end
         end

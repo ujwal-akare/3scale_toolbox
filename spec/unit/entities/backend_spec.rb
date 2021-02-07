@@ -255,13 +255,14 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
 
     context '#hits' do
       subject { backend.hits }
+
       context 'not found' do
         before :each do
           expect(remote).to receive(:list_backend_metrics).with(backend_id).and_return([])
         end
 
-        it 'returns nil' do
-          is_expected.to be_nil
+        it 'raises error' do
+          expect { subject }.to raise_error(ThreeScaleToolbox::Error)
         end
       end
 

@@ -132,7 +132,11 @@ RSpec.shared_context :copied_plans do
   let(:plan_mapping_arr) do
     ThreeScaleToolbox::Helper.application_plan_mapping(source_plans, target_plans)
   end
-  let(:plan_mapping) { plan_mapping_arr.to_h }
+  let(:plan_mapping) do
+    plan_mapping_arr.each_with_object({}) do |(a, b), hash|
+      hash[a.id] = b
+    end
+  end
 end
 
 RSpec.shared_context :copied_metrics do
@@ -154,12 +158,8 @@ RSpec.shared_context :oas_common_context do
   let(:system_name) { "test_openapi_#{random_lowercase_name}" }
   let(:destination_url) { client_url }
   subject { ThreeScaleToolbox::CLI.run(command_line_str.split) }
-  let(:service_id) do
-    # figure out service by system_name
-    api3scale_client.list_services.find { |service| service['system_name'] == system_name }['id']
-  end
   let(:service) do
-    ThreeScaleToolbox::Entities::Service.new(id: service_id, remote: api3scale_client)
+    ThreeScaleToolbox::Entities::Service.find_by_system_name(remote: api3scale_client, system_name: system_name)
   end
   let(:service_proxy) { service.proxy }
   let(:service_settings) { service.attrs }

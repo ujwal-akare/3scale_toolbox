@@ -36,8 +36,16 @@ module ThreeScaleToolbox
         @attrs['metric_id']
       end
 
-      def metric_id=(metric_id)
-        @attrs['metric_id'] = metric_id
+      def pattern
+        attrs['pattern']
+      end
+
+      def http_method
+        attrs['http_method']
+      end
+
+      def delta
+        attrs['delta']
       end
 
       def update(mr_attrs)

@@ -23,7 +23,7 @@ module ThreeScaleToolbox
           end
 
           def run
-            printer.print_collection service.methods
+            printer.print_collection service.methods.map(&:attrs)
           end
 
           private

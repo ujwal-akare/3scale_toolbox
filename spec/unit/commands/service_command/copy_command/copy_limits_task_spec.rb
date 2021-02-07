@@ -2,65 +2,17 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
   context '#call' do
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
-    let(:source_remote) { instance_double('ThreeScale::API::Client', 'source_remote') }
-    let(:target_remote) { instance_double('ThreeScale::API::Client', 'target_remote') }
-    let(:plan_0) do
-      {
-        'id' => 0,
-        'name' => 'plan_0',
-        'state' => 'published',
-        'default' => false,
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'custom' => false,
-        'system_name' => 'plan_0',
-        'links' => []
-      }
-    end
-    let(:plan_1) do
-      {
-        'id' => 1,
-        'name' => 'plan_1',
-        'state' => 'published',
-        'default' => false,
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'custom' => false,
-        'system_name' => 'plan_1',
-        'links' => []
-      }
-    end
-    let(:metric_0) do
-      {
-        'id' => 1,
-        'name' => 'metric_1',
-        'system_name' => 'the_metric',
-        'unit': '1',
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
-      }
-    end
-    let(:metric_1) do
-      {
-        'id' => 2,
-        'name' => 'metric_1',
-        'system_name' => 'the_metric',
-        'unit': '1',
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
-      }
-    end
+    let(:source_plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:target_plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:target_plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:source_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+    let(:target_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
     let(:limit_0) do
       { # limit for metric_0
         'id' => 1,
         'period' => 'year',
         'value' => 10_000,
         'metric_id' => 1,
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
       }
     end
     let(:limit_1) do
@@ -69,109 +21,97 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
         'period' => 'year',
         'value' => 10_000,
         'metric_id' => 2,
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
       }
     end
-    let(:source_plans) { [plan_0] }
-    let(:source_metrics) { [metric_0] }
+    let(:source_plans) { [] }
+    let(:source_metrics) { [] }
+    let(:source_methods) { [] }
+    let(:target_metrics) { [] }
+    let(:target_methods) { [] }
+    let(:source_limits) { [] }
+    let(:target_limits) { [] }
 
     subject { described_class.new(source: source, target: target) }
 
     before :each do
-      allow(source).to receive(:remote).and_return(source_remote)
-      allow(target).to receive(:remote).and_return(target_remote)
       expect(source).to receive(:plans).and_return(source_plans)
       expect(target).to receive(:plans).and_return(target_plans)
+      allow(source_plan_0).to receive(:id).and_return(1)
+      allow(source_plan_0).to receive(:limits).and_return(source_limits)
+      allow(source_plan_0).to receive(:system_name).and_return('plan_0')
+      allow(target_plan_0).to receive(:id).and_return(1)
+      allow(target_plan_0).to receive(:system_name).and_return('plan_0')
+      allow(target_plan_0).to receive(:limits).and_return(target_limits)
+      allow(target_plan_1).to receive(:id).and_return(2)
+      allow(target_plan_1).to receive(:system_name).and_return('plan_1')
+      allow(target_plan_1).to receive(:limits).and_return(target_limits)
+      allow(source_metric_0).to receive(:id).and_return(1)
+      allow(source_metric_0).to receive(:system_name).and_return('metric_0')
+      allow(target_metric_0).to receive(:id).and_return(2)
+      allow(target_metric_0).to receive(:system_name).and_return('metric_0')
+      allow(source).to receive(:metrics).and_return(source_metrics)
+      allow(source).to receive(:methods).and_return(source_methods)
+      allow(target).to receive(:metrics).and_return(target_metrics)
+      allow(target).to receive(:methods).and_return(target_methods)
     end
 
     context 'no application plan match' do
-      # missing plans is empty set
-      let(:target_plans) { [plan_1] }
-      let(:target_metrics) { [metric_0] }
+      # mapped plans is empty set
+      let(:target_plans) { [target_plan_1] }
+      let(:source_plans) { [source_plan_0] }
 
-      it 'does not call create_application_plan_limit method' do
+      it 'does not create limit' do
         subject.call
       end
     end
 
-    context 'application plan match' do
-      let(:target_plans) { [plan_0] }
-      before :each do
-        expect(source).to receive(:metrics).and_return([metric_0])
-        expect(source).to receive(:methods).and_return([])
-        expect(target).to receive(:metrics).and_return([metric_1])
-        expect(target).to receive(:methods).and_return([])
+    context 'missing limits is empty' do
+      let(:target_plans) { [target_plan_0] }
+      let(:source_plans) { [source_plan_0] }
+      # missing limits set is empty
+      let(:source_limits) { [limit_0] }
+      let(:target_limits) { [limit_1] }
+      let(:source_metrics) { [source_metric_0] }
+      let(:target_metrics) { [target_metric_0] }
+
+      it 'does not create limits' do
+        expect { subject.call }.to output(/Missing 0 plan limits/).to_stdout
       end
+    end
 
-      context 'missing limits is empty' do
-        # missing limits set is empty
-        let(:source_limits) { [limit_0] }
-        let(:target_metrics) { [metric_0] }
-        let(:target_limits) { [limit_1] }
+    context '1 limit missing' do
+      let(:target_plans) { [target_plan_0] }
+      let(:source_plans) { [source_plan_0] }
+      let(:source_limits) { [limit_0] }
+      let(:target_limits) { [] }
+      let(:source_metrics) { [source_metric_0] }
+      let(:target_metrics) { [target_metric_0] }
 
-        before :each do
-          expect(source_remote).to receive(:list_application_plan_limits).with(0)
-                                                                         .and_return(source_limits)
-          expect(target_remote).to receive(:list_application_plan_limits).with(0)
-                                                                         .and_return(target_limits)
-        end
-
-        it 'does not call create_application_plan_limit method' do
-          expect { subject.call }.to output(/Missing 0 plan limits/).to_stdout
-        end
+      it 'creates one limit' do
+        expect(target_plan_0).to receive(:create_limit).with(target_metric_0.id, limit_0)
+        expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
+    end
 
-      context '1 limit missing' do
-        let(:source_limits) { [limit_0] }
-        let(:target_metrics) { [metric_1] }
-        let(:target_limits) { [] }
-
-        before :each do
-          expect(source_remote).to receive(:list_application_plan_limits).with(0)
-                                                                         .and_return(source_limits)
-          expect(target_remote).to receive(:list_application_plan_limits).with(0)
-                                                                         .and_return(target_limits)
-        end
-
-        it 'calls create_application_plan_limit method' do
-          expect(target_remote).to receive(:create_application_plan_limit).with(plan_0['id'],
-                                                                                metric_1['id'],
-                                                                                limit_0)
-                                                                          .and_return({})
-          expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
-        end
+    context '1 limit missing because limits do not match' do
+      let(:target_plans) { [target_plan_0] }
+      let(:source_plans) { [source_plan_0] }
+      let(:source_limits) { [limit_0] }
+      let(:custom_limit) do
+        { # limit for metric_1
+          'id' => 123,
+          'period' => 'year',
+          'value' => 10_000,
+          'metric_id' => 3,
+        }
       end
+      let(:target_limits) { [custom_limit] }
+      let(:source_metrics) { [source_metric_0] }
+      let(:target_metrics) { [target_metric_0] }
 
-      context 'limit from diff metrics' do
-        let(:source_limits) { [limit_0] }
-        let(:target_metrics) { [metric_1] }
-        let(:target_limit_0) do
-          { # limit for some other metric '3', same period
-            'id' => 0,
-            'period' => 'year',
-            'value' => 10_000,
-            'metric_id' => 3
-          }
-        end
-        # still missing limit_0 for metric_1
-        let(:target_limits) { [target_limit_0] }
-
-        before :each do
-          expect(source_remote).to receive(:list_application_plan_limits).with(0)
-                                                                         .and_return(source_limits)
-          expect(target_remote).to receive(:list_application_plan_limits).with(0)
-                                                                         .and_return(target_limits)
-        end
-
-        it 'calls create_application_plan_limit method' do
-          expect(target_remote).to receive(:create_application_plan_limit).with(plan_0['id'],
-                                                                                metric_1['id'],
-                                                                                limit_0)
-                                                                          .and_return({})
-          expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
-        end
+      it 'creates one limit' do
+        expect(target_plan_0).to receive(:create_limit).with(target_metric_0.id, limit_0)
+        expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end
   end

@@ -19,7 +19,6 @@ RSpec.describe 'Method create command' do
     )
   end
   let(:plan_ref) { "app_plan_#{random_lowercase_name}" }
-  let(:service_hits_id) { service.hits.fetch('id') }
 
   before :example do
     plan_attrs = { 'name' => 'old_name', 'system_name' => plan_ref }
@@ -33,8 +32,7 @@ RSpec.describe 'Method create command' do
   it 'method is created and disabled' do
     expect(subject).to eq(0)
 
-    method = ThreeScaleToolbox::Entities::Method.find(service: service, parent_id: service_hits_id,
-                                                      ref: method_ref)
+    method = ThreeScaleToolbox::Entities::Method.find(service: service, ref: method_ref)
     expect(method).not_to be_nil
     expect(method.attrs.fetch('friendly_name')).to eq(method_name)
     expect(method.attrs.fetch('description')).to eq(method_descr)

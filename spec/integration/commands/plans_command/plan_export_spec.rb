@@ -16,7 +16,6 @@ RSpec.describe 'Application Plan Export' do
       remote: api3scale_client, service_params: service_obj
     )
   end
-  let(:service_hits_id) { service.hits['id'] }
   # plan system name does not conflict with app plans belonging to other services
   let(:plan_attrs) { { 'name' => 'basic', 'system_name' => 'basic' } }
   let(:plan) do
@@ -45,15 +44,11 @@ RSpec.describe 'Application Plan Export' do
 
   before :example do
     # method
-    method = ThreeScaleToolbox::Entities::Method.create(service: service,
-                                                        parent_id: service_hits_id,
-                                                        attrs: method_attrs)
+    method = ThreeScaleToolbox::Entities::Method.create(service: service, attrs: method_attrs)
     # create more methods not used for limits or pricingrules
     # These methods should not be exported
-    ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: service_hits_id,
-                                               attrs: { friendly_name: 'method_02' })
-    ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: service_hits_id,
-                                               attrs: { friendly_name: 'method_03 ' })
+    ThreeScaleToolbox::Entities::Method.create(service: service, attrs: { friendly_name: 'method_02' })
+    ThreeScaleToolbox::Entities::Method.create(service: service, attrs: { friendly_name: 'method_03 ' })
     # metric
     metric = ThreeScaleToolbox::Entities::Metric.create(service: service, attrs: metric_attrs)
     # create more metrics not used for limits or pricingrules

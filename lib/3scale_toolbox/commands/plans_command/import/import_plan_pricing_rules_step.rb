@@ -34,7 +34,7 @@ module ThreeScaleToolbox
           def resource_pr_processed
             resource_pricing_rules.map do |pr|
               metric = find_metric_by_system_name(pr.delete('metric_system_name'))
-              pr.merge('metric_id' => metric.fetch('id'),
+              pr.merge('metric_id' => metric.id,
                        'cost_per_unit' => pr.fetch('cost_per_unit').to_f)
             end
           end

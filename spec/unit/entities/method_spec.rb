@@ -1,13 +1,15 @@
 RSpec.describe ThreeScaleToolbox::Entities::Method do
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:hits) { instance_double(ThreeScaleToolbox::Entities::Metric) }
   let(:service_id) { 1000 }
   let(:hits_id) { 1 }
 
   before :example do
+    allow(hits).to receive(:id).and_return(hits_id)
     allow(service).to receive(:remote).and_return(remote)
     allow(service).to receive(:id).and_return(service_id)
-    allow(service).to receive(:hits).and_return({'id' => hits_id})
+    allow(service).to receive(:hits).and_return(hits)
   end
 
   context 'Method.create' do
@@ -67,7 +69,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
 
     context 'method is found by system_name' do
       let(:method_ref) { method_system_name }
-      let(:methods) { [method_attrs] }
+      let(:my_method) { described_class.new(id: method_id, service: service, attrs: method_attrs) }
+      let(:methods) { [my_method] }
 
       before :example do
         expect(remote).to receive(:show_method).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))

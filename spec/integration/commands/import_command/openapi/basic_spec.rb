@@ -39,15 +39,14 @@ RSpec.describe 'OpenAPI import basic test' do
     expect(expected_methods.size).to be > 0
     # test Set(service.methods) includes Set(expected_methods)
     # with a custom identity method for methods
-    hits_id = service.hits['id']
-    expect(expected_methods).to be_subset_of(service.methods(hits_id)).comparing_keys(method_keys)
+    expect(expected_methods).to be_subset_of(service.methods.map(&:attrs)).comparing_keys(method_keys)
 
     # mapping rules are created
     expect(expected_mapping_rules.size).to be > 0
     # expect Set(service.mapping_rules) == Set(expected_mapping_rules)
     # with a custom identity method for mapping_rules
-    expect(expected_mapping_rules).to be_subset_of(service.mapping_rules).comparing_keys(mapping_rule_keys)
-    expect(service.mapping_rules).to be_subset_of(expected_mapping_rules).comparing_keys(mapping_rule_keys)
+    expect(expected_mapping_rules).to be_subset_of(service.mapping_rules.map(&:attrs)).comparing_keys(mapping_rule_keys)
+    expect(service.mapping_rules.map(&:attrs)).to be_subset_of(expected_mapping_rules).comparing_keys(mapping_rule_keys)
 
     # service proxy is updated
     expect(service_proxy).not_to be_nil

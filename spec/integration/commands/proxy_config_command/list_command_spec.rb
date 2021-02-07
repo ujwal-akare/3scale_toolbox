@@ -24,7 +24,7 @@ RSpec.describe 'ProxyConfig List command' do
 
       svc
   end
-  let(:hits_id) { service.hits.fetch('id') }
+  let(:hits_id) { service.hits.id }
 
   context "With multiple existing Proxy Configurations" do
     before :example do

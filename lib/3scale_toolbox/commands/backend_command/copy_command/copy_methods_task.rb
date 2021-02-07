@@ -18,7 +18,7 @@ module ThreeScaleToolbox
           rescue ThreeScaleToolbox::ThreeScaleApiError => e
             raise e unless ThreeScaleToolbox::Helper.system_name_already_taken_error?(e.apierrors)
 
-            warn "[WARN] backend method #{method.attrs.fetch('system_name')} not created. " \
+            warn "[WARN] backend method #{method.system_name} not created. " \
               'Backend metric with the same system_name exists.'
           end
 

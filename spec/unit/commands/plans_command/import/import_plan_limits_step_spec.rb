@@ -9,7 +9,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
   let(:plan) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
   let(:resource_limits) { [] }
   let(:hits_metric_id) { 1 }
-  let(:hits_metric) { { 'id' => hits_metric_id, 'system_name' => 'hits' } }
+  let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
   let(:service_metrics) { [hits_metric] }
   let(:plan_limits) { [] }
   let(:artifacts_resource) do
@@ -29,6 +29,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
 
   context '#call' do
     before :example do
+      allow(hits_metric).to receive(:id).and_return(hits_metric_id)
+      allow(hits_metric).to receive(:system_name).and_return('hits')
       expect(service_class).to receive(:find).with(hash_including(service_info))
                                              .and_return(service)
       expect(plan_class).to receive(:find).with(hash_including(service: service,

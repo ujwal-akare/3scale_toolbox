@@ -57,7 +57,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
     context 'metric is found by system_name' do
       let(:metric_ref) { metric_system_name }
-      let(:metrics) { [metric_attrs] }
+      let(:my_metric) { described_class.new(id: metric_id, service: service, attrs: metric_attrs) }
+      let(:metrics) { [my_metric] }
 
       before :example do
         expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
@@ -118,16 +119,10 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
     end
 
     context '#enable' do
-      let(:plans) do
-        [
-          { 'id' => 1 },
-          { 'id' => 2 },
-          { 'id' => 3 }
-        ]
-      end
-      let(:plan_1) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_2) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_3) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
+      let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_2) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_3) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plans) { [ plan_1, plan_2, plan_3 ] }
       let(:limit_0_disabled) { { 'id' => 0, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
       let(:limit_1) { { 'id' => 1, 'metric_id' => id, 'period' => 'eternity', 'value' => 100 } }
       let(:limit_2_disabled) { { 'id' => 2, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
@@ -135,9 +130,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
       before :example do
         expect(service).to receive(:plans).and_return(plans)
-        expect(plan_class).to receive(:new).with(id: 1, service: service).and_return(plan_1)
-        expect(plan_class).to receive(:new).with(id: 2, service: service).and_return(plan_2)
-        expect(plan_class).to receive(:new).with(id: 3, service: service).and_return(plan_3)
         expect(plan_1).to receive(:metric_limits).with(id).and_return([limit_0_disabled])
         expect(plan_2).to receive(:metric_limits).with(id).and_return([limit_1])
         expect(plan_3).to receive(:metric_limits).with(id).and_return([limit_2_disabled, limit_3])
@@ -153,22 +145,13 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
     context '#disable' do
       let(:zero_eternity_limit_attrs) { { 'period' => 'eternity', 'value' => 0 } }
-      let(:plans) do
-        [
-          { 'id' => 0 },
-          { 'id' => 1 },
-          { 'id' => 2 }
-        ]
-      end
-      let(:plan_0) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_1) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_2) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
+      let(:plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_2) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plans) { [ plan_0, plan_1, plan_2 ] }
 
       before :example do
         expect(service).to receive(:plans).and_return(plans)
-        expect(plan_class).to receive(:new).with(id: 0, service: service).and_return(plan_0)
-        expect(plan_class).to receive(:new).with(id: 1, service: service).and_return(plan_1)
-        expect(plan_class).to receive(:new).with(id: 2, service: service).and_return(plan_2)
         expect(plan_0).to receive(:metric_limits).with(id).and_return([limit_0])
         expect(plan_1).to receive(:metric_limits).with(id).and_return([limit_1])
         expect(plan_2).to receive(:metric_limits).with(id).and_return([limit_2])
