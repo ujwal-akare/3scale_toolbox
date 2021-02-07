@@ -244,8 +244,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       end
       subject { backend.metrics }
       before :each do
-        expect(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
-        expect(remote).to receive(:list_backend_methods).with(backend_id, 1).and_return(methods)
+        allow(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
+        allow(remote).to receive(:list_backend_methods).with(backend_id, 1).and_return(methods)
       end
 
       it 'returns only metrics' do

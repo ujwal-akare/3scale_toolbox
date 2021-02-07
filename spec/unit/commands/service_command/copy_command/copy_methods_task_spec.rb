@@ -31,10 +31,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
     subject { described_class.new(source: source, target: target) }
 
     before :each do
-      expect(source).to receive(:methods).and_return(source_methods)
-      expect(source).to receive(:hits).and_return('id' => 1)
-      expect(target).to receive(:methods).and_return(target_methods)
-      expect(target).to receive(:hits).and_return('id' => target_hits_metric_id)
+      allow(source).to receive(:methods).and_return(source_methods)
+      allow(source).to receive(:hits).and_return('id' => 1)
+      allow(target).to receive(:methods).and_return(target_methods)
+      allow(target).to receive(:hits).and_return('id' => target_hits_metric_id)
     end
 
     context 'no missing methods' do

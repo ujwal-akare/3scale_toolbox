@@ -17,10 +17,10 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
 
   context '#run' do
     before :each do
-      expect(source_backend).to receive(:methods).and_return(source_methods)
-      expect(source_backend).to receive(:hits).and_return(source_hits_metric)
-      expect(target_backend).to receive(:methods).and_return(target_methods)
-      expect(target_backend).to receive(:hits).and_return(target_hits_metric)
+      allow(source_backend).to receive(:methods).and_return(source_methods)
+      allow(source_backend).to receive(:hits).and_return(source_hits_metric)
+      allow(target_backend).to receive(:methods).and_return(target_methods)
+      allow(target_backend).to receive(:hits).and_return(target_hits_metric)
       allow(target_hits_metric).to receive(:id).and_return(target_hits_id)
     end
 

@@ -287,8 +287,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     context '#metrics' do
       it 'returns only metrics' do
-        expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
-        expect(remote).to receive(:list_methods).with(id, 1).and_return(methods)
+        allow(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
+        allow(remote).to receive(:list_methods).with(id, 1).and_return(methods)
         expect(subject.metrics).to eq(metrics)
       end
     end

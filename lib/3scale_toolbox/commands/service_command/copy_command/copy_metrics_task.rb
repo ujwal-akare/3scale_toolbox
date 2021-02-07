@@ -6,11 +6,10 @@ module ThreeScaleToolbox
           include Task
 
           def call
-            puts "original service has #{source_metrics.size} metrics"
-            puts "target service has #{target_metrics.size} metrics"
+            puts "original service has #{source.metrics.size} metrics"
+            puts "target service has #{target.metrics.size} metrics"
             missing_metrics.each(&method(:create_metric))
             puts "created #{missing_metrics.size} metrics on the target service"
-            invalidate_target_metrics if missing_metrics.size.positive?
           end
 
           private
@@ -26,7 +25,7 @@ module ThreeScaleToolbox
           end
 
           def missing_metrics
-            @missing_metrics ||= ThreeScaleToolbox::Helper.array_difference(source_metrics, target_metrics) do |source, target|
+            ThreeScaleToolbox::Helper.array_difference(source.metrics, target.metrics) do |source, target|
               ThreeScaleToolbox::Helper.compare_hashes(source, target, ['system_name'])
             end
           end
