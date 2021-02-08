@@ -54,22 +54,37 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanLimits
     end
 
     context 'when there are limits' do
-      let(:limit_for_metric) do
+      let(:limit_for_metric) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_for_metric_attrs) do
         { 'period' => 'year', 'value' => 1000, 'metric_id' => metric_0_id }
       end
-      let(:limit_for_method) do
+      let(:limit_for_method) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_for_method_attrs) do
         { 'period' => 'day', 'value' => 1000, 'metric_id' => method_0_id }
       end
       let(:plan_limits) { [limit_for_metric, limit_for_method] }
       let(:service_methods) { [ method_0 ] }
       let(:service_metrics) { [metric_0, hits_metric] }
 
+      before :example do
+        allow(limit_for_metric).to receive(:attrs).and_return(limit_for_metric_attrs)
+        allow(limit_for_metric).to receive(:period).and_return(limit_for_metric_attrs.fetch('period'))
+        allow(limit_for_metric).to receive(:value).and_return(limit_for_metric_attrs.fetch('value'))
+        allow(limit_for_metric).to receive(:metric_id).and_return(limit_for_metric_attrs.fetch('metric_id'))
+        allow(limit_for_metric).to receive(:id).and_return(1)
+        allow(limit_for_method).to receive(:attrs).and_return(limit_for_method_attrs)
+        allow(limit_for_method).to receive(:period).and_return(limit_for_method_attrs.fetch('period'))
+        allow(limit_for_method).to receive(:value).and_return(limit_for_method_attrs.fetch('value'))
+        allow(limit_for_method).to receive(:metric_id).and_return(limit_for_method_attrs.fetch('metric_id'))
+        allow(limit_for_method).to receive(:id).and_return(2)
+      end
+
       it 'limit addded' do
         subject.call
         expect(result).not_to be_nil
         expect(result[:limits].size).to eq(2)
-        expect(result[:limits][0]).to include(limit_for_metric)
-        expect(result[:limits][1]).to include(limit_for_method)
+        expect(result[:limits][0]).to include(limit_for_metric.attrs)
+        expect(result[:limits][1]).to include(limit_for_method.attrs)
       end
 
       it 'metric info addded for limit refering to metric' do

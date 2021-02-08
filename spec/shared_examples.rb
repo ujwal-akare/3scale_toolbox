@@ -3,8 +3,7 @@ RSpec.shared_examples 'service copied' do
   include_context :copied_plans
 
   def limit_match(limit_a, limit_b, metrics_mapping)
-    ThreeScaleToolbox::Helper.compare_hashes(limit_a, limit_b, %w[period value]) &&
-      metrics_mapping.fetch(limit_a.fetch('metric_id')) == limit_b.fetch('metric_id')
+    limit_a.period == limit_b.period && limit_a.value == limit_b.value && metrics_mapping.fetch(limit_a.metric_id) == limit_b.metric_id
   end
 
   def limit_mapping(limits_a, limits_b, metrics_mapping)

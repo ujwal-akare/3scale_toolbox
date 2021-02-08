@@ -79,8 +79,8 @@ module ThreeScaleToolbox
         # b) metrics having limits set with eternity period, but not zero value, must be updated
         # c) metrics not having limits set with eternity period, must be created
 
-        eternity_limits = limits.select { |limit| limit.fetch('period') == 'eternity' }
-        eternity_metric_ids = eternity_limits.map { |limit| limit.fetch('metric_id') }
+        eternity_limits = limits.select { |limit| limit.period == 'eternity' }
+        eternity_metric_ids = eternity_limits.map { |limit| limit.metric_id }
         service_metric_ids = service.metrics.map { |metric| metric.id }
         metric_ids_without_eternity = service_metric_ids - eternity_metric_ids
 
@@ -90,16 +90,14 @@ module ThreeScaleToolbox
         end
 
         # update eternity zero limit those metrics already having eternity limit set
-        not_zero_eternity_limits = eternity_limits.reject { |limit| limit.fetch('value').zero? }
+        not_zero_eternity_limits = eternity_limits.reject { |limit| limit.value.zero? }
         not_zero_eternity_limits.each do |limit|
-          update_limit(limit.fetch('metric_id'), limit.fetch('id'), zero_eternity_limit_attrs)
+          limit.update(zero_eternity_limit_attrs)
         end
       end
 
       def enable
-        eternity_zero_limits.each do |limit|
-          delete_limit(limit.fetch('metric_id'), limit.fetch('id'))
-        end
+        eternity_zero_limits.each(&:delete)
       end
 
       def limits
@@ -108,7 +106,9 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Limits per application plan not read', errors)
         end
 
-        plan_limits
+        plan_limits.map do |limit_attrs|
+          Limit.new(id: limit_attrs.fetch('id'), plan: self, metric_id: limit_attrs.fetch('metric_id'), attrs: limit_attrs)
+        end
       end
 
       def metric_limits(metric_id)
@@ -117,29 +117,11 @@ module ThreeScaleToolbox
         # Already reported. https://issues.jboss.org/browse/THREESCALE-2486
         # Meanwhile, the strategy will be to get all metrics from a given plan
         # and filter by metric_id
-        limits.select { |limit| limit['metric_id'] == metric_id }
+        limits.select { |limit| limit.metric_id == metric_id }
       end
 
       def create_limit(metric_id, limit_attrs)
-        limit = remote.create_application_plan_limit id, metric_id, limit_attrs
-        if (errors = limit['errors'])
-          raise ThreeScaleToolbox::ThreeScaleApiError.new('Limit has not been created', errors)
-        end
-
-        limit
-      end
-
-      def update_limit(metric_id, limit_id, limit_attrs)
-        limit = remote.update_application_plan_limit id, metric_id, limit_id, limit_attrs
-        if (errors = limit['errors'])
-          raise ThreeScaleToolbox::ThreeScaleApiError.new('Limit not updated', errors)
-        end
-
-        limit
-      end
-
-      def delete_limit(metric_id, limit_id)
-        remote.delete_application_plan_limit id, metric_id, limit_id
+        Limit.create(plan: self, metric_id: metric_id, attrs: limit_attrs)
       end
 
       def create_pricing_rule(metric_id, pr_attrs)
@@ -227,7 +209,7 @@ module ThreeScaleToolbox
       end
 
       def eternity_zero_limits
-        limits.select { |limit| zero_eternity_limit_attrs < limit }
+        limits.select { |limit| zero_eternity_limit_attrs < limit.attrs }
       end
 
       def zero_eternity_limit_attrs

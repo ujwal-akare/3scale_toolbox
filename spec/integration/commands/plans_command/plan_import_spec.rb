@@ -58,10 +58,10 @@ RSpec.describe 'Application Plan Import' do
     expect(remote_plan_limits.size).to eq(1)
     remote_plan_limit = remote_plan_limits[0]
     ## compare limit read from remote and limit read from file
-    expect(remote_plan_limit).to include(file_limit.clone.tap { |h| h.delete('metric_system_name') })
+    expect(remote_plan_limit.attrs).to include(file_limit.clone.tap { |h| h.delete('metric_system_name') })
     ## check metric_id refer to a metric with metric_system_name from file limit
     limit_metric = service_all_metrics.find do |m|
-      m.id == remote_plan_limit.fetch('metric_id')
+      m.id == remote_plan_limit.metric_id
     end
     expect(limit_metric).not_to be_nil
     expect(limit_metric.system_name).to eq(file_limit.fetch('metric_system_name'))

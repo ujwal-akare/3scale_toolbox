@@ -42,7 +42,7 @@ RSpec.describe 'Application Plan create command' do
     expect(plan.published?).to be_truthy
     # check disabled
     zero_eternity_limit_attrs = { 'period' => 'eternity', 'value' => 0 }
-    eternity_zero_limits = plan.limits.select { |limit| zero_eternity_limit_attrs < limit }
+    eternity_zero_limits = plan.limits.select { |limit| zero_eternity_limit_attrs < limit.attrs }
     expect(eternity_zero_limits).not_to be_empty
   end
 end

@@ -47,7 +47,7 @@ RSpec.describe 'Metric apply command' do
     expect(plan).not_to be_nil
     # check disabled
     eternity_zero_limits = plan.metric_limits(metric.id).select do |limit|
-      limit > { 'period' => 'eternity', 'value' => 0 }
+      limit.attrs > { 'period' => 'eternity', 'value' => 0 }
     end
     expect(eternity_zero_limits).not_to be_empty
   end

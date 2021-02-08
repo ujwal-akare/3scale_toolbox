@@ -137,20 +137,38 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
     end
 
     context '#limits' do
-      let(:limits) { double('limits') }
-      it 'calls list_application_plan_limits method' do
+      let(:limit_0_attrs) { { 'id' => 1, 'metric_id' => 2 } }
+      let(:limits) { [limit_0_attrs] }
+
+      before :example do
         expect(remote).to receive(:list_application_plan_limits).with(id).and_return(limits)
-        expect(subject.limits).to eq(limits)
+      end
+
+      it 'metric_id is parsed' do
+        expect(subject.limits[0].metric_id).to eq(2)
+      end
+
+      it 'id is parsed' do
+        expect(subject.limits[0].id).to eq(1)
+      end
+
+      it 'one element is returned' do
+        expect(subject.limits.length()).to eq(1)
       end
     end
 
     context '#create_limit' do
+      let(:limit_class) { class_double(ThreeScaleToolbox::Entities::Limit).as_stubbed_const }
+      let(:limit) { instance_double(ThreeScaleToolbox::Entities::Limit) }
       let(:metric_id) { 4 }
       let(:limit_attrs) { { 'period' => 'year', 'value' => 10_000 } }
-      let(:limit) { limit_attrs.merge('id' => 1) }
+
+      before :example do
+        allow(limit).to receive(:id).and_return(4)
+      end
 
       it 'calls create_application_plan_limit method' do
-        expect(remote).to receive(:create_application_plan_limit).with(id, metric_id, limit_attrs)
+        expect(limit_class).to receive(:create).with(plan: subject, metric_id: metric_id, attrs: limit_attrs)
                                                                  .and_return(limit)
         expect(subject.create_limit(metric_id, limit_attrs)).to eq(limit)
       end

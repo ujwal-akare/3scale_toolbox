@@ -7,7 +7,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
     let(:target_plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
     let(:source_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
     let(:target_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
-    let(:limit_0) do
+    let(:limit_0) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+    let(:limit_0_attrs) do
       { # limit for metric_0
         'id' => 1,
         'period' => 'year',
@@ -15,7 +16,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
         'metric_id' => 1,
       }
     end
-    let(:limit_1) do
+    let(:limit_1) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+    let(:limit_1_attrs) do
       { # limit for metric_1
         'id' => 1,
         'period' => 'year',
@@ -49,6 +51,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
       allow(source_metric_0).to receive(:system_name).and_return('metric_0')
       allow(target_metric_0).to receive(:id).and_return(2)
       allow(target_metric_0).to receive(:system_name).and_return('metric_0')
+      allow(limit_0).to receive(:attrs).and_return(limit_0_attrs)
+      allow(limit_0).to receive(:period).and_return(limit_0_attrs.fetch('period'))
+      allow(limit_0).to receive(:value).and_return(limit_0_attrs.fetch('value'))
+      allow(limit_0).to receive(:metric_id).and_return(limit_0_attrs.fetch('metric_id'))
+      allow(limit_1).to receive(:attrs).and_return(limit_1_attrs)
+      allow(limit_1).to receive(:period).and_return(limit_1_attrs.fetch('period'))
+      allow(limit_1).to receive(:value).and_return(limit_1_attrs.fetch('value'))
+      allow(limit_1).to receive(:metric_id).and_return(limit_1_attrs.fetch('metric_id'))
       allow(source).to receive(:metrics).and_return(source_metrics)
       allow(source).to receive(:methods).and_return(source_methods)
       allow(target).to receive(:metrics).and_return(target_metrics)
@@ -88,7 +98,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
       let(:target_metrics) { [target_metric_0] }
 
       it 'creates one limit' do
-        expect(target_plan_0).to receive(:create_limit).with(target_metric_0.id, limit_0)
+        expect(target_plan_0).to receive(:create_limit).with(target_metric_0.id, limit_0.attrs)
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end
@@ -97,8 +107,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
       let(:target_plans) { [target_plan_0] }
       let(:source_plans) { [source_plan_0] }
       let(:source_limits) { [limit_0] }
-      let(:custom_limit) do
-        { # limit for metric_1
+      let(:custom_limit) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:custom_limit_attrs) do
+        {
           'id' => 123,
           'period' => 'year',
           'value' => 10_000,
@@ -109,8 +120,15 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
       let(:source_metrics) { [source_metric_0] }
       let(:target_metrics) { [target_metric_0] }
 
+      before :example do
+        allow(custom_limit).to receive(:attrs).and_return(custom_limit_attrs)
+        allow(custom_limit).to receive(:period).and_return(custom_limit_attrs.fetch('period'))
+        allow(custom_limit).to receive(:value).and_return(custom_limit_attrs.fetch('value'))
+        allow(custom_limit).to receive(:metric_id).and_return(custom_limit_attrs.fetch('metric_id'))
+      end
+
       it 'creates one limit' do
-        expect(target_plan_0).to receive(:create_limit).with(target_metric_0.id, limit_0)
+        expect(target_plan_0).to receive(:create_limit).with(target_metric_0.id, limit_0.attrs)
         expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
       end
     end

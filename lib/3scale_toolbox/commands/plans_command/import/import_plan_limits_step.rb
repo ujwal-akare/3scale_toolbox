@@ -11,15 +11,14 @@ module ThreeScaleToolbox
             # First, delete existing limits
             # Second, add new limits
             plan.limits.each do |limit|
-              metric_id = limit.fetch('metric_id')
-              plan.delete_limit metric_id, limit.fetch('id')
-              puts "Deleted existing plan limit: [metric: #{metric_id}, #{limit}]"
+              limit.delete()
+              puts "Deleted existing plan limit: [metric: #{limit.metric_id}, #{limit.attrs}]"
             end
 
-            resource_limits_processed.each do |limit|
-              metric_id = limit.delete('metric_id')
-              plan.create_limit(metric_id, limit)
-              puts "Created plan limit: [metric: #{metric_id}, #{limit}]"
+            resource_limits_processed.each do |limit_attrs|
+              metric_id = limit_attrs.delete('metric_id')
+              plan.create_limit(metric_id, limit_attrs)
+              puts "Created plan limit: [metric: #{metric_id}, #{limit_attrs}]"
             end
           end
 

@@ -37,7 +37,7 @@ module ThreeScaleToolbox
       end
 
       def system_name
-        attrs['system_name'] 
+        attrs['system_name']
       end
 
       def disable
@@ -49,8 +49,8 @@ module ThreeScaleToolbox
           eternity_limit = plan_eternity_limit(plan)
           if eternity_limit.nil?
             plan.create_limit(id, zero_eternity_limit_attrs)
-          elsif !eternity_limit.fetch('value').zero?
-            plan.update_limit(id, eternity_limit.fetch('id'), zero_eternity_limit_attrs)
+          elsif !eternity_limit.value.zero?
+            eternity_limit.update(zero_eternity_limit_attrs)
           end
         end
       end
@@ -58,7 +58,7 @@ module ThreeScaleToolbox
       def enable
         service.plans.each do |plan|
           limit = plan_zero_eternity_limit(plan)
-          plan.delete_limit(id, limit.fetch('id')) unless limit.nil?
+          limit.delete unless limit.nil?
         end
       end
 
@@ -91,12 +91,15 @@ module ThreeScaleToolbox
 
       def plan_zero_eternity_limit(plan)
         # only one limit for eternity period is allowed per (plan_id, metric_id)
-        plan.metric_limits(id).find { |limit| limit > zero_eternity_limit_attrs }
+        #plan.metric_limits(id).find { |limit| limit.attrs > zero_eternity_limit_attrs }
+        plan.metric_limits(id).find do |limit|
+          limit.attrs > zero_eternity_limit_attrs
+        end
       end
 
       def plan_eternity_limit(plan)
         # only one limit for eternity period is allowed per (plan_id, metric_id)
-        plan.metric_limits(id).find { |limit| limit['period'] == 'eternity' }
+        plan.metric_limits(id).find { |limit| limit.period == 'eternity' }
       end
 
       def zero_eternity_limit_attrs

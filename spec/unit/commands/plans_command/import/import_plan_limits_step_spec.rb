@@ -10,6 +10,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
   let(:resource_limits) { [] }
   let(:hits_metric_id) { 1 }
   let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:limit_0) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+  let(:limit_0_attrs) { { 'value' => 100 } }
   let(:service_metrics) { [hits_metric] }
   let(:plan_limits) { [] }
   let(:artifacts_resource) do
@@ -31,6 +33,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
     before :example do
       allow(hits_metric).to receive(:id).and_return(hits_metric_id)
       allow(hits_metric).to receive(:system_name).and_return('hits')
+      allow(limit_0).to receive(:metric_id).and_return(hits_metric_id)
+      allow(limit_0).to receive(:attrs).and_return(limit_0_attrs)
       expect(service_class).to receive(:find).with(hash_including(service_info))
                                              .and_return(service)
       expect(plan_class).to receive(:find).with(hash_including(service: service,
@@ -42,11 +46,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLi
     end
 
     context 'existing limits' do
-      let(:plan_limit) { { 'id' => 32, 'metric_id' => hits_metric_id } }
-      let(:plan_limits) { [plan_limit] }
+      let(:plan_limits) { [limit_0] }
 
       it 'deleted' do
-        expect(plan).to receive(:delete_limit).with(hits_metric_id, plan_limit.fetch('id'))
+        expect(limit_0).to receive(:delete)
         subject.call
       end
     end
