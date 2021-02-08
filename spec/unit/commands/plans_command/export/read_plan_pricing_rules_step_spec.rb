@@ -54,22 +54,35 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
     end
 
     context 'when there are pricingrules' do
-      let(:pringrule_for_metric) do
+      let(:pringrule_for_metric) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:pringrule_for_metric_attrs) do
         { 'cost_per_unit' => 1.0, 'min' => 1, 'max' => 100, 'metric_id' => metric_0_id }
       end
-      let(:pringrule_for_method) do
+      let(:pringrule_for_method) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:pringrule_for_method_attrs) do
         { 'cost_per_unit' => 2.0, 'min' => 1, 'max' => 100, 'metric_id' => method_0_id }
       end
       let(:plan_pricingrules) { [pringrule_for_metric, pringrule_for_method] }
       let(:service_methods) { [ method_0 ] }
       let(:service_metrics) { [metric_0, hits_metric] }
 
+      before :example do
+        allow(pringrule_for_metric).to receive(:attrs).and_return(pringrule_for_metric_attrs)
+        allow(pringrule_for_method).to receive(:attrs).and_return(pringrule_for_method_attrs)
+        allow(pringrule_for_metric).to receive(:id).and_return(1)
+        allow(pringrule_for_method).to receive(:id).and_return(2)
+        %w[cost_per_unit metric_id min max].each do |attr|
+          allow(pringrule_for_metric).to receive(attr.to_sym).and_return(pringrule_for_metric_attrs.fetch(attr))
+          allow(pringrule_for_method).to receive(attr.to_sym).and_return(pringrule_for_method_attrs.fetch(attr))
+        end
+      end
+
       it 'pricingrules addded' do
         subject.call
         expect(result).not_to be_nil
         expect(result[:pricingrules].size).to eq(2)
-        expect(result[:pricingrules][0]).to include(pringrule_for_metric)
-        expect(result[:pricingrules][1]).to include(pringrule_for_method)
+        expect(result[:pricingrules][0]).to include(pringrule_for_metric.attrs)
+        expect(result[:pricingrules][1]).to include(pringrule_for_method.attrs)
       end
 
       it 'metric info addded for pricingrule refering to metric' do
@@ -92,7 +105,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Export::ReadPlanPricin
       end
 
       context 'cost_per_unit is string' do
-        let(:pringrule_for_metric) do
+        let(:pringrule_for_metric_attrs) do
           { 'cost_per_unit' => '1.0', 'min' => 1, 'max' => 100, 'metric_id' => metric_0_id }
         end
 

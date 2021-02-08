@@ -45,7 +45,7 @@ module ThreeScaleToolbox
             context[:plan] ||= find_plan
           end
 
-          def metric_info_from_obj(elem, elem_name)
+          def metric_info(elem, elem_name)
             if (method = find_method(elem.metric_id))
               { 'type' => 'method', 'system_name' => method.system_name }
             elsif (metric = find_metric(elem.metric_id))
@@ -53,17 +53,6 @@ module ThreeScaleToolbox
             else
               raise ThreeScaleToolbox::Error, "Unexpected error. #{elem_name} #{elem.id} " \
                 "referencing to metric id #{elem.metric_id} which has not been found"
-            end
-          end
-
-          def metric_info(elem, elem_name)
-            if (method = find_method(elem.fetch('metric_id')))
-              { 'type' => 'method', 'system_name' => method.system_name }
-            elsif (metric = find_metric(elem.fetch('metric_id')))
-              { 'type' => 'metric', 'system_name' => metric.system_name }
-            else
-              raise ThreeScaleToolbox::Error, "Unexpected error. #{elem_name} #{elem['id']} " \
-                "referencing to metric id #{elem.fetch('metric_id')} which has not been found"
             end
           end
 

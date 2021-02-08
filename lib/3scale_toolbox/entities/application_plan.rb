@@ -125,16 +125,7 @@ module ThreeScaleToolbox
       end
 
       def create_pricing_rule(metric_id, pr_attrs)
-        pricing_rule_attrs = remote.create_pricingrule id, metric_id, pr_attrs
-        if (errors = pricing_rule_attrs['errors'])
-          raise ThreeScaleToolbox::Error, "Pricing rule has not been created. #{errors}"
-        end
-
-        pricing_rule_attrs
-      end
-
-      def delete_pricing_rule(metric_id, rule_id)
-        remote.delete_application_plan_pricingrule(id, metric_id, rule_id)
+        PricingRule.create(plan: self, metric_id: metric_id, attrs: pr_attrs)
       end
 
       def pricing_rules
@@ -144,7 +135,9 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::ThreeScaleApiError.new('pricing rules not read', errors)
         end
 
-        pr_list
+        pr_list.map do |pr_attrs|
+          PricingRule.new(id: pr_attrs.fetch('id'), plan: self, metric_id: pr_attrs.fetch('metric_id'), attrs: pr_attrs)
+        end
       end
 
       def features

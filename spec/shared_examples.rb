@@ -22,15 +22,6 @@ RSpec.shared_examples 'service copied' do
       metrics_mapping.fetch(src.metric_id) == target.metric_id
   end
 
-  def pricingrule_mapping(limits_a, limits_b, metrics_mapping)
-    limits_a.map do |limit_a|
-      found_limit = limits_b.find do |limit_b|
-        limit_match(limit_a, limit_b, metrics_mapping)
-      end
-      [limit_a, found_limit]
-    end.to_h
-  end
-
   it do
     expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
@@ -117,7 +108,10 @@ RSpec.shared_examples 'service copied' do
       target_pricingrules = copied_plan.pricing_rules
       # the difference should be empty set
       missing_pricingrules = ThreeScaleToolbox::Helper.array_difference(source_pricingrules, target_pricingrules) do |src, target|
-        ThreeScaleToolbox::Helper.compare_hashes(src, target, ['system_name'])
+        src.cost_per_unit == target.cost_per_unit &&
+          src.min == target.min &&
+          src.max == target.max &&
+          metrics_mapping.fetch(src.metric_id) == target.metric_id
       end
       expect(missing_pricingrules.size).to be_zero
     end

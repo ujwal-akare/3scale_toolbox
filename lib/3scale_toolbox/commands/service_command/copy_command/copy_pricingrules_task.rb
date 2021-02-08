@@ -10,8 +10,7 @@ module ThreeScaleToolbox
             plan_mapping.each do |source_plan, target_plan|
               missing_pricing_rules = compute_missing_pricing_rules(source_plan.pricing_rules, target_plan.pricing_rules)
               missing_pricing_rules.each do |pricing_rule|
-                pricing_rule.delete('links')
-                target_plan.create_pricing_rule(metrics_map.fetch(pricing_rule['metric_id']), pricing_rule)
+                target_plan.create_pricing_rule(metrics_map.fetch(pricing_rule.metric_id), pricing_rule.attrs)
               end
               puts "Missing #{missing_pricing_rules.size} pricing rules from target application plan " \
                 "#{target_plan.id}. Source plan #{source_plan.id}"
@@ -26,8 +25,10 @@ module ThreeScaleToolbox
 
           def compute_missing_pricing_rules(source_pricing_rules, target_pricing_rules)
             ThreeScaleToolbox::Helper.array_difference(source_pricing_rules, target_pricing_rules) do |src, target_pr|
-              ThreeScaleToolbox::Helper.compare_hashes(src, target_pr, %w[cost_per_unit min max]) &&
-                metrics_map.fetch(src.fetch('metric_id')) == target_pr.fetch('metric_id')
+              src.cost_per_unit == target_pr.cost_per_unit &&
+                src.min == target_pr.min &&
+                src.max == target_pr.max &&
+                metrics_map.fetch(src.metric_id) == target_pr.metric_id
             end
           end
         end

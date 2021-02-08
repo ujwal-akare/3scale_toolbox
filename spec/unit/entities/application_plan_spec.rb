@@ -157,6 +157,27 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       end
     end
 
+    context '#pricing_rules' do
+      let(:pr_0_attrs) { { 'id' => 1, 'metric_id' => 2 } }
+      let(:pricing_rules) { [pr_0_attrs] }
+
+      before :example do
+        expect(remote).to receive(:list_pricingrules_per_application_plan).with(id).and_return(pricing_rules)
+      end
+
+      it 'metric_id is parsed' do
+        expect(subject.pricing_rules[0].metric_id).to eq(2)
+      end
+
+      it 'id is parsed' do
+        expect(subject.pricing_rules[0].id).to eq(1)
+      end
+
+      it 'one element is returned' do
+        expect(subject.pricing_rules.length()).to eq(1)
+      end
+    end
+
     context '#create_limit' do
       let(:limit_class) { class_double(ThreeScaleToolbox::Entities::Limit).as_stubbed_const }
       let(:limit) { instance_double(ThreeScaleToolbox::Entities::Limit) }

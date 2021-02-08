@@ -9,7 +9,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
     let(:target_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
     let(:source_metric_id) { 1 }
     let(:target_metric_id) { 2 }
-    let(:pricing_rule_0) do
+    let(:pricing_rule_0) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+    let(:pricing_rule_0_attrs) do
       {
         'id' => 1,
         'name' => 'pr_1',
@@ -19,7 +20,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
         'metric_id' => source_metric_id
       }
     end
-    let(:pricing_rule_1) do
+    let(:pricing_rule_1) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+    let(:pricing_rule_1_attrs) do
       {
         'id' => 1,
         'name' => 'pr_1',
@@ -29,7 +31,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
         'metric_id' => target_metric_id
       }
     end
-    let(:pricing_rule_2) do
+    let(:pricing_rule_2) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+    let(:pricing_rule_2_attrs) do
       {
         'id' => 2,
         'name' => 'pr_2',
@@ -63,6 +66,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       allow(source_metric_0).to receive(:system_name).and_return('metric_0')
       allow(target_metric_0).to receive(:id).and_return(target_metric_id)
       allow(target_metric_0).to receive(:system_name).and_return('metric_0')
+      allow(pricing_rule_0).to receive(:attrs).and_return(pricing_rule_0_attrs)
+      allow(pricing_rule_1).to receive(:attrs).and_return(pricing_rule_1_attrs)
+      allow(pricing_rule_2).to receive(:attrs).and_return(pricing_rule_2_attrs)
+      %w[cost_per_unit metric_id min max].each do |attr| 
+        allow(pricing_rule_0).to receive(attr.to_sym).and_return(pricing_rule_0_attrs.fetch(attr))
+        allow(pricing_rule_1).to receive(attr.to_sym).and_return(pricing_rule_1_attrs.fetch(attr))
+        allow(pricing_rule_2).to receive(attr.to_sym).and_return(pricing_rule_2_attrs.fetch(attr))
+      end
       allow(source).to receive(:metrics).and_return(source_metrics)
       allow(source).to receive(:methods).and_return([])
       allow(target).to receive(:metrics).and_return(target_metrics)
@@ -103,7 +114,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       let(:target_metrics) { [target_metric_0] }
 
       it 'call create_pricingrule method' do
-        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_0.id, pricing_rule_0)
+        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_0.id, pricing_rule_0.attrs)
         expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
       end
     end
@@ -117,7 +128,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       let(:target_metrics) { [target_metric_0] }
 
       it 'call create_pricingrule method' do
-        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_0.id, pricing_rule_0)
+        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_0.id, pricing_rule_0.attrs)
         expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
       end
     end

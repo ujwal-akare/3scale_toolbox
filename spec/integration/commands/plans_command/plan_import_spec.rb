@@ -71,10 +71,10 @@ RSpec.describe 'Application Plan Import' do
     expect(remote_plan_prs.size).to eq(1)
     remote_plan_pr = remote_plan_prs[0]
     ## compare pricing rule read from remote and pricing rule read from file
-    expect(remote_plan_pr).to include(file_pricingrule.clone.tap { |h| h.delete('metric_system_name') })
+    expect(remote_plan_pr.attrs).to include(file_pricingrule.clone.tap { |h| h.delete('metric_system_name') })
     ## check metric_id refer to a metric with metric_system_name from file pricing rule
     pr_metric = service_all_metrics.find do |m|
-      m.id == remote_plan_pr.fetch('metric_id')
+      m.id == remote_plan_pr.metric_id
     end
     expect(pr_metric).not_to be_nil
     expect(pr_metric.system_name).to eq(file_pricingrule.fetch('metric_system_name'))

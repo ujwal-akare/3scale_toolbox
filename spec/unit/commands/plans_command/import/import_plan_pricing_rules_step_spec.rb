@@ -42,7 +42,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
     end
 
     context 'existing pricingrules' do
-      let(:plan_pricingrule) do
+      let(:plan_pricingrule) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:plan_pricingrule_attrs) do
         {
           'id' => 32, 'cost_per_unit' => '1.0', 'min' => 1,
           'max' => 100, 'metric_id' => hits_metric_id
@@ -50,8 +51,13 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
       end
       let(:plan_pricingrules) { [plan_pricingrule] }
 
+      before :example do
+        allow(plan_pricingrule).to receive(:attrs).and_return(plan_pricingrule_attrs)
+        allow(plan_pricingrule).to receive(:metric_id).and_return(plan_pricingrule_attrs.fetch('metric_id'))
+      end
+
       it 'deleted' do
-        expect(plan).to receive(:delete_pricing_rule).with(hits_metric_id, plan_pricingrule.fetch('id'))
+        expect(plan_pricingrule).to receive(:delete)
         subject.call
       end
     end
