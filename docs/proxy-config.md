@@ -4,6 +4,7 @@
 * [Show Proxy Configuration](#show)
 * [Promote Proxy Configuration](#promote)
 * [Export Proxy Configuration](#export)
+* [Deploy Proxy Configuration](#deploy)
 
 ### List
 
@@ -103,5 +104,22 @@ DESCRIPTION
 OPTIONS
        --environment=<value>      Gateway environment. Must be 'sandbox' or
                                   'production' (default: sandbox)
+    -o --output=<value>           Output format. One of: json|yaml
+```
+
+### Deploy
+
+```shell
+NAME
+    deploy - Promotes the APIcast configuration to the Staging Environment
+
+USAGE
+    3scale proxy-config deploy <remote> <service>
+
+DESCRIPTION
+    Promotes the APIcast configuration to the Staging Environment (Production
+    Environment in case of Service Mesh).
+
+OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
 ```
