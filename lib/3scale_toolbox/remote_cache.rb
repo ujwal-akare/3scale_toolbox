@@ -1,14 +1,18 @@
 module ThreeScaleToolbox
   class RemoteCache < BasicObject
 
-    attr_reader :metrics_cache, :methods_cache, :subject
+    attr_reader :metrics_cache, :methods_cache, :backend_metrics_cache, :backend_methods_cache, :subject
 
     def initialize(subject)
       @subject = subject
       # Metrics and methods cache data
-      # Methods cache data
       @metrics_cache = {}
+      # methods cache data
       @methods_cache = {}
+      # Backend Metrics and methods cache data
+      @backend_metrics_cache = {}
+      # Backend methods cache data
+      @backend_methods_cache = {}
     end
 
     def list_metrics(service_id)
@@ -68,6 +72,70 @@ module ThreeScaleToolbox
       end
     end
 
+    ###
+    # Backends
+    ###
+
+    def list_backend_metrics(backend_id)
+      return backend_metrics_cache[backend_id] if backend_metrics_cache.has_key? backend_id
+
+      subject.list_backend_metrics(backend_id).tap do |metrics|
+        backend_metrics_cache[backend_id] = metrics unless metrics.respond_to?(:has_key?) && !metrics['errors'].nil?
+      end
+    end
+
+    def list_backend_methods(backend_id, metric_id)
+      key = method_cache_key(backend_id, metric_id)
+      return backend_methods_cache[key] if backend_methods_cache.has_key? key
+
+      subject.list_backend_methods(backend_id, metric_id).tap do |methods|
+        backend_methods_cache[key] = methods unless methods.respond_to?(:has_key?) && !methods['errors'].nil?
+      end
+    end
+
+    def create_backend_metric(backend_id, attributes)
+      subject.create_backend_metric(backend_id, attributes).tap do |_|
+        backend_metrics_cache.delete(backend_id)
+      end
+    end
+
+    def update_backend_metric(backend_id, metric_id, attributes)
+      subject.update_backend_metric(backend_id, metric_id, attributes).tap do |_|
+        backend_metrics_cache.delete(backend_id)
+      end
+    end
+
+    def delete_backend_metric(backend_id, metric_id)
+      subject.delete_backend_metric(backend_id, metric_id).tap do |_|
+        backend_metrics_cache.delete(backend_id)
+      end
+    end
+
+    def create_backend_method(backend_id, metric_id, attributes)
+      subject.create_backend_method(backend_id, metric_id, attributes).tap do |_|
+        backend_metrics_cache.delete(backend_id)
+        backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+      end
+    end
+
+    def delete_backend_method(backend_id, metric_id, method_id)
+      subject.delete_backend_method(backend_id, metric_id, method_id).tap do |_|
+        backend_metrics_cache.delete(backend_id)
+        backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+      end
+    end
+
+    def update_backend_method(backend_id, metric_id, method_id, attributes)
+      subject.update_backend_method(backend_id, metric_id, method_id, attributes).tap do |_|
+        backend_metrics_cache.delete(backend_id)
+        backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+      end
+    end
+
+    ###
+    # Generic methods
+    ###
+
     def method_missing(name, *args)
       subject.public_send(name, *args)
     end
@@ -78,8 +146,8 @@ module ThreeScaleToolbox
 
     private
 
-    def method_cache_key(service_id, metric_id)
-      "#{service_id}#{metric_id}"
+    def method_cache_key(id, metric_id)
+      "#{id}#{metric_id}"
     end
   end
 end
