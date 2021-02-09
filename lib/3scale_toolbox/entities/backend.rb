@@ -30,6 +30,21 @@ module ThreeScaleToolbox
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         end
 
+        def from_cr(remote:, cr:)
+          context = {
+            source_backend: build_backend_from(cr),
+            target_remote: remote
+          }
+
+          tasks = []
+          tasks << Commands::BackendCommand::CopyCommand::CreateOrUpdateTargetBackendTask.new(context)
+          # First metrics as methods need 'hits' metric in target backend
+          tasks << Commands::BackendCommand::CopyCommand::CopyMetricsTask.new(context)
+          tasks << Commands::BackendCommand::CopyCommand::CopyMethodsTask.new(context)
+          tasks << Commands::BackendCommand::CopyCommand::CopyMappingRulesTask.new(context)
+          tasks.each(&:call)
+        end
+
         private
 
         def list_backends(remote:)
@@ -60,6 +75,34 @@ module ThreeScaleToolbox
               page += 1
             end
           end
+        end
+
+        def build_backend_from(cr)
+          backend_remote = BackendRemote.new(
+            methods: methods_from_cr(cr),
+            metrics: metrics_from_cr(cr),
+            mapping_rules: mapping_rules_from_cr(cr),
+            attrs: attrs_from_cr(cr)
+          )
+          new(id: 1, remote: backend_remote, attrs: attrs_from_cr(cr))
+        end
+
+        def methods_from_cr(cr)
+        end
+
+        def metrics_from_cr(cr)
+        end
+
+        def mapping_rules_from_cr(cr)
+        end
+
+        def attrs_from_cr(cr)
+          {
+            'name' => cr.dig('spec', 'name'),
+            'system_name' => cr.dig('spec', 'systemName'),
+            'description' => cr.dig('spec', 'description'),
+            'private_endpoint' => cr.dig('spec', 'privateBaseURL')
+          }
         end
       end
 
@@ -169,7 +212,7 @@ module ThreeScaleToolbox
           },
           'spec' => {
             'name' => name,
-            'system_name' => system_name,
+            'systemName' => system_name,
             'privateBaseURL' => private_endpoint,
             'description' => description,
             'mappingRules' => mapping_rules.map(&:to_crd),

@@ -37,6 +37,11 @@ module ThreeScaleToolbox
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         end
 
+        def from_cr(remote:, cr:)
+          puts "======= from Cr backend"
+          puts cr
+        end
+
         private
 
         def create_service(remote:, service:)
@@ -352,7 +357,7 @@ module ThreeScaleToolbox
           },
           'spec' => {
             'name' => name,
-            'system_name' => system_name,
+            'systemName' => system_name,
             'description' => description,
             'mappingRules' => mapping_rules.map(&:to_crd),
             'metrics' => metrics.each_with_object({}) do |metric, hash|

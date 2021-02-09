@@ -8,8 +8,8 @@ module ThreeScaleToolbox
           Cri::Command.define do
             name        'export'
             usage       'export [opts] <remote> <product>'
-            summary     'Export product to yaml format'
-            description 'This command serializes the referenced product into a yaml format'
+            summary     'Export product to serialized format'
+            description 'This command serializes the referenced product and associated backends into a yaml format'
 
             option      :f, :file, 'Write to file instead of stdout', argument: :required
             param       :remote
