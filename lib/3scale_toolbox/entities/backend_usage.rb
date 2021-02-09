@@ -82,6 +82,12 @@ module ThreeScaleToolbox
         remote.delete_backend_usage product.id, id
       end
 
+      def to_crd
+        {
+          'path' => path
+        }
+      end
+
       private
 
       def fetch_attrs

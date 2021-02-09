@@ -364,6 +364,10 @@ module ThreeScaleToolbox
             'policies' => policies,
             'applicationPlans' => plans.each_with_object({}) do |app_plan, hash|
               hash[app_plan.system_name] = app_plan.to_crd
+            end,
+            'backendUsages' => backend_usage_list.each_with_object({}) do |backend_usage, hash|
+              backend = Backend.new(id: backend_usage.backend_id, remote: remote)
+              hash[backend.system_name] = backend_usage.to_crd
             end
           }
         }
