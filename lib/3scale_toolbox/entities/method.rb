@@ -6,7 +6,6 @@ module ThreeScaleToolbox
           method_attrs = service.remote.create_method service.id, service.hits.id, attrs
           if (errors = method_attrs['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Method has not been created', errors)
-
           end
 
           new(id: method_attrs.fetch('id'), service: service, attrs: method_attrs)
@@ -78,6 +77,8 @@ module ThreeScaleToolbox
           'friendlyName' => friendly_name,
           'description' => description,
         }
+      end
+
       private
 
       def hits_id

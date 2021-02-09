@@ -354,11 +354,11 @@ module ThreeScaleToolbox
             'name' => name,
             'system_name' => system_name,
             'description' => description,
-            'mappingRules' => mapping_rule_objects.map(&:to_crd),
-            'metrics' => metric_objects.each_with_object({}) do |metric, hash|
+            'mappingRules' => mapping_rules.map(&:to_crd),
+            'metrics' => metrics.each_with_object({}) do |metric, hash|
               hash[metric.system_name] = metric.to_crd
             end,
-            'methods' => method_objects(hits.fetch('id')).each_with_object({}) do |method, hash|
+            'methods' => methods.each_with_object({}) do |method, hash|
               hash[method.system_name] = method.to_crd
             end,
             'policies' => policies

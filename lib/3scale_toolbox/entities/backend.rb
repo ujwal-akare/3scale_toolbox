@@ -176,7 +176,7 @@ module ThreeScaleToolbox
             'metrics' => metrics.each_with_object({}) do |metric, hash|
               hash[metric.system_name] = metric.to_crd
             end,
-            'methods' => methods(hits).each_with_object({}) do |method, hash|
+            'methods' => methods.each_with_object({}) do |method, hash|
               hash[method.system_name] = method.to_crd
             end
           }
