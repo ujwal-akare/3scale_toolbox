@@ -50,6 +50,10 @@ module ThreeScaleToolbox
         attrs['system_name']
       end
 
+      def name
+        attrs['name']
+      end
+
       def update(plan_attrs)
         return attrs if update_plan_attrs(plan_attrs).empty?
 
@@ -177,6 +181,34 @@ module ThreeScaleToolbox
 
       def published?
         attrs.fetch('state') == 'published'
+      end
+
+      def approval_required?
+        attrs.fetch('approval_required', true)
+      end
+
+      def trial_period_days
+        attrs.fetch('trial_period_days', 0)
+      end
+
+      def setup_fee
+        attrs.fetch('setup_fee', 0.0)
+      end
+
+      def cost_per_month
+        attrs.fetch('cost_per_month', 0.0)
+      end
+
+      def to_crd
+        {
+          'name' => name,
+          'appsRequireApproval' => approval_required?,
+          'trialPeriod' => trial_period_days,
+          'setupFee' => setup_fee,
+          'costMonth' => cost_per_month,
+          'pricingRules' => [],
+          'limits' => [],
+        }
       end
 
       private
