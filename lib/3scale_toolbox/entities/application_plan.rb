@@ -207,7 +207,7 @@ module ThreeScaleToolbox
           'setupFee' => setup_fee,
           'costMonth' => cost_per_month,
           'pricingRules' => pricing_rules.map(&:to_crd),
-          'limits' => [],
+          'limits' => limits.map(&:to_crd)
         }
       end
 

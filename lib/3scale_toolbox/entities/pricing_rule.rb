@@ -34,16 +34,16 @@ module ThreeScaleToolbox
         attrs['max']
       end
 
-      def delete
-        remote.delete_application_plan_pricingrule plan.id, metric_id, id
-      end
-
       def links
-        attrs['links'] || {}
+        attrs['links'] || []
       end
 
       def metric_link
         links.find { |link| link['rel'] == 'metric' }
+      end
+
+      def delete
+        remote.delete_application_plan_pricingrule plan.id, metric_id, id
       end
 
       def to_crd
