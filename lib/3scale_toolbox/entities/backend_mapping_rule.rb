@@ -87,7 +87,7 @@ module ThreeScaleToolbox
         {
           'httpMethod' => http_method,
           'pattern' => pattern,
-          'metricMethodRef' => metricMethodRef,
+          'metricMethodRef' => metric_method_ref,
           'increment' => delta,
           'last' => last,
         }
@@ -106,15 +106,14 @@ module ThreeScaleToolbox
         mapping_rule
       end
 
-      def metricMethodRef
-        # TODO each mapping rule will request metric or method metadata, use some cache
-        # or metrics and methods index
-        begin
-          backend_metric = BackendMetric.new(id: metric_id, backend: backend)
-          backend_metric.system_name
-        rescue ThreeScale::API::HttpClient::NotFoundError
-          backend_method = BackendMethod.new(id: metric_id, backend: backend, parent_id: backend.hits.id)
-          backend_method.system_name
+      def metric_method_ref
+        if (method = backend.methods.find { |m| m.id == metric_id })
+          method.system_name
+        elsif (metric = backend.metrics.find { |m| m.id == metric_id })
+          metric.system_name
+        else
+          raise ThreeScaleToolbox::Error, "Unexpected error. Backend #{backend.system_name} " \
+            "mapping rule #{id} referencing to metric id #{metric_id} which has not been found"
         end
       end
     end

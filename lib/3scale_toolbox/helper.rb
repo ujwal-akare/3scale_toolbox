@@ -69,6 +69,10 @@ module ThreeScaleToolbox
       def random_lowercase_name(length=8)
         [*('a'..'z')].sample(length).join
       end
+
+      def backend_metric_link_parser(link)
+        link.match(/admin\/api\/backend_apis\/(\d+)\/metrics/) { |m| m.captures[0] }
+      end
     end
 
     class BooleanTransformer

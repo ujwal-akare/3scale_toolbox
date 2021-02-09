@@ -206,7 +206,7 @@ module ThreeScaleToolbox
           'trialPeriod' => trial_period_days,
           'setupFee' => setup_fee,
           'costMonth' => cost_per_month,
-          'pricingRules' => [],
+          'pricingRules' => pricing_rules.map(&:to_crd),
           'limits' => [],
         }
       end
