@@ -122,6 +122,10 @@ module ThreeScaleToolbox
         attrs['description']
       end
 
+      def deployment_option
+        attrs['deployment_option']
+      end
+
       def update_proxy(proxy)
         new_proxy_attrs = remote.update_proxy id, proxy
 
@@ -377,7 +381,8 @@ module ThreeScaleToolbox
             'backendUsages' => backend_usage_list.each_with_object({}) do |backend_usage, hash|
               backend = Backend.new(id: backend_usage.backend_id, remote: remote)
               hash[backend.system_name] = backend_usage.to_crd
-            end
+            end,
+            'deployment' => deployment_to_cr
           }
         }
       end
@@ -415,6 +420,39 @@ module ThreeScaleToolbox
         # TODO run validation for DNS1123
         # https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
         "#{system_name.gsub(/[^[a-zA-Z0-9\-\.]]/, '.')}.#{Helper.random_lowercase_name}"
+      end
+
+      def deployment_to_cr
+        case deployment_option
+        when 'hosted'
+          hosted_deployment_to_cr
+        when 'self_managed'
+          self_managed_deployment_to_cr
+        else
+          raise ThreeScaleToolbox::Error, "Unknown deployment option: #{deployment_option}"
+        end
+      end
+
+      def hosted_deployment_to_cr
+        {
+          'apicastHosted' => {
+            'authentication' => {
+            }
+          }
+        }
+      end
+
+      def self_managed_deployment_to_cr
+        # cache proxy call
+        service_proxy = proxy
+        {
+          'apicastSelfManaged' => {
+            'authentication' => {
+            },
+            'stagingPublicBaseURL' => service_proxy['sandbox_endpoint'],
+            'productionPublicBaseURL' => service_proxy['endpoint']
+          }
+        }
       end
     end
   end

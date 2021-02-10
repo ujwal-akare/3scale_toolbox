@@ -6,7 +6,9 @@ module ThreeScaleToolbox
 
           attr_reader :id, :product, :backend_index
           #
-          # product format
+          # Product CRD Format
+          # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/doc/product-reference.md
+          #
           #     apiVersion: capabilities.3scale.net/v1beta1
           #     kind: Product
           #     metadata:
@@ -62,7 +64,9 @@ module ThreeScaleToolbox
           #            metricMethodRef:
           #              systemName: hits
           #
-          # backend item format
+          # Backend CRD format
+          # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/doc/backend-reference.md
+          #
           #     apiVersion: capabilities.3scale.net/v1beta1
           #     kind: Backend
           #     metadata:

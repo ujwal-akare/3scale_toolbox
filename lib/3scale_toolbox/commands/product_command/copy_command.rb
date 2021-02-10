@@ -22,8 +22,8 @@ module ThreeScaleToolbox
             \nproduct methods&metrics: Only missing metrics&methods will be created.
             \nproduct mapping rules: Only missing mapping rules will be created.
             \nproduct application plans & pricing rules & limits: Only missing application plans & pricing rules & limits will be created.
-            \nproduct application usage rules 
-            \nproduct policies 
+            \nproduct application usage rules
+            \nproduct policies
             \nproduct backends: Only missing backends will be created.
             \nproduct activedocs: Only missing activedocs will be created.
             HEREDOC
