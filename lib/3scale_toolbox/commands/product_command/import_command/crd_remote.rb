@@ -182,7 +182,10 @@ module ThreeScaleToolbox
             end
           end
 
-          def show_proxy
+          def show_proxy(service_id)
+            assert_service_id(service_id)
+
+            Entities::ProxyConfig.from_cr(product_deployment)
           end
 
           def http_client
@@ -223,6 +226,10 @@ module ThreeScaleToolbox
 
           def product_methods
             product.dig('spec', 'methods') || {}
+          end
+
+          def product_deployment
+            product.dig('spec', 'deployment') || {}
           end
 
           def backend_system_name(backend)
