@@ -88,16 +88,58 @@ module ThreeScaleToolbox
         end
 
         def methods_from_cr(cr)
+          # method index can not conflict with metric index. Index is unique among metrics and methods
+          base_idx = metrics_from_cr(cr).length
+          (cr.dig('spec', 'methods') || {}).each_with_index.map do |(system_name, attrs), idx|
+            {
+              'id' => base_idx + idx,
+              'name' => attrs['friendlyName'],
+              'friendly_name' => attrs['friendlyName'],
+              'system_name' => system_name,
+              'description' => attrs['description'],
+            }
+          end
         end
 
         def metrics_from_cr(cr)
+          (cr.dig('spec', 'metrics') || {}).each_with_index.map do |(system_name, attrs), idx|
+            {
+              'id' => idx,
+              'name' => attrs['friendlyName'],
+              'friendly_name' => attrs['friendlyName'],
+              'system_name' => system_name,
+              'description' => attrs['description'],
+              'unit' => attrs['unit']
+            }
+          end
         end
 
         def mapping_rules_from_cr(cr)
+          (cr.dig('spec', 'mappingRules') || []).each_with_index.map do |attrs, idx|
+            {
+              'id' => idx,
+              'pattern' => attrs['pattern'],
+              'http_method' => attrs['httpMethod'],
+              'delta' => attrs['increment'],
+              'last' => attrs['last'],
+              'metric_id' => methods_metrics_id_by_system_name(cr).fetch(attrs['metricMethodRef']) do
+                raise ThreeScaleToolbox::Error, "Invalid content. " \
+                  "Mapping rule {#{attrs['httpMethod']} #{attrs['httpMethod']}} " \
+                  "referencing to metric #{attrs['metricMethodRef']} has not been found"
+              end
+            }
+          end
+        end
+
+        def methods_metrics_id_by_system_name(cr)
+            (metrics_from_cr(cr) + methods_from_cr(cr)).each_with_object({}) do |m, hash|
+              hash[m['system_name']] = m['id']
+            end
         end
 
         def attrs_from_cr(cr)
           {
+            'id' => 1, # should not be used
             'name' => cr.dig('spec', 'name'),
             'system_name' => cr.dig('spec', 'systemName'),
             'description' => cr.dig('spec', 'description'),
@@ -162,9 +204,7 @@ module ThreeScaleToolbox
         end
 
         method_attr_list.map do |method_attrs|
-          BackendMethod.new(id: method_attrs.fetch('id'),
-                            backend: self,
-                            attrs: method_attrs)
+          BackendMethod.new(id: method_attrs.fetch('id'), backend: self, attrs: method_attrs)
         end
       end
 

@@ -19,12 +19,11 @@ module ThreeScaleToolbox
       end
 
       def http_client
-        HttpClient = Struct.new(:endpoint)
-        HttpClient.new('http://fromCR')
+        Struct.new(:endpoint).new('http://fromCR')
       end
 
       def list_backend_metrics(*args)
-        metrics
+        metrics + methods
       end
 
       def backend(*args)
