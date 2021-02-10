@@ -126,6 +126,10 @@ module ThreeScaleToolbox
         attrs['deployment_option']
       end
 
+      def backend_version
+        attrs['backend_version']
+      end
+
       def update_proxy(proxy)
         new_proxy_attrs = remote.update_proxy id, proxy
 
@@ -434,11 +438,9 @@ module ThreeScaleToolbox
       end
 
       def hosted_deployment_to_cr
+        service_proxy = proxy
         {
-          'apicastHosted' => {
-            'authentication' => {
-            }
-          }
+          'apicastHosted' => { 'authentication' => authentication_to_cr(service_proxy) }
         }
       end
 
@@ -447,11 +449,96 @@ module ThreeScaleToolbox
         service_proxy = proxy
         {
           'apicastSelfManaged' => {
-            'authentication' => {
-            },
+            'authentication' => authentication_to_cr(service_proxy),
             'stagingPublicBaseURL' => service_proxy['sandbox_endpoint'],
             'productionPublicBaseURL' => service_proxy['endpoint']
           }
+        }
+      end
+
+      def authentication_to_cr(service_proxy)
+        case backend_version
+        when '1'
+          userkey_authentication_to_cr(service_proxy)
+        when '2'
+          appkey_authentication_to_cr(service_proxy)
+        when 'oidc'
+          oidc_authentication_to_cr(service_proxy)
+        else
+          raise ThreeScaleToolbox::Error, "Unknown backend_version: #{backend_version}"
+        end
+      end
+
+      def userkey_authentication_to_cr(service_proxy)
+        {
+          'userkey' => {
+            'authUserKey' => service_proxy['auth_user_key'],
+            'credentials' => service_proxy['credentials_location'],
+            'security' => security_to_cr(service_proxy),
+            'gatewayResponse' => gateway_response_to_cr(service_proxy)
+          }
+        }
+      end
+
+      def appkey_authentication_to_cr(service_proxy)
+        {
+          'appKeyAppID' => {
+            'appID' => service_proxy['auth_app_id'],
+            'appKey' => service_proxy['auth_app_key'],
+            'credentials' => service_proxy['credentials_location'],
+            'security' => security_to_cr(service_proxy),
+            'gatewayResponse' => gateway_response_to_cr(service_proxy)
+          }
+        }
+      end
+
+      def oidc_authentication_to_cr(service_proxy)
+        {
+          'oidc' => {
+            'issuerType' => service_proxy['oidc_issuer_type'],
+            'issuerEndpoint' => service_proxy['oidc_issuer_endpoint'],
+            'jwtClaimWithClientID' => service_proxy['jwt_claim_with_client_id'],
+            'jwtClaimWithClientIDType' => service_proxy['jwt_claim_with_client_id_type'],
+            'authenticationFlow' => oidc_flow_to_cr,
+            'credentials' => service_proxy['credentials_location'],
+            'security' => security_to_cr(service_proxy),
+            'gatewayResponse' => gateway_response_to_cr(service_proxy)
+          }
+        }
+      end
+
+      def oidc_flow_to_cr
+        # cache to avoid calls
+        oidc_conf = oidc
+        {
+          'standardFlowEnabled' => oidc_conf['standard_flow_enabled'],
+          'implicitFlowEnabled' => oidc_conf['implicit_flow_enabled'],
+          'serviceAccountsEnabled' => oidc_conf['service_accounts_enabled'],
+          'directAccessGrantsEnabled' => oidc_conf['direct_access_grants_enabled']
+        }
+      end
+
+      def security_to_cr(service_proxy)
+        {
+          'hostHeader' => service_proxy['hostname_rewrite'],
+          'secretToken' => service_proxy['secret_token']
+        }
+      end
+
+      def gateway_response_to_cr(service_proxy)
+        {
+          'errorStatusAuthFailed' => service_proxy['error_status_auth_failed'],
+          'errorHeadersAuthFailed' => service_proxy['error_headers_auth_failed'],
+          'errorAuthFailed' => service_proxy['error_auth_failed'],
+          'errorStatusAuthMissing' => service_proxy['error_status_auth_missing'],
+          'errorHeadersAuthMissing' => service_proxy['error_headers_auth_missing'],
+          'errorAuthMissing' => service_proxy['error_auth_missing'],
+          'errorStatusNoMatch' => service_proxy['error_status_no_match'],
+          'errorHeadersNoMatch' => service_proxy['error_headers_no_match'],
+          'errorNoMatch' => service_proxy['error_no_match'],
+          'errorStatusLimitsExceeded' => service_proxy['error_status_limits_exceeded'],
+          'errorHeadersLimitsExceeded' => service_proxy['error_headers_limits_exceeded'],
+          'errorLimitsExceeded' => service_proxy['error_limits_exceeded']
         }
       end
     end
