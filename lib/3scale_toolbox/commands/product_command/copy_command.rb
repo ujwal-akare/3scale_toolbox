@@ -37,7 +37,7 @@ module ThreeScaleToolbox
           end
         end
 
-        def run
+        def self.workflow(context)
           tasks = []
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CreateOrUpdateTargetServiceTask.new(context)
           tasks << CopyCommand::DeleteExistingTargetBackendUsagesTask.new(context)
@@ -56,6 +56,10 @@ module ThreeScaleToolbox
 
           # This should be the last step
           ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::BumpProxyVersionTask.new(service: context[:target]).call
+        end
+
+        def run
+          self.class.workflow(context)
         end
 
         private

@@ -30,19 +30,14 @@ module ThreeScaleToolbox
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         end
 
-        def from_cr(remote:, cr:)
-          context = {
-            source_backend: build_backend_from(cr),
-            target_remote: remote
+        def from_cr(id, cr)
+          {
+            'id' => id,
+            'name' => cr.dig('spec', 'name'),
+            'system_name' => cr.dig('spec', 'systemName'),
+            'description' => cr.dig('spec', 'description'),
+            'private_endpoint' => cr.dig('spec', 'privateBaseURL')
           }
-
-          tasks = []
-          tasks << Commands::BackendCommand::CopyCommand::CreateOrUpdateTargetBackendTask.new(context)
-          # First metrics as methods need 'hits' metric in target backend
-          tasks << Commands::BackendCommand::CopyCommand::CopyMetricsTask.new(context)
-          tasks << Commands::BackendCommand::CopyCommand::CopyMethodsTask.new(context)
-          tasks << Commands::BackendCommand::CopyCommand::CopyMappingRulesTask.new(context)
-          tasks.each(&:call)
         end
 
         private
@@ -75,76 +70,6 @@ module ThreeScaleToolbox
               page += 1
             end
           end
-        end
-
-        def build_backend_from(cr)
-          backend_remote = BackendRemote.new(
-            methods: methods_from_cr(cr),
-            metrics: metrics_from_cr(cr),
-            mapping_rules: mapping_rules_from_cr(cr),
-            attrs: attrs_from_cr(cr)
-          )
-          new(id: 1, remote: backend_remote, attrs: attrs_from_cr(cr))
-        end
-
-        def methods_from_cr(cr)
-          # method index can not conflict with metric index. Index is unique among metrics and methods
-          base_idx = metrics_from_cr(cr).length
-          (cr.dig('spec', 'methods') || {}).each_with_index.map do |(system_name, attrs), idx|
-            {
-              'id' => base_idx + idx,
-              'name' => attrs['friendlyName'],
-              'friendly_name' => attrs['friendlyName'],
-              'system_name' => system_name,
-              'description' => attrs['description'],
-            }
-          end
-        end
-
-        def metrics_from_cr(cr)
-          (cr.dig('spec', 'metrics') || {}).each_with_index.map do |(system_name, attrs), idx|
-            {
-              'id' => idx,
-              'name' => attrs['friendlyName'],
-              'friendly_name' => attrs['friendlyName'],
-              'system_name' => system_name,
-              'description' => attrs['description'],
-              'unit' => attrs['unit']
-            }
-          end
-        end
-
-        def mapping_rules_from_cr(cr)
-          (cr.dig('spec', 'mappingRules') || []).each_with_index.map do |attrs, idx|
-            {
-              'id' => idx,
-              'pattern' => attrs['pattern'],
-              'http_method' => attrs['httpMethod'],
-              'delta' => attrs['increment'],
-              'last' => attrs['last'],
-              'metric_id' => methods_metrics_id_by_system_name(cr).fetch(attrs['metricMethodRef']) do
-                raise ThreeScaleToolbox::Error, "Invalid content. " \
-                  "Mapping rule {#{attrs['httpMethod']} #{attrs['httpMethod']}} " \
-                  "referencing to metric #{attrs['metricMethodRef']} has not been found"
-              end
-            }
-          end
-        end
-
-        def methods_metrics_id_by_system_name(cr)
-            (metrics_from_cr(cr) + methods_from_cr(cr)).each_with_object({}) do |m, hash|
-              hash[m['system_name']] = m['id']
-            end
-        end
-
-        def attrs_from_cr(cr)
-          {
-            'id' => 1, # should not be used
-            'name' => cr.dig('spec', 'name'),
-            'system_name' => cr.dig('spec', 'systemName'),
-            'description' => cr.dig('spec', 'description'),
-            'private_endpoint' => cr.dig('spec', 'privateBaseURL')
-          }
         end
       end
 

@@ -17,6 +17,17 @@ module ThreeScaleToolbox
 
           new(id: mapping_rule.fetch('id'), backend: backend, attrs: mapping_rule)
         end
+
+        def from_cr(id, metric_id, cr)
+          {
+            'id' => id,
+            'pattern' => cr['pattern'],
+            'http_method' => cr['httpMethod'],
+            'delta' => cr['increment'],
+            'last' => cr['last'],
+            'metric_id' => metric_id
+          }
+        end
       end
 
       attr_reader :id, :backend, :remote

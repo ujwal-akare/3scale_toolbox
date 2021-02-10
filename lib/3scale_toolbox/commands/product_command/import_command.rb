@@ -1,3 +1,5 @@
+require '3scale_toolbox/commands/product_command/import_command/crd_remote'
+
 module ThreeScaleToolbox
   module Commands
     module ProductCommand
@@ -22,11 +24,14 @@ module ThreeScaleToolbox
         def run
           validate_artifacts_resource!
 
-          backend_resources.each do |cr|
-            Entities::Backend.from_cr(remote: remote, cr: cr)
-          end
-          product_resources.each do |cr|
-            Entities::Service.from_cr(remote: remote, cr: cr)
+          product_resources.each_with_index do |product_cr, idx|
+            Commands::ProductCommand::CopySubcommand.workflow(
+              {
+                target_remote: remote,
+                source_remote: ImportCommand::CRDRemote.new(idx + 1, product_cr, backend_resources),
+                source_service_ref: idx + 1,
+              }
+            )
           end
         end
 
@@ -36,8 +41,6 @@ module ThreeScaleToolbox
           validate_api_version!
 
           validate_kind!
-
-          validate_items!
         end
 
         def validate_api_version!
@@ -56,17 +59,13 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::Error, 'Invalid content. kind wrong value ' unless artifacts_resource.fetch('kind') == 'List'
         end
 
-        def validate_items!
+        def artifacts_resource_items
           artifacts_resource.fetch('items') do
             raise ThreeScaleToolbox::Error, 'Invalid content. items not found'
           end
-
-          raise ThreeScaleToolbox::Error, 'Invalid content. items not a list' unless artifacts_resource.fetch('items').respond_to?(:each)
         end
 
-        def artifacts_resource_items
-          artifacts_resource.fetch('items')
-        end
+
 
         def product_resources
           artifacts_resource_items.select do |item|
@@ -74,6 +73,12 @@ module ThreeScaleToolbox
               item.fetch('apiVersion', '').include?('capabilities.3scale.net') &&
               item['kind'] == 'Product'
           end
+        end
+
+        def backend_resources_index
+            backend_resources.each_with_object({}) do |b, hash|
+              hash[b.dig('spec', 'systemName')] = b
+            end
         end
 
         def backend_resources

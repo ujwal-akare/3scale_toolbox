@@ -37,9 +37,13 @@ module ThreeScaleToolbox
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
         end
 
-        def from_cr(remote:, cr:)
-          puts "======= from Cr backend"
-          puts cr
+        def from_cr(id, cr)
+          {
+            'id' => id,
+            'name' => cr.dig('spec', 'name'),
+            'system_name' => cr.dig('spec', 'systemName'),
+            'description' => cr.dig('spec', 'description'),
+          }
         end
 
         private

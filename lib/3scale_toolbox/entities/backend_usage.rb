@@ -33,6 +33,15 @@ module ThreeScaleToolbox
 
           new(id: backend_usage_attrs.fetch('id'), product: product, attrs: backend_usage_attrs)
         end
+
+        def from_cr(id, service_id, backend_id, cr)
+          {
+            'id' => id,
+            'path' => cr['path'],
+            'service_id' => service_id,
+            'backend_id' => backend_id
+          }
+        end
       end
 
       attr_reader :id, :product, :remote

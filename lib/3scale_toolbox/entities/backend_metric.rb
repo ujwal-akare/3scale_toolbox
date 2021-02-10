@@ -26,6 +26,17 @@ module ThreeScaleToolbox
         def find_by_system_name(backend:, system_name:)
           backend.metrics.find { |m| m.system_name == system_name }
         end
+
+        def from_cr(id, system_name, cr)
+          {
+            'id' => id,
+            'name' => cr['friendlyName'],
+            'friendly_name' => cr['friendlyName'],
+            'system_name' => system_name,
+            'description' => cr['description'],
+            'unit' => cr['unit']
+          }
+        end
       end
 
       attr_reader :id, :backend, :remote
