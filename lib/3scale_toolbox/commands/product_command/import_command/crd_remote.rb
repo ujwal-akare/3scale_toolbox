@@ -45,24 +45,49 @@ module ThreeScaleToolbox
           #           path: "/v1/pets"
           #         backend_02:
           #           path: "/v1/cats"
-          #      applicationPlans:
-          #        basic:
-          #          name: Basic
-          #          appsRequireApproval: false
-          #          trialPeriod: 0
-          #          setupFee: 0.0
-          #          costMonth: 0.0
-          #          pricingRules:
-          #          - from: 1
-          #            to: 1000
-          #            pricePerUnit: 1.0
-          #            metricMethodRef:
-          #              systemName: hits
-          #          limits:
-          #          - period: eternity
-          #            value: 10000
-          #            metricMethodRef:
-          #              systemName: hits
+          #       deployment:
+          #         apicastSelfManaged:
+          #           authentication:
+          #             appKeyAppID:
+          #               appID: app_id
+          #               appKey: app_key
+          #               credentials: query
+          #               security:
+          #                 hostHeader: ''
+          #                 secretToken: some_secret
+          #               gatewayResponse:
+          #                 errorStatusAuthFailed: 403
+          #                 errorHeadersAuthFailed: text/plain; charset=us-ascii
+          #                 errorAuthFailed: Authentication failed
+          #                 errorStatusAuthMissing: 403
+          #                 errorHeadersAuthMissing: text/plain; charset=us-ascii
+          #                 errorAuthMissing: Authentication parameters missing
+          #                 errorStatusNoMatch: 404
+          #                 errorHeadersNoMatch: text/plain; charset=us-ascii
+          #                 errorNoMatch: No Mapping Rule matched
+          #                 errorStatusLimitsExceeded: 429
+          #                 errorHeadersLimitsExceeded: text/plain; charset=us-ascii
+          #                 errorLimitsExceeded: Usage limit exceeded
+          #           stagingPublicBaseURL: http://staging.example.com:80
+          #           productionPublicBaseURL: http://example.com:80
+          #       applicationPlans:
+          #         basic:
+          #           name: Basic
+          #           appsRequireApproval: false
+          #           trialPeriod: 0
+          #           setupFee: 0.0
+          #           costMonth: 0.0
+          #           pricingRules:
+          #           - from: 1
+          #             to: 1000
+          #             pricePerUnit: 1.0
+          #             metricMethodRef:
+          #               systemName: hits
+          #           limits:
+          #           - period: eternity
+          #             value: 10000
+          #             metricMethodRef:
+          #               systemName: hits
           #
           # Backend CRD format
           # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/doc/backend-reference.md
