@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class PricingRule
-      include CRD::PricingRule
+      include CRD::PricingRuleSerializer
 
       class << self
         def create(plan:, metric_id:, attrs:)

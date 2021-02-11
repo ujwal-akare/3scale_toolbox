@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module PricingRule
+    module PricingRuleSerializer
       def to_cr
         {
           'from' => min,

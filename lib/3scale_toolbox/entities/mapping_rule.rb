@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class MappingRule
-      include CRD::MappingRule
+      include CRD::MappingRuleSerializer
 
       VALID_PARAMS = %w[metric_id pattern http_method delta position last].freeze
       public_constant :VALID_PARAMS

@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module Product
+    module ProductSerializer
       def to_cr
         {
           'apiVersion' => 'capabilities.3scale.net/v1beta1',

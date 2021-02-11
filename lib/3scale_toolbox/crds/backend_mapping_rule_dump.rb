@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module BackendMappingRule
+    module BackendMappingRuleSerializer
       def to_cr
         {
           'httpMethod' => http_method,

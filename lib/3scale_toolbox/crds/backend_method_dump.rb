@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module BackendMethod
+    module BackendMethodSerializer
       def to_cr
         {
           'friendlyName' => friendly_name,

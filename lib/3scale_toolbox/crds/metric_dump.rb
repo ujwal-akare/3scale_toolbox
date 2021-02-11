@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module Metric
+    module MetricSerializer
       def to_cr
         {
           'friendlyName' => friendly_name,

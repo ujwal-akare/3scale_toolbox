@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class Method
-      include CRD::Method
+      include CRD::MethodSerializer
 
       class << self
         def create(service:, attrs:)

@@ -3,7 +3,7 @@ module ThreeScaleToolbox
     ##
     # BackendUsage represents Product - Backend mapping entry
     class BackendUsage
-      include CRD::BackendUsage
+      include CRD::BackendUsageSerializer
 
       CREATE_PARAMS = %w[path backend_api_id].freeze
       public_constant :CREATE_PARAMS
@@ -34,15 +34,6 @@ module ThreeScaleToolbox
           return if backend_usage_attrs.nil?
 
           new(id: backend_usage_attrs.fetch('id'), product: product, attrs: backend_usage_attrs)
-        end
-
-        def from_cr(id, service_id, backend_id, cr)
-          {
-            'id' => id,
-            'path' => cr['path'],
-            'service_id' => service_id,
-            'backend_id' => backend_id
-          }
         end
       end
 

@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class Metric
-      include CRD::Metric
+      include CRD::MetricSerializer
 
       class << self
         def create(service:, attrs:)

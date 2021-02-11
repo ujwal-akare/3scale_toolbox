@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module BackendUsage
+    module BackendUsageSerializer
       def to_cr
         {
           'path' => path

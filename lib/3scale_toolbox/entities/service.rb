@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class Service
-      include CRD::Product
+      include CRD::ProductSerializer
 
       VALID_PARAMS = %w[
         name backend_version deployment_option description
@@ -37,18 +37,6 @@ module ThreeScaleToolbox
           return if attrs.nil?
 
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
-        end
-
-        def from_cr(id, cr)
-          deployment_parser = ProductDeploymentCRDParser.new(cr.dig('spec', 'deployment') || {})
-          {
-            'id' => id,
-            'name' => cr.dig('spec', 'name'),
-            'system_name' => cr.dig('spec', 'systemName'),
-            'description' => cr.dig('spec', 'description'),
-            'deployment_option' => deployment_parser.deployment_option,
-            'backend_version' => deployment_parser.backend_version
-          }
         end
 
         private

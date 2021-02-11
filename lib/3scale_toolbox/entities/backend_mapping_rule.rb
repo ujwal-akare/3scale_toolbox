@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class BackendMappingRule
-      include CRD::BackendMappingRule
+      include CRD::BackendMappingRuleSerializer
 
       VALID_PARAMS = %w[metric_id pattern http_method delta position last].freeze
       public_constant :VALID_PARAMS
@@ -18,17 +18,6 @@ module ThreeScaleToolbox
           end
 
           new(id: mapping_rule.fetch('id'), backend: backend, attrs: mapping_rule)
-        end
-
-        def from_cr(id, metric_id, cr)
-          {
-            'id' => id,
-            'pattern' => cr['pattern'],
-            'http_method' => cr['httpMethod'],
-            'delta' => cr['increment'],
-            'last' => cr['last'],
-            'metric_id' => metric_id
-          }
         end
       end
 

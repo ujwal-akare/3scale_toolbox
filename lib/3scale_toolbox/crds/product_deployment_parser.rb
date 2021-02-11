@@ -2,7 +2,7 @@ module ThreeScaleToolbox
   module CRD
     # ProductDeploymentCRDParser parses CRD Format
     # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/doc/product-reference.md#productdeploymentspec
-    class ProductDeploymentCRDParser
+    class ProductDeploymentParser
       class ApicastHostedParser
         attr_reader :authentication_parser
 
@@ -149,12 +149,13 @@ module ThreeScaleToolbox
       end
 
       class OidcParser
-        attr_reader :cr, :security_parser, :gaterway_response_parser
+        attr_reader :cr, :security_parser, :gaterway_response_parser, :authentication_flow_parser
 
         def initialize(cr)
           @cr = cr
           @security_parser = SecurityParser.new(cr.fetch('security', {}))
           @gaterway_response_parser = GatewayResponseParser.new(cr.fetch('gatewayResponse', {}))
+          @authentication_flow_parser = AuthenticationFlowParser.new(cr.fetch('authenticationFlow', {}))
         end
 
         def backend_version
@@ -182,6 +183,9 @@ module ThreeScaleToolbox
         end
 
         def method_missing(name, *args)
+          res = authentication_flow_parser.public_send(name, *args)
+          return res unless res.nil?
+
           res = security_parser.public_send(name, *args)
           return res unless res.nil?
 
@@ -266,6 +270,34 @@ module ThreeScaleToolbox
 
         def error_headers_limits_exceeded
           cr['errorHeadersLimitsExceeded']
+        end
+
+        def method_missing(name, *args)
+          nil
+        end
+      end
+
+      class AuthenticationFlowParser
+        attr_reader :cr
+
+        def initialize(cr)
+          @cr = cr
+        end
+
+        def standard_flow_enabled
+          cr.fetch('standardFlowEnabled', false)
+        end
+
+        def implicit_flow_enabled
+          cr.fetch('implicitFlowEnabled', false)
+        end
+
+        def service_accounts_enabled
+          cr.fetch('serviceAccountsEnabled', false)
+        end
+
+        def direct_access_grants_enabled
+          cr.fetch('directAccessGrantsEnabled', false)
         end
 
         def method_missing(name, *args)

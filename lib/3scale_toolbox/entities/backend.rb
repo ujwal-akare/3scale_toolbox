@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class Backend
-      include CRD::Backend
+      include CRD::BackendSerializer
 
       VALID_PARAMS = %w[name description system_name private_endpoint].freeze
       public_constant :VALID_PARAMS
@@ -30,16 +30,6 @@ module ThreeScaleToolbox
           return if attrs.nil?
 
           new(id: attrs.fetch('id'), remote: remote, attrs: attrs)
-        end
-
-        def from_cr(id, cr)
-          {
-            'id' => id,
-            'name' => cr.dig('spec', 'name'),
-            'system_name' => cr.dig('spec', 'systemName'),
-            'description' => cr.dig('spec', 'description'),
-            'private_endpoint' => cr.dig('spec', 'privateBaseURL')
-          }
         end
 
         private

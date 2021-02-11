@@ -22,12 +22,12 @@ module ThreeScaleToolbox
         def run
           validate_artifacts_resource!
 
-          product_resources.each_with_index do |product_cr, idx|
+          product_list.each do |product|
             Commands::ProductCommand::CopySubcommand.workflow(
               {
                 target_remote: remote,
-                source_remote: ImportCommand::CRDRemote.new(idx + 1, product_cr, backend_resources),
-                source_service_ref: idx + 1,
+                source_remote: crd_remote,
+                source_service_ref: product.system_name
               }
             )
           end
@@ -35,8 +35,26 @@ module ThreeScaleToolbox
 
         private
 
+        def crd_remote
+          @crd_remote ||= CRD::Remote.new(product_list, backend_list)
+        end
+
+        def product_list
+          @product_list ||= product_resources.map do |product_cr|
+            CRD::ProductParser.new product_cr
+          end
+        end
+
+        def backend_list
+          @backend_list ||= backend_resources.map do |backend_cr|
+            CRD::BackendParser.new backend_cr
+          end
+        end
+
         def validate_artifacts_resource!
           # TODO: Add openapiV3 validation
+          # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/deploy/crds/capabilities.3scale.net_backends_crd.yaml
+          # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/deploy/crds/capabilities.3scale.net_products_crd.yaml
           validate_api_version!
 
           validate_kind!
@@ -64,20 +82,12 @@ module ThreeScaleToolbox
           end
         end
 
-
-
         def product_resources
           artifacts_resource_items.select do |item|
             item.respond_to?(:has_key?) &&
               item.fetch('apiVersion', '').include?('capabilities.3scale.net') &&
               item['kind'] == 'Product'
           end
-        end
-
-        def backend_resources_index
-            backend_resources.each_with_object({}) do |b, hash|
-              hash[b.dig('spec', 'systemName')] = b
-            end
         end
 
         def backend_resources
