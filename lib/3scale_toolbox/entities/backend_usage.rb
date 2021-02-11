@@ -3,6 +3,8 @@ module ThreeScaleToolbox
     ##
     # BackendUsage represents Product - Backend mapping entry
     class BackendUsage
+      include CRD::BackendUsage
+
       CREATE_PARAMS = %w[path backend_api_id].freeze
       public_constant :CREATE_PARAMS
       UPDATE_PARAMS = %w[path].freeze
@@ -63,7 +65,7 @@ module ThreeScaleToolbox
 
       def backend_id
         # 3scale API returns 'backend_id'
-        # 3scale API only accepts 'backend_api_id' as params
+        # 3scale API only accepts 'backend_api_id' as params on create endpoint
         # good job
         attrs['backend_id']
       end
@@ -91,10 +93,8 @@ module ThreeScaleToolbox
         remote.delete_backend_usage product.id, id
       end
 
-      def to_crd
-        {
-          'path' => path
-        }
+      def backend
+        Backend.new(id: backend_id, remote: remote)
       end
 
       private

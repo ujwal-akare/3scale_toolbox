@@ -1,5 +1,3 @@
-require '3scale_toolbox/commands/product_command/import_command/crd_remote'
-
 module ThreeScaleToolbox
   module Commands
     module ProductCommand
@@ -38,6 +36,7 @@ module ThreeScaleToolbox
         private
 
         def validate_artifacts_resource!
+          # TODO: Add openapiV3 validation
           validate_api_version!
 
           validate_kind!

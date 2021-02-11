@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class BackendMethod
+      include CRD::BackendMethod
+
       VALID_PARAMS = %w[friendly_name system_name description].freeze
       public_constant :VALID_PARAMS
 
@@ -77,13 +79,6 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_backend_method backend.id, hits_id, id
-      end
-
-      def to_crd
-        {
-          'friendlyName' => friendly_name,
-          'description' => description,
-        }
       end
 
       private

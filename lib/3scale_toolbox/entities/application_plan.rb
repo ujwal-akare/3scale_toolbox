@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class ApplicationPlan
+      include CRD::ApplicationPlan
+
       class << self
         def create(service:, plan_attrs:)
           plan = service.remote.create_application_plan service.id, create_plan_attrs(plan_attrs)
@@ -197,18 +199,6 @@ module ThreeScaleToolbox
 
       def cost_per_month
         attrs.fetch('cost_per_month', 0.0)
-      end
-
-      def to_crd
-        {
-          'name' => name,
-          'appsRequireApproval' => approval_required?,
-          'trialPeriod' => trial_period_days,
-          'setupFee' => setup_fee,
-          'costMonth' => cost_per_month,
-          'pricingRules' => pricing_rules.map(&:to_crd),
-          'limits' => limits.map(&:to_crd)
-        }
       end
 
       private

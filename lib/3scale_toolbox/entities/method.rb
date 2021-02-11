@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Method
+      include CRD::Method
+
       class << self
         def create(service:, attrs:)
           method_attrs = service.remote.create_method service.id, service.hits.id, attrs
@@ -72,12 +74,6 @@ module ThreeScaleToolbox
         remote.delete_method service.id, hits_id, id
       end
 
-      def to_crd
-        {
-          'friendlyName' => friendly_name,
-          'description' => description,
-        }
-      end
 
       private
 

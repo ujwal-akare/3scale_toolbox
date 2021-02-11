@@ -35,7 +35,7 @@ module ThreeScaleToolbox
           {
             'apiVersion' => 'v1',
             'kind' => 'List',
-            'items' => [product.to_crd] + backends.map(&:to_crd)
+            'items' => [product.to_cr] + product_backends.map(&:to_cr)
           }
         end
 
@@ -56,7 +56,7 @@ module ThreeScaleToolbox
           @product ||= find_product
         end
 
-        def backends
+        def product_backends
           product.backend_usage_list.map do |backend_usage|
             Entities::Backend.new(id: backend_usage.backend_id, remote: remote)
           end

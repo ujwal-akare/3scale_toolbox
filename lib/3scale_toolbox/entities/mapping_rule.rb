@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class MappingRule
+      include CRD::MappingRule
+
       VALID_PARAMS = %w[metric_id pattern http_method delta position last].freeze
       public_constant :VALID_PARAMS
 
@@ -71,16 +73,6 @@ module ThreeScaleToolbox
         remote.delete_mapping_rule service.id, id
       end
 
-      def to_crd
-        {
-          'httpMethod' => http_method,
-          'pattern' => pattern,
-          'metricMethodRef' => metric_method_ref,
-          'increment' => delta,
-          'last' => last,
-        }
-      end
-
       private
 
       def mapping_rule_attrs
@@ -92,17 +84,6 @@ module ThreeScaleToolbox
         end
 
         mapping_rule
-      end
-
-      def metric_method_ref
-        if (method = service.methods.find { |m| m.id == metric_id })
-          method.system_name
-        elsif (metric = service.metrics.find { |m| m.id == metric_id })
-          metric.system_name
-        else
-          raise ThreeScaleToolbox::Error, "Unexpected error. Service #{service.system_name} " \
-            "mapping rule #{id} referencing to metric id #{metric_id} which has not been found"
-        end
       end
     end
   end

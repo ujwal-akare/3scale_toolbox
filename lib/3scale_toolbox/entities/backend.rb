@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Backend
+      include CRD::Backend
+
       VALID_PARAMS = %w[name description system_name private_endpoint].freeze
       public_constant :VALID_PARAMS
 
@@ -164,33 +166,6 @@ module ThreeScaleToolbox
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end
 
-      def to_crd
-        {
-          'apiVersion' => 'capabilities.3scale.net/v1beta1',
-          'kind' => 'Backend',
-          'metadata' => {
-            'annotations' => {
-              '3scale_toolbox_created_at' => Time.now.utc.iso8601,
-              '3scale_toolbox_version' => ThreeScaleToolbox::VERSION
-            },
-            'name' => crd_name
-          },
-          'spec' => {
-            'name' => name,
-            'systemName' => system_name,
-            'privateBaseURL' => private_endpoint,
-            'description' => description,
-            'mappingRules' => mapping_rules.map(&:to_crd),
-            'metrics' => metrics.each_with_object({}) do |metric, hash|
-              hash[metric.system_name] = metric.to_crd
-            end,
-            'methods' => methods.each_with_object({}) do |method, hash|
-              hash[method.system_name] = method.to_crd
-            end
-          }
-        }
-      end
-
       private
 
       def metrics_and_methods
@@ -211,13 +186,6 @@ module ThreeScaleToolbox
         end
 
         backend
-      end
-
-      def crd_name
-        # Should be DNS1123 subdomain name
-        # TODO run validation for DNS1123
-        # https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
-        "#{system_name.gsub(/[^[a-zA-Z0-9\-\.]]/, '.')}.#{Helper.random_lowercase_name}"
       end
     end
   end

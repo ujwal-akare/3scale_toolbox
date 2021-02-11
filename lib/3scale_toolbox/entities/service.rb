@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Service
+      include CRD::Product
+
       VALID_PARAMS = %w[
         name backend_version deployment_option description
         system_name end_user_registration_required
@@ -152,6 +154,10 @@ module ThreeScaleToolbox
         proxy_attrs
       end
 
+      def cached_proxy
+        @cached_proxy ||= proxy
+      end
+
       # @api public
       # @return [List]
       def metrics
@@ -274,6 +280,10 @@ module ThreeScaleToolbox
         service_oidc
       end
 
+      def cached_oidc
+        @cached_oidc ||= oidc
+      end
+
       def update_oidc(oidc_settings)
         new_oidc = remote.update_oidc(id, oidc_settings)
 
@@ -359,41 +369,6 @@ module ThreeScaleToolbox
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end
 
-      def to_crd
-        {
-          'apiVersion' => 'capabilities.3scale.net/v1beta1',
-          'kind' => 'Product',
-          'metadata' => {
-            'annotations' => {
-              '3scale_toolbox_created_at' => Time.now.utc.iso8601,
-              '3scale_toolbox_version' => ThreeScaleToolbox::VERSION
-            },
-            'name' => crd_name
-          },
-          'spec' => {
-            'name' => name,
-            'systemName' => system_name,
-            'description' => description,
-            'mappingRules' => mapping_rules.map(&:to_crd),
-            'metrics' => metrics.each_with_object({}) do |metric, hash|
-              hash[metric.system_name] = metric.to_crd
-            end,
-            'methods' => methods.each_with_object({}) do |method, hash|
-              hash[method.system_name] = method.to_crd
-            end,
-            'policies' => policies,
-            'applicationPlans' => plans.each_with_object({}) do |app_plan, hash|
-              hash[app_plan.system_name] = app_plan.to_crd
-            end,
-            'backendUsages' => backend_usage_list.each_with_object({}) do |backend_usage, hash|
-              backend = Backend.new(id: backend_usage.backend_id, remote: remote)
-              hash[backend.system_name] = backend_usage.to_crd
-            end,
-            'deployment' => deployment_to_cr
-          }
-        }
-      end
-
       private
 
       def fetch_attrs
@@ -420,129 +395,6 @@ module ThreeScaleToolbox
         end
 
         new_attrs
-      end
-
-      def crd_name
-        # Should be DNS1123 subdomain name
-        # TODO run validation for DNS1123
-        # https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
-        "#{system_name.gsub(/[^[a-zA-Z0-9\-\.]]/, '.')}.#{Helper.random_lowercase_name}"
-      end
-
-      def deployment_to_cr
-        case deployment_option
-        when 'hosted'
-          hosted_deployment_to_cr
-        when 'self_managed'
-          self_managed_deployment_to_cr
-        else
-          raise ThreeScaleToolbox::Error, "Unknown deployment option: #{deployment_option}"
-        end
-      end
-
-      def hosted_deployment_to_cr
-        service_proxy = proxy
-        {
-          'apicastHosted' => { 'authentication' => authentication_to_cr(service_proxy) }
-        }
-      end
-
-      def self_managed_deployment_to_cr
-        # cache proxy call
-        service_proxy = proxy
-        {
-          'apicastSelfManaged' => {
-            'authentication' => authentication_to_cr(service_proxy),
-            'stagingPublicBaseURL' => service_proxy['sandbox_endpoint'],
-            'productionPublicBaseURL' => service_proxy['endpoint']
-          }
-        }
-      end
-
-      def authentication_to_cr(service_proxy)
-        case backend_version
-        when '1'
-          userkey_authentication_to_cr(service_proxy)
-        when '2'
-          appkey_authentication_to_cr(service_proxy)
-        when 'oidc'
-          oidc_authentication_to_cr(service_proxy)
-        else
-          raise ThreeScaleToolbox::Error, "Unknown backend_version: #{backend_version}"
-        end
-      end
-
-      def userkey_authentication_to_cr(service_proxy)
-        {
-          'userkey' => {
-            'authUserKey' => service_proxy['auth_user_key'],
-            'credentials' => service_proxy['credentials_location'],
-            'security' => security_to_cr(service_proxy),
-            'gatewayResponse' => gateway_response_to_cr(service_proxy)
-          }
-        }
-      end
-
-      def appkey_authentication_to_cr(service_proxy)
-        {
-          'appKeyAppID' => {
-            'appID' => service_proxy['auth_app_id'],
-            'appKey' => service_proxy['auth_app_key'],
-            'credentials' => service_proxy['credentials_location'],
-            'security' => security_to_cr(service_proxy),
-            'gatewayResponse' => gateway_response_to_cr(service_proxy)
-          }
-        }
-      end
-
-      def oidc_authentication_to_cr(service_proxy)
-        {
-          'oidc' => {
-            'issuerType' => service_proxy['oidc_issuer_type'],
-            'issuerEndpoint' => service_proxy['oidc_issuer_endpoint'],
-            'jwtClaimWithClientID' => service_proxy['jwt_claim_with_client_id'],
-            'jwtClaimWithClientIDType' => service_proxy['jwt_claim_with_client_id_type'],
-            'authenticationFlow' => oidc_flow_to_cr,
-            'credentials' => service_proxy['credentials_location'],
-            'security' => security_to_cr(service_proxy),
-            'gatewayResponse' => gateway_response_to_cr(service_proxy)
-          }
-        }
-      end
-
-      def oidc_flow_to_cr
-        # cache to avoid calls
-        oidc_conf = oidc
-        {
-          'standardFlowEnabled' => oidc_conf['standard_flow_enabled'],
-          'implicitFlowEnabled' => oidc_conf['implicit_flow_enabled'],
-          'serviceAccountsEnabled' => oidc_conf['service_accounts_enabled'],
-          'directAccessGrantsEnabled' => oidc_conf['direct_access_grants_enabled']
-        }
-      end
-
-      def security_to_cr(service_proxy)
-        {
-          'hostHeader' => service_proxy['hostname_rewrite'],
-          'secretToken' => service_proxy['secret_token']
-        }
-      end
-
-      def gateway_response_to_cr(service_proxy)
-        {
-          'errorStatusAuthFailed' => service_proxy['error_status_auth_failed'],
-          'errorHeadersAuthFailed' => service_proxy['error_headers_auth_failed'],
-          'errorAuthFailed' => service_proxy['error_auth_failed'],
-          'errorStatusAuthMissing' => service_proxy['error_status_auth_missing'],
-          'errorHeadersAuthMissing' => service_proxy['error_headers_auth_missing'],
-          'errorAuthMissing' => service_proxy['error_auth_missing'],
-          'errorStatusNoMatch' => service_proxy['error_status_no_match'],
-          'errorHeadersNoMatch' => service_proxy['error_headers_no_match'],
-          'errorNoMatch' => service_proxy['error_no_match'],
-          'errorStatusLimitsExceeded' => service_proxy['error_status_limits_exceeded'],
-          'errorHeadersLimitsExceeded' => service_proxy['error_headers_limits_exceeded'],
-          'errorLimitsExceeded' => service_proxy['error_limits_exceeded']
-        }
       end
     end
   end

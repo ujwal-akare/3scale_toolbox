@@ -1,5 +1,5 @@
 module ThreeScaleToolbox
-  module Entities
+  module CRD
     # ProductDeploymentCRDParser parses CRD Format
     # https://github.com/3scale/3scale-operator/blob/3scale-2.10.0-CR2/doc/product-reference.md#productdeploymentspec
     class ProductDeploymentCRDParser

@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class BackendMetric
+      include CRD::BackendMetric
+
       VALID_PARAMS = %w[friendly_name system_name unit description].freeze
       public_constant :VALID_PARAMS
 
@@ -81,14 +83,6 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_backend_metric backend.id, id
-      end
-
-      def to_crd
-        {
-          'friendlyName' => friendly_name,
-          'unit' => unit,
-          'description' => description,
-        }
       end
 
       private

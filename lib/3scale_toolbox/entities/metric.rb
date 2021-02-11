@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Metric
+      include CRD::Metric
+
       class << self
         def create(service:, attrs:)
           metric = service.remote.create_metric service.id, attrs
@@ -88,14 +90,6 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_metric service.id, id
-      end
-
-      def to_crd
-        {
-          'friendlyName' => friendly_name,
-          'unit' => unit,
-          'description' => description,
-        }
       end
 
       private
