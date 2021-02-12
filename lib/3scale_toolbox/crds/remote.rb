@@ -121,18 +121,10 @@ module ThreeScaleToolbox
 
       def initialize(products, backends)
         # Index of backends by id (by sequence order)
-        @backend_index = backends.each_with_index.each_with_object({}) do |(backend, idx), hash|
-          # 0 is not valid id
-          backend_id = idx + 1
-          hash[backend_id] = backend
-        end
+        @backend_index = backends.each_with_object({}) { |backend, hash| hash[new_index] = backend }
 
         # Index of products by id (by sequence order)
-        @product_index = products.each_with_index.each_with_object({}) do |(product, idx), hash|
-          # 0 is not valid id
-          product_id = idx + 1
-          hash[product_id] = product
-        end
+        @product_index = products.each_with_object({}) { |product, hash| hash[new_index] = product }
 
         validate!
       end
@@ -143,7 +135,6 @@ module ThreeScaleToolbox
 
       def show_service(service_id)
         service = product_index.fetch(service_id) { raise_product_missing(service_id) }
-
         {
           'id' => service_id,
           'name' => service.name,
@@ -173,7 +164,7 @@ module ThreeScaleToolbox
         service = product_index.fetch(service_id) { raise_product_missing(service_id) }
         service.backend_usages.each_with_index.map do |backend_usage, idx|
           {
-            'id' => idx,
+            'id' => idx + 1,
             'path' => backend_usage.path,
             'service_id' => service_id,
             'backend_id' => backend_index.find { |k, b| b.system_name == backend_usage.backend_system_name }.first
@@ -219,6 +210,7 @@ module ThreeScaleToolbox
           {
             'id' => method_id,
             'name' => method.friendly_name,
+            'parent_id' => 1, # should not be used
             'friendly_name' => method.friendly_name,
             'system_name' => method.system_name,
             'description' => method.description
@@ -321,6 +313,7 @@ module ThreeScaleToolbox
           {
             'id' => method_id,
             'name' => method.friendly_name,
+            'parent_id' => 1, # should not be used
             'friendly_name' => method.friendly_name,
             'system_name' => method.system_name,
             'description' => method.description
@@ -398,6 +391,10 @@ module ThreeScaleToolbox
             'plan_id' => plan_id
           }
         end
+      end
+
+      def list_activedocs
+        []
       end
 
       private
@@ -590,14 +587,13 @@ module ThreeScaleToolbox
       end
 
 
-      # backend_id -> metric_id -> metric or method
+      # Index: backend_id -> metric_id -> metric or method
       # metric and methods have unique indexes
       def backend_metric_index
         @backend_metric_index ||= backend_index.each_with_object({}) do |(backend_id, backend), backend_index|
           metric_method_list = backend.metrics + backend.methods
-          backend_index[backend_id] = metric_method_list.each_with_index.each_with_object({}) do |(metric, idx), metric_index|
-            # 0 is not valid id
-            metric_index[idx + 1] = metric
+          backend_index[backend_id] = metric_method_list.each_with_object({}) do |metric, metric_index|
+            metric_index[new_index] = metric
           end
         end
       end
@@ -609,15 +605,9 @@ module ThreeScaleToolbox
 
       # Index: product_id -> plan_id -> plan
       def product_plan_index
-        @product_plan_index ||= build_product_plans_index
-      end
-
-      def build_product_plans_index
-        application_plan_id = 1
-        product_index.each_with_object({}) do |(product_id, product), product_index|
+        @product_plan_index ||= product_index.each_with_object({}) do |(product_id, product), product_index|
           product_index[product_id] = product.application_plans.each_with_object({}) do |plan, plan_index|
-            plan_index[application_plan_id] = plan
-            application_plan_id += 1
+            plan_index[new_index] = plan
           end
         end
       end
@@ -633,11 +623,16 @@ module ThreeScaleToolbox
       def product_metric_index
         @product_metric_index ||= product_index.each_with_object({}) do |(product_id, product), product_index|
           metric_method_list = product.metrics + product.methods
-          product_index[product_id] = metric_method_list.each_with_index.each_with_object({}) do |(metric, idx), metric_index|
-            # 0 is not valid id
-            metric_index[idx + 1] = metric
+          product_index[product_id] = metric_method_list.each_with_object({}) do |metric, metric_index|
+            metric_index[new_index] = metric
           end
         end
+      end
+
+      def new_index
+        # starts on 1
+        @new_index ||= 0
+        @new_index += 1
       end
 
       def find_metric_id_from_ref(plan_id, system_name, backend_system_name)

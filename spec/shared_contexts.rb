@@ -144,9 +144,7 @@ RSpec.shared_context :copied_metrics do
   let(:source_metrics) { source_service.metrics }
   let(:target_metrics) { target_service.metrics }
   let(:metric_keys) { %w[name system_name unit] }
-  let(:metrics_mapping) do
-    ThreeScaleToolbox::Helper.metrics_mapping(source_metrics, target_metrics)
-  end
+  let(:metrics_mapping) { source_service.metrics_mapping(target_service) }
 end
 
 RSpec.shared_context :oas_common_context do
