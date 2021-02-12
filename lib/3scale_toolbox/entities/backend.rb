@@ -94,9 +94,7 @@ module ThreeScaleToolbox
       end
 
       def metrics
-        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |item, method|
-          method.id == item.fetch('id', nil)
-        end
+        metric_attr_list = metrics_and_methods.select { |metric_attrs| metric_attrs['parent_id'].nil? }
 
         metric_attr_list.map do |metric_attrs|
           BackendMetric.new(id: metric_attrs.fetch('id'), backend: self, attrs: metric_attrs)

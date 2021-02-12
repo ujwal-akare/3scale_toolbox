@@ -238,8 +238,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       end
       let(:methods) do
         [
-          { 'id' => 101, 'system_name' => 'method_101' },
-          { 'id' => 201, 'system_name' => 'method_201' }
+          { 'id' => 101, 'system_name' => 'method_101', 'parent_id' => 1 },
+          { 'id' => 201, 'system_name' => 'method_201', 'parent_id' => 1 }
         ]
       end
       subject { backend.metrics }
