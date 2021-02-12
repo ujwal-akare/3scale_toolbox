@@ -18,20 +18,7 @@ module ThreeScaleToolbox
           private
 
           def metrics_map
-            @metrics_map ||= build_metrics_mapping
-          end
-
-          def build_metrics_mapping
-            target_mm = target_backend.metrics + target_backend.methods
-            source_mm = source_backend.metrics + source_backend.methods
-            target_mm.map do |target|
-              source = source_mm.find do |m|
-                m.system_name == target.system_name
-              end
-              next if source.nil?
-
-              [source.id, target.id]
-            end.compact.to_h
+            @metrics_map ||= source_backend.metrics_mapping(target_backend)
           end
 
           def missing_mapping_rules(source_rules, target_rules)

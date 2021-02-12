@@ -313,13 +313,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       end
     end
 
-    context '#metrics_and_methods' do
-      it 'calls list_metrics method' do
-        expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
-        expect(subject.metrics_and_methods).to eq(metrics + methods)
-      end
-    end
-
     context '#plans' do
       it 'calls list_service_application_plans method' do
         expect(remote).to receive(:list_service_application_plans).with(id).and_return([])

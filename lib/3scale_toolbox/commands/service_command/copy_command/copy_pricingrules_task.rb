@@ -20,7 +20,7 @@ module ThreeScaleToolbox
           private
 
           def metrics_map
-            @metrics_map ||= Helper.metrics_mapping(source_metrics_and_methods, target_metrics_and_methods)
+            @metrics_map ||= source.metrics_mapping(target)
           end
 
           def compute_missing_pricing_rules(source_pricing_rules, target_pricing_rules)

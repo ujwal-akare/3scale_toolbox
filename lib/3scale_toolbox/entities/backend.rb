@@ -150,6 +150,13 @@ module ThreeScaleToolbox
         remote.delete_backend id
       end
 
+      # Compute matrics mapping
+      def metrics_mapping(other)
+        (metrics + methods).product(other.metrics + other.methods).select do |m_a, m_b|
+          m_a.system_name == m_b.system_name
+        end.map { |m_a, m_b| [m_a.id, m_b.id] }.to_h
+      end
+
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end

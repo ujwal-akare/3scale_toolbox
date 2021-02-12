@@ -180,15 +180,6 @@ module ThreeScaleToolbox
         end
       end
 
-      def metrics_and_methods
-        m_m = remote.list_metrics id
-        if m_m.respond_to?(:has_key?) && (errors = m_m['errors'])
-          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
-        end
-
-        m_m
-      end
-
       def plans
         service_plans = remote.list_service_application_plans id
         if service_plans.respond_to?(:has_key?) && (errors = service_plans['errors'])
@@ -351,6 +342,23 @@ module ThreeScaleToolbox
         proxy_attrs
       end
 
+      # Compute matrics mapping between products, including related backend metrics as well
+      def metrics_mapping(other)
+        mapping = (metrics + methods).product(other.metrics + other.methods).select do |m_a, m_b|
+          m_a.system_name == m_b.system_name
+        end.map { |m_a, m_b| [m_a.id, m_b.id] }.to_h
+
+        backend_pairs = backend_usage_list.map(&:backend).product(other.backend_usage_list.map(&:backend)).select do |b_a, b_b|
+          b_a.system_name == b_b.system_name
+        end
+
+        backend_pairs.each do |b_a, b_b|
+          mapping.merge!(b_a.metrics_mapping(b_b))
+        end
+
+        mapping
+      end
+
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end
@@ -381,6 +389,15 @@ module ThreeScaleToolbox
         end
 
         new_attrs
+      end
+
+      def metrics_and_methods
+        m_m = remote.list_metrics id
+        if m_m.respond_to?(:has_key?) && (errors = m_m['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
+        end
+
+        m_m
       end
     end
   end
