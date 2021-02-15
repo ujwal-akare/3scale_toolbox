@@ -57,7 +57,7 @@ module ThreeScaleToolbox
       end
 
       def custom
-        attrs['custom']
+        attrs.fetch('custom', false)
       end
 
       def update(plan_attrs)
