@@ -242,8 +242,12 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service activedocs not read', errors)
         end
 
-        tenant_activedocs.select do |activedoc|
-          activedoc['service_id'] == id
+        service_activedocs = tenant_activedocs.select do |activedoc_attrs|
+          activedoc_attrs['service_id'] == id
+        end
+
+        service_activedocs.map do |activedoc_attrs|
+          Entities::ActiveDocs.new(id: activedoc_attrs.fetch('id'), remote: remote, attrs: activedoc_attrs)
         end
       end
 

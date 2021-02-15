@@ -386,26 +386,29 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
     end
 
     context '#activedocs' do
-      let(:owned_activedocs0) do
+      let(:owned_activedocs0) { instance_double(ThreeScaleToolbox::Entities::ActiveDocs, 'activedocs0') }
+      let(:owned_activedocs0_attrs) do
         {
           'id' => 0, 'name' => 'ad_0', 'system_name' => 'ad_0', 'service_id' => id
         }
       end
-      let(:owned_activedocs1) do
+      let(:owned_activedocs1) { instance_double(ThreeScaleToolbox::Entities::ActiveDocs, 'activedocs1') }
+      let(:owned_activedocs1_attrs) do
         {
           'id' => 1, 'name' => 'ad_1', 'system_name' => 'ad_1', 'service_id' => id
         }
       end
-      let(:not_owned_activedocs) do
+      let(:not_owned_activedocs) { instance_double(ThreeScaleToolbox::Entities::ActiveDocs, 'not_owned_activedocs') }
+      let(:not_owned_activedocs_attrs) do
         {
           'id' => 2, 'name' => 'ad_2', 'system_name' => 'ad_2', 'service_id' => 'other'
         }
       end
-      let(:activedocs) { [owned_activedocs0, owned_activedocs1, not_owned_activedocs] }
+      let(:activedocs) { [owned_activedocs0_attrs, owned_activedocs1_attrs, not_owned_activedocs_attrs] }
 
       it 'filters activedocs not owned by service' do
         expect(remote).to receive(:list_activedocs).and_return(activedocs)
-        expect(subject.activedocs).to match_array([owned_activedocs0, owned_activedocs1])
+        expect(subject.activedocs.map(&:attrs)).to match_array([owned_activedocs0_attrs, owned_activedocs1_attrs])
       end
     end
 
