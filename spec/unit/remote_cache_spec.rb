@@ -4,6 +4,7 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
   let(:backend_id) { 7654 }
   let(:metrics) { [{'id' =>  1}, {'id' =>  2}] }
   let(:methods) { [{'id' =>  2}] }
+  let(:error_response) { {'errors' => {}} }
   subject { described_class.new(proxied_object) }
 
   it 'list_metrics first call cache miss' do
@@ -25,8 +26,6 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
   end
 
   context 'list_metrics returns error' do
-    let(:error_response) { {'errors' => {}} }
-
     it 'cache miss' do
       expect(proxied_object).to receive(:list_metrics).twice.and_return(error_response)
       expect(subject.list_metrics(service_id)).to eq(error_response)
@@ -48,6 +47,19 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
     end
   end
 
+  context 'list_metrics then create_metric returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:create_metric).and_return(error_response)
+      subject.list_metrics(service_id)
+      subject.create_metric(service_id, {})
+    end
+
+    it 'cache hit' do
+      expect(subject.list_metrics(service_id)).to eq(metrics)
+    end
+  end
+
   context 'list_metrics then update_metric called' do
     before :example do
       expect(proxied_object).to receive(:list_metrics).and_return(metrics)
@@ -58,6 +70,19 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
 
     it 'cache miss' do
       expect(proxied_object).to receive(:list_metrics).and_return(metrics)
+      expect(subject.list_metrics(service_id)).to eq(metrics)
+    end
+  end
+
+  context 'list_metrics then update_metric returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:update_metric).and_return(error_response)
+      subject.list_metrics(service_id)
+      subject.update_metric(service_id, 1, {})
+    end
+
+    it 'cache hit' do
       expect(subject.list_metrics(service_id)).to eq(metrics)
     end
   end
@@ -95,8 +120,6 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
   end
 
   context 'list_methods returns error' do
-    let(:error_response) { {'errors' => {}} }
-
     it 'cache miss' do
       expect(proxied_object).to receive(:list_methods).twice.and_return(error_response)
       expect(subject.list_methods(service_id, 1)).to eq(error_response)
@@ -125,6 +148,26 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
     end
   end
 
+  context 'list_methods then create_method returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:list_methods).and_return(methods)
+      expect(proxied_object).to receive(:create_method).and_return(error_response)
+
+      subject.list_metrics(service_id)
+      subject.list_methods(service_id, 1)
+      subject.create_method(service_id, 1, {})
+    end
+
+    it 'methods cache hit' do
+      expect(subject.list_methods(service_id, 1)).to eq(methods)
+    end
+
+    it 'metrics cache hit' do
+      expect(subject.list_metrics(service_id)).to eq(metrics)
+    end
+  end
+
   context 'list_methods then update_method called' do
     before :example do
       expect(proxied_object).to receive(:list_metrics).and_return(metrics)
@@ -142,6 +185,26 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
 
     it 'metrics cache miss' do
       expect(proxied_object).to receive(:list_metrics).and_return(metrics)
+      expect(subject.list_metrics(service_id)).to eq(metrics)
+    end
+  end
+
+  context 'list_methods then update_method returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:list_methods).and_return(methods)
+      expect(proxied_object).to receive(:update_method).and_return(error_response)
+
+      subject.list_metrics(service_id)
+      subject.list_methods(service_id, 1)
+      subject.update_method(service_id, 1, 10, {})
+    end
+
+    it 'methods cache hit' do
+      expect(subject.list_methods(service_id, 1)).to eq(methods)
+    end
+
+    it 'metrics cache hit' do
       expect(subject.list_metrics(service_id)).to eq(metrics)
     end
   end
@@ -190,8 +253,6 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
   end
 
   context 'list_backend_metrics returns error' do
-    let(:error_response) { {'errors' => {}} }
-
     it 'cache miss' do
       expect(proxied_object).to receive(:list_backend_metrics).twice.and_return(error_response)
       expect(subject.list_backend_metrics(backend_id)).to eq(error_response)
@@ -213,6 +274,19 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
     end
   end
 
+  context 'list_backend_metrics then create_backend_metric returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:create_backend_metric).and_return(error_response)
+      subject.list_backend_metrics(backend_id)
+      subject.create_backend_metric(backend_id, {})
+    end
+
+    it 'cache hit' do
+      expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
+    end
+  end
+
   context 'list_backend_metrics then update_backend_metric called' do
     before :example do
       expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
@@ -223,6 +297,19 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
 
     it 'cache miss' do
       expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
+      expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
+    end
+  end
+
+  context 'list_backend_metrics then update_backend_metric returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:update_backend_metric).and_return(error_response)
+      subject.list_backend_metrics(backend_id)
+      subject.update_backend_metric(backend_id, 1, {})
+    end
+
+    it 'cache hit' do
       expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
     end
   end
@@ -260,8 +347,6 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
   end
 
   context 'list_backend_methods returns error' do
-    let(:error_response) { {'errors' => {}} }
-
     it 'cache miss' do
       expect(proxied_object).to receive(:list_backend_methods).twice.and_return(error_response)
       expect(subject.list_backend_methods(backend_id, 1)).to eq(error_response)
@@ -290,6 +375,25 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
     end
   end
 
+  context 'list_backend_methods then create_backend_method returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:list_backend_methods).and_return(methods)
+      expect(proxied_object).to receive(:create_backend_method).and_return(error_response)
+      subject.list_backend_metrics(backend_id)
+      subject.list_backend_methods(backend_id, 1)
+      subject.create_backend_method(backend_id, 1, {})
+    end
+
+    it 'methods cache hit' do
+      expect(subject.list_backend_methods(backend_id, 1)).to eq(methods)
+    end
+
+    it 'metrics cache hit' do
+      expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
+    end
+  end
+
   context 'list_backend_methods then update_backend_method called' do
     before :example do
       expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
@@ -307,6 +411,25 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
 
     it 'metrics cache miss' do
       expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
+      expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
+    end
+  end
+
+  context 'list_backend_methods then update_backend_method returns error' do
+    before :example do
+      expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
+      expect(proxied_object).to receive(:list_backend_methods).and_return(methods)
+      expect(proxied_object).to receive(:update_backend_method).and_return(error_response)
+      subject.list_backend_metrics(backend_id)
+      subject.list_backend_methods(backend_id, 1)
+      subject.update_backend_method(backend_id, 1, 10, {})
+    end
+
+    it 'methods cache hit' do
+      expect(subject.list_backend_methods(backend_id, 1)).to eq(methods)
+    end
+
+    it 'metrics cache hit' do
       expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
     end
   end

@@ -33,14 +33,14 @@ module ThreeScaleToolbox
     end
 
     def create_metric(service_id, attributes)
-      subject.create_metric(service_id, attributes).tap do |_|
-        metrics_cache.delete(service_id)
+      subject.create_metric(service_id, attributes).tap do |metric_attrs|
+        metrics_cache.delete(service_id) unless metric_attrs.respond_to?(:has_key?) && !metric_attrs['errors'].nil?
       end
     end
 
     def update_metric(service_id, metric_id, attributes)
-      subject.update_metric(service_id, metric_id, attributes).tap do |_|
-        metrics_cache.delete(service_id)
+      subject.update_metric(service_id, metric_id, attributes).tap do |metric_attrs|
+        metrics_cache.delete(service_id) unless metric_attrs.respond_to?(:has_key?) && !metric_attrs['errors'].nil?
       end
     end
 
@@ -51,17 +51,17 @@ module ThreeScaleToolbox
     end
 
     def update_method(service_id, parent_id, id, attributes)
-      subject.update_method(service_id, parent_id, id, attributes).tap do |_|
-        metrics_cache.delete(service_id)
-        methods_cache.delete(method_cache_key(service_id, parent_id))
+      subject.update_method(service_id, parent_id, id, attributes).tap do |method_attrs|
+        metrics_cache.delete(service_id) unless method_attrs.respond_to?(:has_key?) && !method_attrs['errors'].nil?
+        methods_cache.delete(method_cache_key(service_id, parent_id)) unless method_attrs.respond_to?(:has_key?) && !method_attrs['errors'].nil?
       end
     end
 
 
     def create_method(service_id, metric_id, attributes)
-      subject.create_method(service_id, metric_id, attributes).tap do |_|
-        metrics_cache.delete(service_id)
-        methods_cache.delete(method_cache_key(service_id, metric_id))
+      subject.create_method(service_id, metric_id, attributes).tap do |method_attrs|
+        metrics_cache.delete(service_id) unless method_attrs.respond_to?(:has_key?) && !method_attrs['errors'].nil?
+        methods_cache.delete(method_cache_key(service_id, metric_id)) unless method_attrs.respond_to?(:has_key?) && !method_attrs['errors'].nil?
       end
     end
 
@@ -94,14 +94,14 @@ module ThreeScaleToolbox
     end
 
     def create_backend_metric(backend_id, attributes)
-      subject.create_backend_metric(backend_id, attributes).tap do |_|
-        backend_metrics_cache.delete(backend_id)
+      subject.create_backend_metric(backend_id, attributes).tap do |metric_attrs|
+        backend_metrics_cache.delete(backend_id) unless metric_attrs.respond_to?(:has_key?) && !metric_attrs['errors'].nil?
       end
     end
 
     def update_backend_metric(backend_id, metric_id, attributes)
-      subject.update_backend_metric(backend_id, metric_id, attributes).tap do |_|
-        backend_metrics_cache.delete(backend_id)
+      subject.update_backend_metric(backend_id, metric_id, attributes).tap do |metric_attrs|
+        backend_metrics_cache.delete(backend_id) unless metric_attrs.respond_to?(:has_key?) && !metric_attrs['errors'].nil?
       end
     end
 
@@ -112,9 +112,11 @@ module ThreeScaleToolbox
     end
 
     def create_backend_method(backend_id, metric_id, attributes)
-      subject.create_backend_method(backend_id, metric_id, attributes).tap do |_|
-        backend_metrics_cache.delete(backend_id)
-        backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+      subject.create_backend_method(backend_id, metric_id, attributes).tap do |method_attrs|
+        unless method_attrs.respond_to?(:has_key?) && !method_attrs['errors'].nil?
+          backend_metrics_cache.delete(backend_id)
+          backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+        end
       end
     end
 
@@ -126,9 +128,11 @@ module ThreeScaleToolbox
     end
 
     def update_backend_method(backend_id, metric_id, method_id, attributes)
-      subject.update_backend_method(backend_id, metric_id, method_id, attributes).tap do |_|
-        backend_metrics_cache.delete(backend_id)
-        backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+      subject.update_backend_method(backend_id, metric_id, method_id, attributes).tap do |method_attrs|
+        unless method_attrs.respond_to?(:has_key?) && !method_attrs['errors'].nil?
+          backend_metrics_cache.delete(backend_id)
+          backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
+        end
       end
     end
 
