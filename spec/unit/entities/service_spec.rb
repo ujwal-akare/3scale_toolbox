@@ -614,5 +614,61 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         expect { subject.proxy_deploy }.to raise_error(ThreeScaleToolbox::Error)
       end
     end
+
+    context '#metrics_mapping' do
+      let(:backend) { instance_double(ThreeScaleToolbox::Entities::Backend, 'backend') }
+      let(:other_backend) { instance_double(ThreeScaleToolbox::Entities::Backend, 'other_backend') }
+      let(:backend_usage_class) { class_double(ThreeScaleToolbox::Entities::BackendUsage).as_stubbed_const }
+      let(:backend_usage) { instance_double(ThreeScaleToolbox::Entities::BackendUsage, 'backend_usage') }
+      let(:backend_usage_attrs) { { 'id' => 1 } }
+      let(:backend_usage_list) { [backend_usage_attrs] }
+      let(:other_backend_usage) { instance_double(ThreeScaleToolbox::Entities::BackendUsage, 'other_backend_usage') }
+      let(:other_backend_usage_attrs) { { 'id' => 2 } }
+      let(:other_backend_usage_list) { [other_backend_usage_attrs] }
+      let(:other_remote) { instance_double(ThreeScale::API::Client, 'other_remote') }
+      let(:other_id) { 5 }
+      let(:other) { described_class.new(id: other_id, remote: other_remote) }
+      let(:other_hits_metric) { { 'id' => 10, 'system_name' => 'hits' } }
+      let(:other_metrics) do
+        [
+          { 'id' => 110, 'system_name' => 'metric_10' },
+          other_hits_metric,
+          { 'id' => 120, 'system_name' => 'metric_20' },
+          { 'id' => 130, 'system_name' => 'other_metric_20' }
+        ]
+      end
+
+      before :example do
+        allow(backend_usage_class).to receive(:new).with(hash_including(id: 1)).and_return(backend_usage)
+        allow(backend_usage_class).to receive(:new).with(hash_including(id: 2)).and_return(other_backend_usage)
+        allow(backend_usage).to receive(:backend).and_return(backend)
+        allow(other_backend_usage).to receive(:backend).and_return(other_backend)
+        allow(backend).to receive(:system_name).and_return('mybackend')
+        allow(other_backend).to receive(:system_name).and_return('mybackend')
+        allow(backend).to receive(:metrics_mapping).with(other_backend).and_return(40 => 140)
+        allow(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
+        allow(remote).to receive(:list_methods).with(id, 1).and_return(methods)
+        allow(remote).to receive(:list_backend_usages).with(id).and_return(backend_usage_list)
+        allow(other_remote).to receive(:list_metrics).with(other_id).and_return(other_metrics)
+        allow(other_remote).to receive(:list_methods).with(other_id, 10).and_return([])
+        allow(other_remote).to receive(:list_backend_usages).with(other_id).and_return(other_backend_usage_list)
+      end
+
+      it 'computes metrics mapping' do
+        expect(subject.metrics_mapping(other)).to eq({
+          1 => 10,
+          10 => 110,
+          20 => 120,
+          40 => 140
+        })
+      end
+    end
+
+    context '#backend_usage_list' do
+      it 'calls list_backend_usages method' do
+        expect(remote).to receive(:list_backend_usages).with(id).and_return([])
+        subject.backend_usage_list
+      end
+    end
   end
 end
