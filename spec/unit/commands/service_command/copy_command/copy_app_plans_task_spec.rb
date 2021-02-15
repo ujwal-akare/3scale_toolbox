@@ -2,10 +2,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
   context '#call' do
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
-    let(:plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan, 'plan0') }
     let(:plan_0_attrs) { { 'system_name' => 'plan_0', 'friendly_name' => 'plan_0' } }
-    let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
-    let(:custom_plan) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan, 'plan1') }
+    let(:custom_plan) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan, 'custom_plan') }
     let(:custom_plan_attrs) { { 'system_name' => 'custom_plan', 'custom' => true } }
     let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
 
@@ -16,9 +16,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
       expect(target).to receive(:plans).and_return(target_plans)
       allow(plan_0).to receive(:system_name).and_return(plan_0_attrs.fetch('system_name'))
       allow(plan_0).to receive(:attrs).and_return(plan_0_attrs)
+      allow(plan_0).to receive(:custom).and_return(false)
       allow(plan_1).to receive(:system_name).and_return('plan_1')
+      allow(plan_1).to receive(:custom).and_return(false)
       allow(custom_plan).to receive(:system_name).and_return(custom_plan_attrs['custom'])
       allow(custom_plan).to receive(:attrs).and_return(custom_plan_attrs)
+      allow(custom_plan).to receive(:custom).and_return(true)
     end
 
     context 'no plans to copy' do
