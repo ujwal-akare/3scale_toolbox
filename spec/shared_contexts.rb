@@ -81,12 +81,12 @@ RSpec.shared_context :real_copy_cleanup do
   after :example do
     # delete source activedocs
     source_service.activedocs.each do |activedoc|
-      source_service.remote.delete_activedocs(activedoc['id'])
+      source_service.remote.delete_activedocs(activedoc.id)
     end
     source_service.delete
     # delete target activedocs
     target_service.activedocs.each do |activedoc|
-      target_service.remote.delete_activedocs(activedoc['id'])
+      target_service.remote.delete_activedocs(activedoc.id)
     end
     target_service.delete
   end
@@ -95,7 +95,7 @@ end
 RSpec.shared_context :import_oas_real_cleanup do
   after :example do
     service.activedocs.each do |activedoc|
-      service.remote.delete_activedocs(activedoc['id'])
+      service.remote.delete_activedocs(activedoc.id)
     end
     # backend cannot be deleted if used by any product
     # remove first product backend usage, and then the product itself.

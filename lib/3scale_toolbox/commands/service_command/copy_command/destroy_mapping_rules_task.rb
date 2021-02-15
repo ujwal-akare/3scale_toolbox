@@ -27,7 +27,9 @@ module ThreeScaleToolbox
           end
 
           def logger
-            context.fetch(:logger)
+            context[:logger] ||= Logger.new(STDOUT).tap do |logger|
+              logger.formatter = proc { |severity, datetime, progname, msg| "#{msg}\n" }
+            end
           end
         end
       end
