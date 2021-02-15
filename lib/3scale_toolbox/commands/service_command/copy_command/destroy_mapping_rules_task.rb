@@ -23,11 +23,11 @@ module ThreeScaleToolbox
           end
 
           def target
-            context[:target]
+            context.fetch(:target)
           end
 
-          def target
-            context.fetch(:target)
+          def logger
+            context.fetch(:logger)
           end
         end
       end
