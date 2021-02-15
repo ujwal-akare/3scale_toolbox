@@ -7,8 +7,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
     let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
     let(:custom_plan) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
     let(:custom_plan_attrs) { { 'system_name' => 'custom_plan', 'custom' => true } }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
 
-    subject { described_class.new(source: source, target: target) }
+    subject { described_class.new(task_context) }
 
     before :each do
       expect(source).to receive(:plans).and_return(source_plans)
@@ -26,7 +27,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
       let(:target_plans) { [plan_0, plan_1] }
 
       it 'does not call create_application_plan method' do
-        expect { subject.call }.to output(/target service missing 0 application plans/).to_stdout
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_application_plans_created')
+        expect(task_context.dig(:report, 'missing_application_plans_created')).to eq(0)
       end
     end
 
@@ -36,7 +41,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
 
       it 'call create_application_plan method' do
         expect(ThreeScaleToolbox::Entities::ApplicationPlan).to receive(:create).with(hash_including(service: target, plan_attrs: plan_0_attrs))
-        expect { subject.call }.to output(/target service missing 1 application plans/).to_stdout
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_application_plans_created')
+        expect(task_context.dig(:report, 'missing_application_plans_created')).to eq(1)
       end
     end
 
@@ -45,7 +55,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
       let(:target_plans) { [plan_0] }
 
       it 'does not call create_application_plan method' do
-        expect { subject.call }.to output(/skipping custom plan/).to_stdout
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_application_plans_created')
+        expect(task_context.dig(:report, 'missing_application_plans_created')).to eq(0)
       end
     end
   end

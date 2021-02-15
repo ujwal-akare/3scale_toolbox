@@ -20,7 +20,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopySer
         'links' => []
       }
     end
-    subject { described_class.new(source: source, target: target) }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
+
+    subject { described_class.new(task_context) }
 
     before :each do
       allow(source).to receive(:attrs).and_return(source_attrs)
@@ -30,7 +32,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopySer
 
     it 'it calls update_proxy method' do
       expect(target).to receive(:update_proxy).with(source_proxy)
-      expect { subject.call }.to output(/updated proxy of #{target_id}/).to_stdout
+
+      subject.call
     end
 
     context 'when oidc service' do
@@ -53,7 +56,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopySer
         expect(target).to receive(:update_proxy).with(source_proxy)
         expect(source).to receive(:oidc).and_return(source_proxy)
         expect(target).to receive(:update_oidc).with(source_proxy)
-        expect { subject.call }.to output(/updated proxy of #{target_id}/).to_stdout
+
+        subject.call
       end
     end
 

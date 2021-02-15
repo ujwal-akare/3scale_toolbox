@@ -12,8 +12,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMap
       { 'metric_id' => metric_id_1, 'pattern' => '/rule02', 'http_method' => 'POST', 'delta' => 1 }
     end
     let(:metrics_mapping) { { metric_id_1 => metric_id_2 } }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
 
-    subject { described_class.new(source: source, target: target) }
+    subject { described_class.new(task_context) }
 
     before :each do
       allow(source).to receive(:metrics_mapping).and_return(metrics_mapping)
@@ -43,7 +44,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMap
       let(:target_mapping_rules) { [target_mapping_rule_01] }
 
       it 'does not call create_mapping_rule method' do
-        expect { subject.call }.to output(/created 0 mapping rules/).to_stdout
+        subject.call
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_mapping_rules_created')
+        expect(task_context.dig(:report, 'missing_mapping_rules_created')).to eq(0)
       end
     end
 
@@ -57,7 +61,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMap
           service: target,
           attrs: hash_including(source_mapping_rule_02_attrs.merge('metric_id' => metric_id_2))
         )
-        expect { subject.call }.to output(/created 1 mapping rules/).to_stdout
+        subject.call
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_mapping_rules_created')
+        expect(task_context.dig(:report, 'missing_mapping_rules_created')).to eq(1)
       end
     end
   end

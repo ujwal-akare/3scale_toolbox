@@ -30,7 +30,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
     let(:target_limits) { [] }
     let(:metrics_mapping) { { metric_id_1 => metric_id_2 } }
 
-    subject { described_class.new(source: source, target: target) }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
+
+    subject { described_class.new(task_context) }
 
     before :each do
       expect(source).to receive(:plans).and_return(source_plans)
@@ -73,7 +75,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
       let(:target_limits) { [limit_1] }
 
       it 'does not create limits' do
-        expect { subject.call }.to output(/Missing 0 plan limits/).to_stdout
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_limits_created')).to eq(0)
       end
     end
 
@@ -85,7 +92,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
 
       it 'creates one limit' do
         expect(target_plan_0).to receive(:create_limit).with(metric_id_2, limit_0.attrs)
-        expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_limits_created')).to eq(1)
       end
     end
 
@@ -113,7 +126,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyLim
 
       it 'creates one limit' do
         expect(target_plan_0).to receive(:create_limit).with(metric_id_2, limit_0.attrs)
-        expect { subject.call }.to output(/Missing 1 plan limits/).to_stdout
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_limits_created')).to eq(1)
       end
     end
   end

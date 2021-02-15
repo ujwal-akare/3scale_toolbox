@@ -45,7 +45,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
     let(:source_pricingrules) { [] }
     let(:target_pricingrules) { [] }
 
-    subject { described_class.new(source: source, target: target) }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
+
+    subject { described_class.new(task_context) }
 
     before :each do
       allow(source).to receive(:metrics_mapping).and_return(metrics_mapping)
@@ -89,7 +91,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
 
       # missing_pricingrules is an empty set
       it 'does not call create_pricingrule method' do
-        expect { subject.call }.to output(/Missing 0 pricing rules/).to_stdout
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_pricing_rules_created')).to eq(0)
       end
     end
 
@@ -101,7 +108,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
 
       it 'call create_pricingrule method' do
         expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_id, pricing_rule_0.attrs)
-        expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_pricing_rules_created')).to eq(1)
       end
     end
 
@@ -113,7 +126,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
 
       it 'call create_pricingrule method' do
         expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_id, pricing_rule_0.attrs)
-        expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_pricing_rules_created')).to eq(1)
       end
     end
   end

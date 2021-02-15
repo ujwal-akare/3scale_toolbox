@@ -1,11 +1,12 @@
 RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::DestroyMappingRulesTask do
   context '#call' do
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
-    let(:context) { { target: target } }
-    subject { described_class.new(context) }
+    let(:base_context) { { target: target, logger: Logger.new('/dev/null') } }
+    let(:task_context) { base_context }
+    subject { described_class.new(task_context) }
 
     context 'delete_mapping_rules flag false' do
-      let(:context) { { target: target, delete_mapping_rules: false } }
+      let(:task_context) { base_context.merge(delete_mapping_rules: false) }
       it 'no op' do
         # Run
         subject.call
@@ -13,7 +14,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::Destroy
     end
 
     context 'several mapping rules available' do
-      let(:context) { { target: target, delete_mapping_rules: true } }
+      let(:task_context) { base_context.merge(delete_mapping_rules: true) }
       let(:n_rules) { 10 }
       let(:target_mapping_rules) do
         Array.new(n_rules) do |_|

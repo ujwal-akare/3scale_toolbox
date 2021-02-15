@@ -4,13 +4,14 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
   let(:target_backend) { instance_double(ThreeScaleToolbox::Entities::Backend, 'target_backend') }
   let(:source_metrics) { [] }
   let(:target_metrics) { [] }
-  let(:context)  do
+  let(:task_context)  do
     {
       source_backend: source_backend,
-      target_backend: target_backend
+      target_backend: target_backend,
+      logger: Logger.new('/dev/null')
     }
   end
-  subject { described_class.new(context) }
+  subject { described_class.new(task_context) }
 
   context '#run' do
     before :each do
