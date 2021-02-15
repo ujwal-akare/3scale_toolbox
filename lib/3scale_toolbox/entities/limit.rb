@@ -64,7 +64,7 @@ module ThreeScaleToolbox
         backend_id = Helper.backend_metric_link_parser(metric_link['href'] || '')
         return if backend_id.nil?
 
-        Backend.new(id: backend_id, remote: remote)
+        Backend.new(id: backend_id.to_i, remote: remote)
       end
     end
   end
