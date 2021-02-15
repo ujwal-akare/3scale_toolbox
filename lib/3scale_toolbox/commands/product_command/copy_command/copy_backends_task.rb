@@ -13,7 +13,7 @@ module ThreeScaleToolbox
           def call
             backend_list = source.backend_usage_list
             backend_list.each(&method(:create_backend))
-            puts "created/upated #{backend_list.size} backends"
+            logger.info "created/upated #{backend_list.size} backends"
           end
 
           private
@@ -32,13 +32,16 @@ module ThreeScaleToolbox
 
             # CreateOrUpdate task will keep reference of the target backend in
             # backend_context[:target_backend]
+            target_backend = backend_context[:target_backend]
             attrs = {
-              'backend_api_id' => backend_context[:target_backend].id,
+              'backend_api_id' => target_backend.id,
               'path' => backend_usage.path
             }
             # It is assumed there is no target backend usage with this backend_source's path
             # DeleteExistingTargetBackendUsagesTask should provide that
             Entities::BackendUsage.create(product: target, attrs: attrs)
+
+            backends_report.merge!(target_backend.system_name => backend_context.fetch(:report))
           end
 
           def source
@@ -57,12 +60,25 @@ module ThreeScaleToolbox
             context[:target_remote]
           end
 
+          def backends_report
+            report['backends'] ||= {}
+          end
+
+          def report
+            context.fetch(:report)
+          end
+
+          def logger
+            context.fetch(:logger)
+          end
+
           def create_backend_context(source_backend)
             {
               source_remote: source_remote,
               target_remote: target_remote,
               source_backend: source_backend,
-              source_backend_ref: source_backend.id
+              source_backend_ref: source_backend.id,
+              logger: logger
             }
           end
         end

@@ -12,8 +12,11 @@ module ThreeScaleToolbox
               missing_pricing_rules.each do |pricing_rule|
                 target_plan.create_pricing_rule(metrics_map.fetch(pricing_rule.metric_id), pricing_rule.attrs)
               end
-              puts "Missing #{missing_pricing_rules.size} pricing rules from target application plan " \
+              logger.info "Missing #{missing_pricing_rules.size} pricing rules from target application plan " \
                 "#{target_plan.id}. Source plan #{source_plan.id}"
+
+              plans_report[target_plan.system_name] = {'application_plan_id' => target_plan.id} unless plans_report.has_key? target_plan.system_name
+              plans_report[target_plan.system_name].merge!({'missing_pricing_rules_created' => missing_pricing_rules.size})
             end
           end
 

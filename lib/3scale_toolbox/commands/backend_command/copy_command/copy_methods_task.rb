@@ -8,7 +8,8 @@ module ThreeScaleToolbox
           # entrypoint
           def run
             missing_methods.each(&method(:create_method))
-            puts "created #{missing_methods.size} missing methods"
+            logger.info "created #{missing_methods.size} missing methods"
+            report['missing_methods_created'] = missing_methods.size
           end
 
           private
@@ -23,7 +24,7 @@ module ThreeScaleToolbox
           end
 
           def missing_methods
-            ThreeScaleToolbox::Helper.array_difference(source_backend.methods, target_backend.methods) do |source, target|
+            @missing_methods ||= ThreeScaleToolbox::Helper.array_difference(source_backend.methods, target_backend.methods) do |source, target|
               source.system_name == target.system_name
             end
           end

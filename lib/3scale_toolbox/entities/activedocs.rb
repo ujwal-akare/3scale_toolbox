@@ -51,6 +51,10 @@ module ThreeScaleToolbox
         @attrs ||= activedoc_attrs
       end
 
+      def system_name
+        attrs['system_name']
+      end
+
       def delete
         remote.delete_activedocs id
       end

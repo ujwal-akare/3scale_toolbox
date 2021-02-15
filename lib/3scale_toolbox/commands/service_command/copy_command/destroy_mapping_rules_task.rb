@@ -12,7 +12,7 @@ module ThreeScaleToolbox
           def call
             return unless delete_mapping_rules
 
-            puts 'destroying all mapping rules'
+            logger.info 'destroying all mapping rules'
             target.mapping_rules.each(&:delete)
           end
 
@@ -24,6 +24,10 @@ module ThreeScaleToolbox
 
           def target
             context[:target]
+          end
+
+          def target
+            context.fetch(:target)
           end
         end
       end

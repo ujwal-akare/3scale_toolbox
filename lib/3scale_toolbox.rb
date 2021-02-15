@@ -10,6 +10,7 @@ require 'oas_parser'
 require '3scale/api'
 require 'json-schema'
 require 'erb'
+require 'logger'
 
 require '3scale_toolbox/version'
 require '3scale_toolbox/helper'

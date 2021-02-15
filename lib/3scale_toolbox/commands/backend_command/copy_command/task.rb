@@ -43,6 +43,16 @@ module ThreeScaleToolbox
             context[:option_target_system_name]
           end
 
+          def logger
+            context[:logger] ||= Logger.new(STDOUT).tap do |logger|
+              logger.formatter = proc { |severity, datetime, progname, msg| "#{msg}\n" }
+            end
+          end
+
+          def report
+            context[:report] ||= {}
+          end
+
           private
 
           def find_source_backend

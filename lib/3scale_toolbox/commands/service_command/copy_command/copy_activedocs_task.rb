@@ -6,7 +6,7 @@ module ThreeScaleToolbox
           include Task
 
           def call
-            puts 'copying all service ActiveDocs'
+            logger.info 'copying all service ActiveDocs'
 
             source.activedocs.each(&method(:apply_target_activedoc))
           end
@@ -17,14 +17,17 @@ module ThreeScaleToolbox
             activedocs = Entities::ActiveDocs.find_by_system_name(remote: target.remote,
                                                                   system_name: attrs['system_name'])
             if activedocs.nil?
-              Entities::ActiveDocs.create(remote: target.remote, attrs: create_attrs(attrs))
+              activedocs = Entities::ActiveDocs.create(remote: target.remote, attrs: create_attrs(attrs))
+              activedocs_report[activedocs.system_name] = { 'id' => activedocs.id, 'status' => 'created' }
             elsif activedocs.attrs.fetch('service_id') == target.id
               activedocs.update(update_attrs(attrs))
+              activedocs_report[activedocs.system_name] = { 'id' => activedocs.id, 'status' => 'updated' }
             else
               # activedocs with same system_name exists, but now owned by target service
               new_attrs = create_attrs(attrs)
               new_attrs['system_name'] = "#{attrs['system_name']}#{target.id}"
-              Entities::ActiveDocs.create(remote: target.remote, attrs: new_attrs)
+              activedocs = Entities::ActiveDocs.create(remote: target.remote, attrs: new_attrs)
+              activedocs_report[activedocs.system_name] = { 'id' => activedocs.id, 'status' => 'created' }
             end
           end
 

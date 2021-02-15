@@ -25,7 +25,8 @@ module ThreeScaleToolbox
             # assign target service for other tasks to have it available
             self.target = service
 
-            puts "new service id #{service.id}"
+            logger.info "new service id #{service.id}"
+            report['product_id'] = service.id
           end
 
           private

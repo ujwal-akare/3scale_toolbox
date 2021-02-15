@@ -6,10 +6,11 @@ module ThreeScaleToolbox
           include Task
 
           def call
-            puts "original service hits metric #{source.hits.id} has #{source.methods.size} methods"
-            puts "target service hits metric #{target.hits.id} has #{target.methods.size} methods"
+            logger.info "original service hits metric #{source.hits.id} has #{source.methods.size} methods"
+            logger.info "target service hits metric #{target.hits.id} has #{target.methods.size} methods"
             missing_methods.each(&method(:create_method))
-            puts "created #{missing_methods.size} missing methods on target service"
+            logger.info "created #{missing_methods.size} missing methods on target service"
+            report['missing_methods_created'] = missing_methods.size
           end
 
           private
@@ -27,7 +28,7 @@ module ThreeScaleToolbox
           end
 
           def missing_methods
-            ThreeScaleToolbox::Helper.array_difference(source.methods, target.methods) do |method, target|
+            @missing_methods ||= ThreeScaleToolbox::Helper.array_difference(source.methods, target.methods) do |method, target|
               method.system_name == target.system_name
             end
           end

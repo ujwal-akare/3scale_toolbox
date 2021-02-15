@@ -13,6 +13,7 @@ module ThreeScaleToolbox
             description 'This command deserializes one product and associated backends'
 
             option      :f, :file, 'Read from file instead of stdin', argument: :required
+            ThreeScaleToolbox::CLI.output_flag(self)
             param       :remote
 
             runner ImportSubcommand
@@ -23,14 +24,19 @@ module ThreeScaleToolbox
           validate_artifacts_resource!
 
           product_list.each do |product|
-            Commands::ProductCommand::CopySubcommand.workflow(
-              {
+            context = {
                 target_remote: remote,
                 source_remote: crd_remote,
-                source_service_ref: product.system_name
-              }
-            )
+                source_service_ref: product.system_name,
+                logger: Logger.new('/dev/null')
+            }
+
+            Commands::ProductCommand::CopySubcommand.workflow(context)
+
+            report[product.system_name] = context.fetch(:report)
           end
+
+          printer.print_collection report
         end
 
         private
@@ -102,8 +108,16 @@ module ThreeScaleToolbox
           @artifacts_resource ||= load_resource(options[:file] || '-')
         end
 
+        def report
+          @report ||= {}
+        end
+
         def remote
           @remote ||= threescale_client(arguments[:remote])
+        end
+
+        def printer
+          options.fetch(:output, CLI::JsonPrinter.new)
         end
       end
     end

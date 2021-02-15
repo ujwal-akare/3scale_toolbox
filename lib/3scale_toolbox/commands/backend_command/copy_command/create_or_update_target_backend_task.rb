@@ -23,8 +23,9 @@ module ThreeScaleToolbox
             # assign target backend for other tasks to have it available
             self.target_backend = backend
 
-            puts "source backend ID: #{source_backend.id} system_name: #{source_backend.attrs['system_name']}"
-            puts "target backend ID: #{target_backend.id} system_name: #{target_backend.attrs['system_name']}"
+            logger.info "source backend ID: #{source_backend.id} system_name: #{source_backend.system_name}"
+            logger.info "target backend ID: #{target_backend.id} system_name: #{target_backend.system_name}"
+            report['backend_id'] = target_backend.id
           end
 
           def create_attrs
