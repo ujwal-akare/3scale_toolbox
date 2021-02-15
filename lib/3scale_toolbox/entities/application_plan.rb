@@ -56,6 +56,10 @@ module ThreeScaleToolbox
         attrs['name']
       end
 
+      def custom
+        attrs['custom']
+      end
+
       def update(plan_attrs)
         return attrs if update_plan_attrs(plan_attrs).empty?
 

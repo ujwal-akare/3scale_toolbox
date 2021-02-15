@@ -56,12 +56,12 @@ RSpec.describe 'OpenAPI import basic test' do
 
     # activedocs are created and updated
     expect(service_active_docs.size).to eq(1)
-    expect(service_active_docs[0]['name']).to eq('Swagger Petstore')
+    expect(service_active_docs[0].name).to eq('Swagger Petstore')
     # host updated
     expect(oas_resource['host']).not_to eq(expected_activedocs_host)
-    expect(YAML.safe_load(service_active_docs[0]['body'])).to include('host' => expected_activedocs_host)
+    expect(YAML.safe_load(service_active_docs[0].body)).to include('host' => expected_activedocs_host)
     # scheme updated
     expect(oas_resource['schemes']).not_to eq(expected_public_base_scheme)
-    expect(YAML.safe_load(service_active_docs[0]['body'])).to include('schemes' => expected_public_base_scheme)
+    expect(YAML.safe_load(service_active_docs[0].body)).to include('schemes' => expected_public_base_scheme)
   end
 end

@@ -20,7 +20,7 @@ module ThreeScaleToolbox
           private
 
           def missing_regular_plans
-            missing_plans.reject { |plan| plan.attrs.has_key? 'custom' }
+            missing_plans.reject { |plan| !plan.custom.nil? && plan.custom == true }
           end
 
           def missing_plans

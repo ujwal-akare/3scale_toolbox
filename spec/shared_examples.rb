@@ -54,6 +54,8 @@ RSpec.shared_examples 'service copied' do
 
     # service plans
     expect(source_plans.size).to be > 0
+    expect(target_plans.size).to be > 0
+
     source_plans.each do |source_plan|
       copied_plan = plan_mapping.fetch(source_plan.id)
       expect(
@@ -121,6 +123,6 @@ RSpec.shared_examples 'service copied' do
     target_activedocs = target_service_new.activedocs
     activedocs_keys = %w[name]
     expect(source_activedocs.size).to be > 0
-    expect(source_activedocs).to be_subset_of(target_activedocs).comparing_keys(activedocs_keys)
+    expect(source_activedocs.map(&:attrs)).to be_subset_of(target_activedocs.map(&:attrs)).comparing_keys(activedocs_keys)
   end
 end
