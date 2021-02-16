@@ -474,6 +474,14 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
         expect(subject.to_cr).to include('setupFee' => 1.5)
       end
 
+      it 'custom included' do
+        expect(subject.to_cr).to include('custom' => false)
+      end
+
+      it 'state included' do
+        expect(subject.to_cr).to include('state' => 'published')
+      end
+
       it 'costMonth included' do
         expect(subject.to_cr).to include('costMonth' => 4.5)
       end

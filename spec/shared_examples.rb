@@ -95,7 +95,7 @@ RSpec.shared_examples 'service copied' do
     # service proxy policies
     source_policies = source_service.policies
     target_policies = target_service_new.policies
-    expect(source_policies.size).to be > 3
+    expect(source_policies.size).to be > 0
     expect(target_policies).to match_array(source_policies)
 
     # service pricing rules
@@ -122,7 +122,6 @@ RSpec.shared_examples 'service copied' do
     source_activedocs = source_service.activedocs
     target_activedocs = target_service_new.activedocs
     activedocs_keys = %w[name]
-    expect(source_activedocs.size).to be > 0
     expect(source_activedocs.map(&:attrs)).to be_subset_of(target_activedocs.map(&:attrs)).comparing_keys(activedocs_keys)
   end
 end

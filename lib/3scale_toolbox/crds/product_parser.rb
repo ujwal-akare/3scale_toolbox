@@ -5,7 +5,7 @@ module ThreeScaleToolbox
       Method = Struct.new(:system_name, :friendly_name, :description)
       MappingRule = Struct.new(:metric_ref, :http_method, :pattern, :delta, :last)
       BackendUsage = Struct.new(:backend_system_name, :path)
-      ApplicationPlan = Struct.new(:system_name, :name, :approval_required, :trial_period_days, :setup_fee, :cost_per_month, :limits, :pricing_rules)
+      ApplicationPlan = Struct.new(:system_name, :name, :approval_required, :trial_period_days, :setup_fee, :custom, :state, :cost_per_month, :limits, :pricing_rules)
       Limit = Struct.new(:period, :value, :metric_system_name, :backend_system_name) do
         def to_s
           {period: period, value: value}.to_json
@@ -64,8 +64,8 @@ module ThreeScaleToolbox
       def application_plans
         @application_plans ||= (cr.dig('spec', 'applicationPlans') || {}).map do |system_name, plan|
           ApplicationPlan.new(system_name, plan['name'], plan['appsRequireApproval'],
-                              plan['trialPeriod'], plan['setupFee'], plan['costMonth'],
-                              parse_limits(plan), parse_pricing_rules(plan))
+                              plan['trialPeriod'], plan['setupFee'], plan['custom'], plan['state'],
+                              plan['costMonth'], parse_limits(plan), parse_pricing_rules(plan))
         end
       end
 

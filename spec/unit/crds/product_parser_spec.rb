@@ -160,6 +160,8 @@ RSpec.describe ThreeScaleToolbox::CRD::ProductParser do
           'appsRequireApproval' => false,
           'trialPeriod' => 1,
           'setupFee' => 1.5,
+          'custom' => false,
+          'state' => 'published',
           'costMonth' => 4.5,
           'limits' => [
             {
@@ -186,6 +188,8 @@ RSpec.describe ThreeScaleToolbox::CRD::ProductParser do
           'appsRequireApproval' => true,
           'trialPeriod' => 2,
           'setupFee' => 3.5,
+          'custom' => false,
+          'state' => 'published',
           'costMonth' => 4.5,
           'limits' => [
             {

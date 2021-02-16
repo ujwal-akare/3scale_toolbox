@@ -73,6 +73,8 @@ module ThreeScaleToolbox
       #           appsRequireApproval: false
       #           trialPeriod: 0
       #           setupFee: 0.0
+      #           custom: false
+      #           state: published
       #           costMonth: 0.0
       #           pricingRules:
       #           - from: 1
@@ -187,7 +189,6 @@ module ThreeScaleToolbox
         backend_metric_only_index.map do |metric_id, metric|
           {
             'id' => metric_id,
-            'name' => metric.friendly_name,
             'friendly_name' => metric.friendly_name,
             'system_name' => metric.system_name,
             'description' => metric.description,
@@ -209,7 +210,6 @@ module ThreeScaleToolbox
         backend_method_index.map do |method_id, method|
           {
             'id' => method_id,
-            'name' => method.friendly_name,
             'parent_id' => 1, # should not be used
             'friendly_name' => method.friendly_name,
             'system_name' => method.system_name,
@@ -290,7 +290,6 @@ module ThreeScaleToolbox
         product_metric_only_index.map do |metric_id, metric|
           {
             'id' => metric_id,
-            'name' => metric.friendly_name,
             'friendly_name' => metric.friendly_name,
             'system_name' => metric.system_name,
             'description' => metric.description,
@@ -312,7 +311,6 @@ module ThreeScaleToolbox
         product_method_index.map do |method_id, method|
           {
             'id' => method_id,
-            'name' => method.friendly_name,
             'parent_id' => 1, # should not be used
             'friendly_name' => method.friendly_name,
             'system_name' => method.system_name,
@@ -346,6 +344,8 @@ module ThreeScaleToolbox
             'id' => plan_id,
             'name' => plan.name,
             'setup_fee' => plan.setup_fee,
+            'custom' => plan.custom,
+            'state' => plan.state,
             'cost_per_month' => plan.cost_per_month,
             'trial_period_days' => plan.trial_period_days,
             'approval_required' => plan.approval_required,
@@ -395,6 +395,18 @@ module ThreeScaleToolbox
 
       def list_activedocs
         []
+      end
+
+      def delete_service(id)
+        true
+      end
+
+      def delete_backend(id)
+        true
+      end
+
+      def delete_backend_usage(product_id, id)
+        true
       end
 
       private

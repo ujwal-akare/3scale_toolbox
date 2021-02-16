@@ -56,6 +56,10 @@ module ThreeScaleToolbox
         attrs['name']
       end
 
+      def state
+        attrs['state']
+      end
+
       def custom
         attrs.fetch('custom', false)
       end

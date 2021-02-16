@@ -1,0 +1,240 @@
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: capabilities.3scale.net/v1beta1
+  kind: Product
+  metadata:
+    annotations:
+      3scale_toolbox_created_at: '2021-02-16T15:43:32Z'
+      3scale_toolbox_version: 0.17.1
+    name: api.lxswtzjy
+  spec:
+    name: Default API
+    systemName: api
+    description: ''
+    mappingRules:
+    - httpMethod: GET
+      pattern: "/v1"
+      metricMethodRef: servicemethod01
+      increment: 1
+      last: false
+    - httpMethod: GET
+      pattern: "/v2"
+      metricMethodRef: servicemetric01
+      increment: 1
+      last: false
+    metrics:
+      hits:
+        friendlyName: Hits
+        unit: hit
+        description: Number of API hits
+      servicemetric01:
+        friendlyName: servicemetric01
+        unit: '1'
+        description: ''
+    methods:
+      servicemethod01:
+        friendlyName: servicemethod01
+        description: ''
+    policies:
+    - name: apicast
+      version: builtin
+      configuration: {}
+      enabled: true
+    - name: url_rewriting
+      version: builtin
+      configuration:
+        commands:
+        - op: sub
+          regex: ".+"
+          replace: "/v1/pets/v1/pets"
+      enabled: true
+    applicationPlans:
+      basic:
+        name: Basic
+        appsRequireApproval: false
+        trialPeriod: 0
+        setupFee: 0.0
+        custom: false
+        state: published
+        costMonth: 0.0
+        pricingRules:
+        - from: 1
+          to: 1000
+          pricePerUnit: 1.0
+          metricMethodRef:
+            systemName: hits
+        - from: 1
+          to: 10
+          pricePerUnit: 10.0
+          metricMethodRef:
+            systemName: servicemethod01
+        - from: 1
+          to: 17
+          pricePerUnit: 0.5
+          metricMethodRef:
+            systemName: hits
+            backend: backend_01
+        - from: 1
+          to: 56
+          pricePerUnit: 0.4
+          metricMethodRef:
+            systemName: mybackendmethod01
+            backend: backend_01
+        - from: 1
+          to: 17
+          pricePerUnit: 0.1
+          metricMethodRef:
+            systemName: hits
+            backend: backend_02
+        limits:
+        - period: eternity
+          value: 10000
+          metricMethodRef:
+            systemName: hits
+        - period: day
+          value: 10000
+          metricMethodRef:
+            systemName: servicemethod01
+        - period: hour
+          value: 10000
+          metricMethodRef:
+            systemName: servicemetric01
+        - period: hour
+          value: 1222222
+          metricMethodRef:
+            systemName: hits
+            backend: backend_01
+        - period: minute
+          value: 12222222
+          metricMethodRef:
+            systemName: mybackendmethod01
+            backend: backend_01
+        - period: minute
+          value: 12222222
+          metricMethodRef:
+            systemName: backend02_method01
+            backend: backend_02
+        - period: minute
+          value: 3242
+          metricMethodRef:
+            systemName: hits
+            backend: backend_02
+      unlimited:
+        name: Unlimited
+        appsRequireApproval: false
+        trialPeriod: 0
+        setupFee: 0.0
+        custom: false
+        state: published
+        costMonth: 0.0
+        limits:
+        - period: eternity
+          value: 1
+          metricMethodRef:
+            systemName: hits
+        pricingRules:
+        - from: 1
+          to: 1000
+          pricePerUnit: 1.0
+          metricMethodRef:
+            systemName: hits
+    backendUsages:
+      backend_01:
+        path: "/v1/pets"
+      backend_02:
+        path: "/v1/cats"
+    deployment:
+      apicastSelfManaged:
+        authentication:
+          oidc:
+            issuerType: rest
+            issuerEndpoint: https://hello:test@example.com/auth/realms/3scale-api-consumers
+            jwtClaimWithClientID: azp
+            jwtClaimWithClientIDType: plain
+            authenticationFlow:
+              standardFlowEnabled: false
+              implicitFlowEnabled: true
+              serviceAccountsEnabled: false
+              directAccessGrantsEnabled: true
+            credentials: query
+            security:
+              hostHeader: ''
+              secretToken: some_secret
+            gatewayResponse:
+              errorStatusAuthFailed: 403
+              errorHeadersAuthFailed: text/plain; charset=us-ascii
+              errorAuthFailed: Authentication failed
+              errorStatusAuthMissing: 403
+              errorHeadersAuthMissing: text/plain; charset=us-ascii
+              errorAuthMissing: Authentication parameters missing
+              errorStatusNoMatch: 404
+              errorHeadersNoMatch: text/plain; charset=us-ascii
+              errorNoMatch: No Mapping Rule matched
+              errorStatusLimitsExceeded: 429
+              errorHeadersLimitsExceeded: text/plain; charset=us-ascii
+              errorLimitsExceeded: Usage limit exceeded
+        stagingPublicBaseURL: https://staging.example.com
+        productionPublicBaseURL: https://example.com
+- apiVersion: capabilities.3scale.net/v1beta1
+  kind: Backend
+  metadata:
+    annotations:
+      3scale_toolbox_created_at: '2021-02-16T15:43:42Z'
+      3scale_toolbox_version: 0.17.1
+    name: backend.01.xaebumno
+  spec:
+    name: Backend 01
+    systemName: backend_01
+    privateBaseURL: https://echo-api.3scale.net:443
+    description: new desc
+    mappingRules:
+    - httpMethod: GET
+      pattern: "/v1/pets"
+      metricMethodRef: mybackendmethod01
+      increment: 1
+      last: false
+    metrics:
+      hits:
+        friendlyName: Hits
+        unit: hit
+        description: Number of API hits
+      mybackendmetric01:
+        friendlyName: mybackendmetric01
+        unit: '1'
+        description: ''
+    methods:
+      mybackendmethod01:
+        friendlyName: mybackendmethod01
+        description: ''
+- apiVersion: capabilities.3scale.net/v1beta1
+  kind: Backend
+  metadata:
+    annotations:
+      3scale_toolbox_created_at: '2021-02-16T15:43:43Z'
+      3scale_toolbox_version: 0.17.1
+    name: backend.02.ksrpatlh
+  spec:
+    name: Backend 02
+    systemName: backend_02
+    privateBaseURL: https://echo-api.3scale.net:443
+    description: ''
+    mappingRules:
+    - httpMethod: GET
+      pattern: "/v1/cats"
+      metricMethodRef: hits
+      increment: 1
+      last: false
+    metrics:
+      hits:
+        friendlyName: Hits
+        unit: hit
+        description: Number of API hits
+    methods:
+      backend02_method01:
+        friendlyName: backend02_method01
+        description: ''
+      backend02_method02:
+        friendlyName: backend02_method02
+        description: ''

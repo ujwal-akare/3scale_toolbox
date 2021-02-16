@@ -83,11 +83,37 @@ RSpec.shared_context :real_copy_cleanup do
     source_service.activedocs.each do |activedoc|
       source_service.remote.delete_activedocs(activedoc.id)
     end
+
+    backend_usage_list = source_service.backend_usage_list
+    backend_usage_list.each(&:delete)
+    backend_usage_list.map(&:backend).each(&:delete)
     source_service.delete
+
+    #backend_usage_list = begin
+    #                       source_service.backend_usage_list
+    #                     rescue ThreeScale::API::HttpClient::NotFoundError
+    #                       []
+    #                     end
+    #backend_usage_list.map(&:backend).each do |backend|
+    #  Helpers.wait do
+    #    begin
+    #      backend.delete
+    #    rescue ThreeScale::API::HttpClient::NotFoundError
+    #      true
+    #    rescue ThreeScale::API::HttpClient::ForbiddenError
+    #      false
+    #    end
+    #  end
+    #end
+
     # delete target activedocs
     target_service.activedocs.each do |activedoc|
       target_service.remote.delete_activedocs(activedoc.id)
     end
+
+    backend_usage_list = target_service.backend_usage_list
+    backend_usage_list.each(&:delete)
+    backend_usage_list.map(&:backend).each(&:delete)
     target_service.delete
   end
 end
@@ -143,7 +169,7 @@ RSpec.shared_context :copied_metrics do
   # source and target has to be provided by loader context
   let(:source_metrics) { source_service.metrics }
   let(:target_metrics) { target_service.metrics }
-  let(:metric_keys) { %w[name system_name unit] }
+  let(:metric_keys) { %w[friendly_name system_name unit] }
   let(:metrics_mapping) { source_service.metrics_mapping(target_service) }
 end
 
