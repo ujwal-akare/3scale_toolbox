@@ -80,11 +80,7 @@ module ThreeScaleToolbox
       end
 
       def metrics
-        # cache result to reuse
-        metric_and_method_list = metrics_and_methods
-        hits_metric_obj = hits_metric(metric_and_method_list)
-
-        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metric_and_method_list, methods(hits_metric_obj)) do |item, method|
+        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |item, method|
           method.id == item.fetch('id', nil)
         end
 
@@ -94,16 +90,18 @@ module ThreeScaleToolbox
       end
 
       def hits
-        hits_metric(metrics_and_methods)
+        metric_list = metrics_and_methods.map do |metric_attrs|
+          BackendMetric.new(id: metric_attrs.fetch('id'), backend: self, attrs: metric_attrs)
+        end
+        metric_list.find { |metric| metric.system_name == 'hits' }.tap do |hits_metric|
+          raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
+        end
       end
 
       # @api public
-      # @param [Object] parent_metric_id BackendMetric hits object
       # @return [List]
-      def methods(parent_metric_id)
-        return [] if parent_metric_id.nil?
-
-        method_attr_list = remote.list_backend_methods id, parent_metric_id.id
+      def methods
+        method_attr_list = remote.list_backend_methods id, hits.id
         if method_attr_list.respond_to?(:has_key?) && (errors = method_attr_list['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend methods not read', errors)
         end
@@ -111,7 +109,6 @@ module ThreeScaleToolbox
         method_attr_list.map do |method_attrs|
           BackendMethod.new(id: method_attrs.fetch('id'),
                             backend: self,
-                            parent_id: parent_metric_id.id,
                             attrs: method_attrs)
         end
       end
@@ -156,13 +153,6 @@ module ThreeScaleToolbox
         end
 
         m_m
-      end
-
-      def hits_metric(metric_attr_list)
-        metric_list = metric_attr_list.map do |metric_attrs|
-          BackendMetric.new(id: metric_attrs.fetch('id'), backend: self, attrs: metric_attrs)
-        end
-        metric_list.find { |metric| metric.system_name == 'hits' }
       end
 
       def fetch_backend_attrs

@@ -1,8 +1,12 @@
 RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:metric_1) { instance_double(ThreeScaleToolbox::Entities::Metric) }
 
   before :example do
+    allow(metric_0).to receive(:id).and_return(0)
+    allow(metric_1).to receive(:id).and_return(1)
     allow(service).to receive(:remote).and_return(remote)
   end
 
@@ -87,7 +91,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
 
     context 'plan is found by system_name' do
       let(:plan_ref) { plan_system_name }
-      let(:plans) { [plan_attrs] }
+      let(:my_plan) { described_class.new(id: plan_id, service: service, attrs: plan_attrs) }
+      let(:plans) { [my_plan] }
 
       before :example do
         expect(service).to receive(:plans).and_return(plans)
@@ -132,20 +137,59 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
     end
 
     context '#limits' do
-      let(:limits) { double('limits') }
-      it 'calls list_application_plan_limits method' do
+      let(:limit_0_attrs) { { 'id' => 1, 'metric_id' => 2 } }
+      let(:limits) { [limit_0_attrs] }
+
+      before :example do
         expect(remote).to receive(:list_application_plan_limits).with(id).and_return(limits)
-        expect(subject.limits).to eq(limits)
+      end
+
+      it 'metric_id is parsed' do
+        expect(subject.limits[0].metric_id).to eq(2)
+      end
+
+      it 'id is parsed' do
+        expect(subject.limits[0].id).to eq(1)
+      end
+
+      it 'one element is returned' do
+        expect(subject.limits.length()).to eq(1)
+      end
+    end
+
+    context '#pricing_rules' do
+      let(:pr_0_attrs) { { 'id' => 1, 'metric_id' => 2 } }
+      let(:pricing_rules) { [pr_0_attrs] }
+
+      before :example do
+        expect(remote).to receive(:list_pricingrules_per_application_plan).with(id).and_return(pricing_rules)
+      end
+
+      it 'metric_id is parsed' do
+        expect(subject.pricing_rules[0].metric_id).to eq(2)
+      end
+
+      it 'id is parsed' do
+        expect(subject.pricing_rules[0].id).to eq(1)
+      end
+
+      it 'one element is returned' do
+        expect(subject.pricing_rules.length()).to eq(1)
       end
     end
 
     context '#create_limit' do
+      let(:limit_class) { class_double(ThreeScaleToolbox::Entities::Limit).as_stubbed_const }
+      let(:limit) { instance_double(ThreeScaleToolbox::Entities::Limit) }
       let(:metric_id) { 4 }
       let(:limit_attrs) { { 'period' => 'year', 'value' => 10_000 } }
-      let(:limit) { limit_attrs.merge('id' => 1) }
+
+      before :example do
+        allow(limit).to receive(:id).and_return(4)
+      end
 
       it 'calls create_application_plan_limit method' do
-        expect(remote).to receive(:create_application_plan_limit).with(id, metric_id, limit_attrs)
+        expect(limit_class).to receive(:create).with(plan: subject, metric_id: metric_id, attrs: limit_attrs)
                                                                  .and_return(limit)
         expect(subject.create_limit(metric_id, limit_attrs)).to eq(limit)
       end
@@ -206,17 +250,15 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
       end
 
       context 'when eternity non zero limits exist' do
-        let(:metric_0) { { 'id' => 0 } }
-        let(:metric_1) { { 'id' => 1 } }
         let(:limit_0) do
           {
-            'id' => 0, 'metric_id' => metric_0.fetch('id'),
+            'id' => 0, 'metric_id' => metric_0.id,
             'period' => 'eternity', 'value' => 10_000
           }
         end
         let(:limit_1) do
           {
-            'id' => 1, 'metric_id' => metric_1.fetch('id'),
+            'id' => 1, 'metric_id' => metric_1.id,
             'period' => 'eternity', 'value' => 10_000
           }
         end
@@ -224,26 +266,24 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
         let(:metrics) { [metric_0, metric_1] }
 
         it 'limits updated to zero' do
-          expect(remote).to receive(:update_application_plan_limit).with(id, metric_0.fetch('id'), limit_0.fetch('id'), zero_eternity_limit_attrs)
+          expect(remote).to receive(:update_application_plan_limit).with(id, metric_0.id, limit_0.fetch('id'), zero_eternity_limit_attrs)
                                                                    .and_return('id' => limit_0.fetch('id'))
-          expect(remote).to receive(:update_application_plan_limit).with(id, metric_1.fetch('id'), limit_1.fetch('id'), zero_eternity_limit_attrs)
+          expect(remote).to receive(:update_application_plan_limit).with(id, metric_1.id, limit_1.fetch('id'), zero_eternity_limit_attrs)
                                                                    .and_return('id' => limit_1.fetch('id'))
           subject.disable
         end
       end
 
       context 'when metrics with no eternity period limit exist' do
-        let(:metric_0) { { 'id' => 0 } }
-        let(:metric_1) { { 'id' => 1 } }
         let(:limit_0) do
           {
-            'id' => 0, 'metric_id' => metric_0.fetch('id'),
+            'id' => 0, 'metric_id' => metric_0.id,
             'period' => 'year', 'value' => 10_000
           }
         end
         let(:limit_1) do
           {
-            'id' => 1, 'metric_id' => metric_1.fetch('id'),
+            'id' => 1, 'metric_id' => metric_1.id,
             'period' => 'month', 'value' => 10_000
           }
         end
@@ -251,26 +291,24 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
         let(:metrics) { [metric_0, metric_1] }
 
         it 'eternity zero limits created' do
-          expect(remote).to receive(:create_application_plan_limit).with(id, metric_0.fetch('id'), zero_eternity_limit_attrs)
+          expect(remote).to receive(:create_application_plan_limit).with(id, metric_0.id, zero_eternity_limit_attrs)
                                                                    .and_return('id' => 1000)
-          expect(remote).to receive(:create_application_plan_limit).with(id, metric_1.fetch('id'), zero_eternity_limit_attrs)
+          expect(remote).to receive(:create_application_plan_limit).with(id, metric_1.id, zero_eternity_limit_attrs)
                                                                    .and_return('id' => 1001)
           subject.disable
         end
       end
 
       context 'when metrics with eternity zero limit exist' do
-        let(:metric_0) { { 'id' => 0 } }
-        let(:metric_1) { { 'id' => 1 } }
         let(:limit_0) do
           {
-            'id' => 0, 'metric_id' => metric_0.fetch('id'),
+            'id' => 0, 'metric_id' => metric_0.id,
             'period' => 'eternity', 'value' => 0
           }
         end
         let(:limit_1) do
           {
-            'id' => 1, 'metric_id' => metric_1.fetch('id'),
+            'id' => 1, 'metric_id' => metric_1.id,
             'period' => 'eternity', 'value' => 0
           }
         end

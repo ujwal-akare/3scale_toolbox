@@ -26,38 +26,6 @@ module ThreeScaleToolbox
             context[:source_backend] ||= find_source_backend
           end
 
-          def source_methods
-            context[:source_methods] ||= source_backend.methods(source_hits)
-          end
-
-          def source_hits
-            context[:source_hits] ||= source_backend.hits
-          end
-
-          def source_metrics
-            context[:source_metrics] ||= source_backend.metrics
-          end
-
-          def target_metrics
-            context[:target_metrics] ||= target_backend.metrics
-          end
-
-          def target_hits
-            context[:target_hits] ||= target_backend.hits
-          end
-
-          def target_methods
-            context[:target_methods] ||= target_backend.methods(target_hits)
-          end
-
-          def invalidate_target_methods
-            context[:target_methods] = nil
-          end
-
-          def invalidate_target_metrics
-            context[:target_metrics] = nil
-          end
-
           def source_remote
             context[:source_remote]
           end

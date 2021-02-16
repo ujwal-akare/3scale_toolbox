@@ -34,7 +34,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Delete::DeleteSubcom
       before :example do
         expect(service).to receive(:hits).and_return(hits)
         expect(method_class).to receive(:find).with(service: service,
-                                                    parent_id: hits_id,
                                                     ref: arguments[:method_ref]).and_return(nil)
       end
 
@@ -48,7 +47,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Delete::DeleteSubcom
       before :example do
         expect(service).to receive(:hits).and_return(hits)
         expect(method_class).to receive(:find).with(service: service,
-                                                    parent_id: hits_id,
                                                     ref: arguments[:method_ref])
                                               .and_return(method)
         expect(method).to receive(:id).and_return('1')

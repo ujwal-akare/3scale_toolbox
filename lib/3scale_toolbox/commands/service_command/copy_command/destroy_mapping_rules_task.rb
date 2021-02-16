@@ -13,9 +13,7 @@ module ThreeScaleToolbox
             return unless delete_mapping_rules
 
             puts 'destroying all mapping rules'
-            target.mapping_rules.each do |mapping_rule|
-              target.delete_mapping_rule mapping_rule['id']
-            end
+            target.mapping_rules.each(&:delete)
           end
 
           private

@@ -244,8 +244,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       end
       subject { backend.metrics }
       before :each do
-        expect(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
-        expect(remote).to receive(:list_backend_methods).with(backend_id, 1).and_return(methods)
+        allow(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
+        allow(remote).to receive(:list_backend_methods).with(backend_id, 1).and_return(methods)
       end
 
       it 'returns only metrics' do
@@ -255,13 +255,14 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
 
     context '#hits' do
       subject { backend.hits }
+
       context 'not found' do
         before :each do
           expect(remote).to receive(:list_backend_metrics).with(backend_id).and_return([])
         end
 
-        it 'returns nil' do
-          is_expected.to be_nil
+        it 'raises error' do
+          expect { subject }.to raise_error(ThreeScaleToolbox::Error)
         end
       end
 
@@ -284,13 +285,26 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
         end
       end
     end
+
     context '#methods' do
-      let(:hits_id) { 1 }
-      let(:hits) { instance_double(ThreeScaleToolbox::Entities::BackendMetric, 'hits') }
-      subject { backend.methods hits }
+      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
+      let(:metrics) do
+        [
+          { 'id' => 10, 'system_name' => 'metric_10' },
+          hits_metric,
+          { 'id' => 20, 'system_name' => 'metric_20' }
+        ]
+      end
+      let(:methods) do
+        [
+          { 'id' => 101, 'system_name' => 'method_101' },
+          { 'id' => 201, 'system_name' => 'method_201' }
+        ]
+      end
+      subject { backend.methods }
 
       before :each do
-        allow(hits).to receive(:id).and_return(hits_id)
+        expect(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
       end
 
       context 'when remote returns error' do

@@ -13,14 +13,11 @@ RSpec.describe 'Method delete command' do
     )
   end
   let(:method_ref) { "method_#{random_lowercase_name}" }
-  let(:service_hits_id) { service.hits.fetch('id') }
 
   before :example do
     # add method
     method_attrs = { 'system_name' => method_ref, 'friendly_name' => method_ref }
-    ThreeScaleToolbox::Entities::Method.create(service: service,
-                                               parent_id: service_hits_id,
-                                               attrs: method_attrs)
+    ThreeScaleToolbox::Entities::Method.create(service: service, attrs: method_attrs)
   end
 
   after :example do
@@ -30,7 +27,6 @@ RSpec.describe 'Method delete command' do
   it 'method is deleted' do
     expect(subject).to eq(0)
 
-    expect(ThreeScaleToolbox::Entities::Method.find(service: service, parent_id: service_hits_id,
-                                                    ref: method_ref)).to be_nil
+    expect(ThreeScaleToolbox::Entities::Method.find(service: service, ref: method_ref)).to be_nil
   end
 end

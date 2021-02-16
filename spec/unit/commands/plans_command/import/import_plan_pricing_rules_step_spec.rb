@@ -10,8 +10,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
   let(:plan_pricingrules) { [] }
   let(:resource_pricingrules) { [] }
   let(:hits_metric_id) { 1 }
-  let(:service_metric) { { 'id' => hits_metric_id, 'system_name' => 'hits' } }
-  let(:service_metrics) { [service_metric] }
+  let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:service_metrics) { [hits_metric] }
   let(:artifacts_resource) do
     {
       'pricingrules' => resource_pricingrules
@@ -29,6 +29,8 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
 
   context '#call' do
     before :example do
+      allow(hits_metric).to receive(:id).and_return(hits_metric_id)
+      allow(hits_metric).to receive(:system_name).and_return('hits')
       expect(service_class).to receive(:find).with(hash_including(service_info))
                                              .and_return(service)
       expect(plan_class).to receive(:find).with(hash_including(service: service,
@@ -36,11 +38,12 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
                                           .and_return(plan)
       allow(plan).to receive(:pricing_rules).and_return(plan_pricingrules)
       allow(service).to receive(:metrics).and_return(service_metrics)
-      allow(service).to receive(:hits).and_return(service_metric)
+      allow(service).to receive(:hits).and_return(hits_metric)
     end
 
     context 'existing pricingrules' do
-      let(:plan_pricingrule) do
+      let(:plan_pricingrule) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:plan_pricingrule_attrs) do
         {
           'id' => 32, 'cost_per_unit' => '1.0', 'min' => 1,
           'max' => 100, 'metric_id' => hits_metric_id
@@ -48,8 +51,13 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
       end
       let(:plan_pricingrules) { [plan_pricingrule] }
 
+      before :example do
+        allow(plan_pricingrule).to receive(:attrs).and_return(plan_pricingrule_attrs)
+        allow(plan_pricingrule).to receive(:metric_id).and_return(plan_pricingrule_attrs.fetch('metric_id'))
+      end
+
       it 'deleted' do
-        expect(plan).to receive(:delete_pricing_rule).with(hits_metric_id, plan_pricingrule.fetch('id'))
+        expect(plan_pricingrule).to receive(:delete)
         subject.call
       end
     end

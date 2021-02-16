@@ -13,6 +13,10 @@ module ThreeScaleToolbox
       result
     end
 
+    def public_send(name, *args)
+      method_missing(name, *args)
+    end
+
     def respond_to_missing?(method_name, include_private = false)
       super
     end

@@ -9,7 +9,7 @@ module ThreeScaleToolbox
           # add metric system_name out of metric_id
           def call
             result[:limits] = plan.limits.map do |limit|
-              limit.tap { |l| l['metric'] = metric_info(l, 'Limit') }
+              limit.attrs.merge('metric' => metric_info(limit, 'Limit'))
             end
           end
         end

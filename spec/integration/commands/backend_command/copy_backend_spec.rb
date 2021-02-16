@@ -48,8 +48,8 @@ RSpec.describe 'Backend copy' do
     expect(source_metrics.map(&:attrs)).to be_subset_of(target_backend.metrics.map(&:attrs)).comparing_keys(%w[name system_name unit])
 
     # backend methods
-    source_methods = source_backend.methods source_backend.hits
-    target_methods = target_backend.methods target_backend.hits
+    source_methods = source_backend.methods
+    target_methods = target_backend.methods
     expect(source_methods.size).to be > 0
     expect(source_methods.map(&:attrs)).to be_subset_of(target_methods.map(&:attrs)).comparing_keys(%w[friendly_name system_name])
 

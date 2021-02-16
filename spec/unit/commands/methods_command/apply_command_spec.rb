@@ -12,10 +12,16 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
   let(:method_class) { class_double(ThreeScaleToolbox::Entities::Method).as_stubbed_const }
   let(:method) { instance_double(ThreeScaleToolbox::Entities::Method) }
   let(:hits_id) { 1 }
-  let(:hits) { { 'id' => hits_id } }
+  let(:hits) { instance_double(ThreeScaleToolbox::Entities::Metric) }
   let(:method_id) { 1 }
   let(:method_attrs) { { 'id' => method_id } }
   subject { described_class.new(options, arguments, nil) }
+
+  before :example do
+    allow(hits).to receive(:id).and_return(hits_id)
+    allow(service).to receive(:hits).and_return(hits)
+    allow(method).to receive(:attrs).and_return(method_attrs)
+  end
 
   context '#run' do
     context 'when --disabled and --enabled set' do
@@ -29,7 +35,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
       before :example do
         expect(service_class).to receive(:find).and_return(service)
         expect(subject).to receive(:threescale_client).and_return(remote)
-        allow(method).to receive(:attrs).and_return(method_attrs)
       end
 
       context 'when service not found' do
@@ -50,16 +55,13 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
         end
 
         before :example do
-          expect(service).to receive(:hits).and_return(hits)
           expect(method_class).to receive(:find).with(service: service,
-                                                      parent_id: hits_id,
                                                       ref: arguments[:method_ref])
                                                 .and_return(nil)
         end
 
         it 'method created' do
           expect(method_class).to receive(:create).with(service: service,
-                                                        parent_id: hits_id,
                                                         attrs: create_attrs)
                                                   .and_return(method)
           expect { subject.run }.to output(/Applied method id: 1/).to_stdout
@@ -76,7 +78,6 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
 
           it 'friendly_name overriden' do
             expect(method_class).to receive(:create).with(service: service,
-                                                          parent_id: hits_id,
                                                           attrs: create_attrs)
                                                     .and_return(method)
             expect { subject.run }.to output(/Applied method id: 1/).to_stdout
@@ -86,9 +87,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
 
       context 'when method found' do
         before :example do
-          expect(service).to receive(:hits).and_return(hits)
           expect(method_class).to receive(:find).with(service: service,
-                                                      parent_id: hits_id,
                                                       ref: arguments[:method_ref])
                                                 .and_return(method)
         end

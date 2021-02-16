@@ -65,28 +65,8 @@ module ThreeScaleToolbox
             artifacts_resource['plan_features'] || []
           end
 
-          def service_metrics
-            context[:service_metrics] ||= service.metrics
-          end
-
-          def invalidate_service_metrics
-            context[:service_metrics] = nil
-          end
-
-          def service_hits
-            context[:service_hits] ||= service.hits
-          end
-
-          def service_methods
-            context[:service_methods] ||= service.methods(service_hits['id'])
-          end
-
           def service_metrics_and_methods
-            service_metrics + service_methods
-          end
-
-          def invalidate_service_methods
-            context[:service_methods] = nil
+            service.metrics + service.methods
           end
 
           def service_features
@@ -103,7 +83,7 @@ module ThreeScaleToolbox
           end
 
           def find_metric_by_system_name(system_name)
-            service_metrics_and_methods.find { |metric| metric['system_name'] == system_name }
+            service_metrics_and_methods.find { |metric| metric.system_name == system_name }
           end
 
           private

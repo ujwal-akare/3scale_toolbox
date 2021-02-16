@@ -37,9 +37,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Create::CreateSubcom
     context 'when method is created' do
       let(:expected_attrs) { expected_basic_attrs }
       before :example do
-        expect(service).to receive(:hits).and_return(hits)
         expect(method_class).to receive(:create).with(service: service,
-                                                      parent_id: hits_id,
                                                       attrs: expected_attrs)
                                                 .and_return(method)
       end

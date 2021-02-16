@@ -287,9 +287,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     context '#metrics' do
       it 'returns only metrics' do
-        expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
-        expect(remote).to receive(:list_methods).with(id, 1).and_return(methods)
-        expect(subject.metrics).to eq(metrics)
+        allow(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
+        allow(remote).to receive(:list_methods).with(id, 1).and_return(methods)
+        expect(subject.metrics.map(&:attrs)).to eq(metrics)
       end
     end
 
@@ -301,14 +301,15 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
       it 'return hits metric' do
         expect(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
-        expect(subject.hits).to be(hits_metric)
+        expect(subject.hits.attrs).to be(hits_metric)
       end
     end
 
     context '#methods' do
       it 'calls list_methods method' do
+        allow(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
         expect(remote).to receive(:list_methods).with(id, hits_metric['id']).and_return(methods)
-        expect(subject.methods(hits_metric['id'])).to eq(methods)
+        expect(subject.methods.map(&:attrs)).to eq(methods)
       end
     end
 
@@ -321,31 +322,15 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
 
     context '#plans' do
       it 'calls list_service_application_plans method' do
-        expect(remote).to receive(:list_service_application_plans).with(id)
+        expect(remote).to receive(:list_service_application_plans).with(id).and_return([])
         subject.plans
       end
     end
 
     context '#mapping_rules' do
       it 'calls list_mapping_rules method' do
-        expect(remote).to receive(:list_mapping_rules).with(id)
+        expect(remote).to receive(:list_mapping_rules).with(id).and_return([])
         subject.mapping_rules
-      end
-    end
-
-    context '#delete_mapping_rule' do
-      let(:rule_id) { 3 }
-      it 'calls delete_mapping_rule method' do
-        expect(remote).to receive(:delete_mapping_rule).with(id, rule_id)
-        subject.delete_mapping_rule(rule_id)
-      end
-    end
-
-    context '#create_mapping_rule' do
-      let(:mapping_rule) { { 'id' => 5 } }
-      it 'calls create_mapping_rule method' do
-        expect(remote).to receive(:create_mapping_rule).with(id, mapping_rule)
-        subject.create_mapping_rule(mapping_rule)
       end
     end
 

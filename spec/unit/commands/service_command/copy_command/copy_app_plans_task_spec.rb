@@ -2,39 +2,22 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
   context '#call' do
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
-    2.times do |idx|
-      let("plan_#{idx}".to_sym) do
-        {
-          'id' => idx,
-          'name' => "plan_#{idx}",
-          'state' => 'published',
-          'default' => false,
-          'created_at' => '2014-08-07T11:15:10+02:00',
-          'updated_at' => '2014-08-07T11:15:13+02:00',
-          'custom' => false,
-          'system_name' => "plan_#{idx}",
-          'links' => []
-        }
-      end
-    end
-    let(:custom_plan) do
-      {
-        'id' => 6666,
-        'name' => 'custom_plan',
-        'state' => 'published',
-        'default' => false,
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'custom' => true,
-        'system_name' => 'custom_plan',
-        'links' => []
-      }
-    end
+    let(:plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:plan_0_attrs) { { 'system_name' => 'plan_0', 'friendly_name' => 'plan_0' } }
+    let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:custom_plan) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+    let(:custom_plan_attrs) { { 'system_name' => 'custom_plan', 'custom' => true } }
+
     subject { described_class.new(source: source, target: target) }
 
     before :each do
       expect(source).to receive(:plans).and_return(source_plans)
       expect(target).to receive(:plans).and_return(target_plans)
+      allow(plan_0).to receive(:system_name).and_return(plan_0_attrs.fetch('system_name'))
+      allow(plan_0).to receive(:attrs).and_return(plan_0_attrs)
+      allow(plan_1).to receive(:system_name).and_return('plan_1')
+      allow(custom_plan).to receive(:system_name).and_return(custom_plan_attrs['custom'])
+      allow(custom_plan).to receive(:attrs).and_return(custom_plan_attrs)
     end
 
     context 'no plans to copy' do
@@ -52,7 +35,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyApp
       let(:target_plans) { [plan_1] }
 
       it 'call create_application_plan method' do
-        expect(ThreeScaleToolbox::Entities::ApplicationPlan).to receive(:create).with(hash_including(service: target, plan_attrs: plan_0))
+        expect(ThreeScaleToolbox::Entities::ApplicationPlan).to receive(:create).with(hash_including(service: target, plan_attrs: plan_0_attrs))
         expect { subject.call }.to output(/target service missing 1 application plans/).to_stdout
       end
     end

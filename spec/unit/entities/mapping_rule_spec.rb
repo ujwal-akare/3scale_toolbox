@@ -1,20 +1,20 @@
-RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
+RSpec.describe ThreeScaleToolbox::Entities::MappingRule do
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
-  let(:backend) { instance_double(ThreeScaleToolbox::Entities::Backend, 'backend') }
-  let(:backend_id) { 100 }
+  let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
+  let(:service_id) { 100 }
 
   before :each do
-    allow(backend).to receive(:id).and_return(backend_id)
-    allow(backend).to receive(:remote).and_return(remote)
+    allow(service).to receive(:id).and_return(service_id)
+    allow(service).to receive(:remote).and_return(remote)
   end
 
-  context 'BackendMappingRule.create' do
+  context 'MappingRule.create' do
     let(:attrs) { { 'pattern' => '/pets' } }
-    subject { described_class.create(backend: backend, attrs: attrs) }
+    subject { described_class.create(service: service, attrs: attrs) }
 
     context 'when remote returns error' do
       before :each do
-        expect(remote).to receive(:create_backend_mapping_rule).and_return('errors' => 'some error')
+        expect(remote).to receive(:create_mapping_rule).and_return('errors' => 'some error')
       end
 
       it 'ThreeScaleApiError is raised' do
@@ -28,7 +28,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
       let(:rule_id) { 1 }
       let(:response) { { 'id' => rule_id, 'pattern' => '/pets' } }
       before :each do
-        expect(remote).to receive(:create_backend_mapping_rule).with(backend_id, expected_attrs).and_return(response)
+        expect(remote).to receive(:create_mapping_rule).with(service_id, expected_attrs).and_return(response)
       end
 
       it 'instance is returned' do
@@ -49,7 +49,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
         'http_method' => 'GET'
       }
     end
-    let(:mapping_rule) { described_class.new(id: rule_id, backend: backend, attrs: attrs) }
+    let(:mapping_rule) { described_class.new(id: rule_id, service: service, attrs: attrs) }
 
     context '#attrs' do
       subject { mapping_rule.attrs }
@@ -67,7 +67,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
         end
 
         it 'remote fecth' do
-          expect(remote).to receive(:backend_mapping_rule).with(backend_id, rule_id).and_return(remote_response)
+          expect(remote).to receive(:show_mapping_rule).with(service_id, rule_id).and_return(remote_response)
           is_expected.to eq(remote_response)
         end
       end
@@ -92,7 +92,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
 
       context 'when remote returns error' do
         before :each do
-          expect(remote).to receive(:update_backend_mapping_rule).and_return('errors' => 'some error')
+          expect(remote).to receive(:update_mapping_rule).and_return('errors' => 'some error')
         end
 
         it 'ThreeScaleApiError is raised' do
@@ -113,7 +113,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
         end
 
         before :each do
-          expect(remote).to receive(:update_backend_mapping_rule).with(backend_id, rule_id, expected_attrs).and_return(remote_response)
+          expect(remote).to receive(:update_mapping_rule).with(service_id, rule_id, expected_attrs).and_return(remote_response)
         end
 
         it 'new attrs returned' do
@@ -127,7 +127,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
       subject { mapping_rule.delete }
 
       before :each do
-        expect(remote).to receive(:delete_backend_mapping_rule).with(backend_id, rule_id).and_return(true)
+        expect(remote).to receive(:delete_mapping_rule).with(service_id, rule_id).and_return(true)
       end
 
       it 'remote call done' do

@@ -21,7 +21,7 @@ module ThreeScaleToolbox
             filtered_limit_metrics.each_with_object({}) do |elem, acc|
               # find_metric should not return nil.
               # It is assumed that metric_id refers to existing element from previous steps
-              acc[elem['metric_id']] = find_metric(elem['metric_id'])
+              acc[elem['metric_id']] = find_metric(elem['metric_id']).attrs
             end
           end
 
@@ -33,7 +33,7 @@ module ThreeScaleToolbox
             filtered_pricing_rule_metrics.each_with_object({}) do |elem, acc|
               # find_metric should not return nil.
               # It is assumed that metric_id refers to existing element from previous steps
-              acc[elem['metric_id']] = find_metric(elem['metric_id'])
+              acc[elem['metric_id']] = find_metric(elem['metric_id']).attrs
             end
           end
 

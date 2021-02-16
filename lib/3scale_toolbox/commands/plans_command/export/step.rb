@@ -45,22 +45,14 @@ module ThreeScaleToolbox
             context[:plan] ||= find_plan
           end
 
-          def service_metrics
-            context[:service_metrics] ||= service.metrics
-          end
-
-          def service_methods
-            context[:service_methods] ||= service.methods(service_hits['id'])
-          end
-
           def metric_info(elem, elem_name)
-            if (method = find_method(elem.fetch('metric_id')))
-              { 'type' => 'method', 'system_name' => method.fetch('system_name') }
-            elsif (metric = find_metric(elem.fetch('metric_id')))
-              { 'type' => 'metric', 'system_name' => metric.fetch('system_name') }
+            if (method = find_method(elem.metric_id))
+              { 'type' => 'method', 'system_name' => method.system_name }
+            elsif (metric = find_metric(elem.metric_id))
+              { 'type' => 'metric', 'system_name' => metric.system_name }
             else
-              raise ThreeScaleToolbox::Error, "Unexpected error. #{elem_name} #{elem['id']} " \
-                "referencing to metric id #{elem.fetch('metric_id')} which has not been found"
+              raise ThreeScaleToolbox::Error, "Unexpected error. #{elem_name} #{elem.id} " \
+                "referencing to metric id #{elem.metric_id} which has not been found"
             end
           end
 
@@ -80,15 +72,11 @@ module ThreeScaleToolbox
           end
 
           def find_metric(id)
-            service_metrics.find { |metric| metric['id'] == id }
+            service.metrics.find { |metric| metric.id == id }
           end
 
           def find_method(id)
-            service_methods.find { |method| method['id'] == id }
-          end
-
-          def service_hits
-            context[:service_hits] ||= service.hits
+            service.methods.find { |method| method.id == id }
           end
         end
       end

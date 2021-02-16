@@ -14,8 +14,8 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMet
 
   context '#run' do
     before :each do
-      expect(source_backend).to receive(:metrics).and_return(source_metrics)
-      expect(target_backend).to receive(:metrics).and_return(target_metrics)
+      allow(source_backend).to receive(:metrics).and_return(source_metrics)
+      allow(target_backend).to receive(:metrics).and_return(target_metrics)
     end
 
     it 'no metric created' do

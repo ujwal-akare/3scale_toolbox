@@ -3,38 +3,21 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
     let(:source) { instance_double('ThreeScaleToolbox::Entities::Service', 'source') }
     let(:target) { instance_double('ThreeScaleToolbox::Entities::Service', 'target') }
     let(:method_class) { class_double('ThreeScaleToolbox::Entities::Method').as_stubbed_const }
-    let(:method_0) do
-      {
-        'id' => 0,
-        'name' => 'method_0',
-        'system_name' => 'method_0',
-        'friendly_name' => 'method 0',
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
-      }
-    end
-    let(:method_1) do
-      {
-        'id' => 1,
-        'name' => 'method_1',
-        'system_name' => 'method_1',
-        'friendly_name' => 'method 1',
-        'created_at' => '2014-08-07T11:15:10+02:00',
-        'updated_at' => '2014-08-07T11:15:13+02:00',
-        'links' => []
-      }
-    end
-
-    let(:target_hits_metric_id) { 10 }
+    let(:method_0) { instance_double(ThreeScaleToolbox::Entities::Method) }
+    let(:method_1) { instance_double(ThreeScaleToolbox::Entities::Method) }
+    let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
 
     subject { described_class.new(source: source, target: target) }
 
     before :each do
-      expect(source).to receive(:methods).and_return(source_methods)
-      expect(source).to receive(:hits).and_return('id' => 1)
-      expect(target).to receive(:methods).and_return(target_methods)
-      expect(target).to receive(:hits).and_return('id' => target_hits_metric_id)
+      allow(source).to receive(:methods).and_return(source_methods)
+      allow(source).to receive(:hits).and_return(hits_metric)
+      allow(target).to receive(:methods).and_return(target_methods)
+      allow(target).to receive(:hits).and_return(hits_metric)
+      allow(method_0).to receive(:system_name).and_return('method_0')
+      allow(method_0).to receive(:attrs).and_return('system_name' => 'method_0', 'friendly_name' => 'method_0')
+      allow(method_1).to receive(:system_name).and_return('method_1')
+      allow(hits_metric).to receive(:id).and_return('1')
     end
 
     context 'no missing methods' do
@@ -54,9 +37,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
       it 'it calls create_method method' do
         # original method has been filtered
         expect(method_class).to receive(:create).with(service: target,
-                                                      parent_id: target_hits_metric_id,
-                                                      attrs: hash_including('system_name' => method_0['system_name'],
-                                                                            'friendly_name' => method_0['friendly_name']))
+                                                      attrs: hash_including('system_name' => method_0.system_name))
         expect { subject.call }.to output(/created 1 missing methods/).to_stdout
       end
     end

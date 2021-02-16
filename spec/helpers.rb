@@ -39,12 +39,10 @@ module Helpers
     end
 
     def create_methods
-      hits_id = service.hits['id']
       3.times.each do
         method = { 'system_name' => Helpers.random_lowercase_name,
                    'friendly_name' => Helpers.random_lowercase_name }
-        ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: hits_id,
-                                                   attrs: method)
+        ThreeScaleToolbox::Entities::Method.create(service: service, attrs: method)
       end
     end
 
@@ -69,7 +67,7 @@ module Helpers
     end
 
     def create_application_plan_limits(plans)
-      hits_id = service.hits['id']
+      hits_id = service.hits.id
       plans.each do |plan|
         # limits (only limits for hits metric)
         %w[day week month year].each do |period|
@@ -80,7 +78,7 @@ module Helpers
     end
 
     def create_mapping_rules
-      hits_id = service.hits['id']
+      hits_id = service.hits.id
       # mapping rules (only mapping rules for hits metric)
       2.times.each do |idx|
         mapping_rule = {
@@ -167,7 +165,7 @@ module Helpers
     end
 
     def create_pricing_rules(plans)
-      hits_id = service.hits['id']
+      hits_id = service.hits.id
       plans.each do |plan|
         pricing_rule = { 'cost_per_unit' => '2.0', 'min' => 102, 'max' => 200 }
         plan.create_pricing_rule(hits_id, pricing_rule)
@@ -223,8 +221,7 @@ module Helpers
       2.times.each do
         method = { 'system_name' => Helpers.random_lowercase_name,
                    'friendly_name' => Helpers.random_lowercase_name }
-        ThreeScaleToolbox::Entities::BackendMethod.create(backend: backend, parent_id: hits_id,
-                                                          attrs: method)
+        ThreeScaleToolbox::Entities::BackendMethod.create(backend: backend, attrs: method)
       end
     end
 

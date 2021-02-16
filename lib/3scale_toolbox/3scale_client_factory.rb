@@ -23,9 +23,8 @@ module ThreeScaleToolbox
       end
 
       client = remote_client(**remote.merge(verify_ssl: verify_ssl))
-      return ProxyLogger.new(client) if verbose
-
-      client
+      client = ProxyLogger.new(client) if verbose
+      RemoteCache.new(client)
     end
 
     private

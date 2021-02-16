@@ -9,7 +9,6 @@ module ThreeScaleToolbox
           def run
             missing_metrics.each(&method(:create_metric))
             puts "created #{missing_metrics.size} missing metrics"
-            invalidate_target_metrics if missing_metrics.size.positive?
           end
 
           private
@@ -19,8 +18,8 @@ module ThreeScaleToolbox
           end
 
           def missing_metrics
-            @missing_metrics ||= ThreeScaleToolbox::Helper.array_difference(source_metrics, target_metrics) do |source, target|
-              source.system_name == target.system_name
+            @missing_metrics ||= ThreeScaleToolbox::Helper.array_difference(source_backend.metrics, target_backend.metrics) do |s_m, t_m|
+              s_m.system_name == t_m.system_name
             end
           end
         end

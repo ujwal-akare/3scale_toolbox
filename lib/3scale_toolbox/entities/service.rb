@@ -120,28 +120,40 @@ module ThreeScaleToolbox
         proxy_attrs
       end
 
+      # @api public
+      # @return [List]
       def metrics
-        # cache result to reuse
-        metric_and_method_list = metrics_and_methods
-        hits_metric_obj = hits_metric(metric_and_method_list)
-        hits_id = hits_metric_obj.fetch('id')
+        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |metric_attrs, method|
+          metric_attrs.fetch('id') == method.id
+        end
 
-        ThreeScaleToolbox::Helper.array_difference(metric_and_method_list, methods(hits_id)) do |metric, method|
-          ThreeScaleToolbox::Helper.compare_hashes(metric, method, %w[id])
+        metric_attr_list.map do |metric_attrs|
+          Metric.new(id: metric_attrs.fetch('id'), service: self, attrs: metric_attrs)
         end
       end
 
       def hits
-        hits_metric(metrics_and_methods)
+        metric_list = metrics_and_methods.map do |metric_attrs|
+          Metric.new(id: metric_attrs.fetch('id'), service: self, attrs: metric_attrs)
+        end
+        metric_list.find { |metric| metric.system_name == 'hits' }.tap do |hits_metric|
+          raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
+        end
       end
 
-      def methods(parent_metric_id)
-        service_methods = remote.list_methods id, parent_metric_id
-        if service_methods.respond_to?(:has_key?) && (errors = service_methods['errors'])
+      # @api public
+      # @return [List]
+      def methods
+        method_attr_list = remote.list_methods id, hits.id
+        if method_attr_list.respond_to?(:has_key?) && (errors = method_attr_list['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service methods not read', errors)
         end
 
-        service_methods
+        method_attr_list.map do |method_attrs|
+          Method.new(id: method_attrs.fetch('id'),
+                     service: self,
+                     attrs: method_attrs)
+        end
       end
 
       def metrics_and_methods
@@ -159,19 +171,24 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service plans not read', errors)
         end
 
-        service_plans
+        service_plans.map do |plan_attrs|
+          ApplicationPlan.new(id: plan_attrs.fetch('id'),
+                              service: self,
+                              attrs: plan_attrs)
+        end
       end
 
       def mapping_rules
-        remote.list_mapping_rules id
-      end
+        mr_list = remote.list_mapping_rules id
+        if mr_list.respond_to?(:has_key?) && (errors = mr_list['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service mapping rules not read', errors)
+        end
 
-      def delete_mapping_rule(rule_id)
-        remote.delete_mapping_rule(id, rule_id)
-      end
-
-      def create_mapping_rule(mapping_rule)
-        remote.create_mapping_rule id, mapping_rule
+        mr_list.map do |mr_attrs|
+          MappingRule.new(id: mr_attrs.fetch('id'),
+                          service: self,
+                          attrs: mr_attrs)
+        end
       end
 
       def update(svc_attrs)
@@ -288,6 +305,10 @@ module ThreeScaleToolbox
         end
       end
 
+      def create_mapping_rule(mr_attrs)
+        Entities::MappingRule.create(service: self, attrs: mr_attrs)
+      end
+
       def proxy_deploy
         proxy_attrs = remote.proxy_deploy id
         if proxy_attrs.respond_to?(:has_key?) && (errors = proxy_attrs['errors'])
@@ -302,13 +323,6 @@ module ThreeScaleToolbox
       end
 
       private
-
-      def hits_metric(metric_list)
-        hits_metric = metric_list.find { |metric| metric['system_name'] == 'hits' }
-        raise ThreeScaleToolbox::Error, 'missing hits metric' if hits_metric.nil?
-
-        hits_metric
-      end
 
       def fetch_attrs
         raise ThreeScaleToolbox::InvalidIdError if id.zero?

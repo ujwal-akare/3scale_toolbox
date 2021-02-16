@@ -20,7 +20,6 @@ RSpec.describe 'Method apply command' do
     )
   end
   let(:plan_ref) { "app_plan_#{random_lowercase_name}" }
-  let(:service_hits_id) { service.hits.fetch('id') }
 
   before :example do
     plan_attrs = { 'name' => 'old_name', 'system_name' => plan_ref }
@@ -28,9 +27,7 @@ RSpec.describe 'Method apply command' do
                                                         plan_attrs: plan_attrs)
     # add method
     method_attrs = { 'system_name' => method_ref, 'friendly_name' => 'method_01' }
-    method = ThreeScaleToolbox::Entities::Method.create(service: service,
-                                                        parent_id: service_hits_id,
-                                                        attrs: method_attrs)
+    method = ThreeScaleToolbox::Entities::Method.create(service: service, attrs: method_attrs)
     method.enable
   end
 
@@ -41,8 +38,7 @@ RSpec.describe 'Method apply command' do
   it 'method is applied' do
     expect(subject).to eq(0)
 
-    method = ThreeScaleToolbox::Entities::Method.find(service: service, parent_id: service_hits_id,
-                                                      ref: method_ref)
+    method = ThreeScaleToolbox::Entities::Method.find(service: service, ref: method_ref)
     expect(method).not_to be_nil
     expect(method.attrs.fetch('friendly_name')).to eq(new_method_name)
     expect(method.attrs.fetch('description')).to eq(new_method_descr)
@@ -50,7 +46,7 @@ RSpec.describe 'Method apply command' do
     expect(plan).not_to be_nil
     # check disabled
     eternity_zero_limits = plan.metric_limits(method.id).select do |limit|
-      limit > { 'period' => 'eternity', 'value' => 0 }
+      limit.attrs > { 'period' => 'eternity', 'value' => 0 }
     end
     expect(eternity_zero_limits).not_to be_empty
   end

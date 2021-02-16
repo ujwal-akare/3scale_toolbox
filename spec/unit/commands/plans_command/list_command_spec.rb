@@ -8,10 +8,17 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::List::ListSubcommand d
   let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:plan_a) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+  let(:plan_b) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+  let(:plan_c) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+
   subject { described_class.new(options, arguments, nil) }
 
   context '#run' do
     before :example do
+      allow(plan_a).to receive(:attrs).and_return({'system_name' => 'planA'})
+      allow(plan_b).to receive(:attrs).and_return({'system_name' => 'planB'})
+      allow(plan_c).to receive(:attrs).and_return({'system_name' => 'planC'})
       expect(service_class).to receive(:find).and_return(service)
       expect(subject).to receive(:threescale_client).and_return(remote)
     end
@@ -26,9 +33,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::List::ListSubcommand d
     end
 
     context 'when plan list is returned' do
-      let(:plan_a) { { 'name' => 'planA' } }
-      let(:plan_b) { { 'name' => 'planB' } }
-      let(:plan_c) { { 'name' => 'planC' } }
       let(:plans) { [plan_a, plan_b, plan_c] }
 
       before :example do

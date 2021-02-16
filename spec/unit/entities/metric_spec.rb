@@ -57,7 +57,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
     context 'metric is found by system_name' do
       let(:metric_ref) { metric_system_name }
-      let(:metrics) { [metric_attrs] }
+      let(:my_metric) { described_class.new(id: metric_id, service: service, attrs: metric_attrs) }
+      let(:metrics) { [my_metric] }
 
       before :example do
         expect(remote).to receive(:show_metric).and_raise(ThreeScale::API::HttpClient::NotFoundError.new(nil))
@@ -118,34 +119,29 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
     end
 
     context '#enable' do
-      let(:plans) do
-        [
-          { 'id' => 1 },
-          { 'id' => 2 },
-          { 'id' => 3 }
-        ]
-      end
-      let(:plan_1) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_2) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_3) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:limit_0_disabled) { { 'id' => 0, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
-      let(:limit_1) { { 'id' => 1, 'metric_id' => id, 'period' => 'eternity', 'value' => 100 } }
-      let(:limit_2_disabled) { { 'id' => 2, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
-      let(:limit_3) { { 'id' => 3, 'metric_id' => id, 'period' => 'year', 'value' => 0 } }
+      let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_2) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_3) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plans) { [ plan_1, plan_2, plan_3 ] }
+      let(:limit_0_disabled) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_1) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_2_disabled) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_3) { instance_double(ThreeScaleToolbox::Entities::Limit) }
 
       before :example do
         expect(service).to receive(:plans).and_return(plans)
-        expect(plan_class).to receive(:new).with(id: 1, service: service).and_return(plan_1)
-        expect(plan_class).to receive(:new).with(id: 2, service: service).and_return(plan_2)
-        expect(plan_class).to receive(:new).with(id: 3, service: service).and_return(plan_3)
         expect(plan_1).to receive(:metric_limits).with(id).and_return([limit_0_disabled])
         expect(plan_2).to receive(:metric_limits).with(id).and_return([limit_1])
         expect(plan_3).to receive(:metric_limits).with(id).and_return([limit_2_disabled, limit_3])
+        allow(limit_0_disabled).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 0, 'links' => [] })
+        allow(limit_1).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 100, 'links' => [] })
+        allow(limit_2_disabled).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 0, 'links' => [] })
+        allow(limit_3).to receive(:attrs).and_return({ 'period' => 'year', 'value' => 0, 'links' => [] })
       end
 
       it 'eternity zero limits deleted' do
-        expect(plan_1).to receive(:delete_limit).with(id, limit_0_disabled.fetch('id'))
-        expect(plan_3).to receive(:delete_limit).with(id, limit_2_disabled.fetch('id'))
+        expect(limit_0_disabled).to receive(:delete)
+        expect(limit_2_disabled).to receive(:delete)
 
         subject.enable
       end
@@ -153,44 +149,54 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
     context '#disable' do
       let(:zero_eternity_limit_attrs) { { 'period' => 'eternity', 'value' => 0 } }
-      let(:plans) do
-        [
-          { 'id' => 0 },
-          { 'id' => 1 },
-          { 'id' => 2 }
-        ]
-      end
-      let(:plan_0) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_1) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
-      let(:plan_2) { instance_double('ThreeScaleToolbox::Entities::ApplicationPlan') }
+      let(:plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plan_2) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
+      let(:plans) { [ plan_0, plan_1, plan_2 ] }
+      let(:limit_0) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_1) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_2) { instance_double(ThreeScaleToolbox::Entities::Limit) }
 
       before :example do
         expect(service).to receive(:plans).and_return(plans)
-        expect(plan_class).to receive(:new).with(id: 0, service: service).and_return(plan_0)
-        expect(plan_class).to receive(:new).with(id: 1, service: service).and_return(plan_1)
-        expect(plan_class).to receive(:new).with(id: 2, service: service).and_return(plan_2)
         expect(plan_0).to receive(:metric_limits).with(id).and_return([limit_0])
         expect(plan_1).to receive(:metric_limits).with(id).and_return([limit_1])
         expect(plan_2).to receive(:metric_limits).with(id).and_return([limit_2])
       end
 
       context 'when eternity non zero limits exist' do
-        let(:limit_0) { { 'id' => 0, 'metric_id' => id, 'period' => 'eternity', 'value' => 1000 } }
-        let(:limit_1) { { 'id' => 1, 'metric_id' => id, 'period' => 'eternity', 'value' => 2000 } }
-        let(:limit_2) { { 'id' => 2, 'metric_id' => id, 'period' => 'eternity', 'value' => 1000 } }
+        before :example do
+          allow(limit_0).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 1000 })
+          allow(limit_0).to receive(:period).and_return('eternity')
+          allow(limit_0).to receive(:value).and_return(1000)
+          allow(limit_1).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 2000 })
+          allow(limit_1).to receive(:period).and_return('eternity')
+          allow(limit_1).to receive(:value).and_return(2000)
+          allow(limit_2).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 1000 })
+          allow(limit_2).to receive(:period).and_return('eternity')
+          allow(limit_2).to receive(:value).and_return(1000)
+        end
 
         it 'eternity non zero limits updated' do
-          expect(plan_0).to receive(:update_limit).with(id, limit_0.fetch('id'), zero_eternity_limit_attrs)
-          expect(plan_1).to receive(:update_limit).with(id, limit_1.fetch('id'), zero_eternity_limit_attrs)
-          expect(plan_2).to receive(:update_limit).with(id, limit_2.fetch('id'), zero_eternity_limit_attrs)
+          expect(limit_0).to receive(:update).with(zero_eternity_limit_attrs)
+          expect(limit_1).to receive(:update).with(zero_eternity_limit_attrs)
+          expect(limit_2).to receive(:update).with(zero_eternity_limit_attrs)
           subject.disable
         end
       end
 
       context 'when no eternity limits exist' do
-        let(:limit_0) { { 'id' => 0, 'metric_id' => id, 'period' => 'year', 'value' => 1000 } }
-        let(:limit_1) { { 'id' => 1, 'metric_id' => id, 'period' => 'month', 'value' => 2000 } }
-        let(:limit_2) { { 'id' => 2, 'metric_id' => id, 'period' => 'day', 'value' => 1000 } }
+        before :example do
+          allow(limit_0).to receive(:attrs).and_return({ 'period' => 'year', 'value' => 1000 })
+          allow(limit_0).to receive(:period).and_return('year')
+          allow(limit_0).to receive(:value).and_return(1000)
+          allow(limit_1).to receive(:attrs).and_return({ 'period' => 'month', 'value' => 2000 })
+          allow(limit_1).to receive(:period).and_return('month')
+          allow(limit_1).to receive(:value).and_return(2000)
+          allow(limit_2).to receive(:attrs).and_return({ 'period' => 'day', 'value' => 1000 })
+          allow(limit_2).to receive(:period).and_return('day')
+          allow(limit_2).to receive(:value).and_return(1000)
+        end
 
         it 'eternity zero limits created' do
           expect(plan_0).to receive(:create_limit).with(id, zero_eternity_limit_attrs)
@@ -201,9 +207,17 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
       end
 
       context 'when eternity zero limit exist' do
-        let(:limit_0) { { 'id' => 0, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
-        let(:limit_1) { { 'id' => 1, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
-        let(:limit_2) { { 'id' => 2, 'metric_id' => id, 'period' => 'eternity', 'value' => 0 } }
+        before :example do
+          allow(limit_0).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 0 })
+          allow(limit_0).to receive(:period).and_return('eternity')
+          allow(limit_0).to receive(:value).and_return(0)
+          allow(limit_1).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 2000 })
+          allow(limit_1).to receive(:period).and_return('eternity')
+          allow(limit_1).to receive(:value).and_return(0)
+          allow(limit_2).to receive(:attrs).and_return({ 'period' => 'eternity', 'value' => 1000 })
+          allow(limit_2).to receive(:period).and_return('eternity')
+          allow(limit_2).to receive(:value).and_return(0)
+        end
 
         it 'noop' do
           subject.disable

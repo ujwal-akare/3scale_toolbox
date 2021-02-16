@@ -19,13 +19,11 @@ RSpec.describe 'Application Plan create command' do
       remote: api3scale_client, service_params: service_attrs
     )
   end
-  let(:service_hits_id) { service.hits.fetch('id') }
 
   before :example do
     # add method
     method_attrs = { 'system_name' => 'method_01', 'friendly_name' => 'method_01' }
-    ThreeScaleToolbox::Entities::Method.create(service: service, parent_id: service_hits_id,
-                                               attrs: method_attrs)
+    ThreeScaleToolbox::Entities::Method.create(service: service, attrs: method_attrs)
   end
 
   after :example do
@@ -44,7 +42,7 @@ RSpec.describe 'Application Plan create command' do
     expect(plan.published?).to be_truthy
     # check disabled
     zero_eternity_limit_attrs = { 'period' => 'eternity', 'value' => 0 }
-    eternity_zero_limits = plan.limits.select { |limit| zero_eternity_limit_attrs < limit }
+    eternity_zero_limits = plan.limits.select { |limit| zero_eternity_limit_attrs < limit.attrs }
     expect(eternity_zero_limits).not_to be_empty
   end
 end
