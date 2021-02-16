@@ -203,7 +203,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
   context 'instance method' do
     let(:backend_id) { 99 }
     let(:backend) { described_class.new(id: backend_id, remote: remote, attrs: attrs) }
-    let(:attrs) { { 'id' => backend_id, 'name' => 'some name' } }
+    let(:attrs) do
+      {
+        'id' => backend_id, 'name' => 'some name', 'system_name' => 'backend99',
+        'private_endpoint' => 'https://example.com', 'description' => 'some descr'
+      }
+    end
 
     context '#attrs' do
       subject { backend.attrs }
@@ -446,6 +451,57 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
         it 'are not equal' do
           expect(backend == other_backend).to be_falsy
         end
+      end
+    end
+
+    context '#to_cr' do
+      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
+      let(:backend_method) { { 'id' => 2, 'system_name' => 'backend_method' } }
+
+      subject { backend.to_cr }
+
+      before :each do
+        allow(remote).to receive(:list_backend_mapping_rules).and_return([])
+        allow(remote).to receive(:list_backend_metrics).and_return([hits_metric] )
+        allow(remote).to receive(:list_backend_methods).and_return([backend_method])
+      end
+
+      it 'expected apiversion' do
+        expect(subject).to include('apiVersion' => 'capabilities.3scale.net/v1beta1')
+      end
+
+      it 'expected kind' do
+        expect(subject).to include('kind' => 'Backend')
+      end
+
+      it 'expected name' do
+        expect(subject.fetch('spec')).to include('name' => 'some name')
+      end
+
+      it 'expected systemName' do
+        expect(subject.fetch('spec')).to include('systemName' => 'backend99')
+      end
+
+      it 'expected privateBaseURL' do
+        expect(subject.fetch('spec')).to include('privateBaseURL' => 'https://example.com')
+      end
+
+      it 'expected description' do
+        expect(subject.fetch('spec')).to include('description' => 'some descr')
+      end
+
+      it 'mappingRules included' do
+        expect(subject.fetch('spec')).to include('mappingRules' => [])
+      end
+
+      it 'metrics included' do
+        expect(subject.fetch('spec').has_key? 'metrics').to be_truthy
+        expect(subject.fetch('spec').fetch('metrics').has_key? 'hits').to be_truthy
+      end
+
+      it 'methods included' do
+        expect(subject.fetch('spec').has_key? 'methods').to be_truthy
+        expect(subject.fetch('spec').fetch('methods').has_key? 'backend_method').to be_truthy
       end
     end
   end

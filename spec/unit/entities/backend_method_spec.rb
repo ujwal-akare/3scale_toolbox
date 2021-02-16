@@ -118,7 +118,8 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
       {
         'id' => backend_method_id,
         'friendly_name' => friendly_name,
-        'system_name' => "#{system_name}.#{backend_id}"
+        'system_name' => "#{system_name}.#{backend_id}",
+        'description' => 'some descr'
       }
     end
     let(:backend_method) { described_class.new(id: backend_method_id, backend: backend, attrs: attrs) }
@@ -219,6 +220,18 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMethod do
 
       it 'remote call done' do
         is_expected.to be_truthy
+      end
+    end
+
+    context '#to_cr' do
+      subject { backend_method.to_cr }
+
+      it 'expected friendlyName' do
+        expect(subject).to include('friendlyName' => 'some_friendly_name')
+      end
+
+      it 'expected description' do
+        expect(subject).to include('description' => 'some descr')
       end
     end
   end

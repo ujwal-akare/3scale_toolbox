@@ -114,7 +114,9 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMetric do
       {
         'id' => backend_metric_id,
         'friendly_name' => friendly_name,
-        'system_name' => "#{system_name}.#{backend_id}"
+        'system_name' => "#{system_name}.#{backend_id}",
+        'unit' => '1',
+        'description' => 'some descr'
       }
     end
     let(:backend_metric) { described_class.new(id: backend_metric_id, backend: backend, attrs: attrs) }
@@ -215,6 +217,22 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMetric do
 
       it 'remote call done' do
         is_expected.to be_truthy
+      end
+    end
+
+    context '#to_cr' do
+      subject { backend_metric.to_cr }
+
+      it 'expected friendlyName' do
+        expect(subject).to include('friendlyName' => 'some_friendly_name')
+      end
+
+      it 'expected description' do
+        expect(subject).to include('description' => 'some descr')
+      end
+
+      it 'expected unit' do
+        expect(subject).to include('unit' => '1')
       end
     end
   end
