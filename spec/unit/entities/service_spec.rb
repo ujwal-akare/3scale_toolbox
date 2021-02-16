@@ -261,8 +261,9 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       ]
     end
     let(:proxy) { { 'id' => 201 } }
+    let(:attrs) { nil }
 
-    subject { described_class.new(id: id, remote: remote) }
+    subject { described_class.new(id: id, remote: remote, attrs: attrs) }
 
     context '#attrs' do
       it 'calls show_service method' do
@@ -668,6 +669,388 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
       it 'calls list_backend_usages method' do
         expect(remote).to receive(:list_backend_usages).with(id).and_return([])
         subject.backend_usage_list
+      end
+    end
+
+    context '#to_cr' do
+      let(:attrs) do
+        {
+          'id' => id, 'name' => 'some name', 'system_name' => 'myservice',
+          'description' => 'some descr', 'deployment_option' => 'hosted', 'backend_version' => '1'
+        }
+      end
+      let(:plan_attr_list) do
+        [
+          { 'id' => 1, 'system_name' => 'plan01' },
+          { 'id' => 2, 'system_name' => 'plan02' },
+          { 'id' => 3, 'system_name' => 'plan03' }
+        ]
+      end
+      let(:plan_class) { class_double(ThreeScaleToolbox::Entities::ApplicationPlan).as_stubbed_const }
+      let(:plans) do
+        plan_attr_list.map do |plan_attrs|
+          instance_double(ThreeScaleToolbox::Entities::ApplicationPlan, plan_attrs.fetch('system_name'))
+        end
+      end
+      let(:backend_usage_attr_list) { [ { 'id' => 1 }, { 'id' => 2 }, { 'id' => 3 } ] }
+      let(:backend_usage_class) { class_double(ThreeScaleToolbox::Entities::BackendUsage).as_stubbed_const }
+      let(:backends) do
+        3.times.map do |idx|
+          instance_double(ThreeScaleToolbox::Entities::Backend, idx.to_s)
+        end
+      end
+      let(:backend_usages) do
+        backend_usage_attr_list.map do |bu_attrs|
+          instance_double(ThreeScaleToolbox::Entities::BackendUsage, bu_attrs.fetch('id').to_s)
+        end
+      end
+      let(:policy_chain_item) { double('policy_chain_item') }
+      let(:policy_chain) { [policy_chain_item] }
+      let(:proxy_data) { {} }
+      let(:gateway_response) do
+        {
+          'error_status_auth_failed' => '1', 'error_headers_auth_failed' => '2',
+          'error_auth_failed' => '3', 'error_status_auth_missing' => '4',
+          'error_headers_auth_missing' => '5', 'error_auth_missing' => '6',
+          'error_status_no_match' => '7', 'error_headers_no_match' => '8',
+          'error_no_match' => '9', 'error_status_limits_exceeded' => '10',
+          'error_headers_limits_exceeded' => '11', 'error_limits_exceeded' => '12'
+        }
+      end
+      let(:oidc_data) do
+        {
+          'standard_flow_enabled' => false,
+          'implicit_flow_enabled' => true,
+          'service_accounts_enabled' => true,
+          'direct_access_grants_enabled' => true
+        }
+      end
+      let(:proxy_data) do
+        {
+          'auth_user_key' => 'my_key', 'credentials_location' => 'mycredentials',
+          'hostname_rewrite' => 'my_hostname', 'secret_token' => 'my_secret_token',
+          'auth_app_id' => 'my_app_id', 'auth_app_key' => 'my_app_key',
+          'oidc_issuer_type' => 'my_oidc_issuer_type', 'oidc_issuer_endpoint' => 'my_oidc_endpoint',
+          'jwt_claim_with_client_id' => 'my_jwt_client_id', 'jwt_claim_with_client_id_type' => 'my_jwt_type'
+        }.merge(gateway_response)
+      end
+      subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr }
+
+      before :each do
+        plans.each_with_index do |plan, idx|
+          allow(plan_class).to receive(:new).with(hash_including(id: idx+1)).and_return(plan)
+          allow(plan).to receive(:id).and_return(idx+1)
+          allow(plan).to receive(:system_name).and_return(plan_attr_list[idx].fetch('system_name'))
+          allow(plan).to receive(:to_cr).and_return({})
+        end
+
+        backend_usages.each_with_index do |bu, idx|
+          allow(backend_usage_class).to receive(:new).with(hash_including(id: idx+1)).and_return(bu)
+          allow(bu).to receive(:backend).and_return(backends[idx])
+          allow(bu).to receive(:to_cr).and_return({})
+          allow(backends[idx]).to receive(:system_name).and_return("backend#{idx}")
+        end
+
+        allow(remote).to receive(:list_mapping_rules).and_return([])
+        allow(remote).to receive(:list_metrics).and_return(metrics + methods)
+        allow(remote).to receive(:list_methods).and_return(methods)
+        allow(remote).to receive(:show_policies).and_return(policy_chain)
+        allow(remote).to receive(:list_service_application_plans).and_return(plan_attr_list)
+        allow(remote).to receive(:list_backend_usages).and_return(backend_usage_attr_list)
+        allow(remote).to receive(:show_proxy).and_return(proxy_data)
+      end
+
+      it 'expected apiversion' do
+        expect(subject).to include('apiVersion' => 'capabilities.3scale.net/v1beta1')
+      end
+
+      it 'expected kind' do
+        expect(subject).to include('kind' => 'Product')
+      end
+
+      it 'expected name' do
+        expect(subject.fetch('spec')).to include('name' => 'some name')
+      end
+
+      it 'expected systemName' do
+        expect(subject.fetch('spec')).to include('systemName' => 'myservice')
+      end
+
+      it 'expected description' do
+        expect(subject.fetch('spec')).to include('description' => 'some descr')
+      end
+
+      it 'mappingRules included' do
+        expect(subject.fetch('spec')).to include('mappingRules' => [])
+      end
+
+      it 'metrics included' do
+        expect(subject.fetch('spec').has_key? 'metrics').to be_truthy
+        expect(subject.fetch('spec').fetch('metrics').keys).to match_array(metrics.map { |m|  m.fetch('system_name') })
+      end
+
+      it 'methods included' do
+        expect(subject.fetch('spec').has_key? 'methods').to be_truthy
+        expect(subject.fetch('spec').fetch('methods').keys).to match_array(methods.map { |m|  m.fetch('system_name') })
+      end
+
+      it 'policies included' do
+        expect(subject.fetch('spec')).to include('policies' => policy_chain)
+      end
+
+      it 'applicationPlans included' do
+        expect(subject.fetch('spec').has_key? 'applicationPlans').to be_truthy
+        expect(subject.fetch('spec').fetch('applicationPlans').keys).to match_array(plans.map(&:system_name))
+      end
+
+      it 'backendUsages included' do
+        expect(subject.fetch('spec').has_key? 'backendUsages').to be_truthy
+        expect(subject.fetch('spec').fetch('backendUsages').keys).to match_array(backends.map(&:system_name))
+      end
+
+      it 'deployment included' do
+        expect(subject.fetch('spec').has_key? 'deployment').to be_truthy
+      end
+
+      context 'deployment hosted' do
+        let(:attrs) do
+          {
+            'id' => id, 'name' => 'some name', 'system_name' => 'myservice', 'description' => 'some descr',
+            'deployment_option' => 'hosted', 'backend_version' => '1'
+          }
+        end
+        let(:proxy_data) { {} }
+
+        subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr.dig('spec', 'deployment') }
+
+        it 'apicastHosted included' do
+          expect(subject.has_key? 'apicastHosted').to be_truthy
+        end
+
+        it 'authentication included' do
+          expect(subject.fetch('apicastHosted').has_key? 'authentication').to be_truthy
+        end
+      end
+
+      context 'deployment self managed' do
+        let(:attrs) do
+          {
+            'id' => id, 'name' => 'some name', 'system_name' => 'myservice', 'description' => 'some descr',
+            'deployment_option' => 'self_managed', 'backend_version' => '1'
+          }
+        end
+        let(:proxy_data) { { 'endpoint' => 'https://example.com', 'sandbox_endpoint' => 'https://staging.example.com' } }
+
+        subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr.dig('spec', 'deployment') }
+
+        it 'apicastSelfManaged included' do
+          expect(subject.has_key? 'apicastSelfManaged').to be_truthy
+        end
+
+        it 'stagingPublicBaseURL included' do
+          expect(subject.fetch('apicastSelfManaged')).to include('stagingPublicBaseURL' => 'https://staging.example.com')
+        end
+
+        it 'productionPublicBaseURL included' do
+          expect(subject.fetch('apicastSelfManaged')).to include('productionPublicBaseURL' => 'https://example.com')
+        end
+
+        it 'authentication included' do
+          expect(subject.fetch('apicastSelfManaged').has_key? 'authentication').to be_truthy
+        end
+      end
+
+      context 'deployment unknown' do
+        let(:attrs) do
+          {
+            'id' => id, 'name' => 'some name', 'system_name' => 'myservice', 'description' => 'some descr',
+            'deployment_option' => 'unknown', 'backend_version' => '1'
+          }
+        end
+        let(:proxy_data) { {} }
+
+        subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr.dig('spec', 'deployment') }
+
+        it 'apicastSelfManaged included' do
+          expect { subject }.to raise_error(ThreeScaleToolbox::Error, /Unknown deployment option/)
+        end
+      end
+
+      context 'authentication userkey' do
+        let(:attrs) do
+          {
+            'id' => id, 'name' => 'some name', 'system_name' => 'myservice', 'description' => 'some descr',
+            'deployment_option' => 'hosted', 'backend_version' => '1'
+          }
+        end
+
+        let(:expected_gateway_response) do
+          {
+            'errorStatusAuthFailed' => gateway_response['error_status_auth_failed'],
+            'errorHeadersAuthFailed' => gateway_response['error_headers_auth_failed'],
+            'errorAuthFailed' => gateway_response['error_auth_failed'],
+            'errorStatusAuthMissing' => gateway_response['error_status_auth_missing'],
+            'errorHeadersAuthMissing' => gateway_response['error_headers_auth_missing'],
+            'errorAuthMissing' => gateway_response['error_auth_missing'],
+            'errorStatusNoMatch' => gateway_response['error_status_no_match'],
+            'errorHeadersNoMatch' => gateway_response['error_headers_no_match'],
+            'errorNoMatch' => gateway_response['error_no_match'],
+            'errorStatusLimitsExceeded' => gateway_response['error_status_limits_exceeded'],
+            'errorHeadersLimitsExceeded' => gateway_response['error_headers_limits_exceeded'],
+            'errorLimitsExceeded' => gateway_response['error_limits_exceeded']
+          }
+        end
+
+        subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr.dig('spec', 'deployment', 'apicastHosted', 'authentication') }
+
+        it 'userkey included' do
+          expect(subject.has_key? 'userkey').to be_truthy
+        end
+
+        it 'authUserKey included' do
+          expect(subject.fetch('userkey')).to include('authUserKey' => 'my_key')
+        end
+
+        it 'credentials included' do
+          expect(subject.fetch('userkey')).to include('credentials' => 'mycredentials')
+        end
+
+        it 'security included' do
+          expect(subject.fetch('userkey')).to include('security' => { 'hostHeader' => 'my_hostname', 'secretToken' => 'my_secret_token' } )
+        end
+
+        it 'gateway response included' do
+          expect(subject.fetch('userkey')).to include('gatewayResponse' => expected_gateway_response )
+        end
+      end
+
+      context 'authentication appKeyAppID' do
+        let(:attrs) do
+          {
+            'id' => id, 'name' => 'some name', 'system_name' => 'myservice', 'description' => 'some descr',
+            'deployment_option' => 'hosted', 'backend_version' => '2'
+          }
+        end
+
+        let(:expected_gateway_response) do
+          {
+            'errorStatusAuthFailed' => gateway_response['error_status_auth_failed'],
+            'errorHeadersAuthFailed' => gateway_response['error_headers_auth_failed'],
+            'errorAuthFailed' => gateway_response['error_auth_failed'],
+            'errorStatusAuthMissing' => gateway_response['error_status_auth_missing'],
+            'errorHeadersAuthMissing' => gateway_response['error_headers_auth_missing'],
+            'errorAuthMissing' => gateway_response['error_auth_missing'],
+            'errorStatusNoMatch' => gateway_response['error_status_no_match'],
+            'errorHeadersNoMatch' => gateway_response['error_headers_no_match'],
+            'errorNoMatch' => gateway_response['error_no_match'],
+            'errorStatusLimitsExceeded' => gateway_response['error_status_limits_exceeded'],
+            'errorHeadersLimitsExceeded' => gateway_response['error_headers_limits_exceeded'],
+            'errorLimitsExceeded' => gateway_response['error_limits_exceeded']
+          }
+        end
+
+        subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr.dig('spec', 'deployment', 'apicastHosted', 'authentication') }
+
+        it 'appKeyAppID included' do
+          expect(subject.has_key? 'appKeyAppID').to be_truthy
+        end
+
+        it 'appID included' do
+          expect(subject.fetch('appKeyAppID')).to include('appID' => 'my_app_id')
+        end
+
+        it 'appKey included' do
+          expect(subject.fetch('appKeyAppID')).to include('appKey' => 'my_app_key')
+        end
+
+        it 'credentials included' do
+          expect(subject.fetch('appKeyAppID')).to include('credentials' => 'mycredentials')
+        end
+
+        it 'security included' do
+          expect(subject.fetch('appKeyAppID')).to include('security' => { 'hostHeader' => 'my_hostname', 'secretToken' => 'my_secret_token' } )
+        end
+
+        it 'gateway response included' do
+          expect(subject.fetch('appKeyAppID')).to include('gatewayResponse' => expected_gateway_response )
+        end
+      end
+
+      context 'authentication oidc' do
+        let(:attrs) do
+          {
+            'id' => id, 'name' => 'some name', 'system_name' => 'myservice', 'description' => 'some descr',
+            'deployment_option' => 'hosted', 'backend_version' => 'oidc'
+          }
+        end
+
+        let(:expected_oidc_flow) do
+          {
+            'standardFlowEnabled' => oidc_data['standard_flow_enabled'],
+            'implicitFlowEnabled' => oidc_data['implicit_flow_enabled'],
+            'serviceAccountsEnabled' => oidc_data['service_accounts_enabled'],
+            'directAccessGrantsEnabled' => oidc_data['direct_access_grants_enabled']
+          }
+        end
+
+        let(:expected_gateway_response) do
+          {
+            'errorStatusAuthFailed' => gateway_response['error_status_auth_failed'],
+            'errorHeadersAuthFailed' => gateway_response['error_headers_auth_failed'],
+            'errorAuthFailed' => gateway_response['error_auth_failed'],
+            'errorStatusAuthMissing' => gateway_response['error_status_auth_missing'],
+            'errorHeadersAuthMissing' => gateway_response['error_headers_auth_missing'],
+            'errorAuthMissing' => gateway_response['error_auth_missing'],
+            'errorStatusNoMatch' => gateway_response['error_status_no_match'],
+            'errorHeadersNoMatch' => gateway_response['error_headers_no_match'],
+            'errorNoMatch' => gateway_response['error_no_match'],
+            'errorStatusLimitsExceeded' => gateway_response['error_status_limits_exceeded'],
+            'errorHeadersLimitsExceeded' => gateway_response['error_headers_limits_exceeded'],
+            'errorLimitsExceeded' => gateway_response['error_limits_exceeded']
+          }
+        end
+
+        before :example do
+          allow(remote).to receive(:show_oidc).and_return(oidc_data)
+        end
+
+        subject { described_class.new(id: id, remote: remote, attrs: attrs).to_cr.dig('spec', 'deployment', 'apicastHosted', 'authentication') }
+
+        it 'oidc included' do
+          expect(subject.has_key? 'oidc').to be_truthy
+        end
+
+        it 'issuerType included' do
+          expect(subject.fetch('oidc')).to include('issuerType' => 'my_oidc_issuer_type')
+        end
+
+        it 'issuerEndpoint included' do
+          expect(subject.fetch('oidc')).to include('issuerEndpoint' => 'my_oidc_endpoint')
+        end
+
+        it 'jwtClaimWithClientID included' do
+          expect(subject.fetch('oidc')).to include('jwtClaimWithClientID' => 'my_jwt_client_id')
+        end
+
+        it 'jwtClaimWithClientIDType included' do
+          expect(subject.fetch('oidc')).to include('jwtClaimWithClientIDType' => 'my_jwt_type')
+        end
+
+        it 'credentials included' do
+          expect(subject.fetch('oidc')).to include('credentials' => 'mycredentials')
+        end
+
+        it 'security included' do
+          expect(subject.fetch('oidc')).to include('security' => { 'hostHeader' => 'my_hostname', 'secretToken' => 'my_secret_token' } )
+        end
+
+        it 'gateway response included' do
+          expect(subject.fetch('oidc')).to include('gatewayResponse' => expected_gateway_response )
+        end
+
+        it 'authenticationFlow included' do
+          expect(subject.fetch('oidc')).to include('authenticationFlow' => expected_oidc_flow)
+        end
       end
     end
   end

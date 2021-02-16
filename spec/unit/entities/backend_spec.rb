@@ -1,5 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Entities::Backend do
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
+  let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
 
   context 'Backend.create' do
     let(:attrs) { { 'name' => 'some name' } }
@@ -233,7 +234,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
     end
 
     context '#metrics' do
-      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
       let(:metrics) do
         [
           { 'id' => 10, 'system_name' => 'metric_10' },
@@ -272,7 +272,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       end
 
       context 'found' do
-        let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
         let(:metrics) do
           [
             { 'id' => 10, 'system_name' => 'metric_10' },
@@ -292,7 +291,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
     end
 
     context '#methods' do
-      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
       let(:metrics) do
         [
           { 'id' => 10, 'system_name' => 'metric_10' },
@@ -455,15 +453,26 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
     end
 
     context '#to_cr' do
-      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
-      let(:backend_method) { { 'id' => 2, 'system_name' => 'backend_method' } }
+      let(:metrics) do
+        [
+          { 'id' => 10, 'system_name' => 'metric_10' },
+          hits_metric,
+          { 'id' => 20, 'system_name' => 'metric_20' }
+        ]
+      end
+      let(:methods) do
+        [
+          { 'id' => 101, 'system_name' => 'method_101', 'parent_id' => 1 },
+          { 'id' => 201, 'system_name' => 'method_201', 'parent_id' => 1 }
+        ]
+      end
 
       subject { backend.to_cr }
 
       before :each do
         allow(remote).to receive(:list_backend_mapping_rules).and_return([])
-        allow(remote).to receive(:list_backend_metrics).and_return([hits_metric] )
-        allow(remote).to receive(:list_backend_methods).and_return([backend_method])
+        allow(remote).to receive(:list_backend_metrics).and_return(metrics + methods)
+        allow(remote).to receive(:list_backend_methods).and_return(methods)
       end
 
       it 'expected apiversion' do
@@ -496,12 +505,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
 
       it 'metrics included' do
         expect(subject.fetch('spec').has_key? 'metrics').to be_truthy
-        expect(subject.fetch('spec').fetch('metrics').has_key? 'hits').to be_truthy
+        expect(subject.fetch('spec').fetch('metrics').keys).to match_array(metrics.map { |m|  m.fetch('system_name') })
       end
 
       it 'methods included' do
         expect(subject.fetch('spec').has_key? 'methods').to be_truthy
-        expect(subject.fetch('spec').fetch('methods').has_key? 'backend_method').to be_truthy
+        expect(subject.fetch('spec').fetch('methods').keys).to match_array(methods.map { |m|  m.fetch('system_name') })
       end
     end
   end
