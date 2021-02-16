@@ -105,4 +105,11 @@ RSpec.describe ThreeScaleToolbox::CRD::BackendParser do
     expect(subject.mapping_rules[0].delta).to eq 1
     expect(subject.mapping_rules[0].last).to be_truthy
   end
+
+  it 'metric index correct' do
+    expect(subject.metrics_index.keys).to contain_exactly('hits', 'mybackendmetric01', 'mybackendmethod01')
+    expect(subject.metrics_index.fetch('hits').friendly_name).to eq 'Hits'
+    expect(subject.metrics_index.fetch('mybackendmetric01').friendly_name).to eq 'my backendmetric01'
+    expect(subject.metrics_index.fetch('mybackendmethod01').friendly_name).to eq 'my backendmethod01'
+  end
 end
