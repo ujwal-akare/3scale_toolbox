@@ -63,6 +63,8 @@ module ThreeScaleToolbox
       end
 
       def backend_metric_link_parser(link)
+        return if link.nil?
+
         link.match(/admin\/api\/backend_apis\/(\d+)\/metrics/) { |m| m.captures[0] }
       end
     end

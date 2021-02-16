@@ -119,4 +119,29 @@ RSpec.describe ThreeScaleToolbox::Helper do
       end
     end
   end
+
+  context '#backend_metric_link_parser' do
+    subject { described_class.backend_metric_link_parser(link) }
+
+    context 'on good link' do
+      let(:link) { 'https://example.com/admin/api/backend_apis/3545/metrics/948744.json' }
+      it 'captures backend' do
+        expect(subject).to eq '3545'
+      end
+    end
+
+    context 'on unexpected link' do
+      let(:link) { 'https://example.com/metrics/948744.json' }
+      it 'returns nil' do
+        expect(subject).to be_nil
+      end
+    end
+
+    context 'on nil link' do
+      let(:link) { nil }
+      it 'returns nil' do
+        expect(subject).to be_nil
+      end
+    end
+  end
 end
