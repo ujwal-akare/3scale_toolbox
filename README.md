@@ -13,6 +13,7 @@
    * [Copy service](docs/copy-service.md)
    * [Copy backend](docs/copy-backend.md)
    * [Copy product](docs/copy-product.md)
+   * [Export/Import product](docs/export-import-product.md)
    * [Import from CSV](docs/import-csv.md)
    * [Import from OpenAPI definition](docs/openapi.md)
    * [Export/Import Application Plan](docs/export-import-app-plan.md)
