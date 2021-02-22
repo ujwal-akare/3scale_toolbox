@@ -1,12 +1,13 @@
 module ThreeScaleToolbox
   module Entities
     class Method
+      include CRD::MethodSerializer
+
       class << self
         def create(service:, attrs:)
           method_attrs = service.remote.create_method service.id, service.hits.id, attrs
           if (errors = method_attrs['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new('Method has not been created', errors)
-
           end
 
           new(id: method_attrs.fetch('id'), service: service, attrs: method_attrs)
@@ -38,7 +39,15 @@ module ThreeScaleToolbox
       end
 
       def system_name
-        attrs['system_name'] 
+        attrs['system_name']
+      end
+
+      def friendly_name
+        attrs['friendly_name']
+      end
+
+      def description
+        attrs['description']
       end
 
       def disable
@@ -64,6 +73,7 @@ module ThreeScaleToolbox
       def delete
         remote.delete_method service.id, hits_id, id
       end
+
 
       private
 

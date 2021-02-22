@@ -5,8 +5,6 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
     let(:source_plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
     let(:target_plan_0) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
     let(:target_plan_1) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
-    let(:source_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
-    let(:target_metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
     let(:source_metric_id) { 1 }
     let(:target_metric_id) { 2 }
     let(:pricing_rule_0) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
@@ -42,15 +40,17 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
         'metric_id' => target_metric_id + 1,
       }
     end
+    let(:metrics_mapping) { { source_metric_id => target_metric_id } }
     let(:source_plans) { [] }
-    let(:source_metrics) { [] }
-    let(:target_metrics) { [] }
     let(:source_pricingrules) { [] }
     let(:target_pricingrules) { [] }
 
-    subject { described_class.new(source: source, target: target) }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
+
+    subject { described_class.new(task_context) }
 
     before :each do
+      allow(source).to receive(:metrics_mapping).and_return(metrics_mapping)
       expect(source).to receive(:plans).and_return(source_plans)
       expect(target).to receive(:plans).and_return(target_plans)
       allow(source_plan_0).to receive(:id).and_return(1)
@@ -62,22 +62,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       allow(target_plan_1).to receive(:id).and_return(2)
       allow(target_plan_1).to receive(:system_name).and_return('plan_1')
       allow(target_plan_1).to receive(:pricing_rules).and_return(target_pricingrules)
-      allow(source_metric_0).to receive(:id).and_return(source_metric_id)
-      allow(source_metric_0).to receive(:system_name).and_return('metric_0')
-      allow(target_metric_0).to receive(:id).and_return(target_metric_id)
-      allow(target_metric_0).to receive(:system_name).and_return('metric_0')
       allow(pricing_rule_0).to receive(:attrs).and_return(pricing_rule_0_attrs)
       allow(pricing_rule_1).to receive(:attrs).and_return(pricing_rule_1_attrs)
       allow(pricing_rule_2).to receive(:attrs).and_return(pricing_rule_2_attrs)
-      %w[cost_per_unit metric_id min max].each do |attr| 
+      %w[cost_per_unit metric_id min max].each do |attr|
         allow(pricing_rule_0).to receive(attr.to_sym).and_return(pricing_rule_0_attrs.fetch(attr))
         allow(pricing_rule_1).to receive(attr.to_sym).and_return(pricing_rule_1_attrs.fetch(attr))
         allow(pricing_rule_2).to receive(attr.to_sym).and_return(pricing_rule_2_attrs.fetch(attr))
       end
-      allow(source).to receive(:metrics).and_return(source_metrics)
-      allow(source).to receive(:methods).and_return([])
-      allow(target).to receive(:metrics).and_return(target_metrics)
-      allow(target).to receive(:methods).and_return([])
     end
 
     context 'no application plan match' do
@@ -94,14 +86,17 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       let(:target_plans) { [target_plan_0] }
       let(:source_plans) { [source_plan_0] }
       # missing pricining rules set is empty
-      let(:source_metrics) { [source_metric_0] }
-      let(:target_metrics) { [target_metric_0] }
       let(:source_pricingrules) { [pricing_rule_0] }
       let(:target_pricingrules) { [pricing_rule_1] }
 
       # missing_pricingrules is an empty set
       it 'does not call create_pricingrule method' do
-        expect { subject.call }.to output(/Missing 0 pricing rules/).to_stdout
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_pricing_rules_created')).to eq(0)
       end
     end
 
@@ -110,12 +105,16 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       let(:source_plans) { [source_plan_0] }
       let(:source_pricingrules) { [pricing_rule_0] }
       let(:target_pricingrules) { [] }
-      let(:source_metrics) { [source_metric_0] }
-      let(:target_metrics) { [target_metric_0] }
 
       it 'call create_pricingrule method' do
-        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_0.id, pricing_rule_0.attrs)
-        expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_id, pricing_rule_0.attrs)
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_pricing_rules_created')).to eq(1)
       end
     end
 
@@ -124,12 +123,16 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPri
       let(:source_plans) { [source_plan_0] }
       let(:source_pricingrules) { [pricing_rule_0] }
       let(:target_pricingrules) { [pricing_rule_2] }
-      let(:source_metrics) { [source_metric_0] }
-      let(:target_metrics) { [target_metric_0] }
 
       it 'call create_pricingrule method' do
-        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_0.id, pricing_rule_0.attrs)
-        expect { subject.call }.to output(/Missing 1 pricing rules/).to_stdout
+        expect(target_plan_0).to receive(:create_pricing_rule).with(target_metric_id, pricing_rule_0.attrs)
+
+        subject.call
+
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('application_plans')
+        expect(task_context.dig(:report, 'application_plans')).to include(target_plan_0.system_name)
+        expect(task_context.dig(:report, 'application_plans', target_plan_0.system_name, 'missing_pricing_rules_created')).to eq(1)
       end
     end
   end

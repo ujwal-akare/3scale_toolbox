@@ -1,5 +1,6 @@
 RSpec.describe ThreeScaleToolbox::Entities::Backend do
   let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
+  let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
 
   context 'Backend.create' do
     let(:attrs) { { 'name' => 'some name' } }
@@ -203,7 +204,12 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
   context 'instance method' do
     let(:backend_id) { 99 }
     let(:backend) { described_class.new(id: backend_id, remote: remote, attrs: attrs) }
-    let(:attrs) { { 'id' => backend_id, 'name' => 'some name' } }
+    let(:attrs) do
+      {
+        'id' => backend_id, 'name' => 'some name', 'system_name' => 'backend99',
+        'private_endpoint' => 'https://example.com', 'description' => 'some descr'
+      }
+    end
 
     context '#attrs' do
       subject { backend.attrs }
@@ -228,7 +234,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
     end
 
     context '#metrics' do
-      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
       let(:metrics) do
         [
           { 'id' => 10, 'system_name' => 'metric_10' },
@@ -238,8 +243,8 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       end
       let(:methods) do
         [
-          { 'id' => 101, 'system_name' => 'method_101' },
-          { 'id' => 201, 'system_name' => 'method_201' }
+          { 'id' => 101, 'system_name' => 'method_101', 'parent_id' => 1 },
+          { 'id' => 201, 'system_name' => 'method_201', 'parent_id' => 1 }
         ]
       end
       subject { backend.metrics }
@@ -267,7 +272,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       end
 
       context 'found' do
-        let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
         let(:metrics) do
           [
             { 'id' => 10, 'system_name' => 'metric_10' },
@@ -287,7 +291,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
     end
 
     context '#methods' do
-      let(:hits_metric) { { 'id' => 1, 'system_name' => 'hits' } }
       let(:metrics) do
         [
           { 'id' => 10, 'system_name' => 'metric_10' },
@@ -446,6 +449,68 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
         it 'are not equal' do
           expect(backend == other_backend).to be_falsy
         end
+      end
+    end
+
+    context '#to_cr' do
+      let(:metrics) do
+        [
+          { 'id' => 10, 'system_name' => 'metric_10' },
+          hits_metric,
+          { 'id' => 20, 'system_name' => 'metric_20' }
+        ]
+      end
+      let(:methods) do
+        [
+          { 'id' => 101, 'system_name' => 'method_101', 'parent_id' => 1 },
+          { 'id' => 201, 'system_name' => 'method_201', 'parent_id' => 1 }
+        ]
+      end
+
+      subject { backend.to_cr }
+
+      before :each do
+        allow(remote).to receive(:list_backend_mapping_rules).and_return([])
+        allow(remote).to receive(:list_backend_metrics).and_return(metrics + methods)
+        allow(remote).to receive(:list_backend_methods).and_return(methods)
+      end
+
+      it 'expected apiversion' do
+        expect(subject).to include('apiVersion' => 'capabilities.3scale.net/v1beta1')
+      end
+
+      it 'expected kind' do
+        expect(subject).to include('kind' => 'Backend')
+      end
+
+      it 'expected name' do
+        expect(subject.fetch('spec')).to include('name' => 'some name')
+      end
+
+      it 'expected systemName' do
+        expect(subject.fetch('spec')).to include('systemName' => 'backend99')
+      end
+
+      it 'expected privateBaseURL' do
+        expect(subject.fetch('spec')).to include('privateBaseURL' => 'https://example.com')
+      end
+
+      it 'expected description' do
+        expect(subject.fetch('spec')).to include('description' => 'some descr')
+      end
+
+      it 'mappingRules included' do
+        expect(subject.fetch('spec')).to include('mappingRules' => [])
+      end
+
+      it 'metrics included' do
+        expect(subject.fetch('spec').has_key? 'metrics').to be_truthy
+        expect(subject.fetch('spec').fetch('metrics').keys).to match_array(metrics.map { |m|  m.fetch('system_name') })
+      end
+
+      it 'methods included' do
+        expect(subject.fetch('spec').has_key? 'methods').to be_truthy
+        expect(subject.fetch('spec').fetch('methods').keys).to match_array(methods.map { |m|  m.fetch('system_name') })
       end
     end
   end

@@ -12,15 +12,18 @@ module ThreeScaleToolbox
               missing_limits.each do |limit|
                 target_plan.create_limit(metrics_map.fetch(limit.metric_id), limit.attrs)
               end
-              puts "Missing #{missing_limits.size} plan limits from target application plan " \
+              logger.info "Missing #{missing_limits.size} plan limits from target application plan " \
                 "#{target_plan.id}. Source plan #{source_plan.id}"
+
+              plans_report[target_plan.system_name] = {'application_plan_id' => target_plan.id} unless plans_report.has_key? target_plan.system_name
+              plans_report[target_plan.system_name].merge!({'missing_limits_created' => missing_limits.size})
             end
           end
 
           private
 
           def metrics_map
-            @metrics_map ||= Helper.metrics_mapping(source_metrics_and_methods, target_metrics_and_methods)
+            @metrics_map ||= source.metrics_mapping(target)
           end
 
           def compute_missing_limits(source_limits, target_limits)

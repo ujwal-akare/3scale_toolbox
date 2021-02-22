@@ -9,7 +9,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyPol
     it 'does not call create_method method' do
       expect(source).to receive(:policies).and_return(source_policies)
       expect(target).to receive(:update_policies).with('policies_config' => source_policies)
-      expect { subject.call }.to output.to_stdout
+
+      subject.call
     end
   end
 end

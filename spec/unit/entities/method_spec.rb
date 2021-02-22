@@ -103,6 +103,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
     let(:id) { 1774 }
     let(:service_id) { 4771 }
     let(:method_attrs) { nil }
+
     subject do
       described_class.new(id: id, service: service, attrs: method_attrs)
     end
@@ -113,6 +114,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
 
     context '#attrs' do
       context 'when initialized with empty attrs' do
+        let(:method_attrs) { nil }
         let(:remote_attrs) { { 'id' => id, 'system_name' => 'some_system_name' } }
 
         before :example do
@@ -180,6 +182,25 @@ RSpec.describe ThreeScaleToolbox::Entities::Method do
           expect { subject.update(method_attrs) }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
                                                                  /Method has not been updated/)
         end
+      end
+    end
+
+    context '#to_cr' do
+      let(:method_attrs) do
+        {
+          'system_name' => 'method_1774', 'friendly_name' => 'some_friendly_name',
+          'description' => 'some descr'
+        }
+      end
+
+      subject { described_class.new(id: id, service: service, attrs: method_attrs).to_cr }
+
+      it 'expected friendlyName' do
+        expect(subject).to include('friendlyName' => 'some_friendly_name')
+      end
+
+      it 'expected description' do
+        expect(subject).to include('description' => 'some descr')
       end
     end
   end

@@ -3,7 +3,7 @@ RSpec.describe ThreeScaleToolbox::Entities::PricingRule do
   let(:plan) { instance_double(ThreeScaleToolbox::Entities::ApplicationPlan) }
   let(:plan_id) { 1 }
   let(:metric_id) { 2 }
-  let(:attrs) { { 'cost_per_unit' => '1.0', 'min' => 0, 'max' => 100, 'metric_id' => metric_id } }
+  let(:attrs) { { 'cost_per_unit' => 1.0, 'min' => 0, 'max' => 100, 'metric_id' => metric_id } }
 
   before :each do
     allow(plan).to receive(:id).and_return(plan_id)
@@ -73,6 +73,70 @@ RSpec.describe ThreeScaleToolbox::Entities::PricingRule do
 
       it 'remote call done' do
         expect(subject.delete).to be_truthy
+      end
+    end
+
+    context '#to_cr' do
+      let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
+      let(:metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric, 'metric_0') }
+      let(:metric_1) { instance_double(ThreeScaleToolbox::Entities::Metric, 'metric_1') }
+      let(:metrics) { [metric_0, metric_1] }
+
+      subject { described_class.new(id: pr_id, plan: plan, metric_id: metric_id, attrs: attrs).to_cr }
+
+      before :example do
+        allow(plan).to receive(:service).and_return(service)
+        allow(metric_0).to receive(:id).and_return(2)
+        allow(metric_1).to receive(:id).and_return(777)
+        allow(metric_0).to receive(:system_name).and_return('metric_0')
+        allow(metric_1).to receive(:system_name).and_return('metric_1')
+        allow(service).to receive(:metrics).and_return(metrics)
+        allow(service).to receive(:methods).and_return([])
+      end
+
+      it 'from included' do
+        expect(subject).to include('from' => 0)
+      end
+
+      it 'to included' do
+        expect(subject).to include('to' => 100)
+      end
+
+      it 'pricePerUnit included' do
+        expect(subject).to include('pricePerUnit' => 1.0)
+      end
+
+      it 'metricMethodRef included' do
+        expect(subject).to include('metricMethodRef' => { 'systemName' => 'metric_0' })
+      end
+
+      context 'for backend metric' do
+        let(:backend_class) { class_double(ThreeScaleToolbox::Entities::Backend).as_stubbed_const }
+        let(:backend) { instance_double(ThreeScaleToolbox::Entities::Backend) }
+        let(:backend_metric_0) { instance_double(ThreeScaleToolbox::Entities::BackendMetric, 'backend_metric_0') }
+        let(:metric_id) { 666 }
+        let(:backend_id) { 3 }
+        let(:attrs) do
+         {
+           'cost_per_unit' => 1.0, 'min' => 0, 'max' => 100,
+           'links' => [
+             'rel' => 'metric',
+             'href' => "https://example.com/admin/api/backend_apis/#{backend_id}/metrics/#{metric_id}"
+           ]
+          }
+        end
+
+        before :example do
+          allow(backend_class).to receive(:new).with(id: backend_id, remote: remote).and_return(backend)
+          allow(backend).to receive(:metrics).and_return([backend_metric_0])
+          allow(backend).to receive(:system_name).and_return('backend_0')
+          allow(backend_metric_0).to receive(:id).and_return(metric_id)
+          allow(backend_metric_0).to receive(:system_name).and_return('backend_metric_0')
+        end
+
+        it 'metricMethodRef included backend' do
+          expect(subject).to include('metricMethodRef' => { 'systemName' => 'backend_metric_0', 'backend' => 'backend_0' })
+        end
       end
     end
   end

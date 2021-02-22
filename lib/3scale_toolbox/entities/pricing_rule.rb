@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class PricingRule
+      include CRD::PricingRuleSerializer
+
       class << self
         def create(plan:, metric_id:, attrs:)
           resp_attrs = plan.remote.create_pricingrule plan.id, metric_id, attrs
@@ -34,8 +36,27 @@ module ThreeScaleToolbox
         attrs['max']
       end
 
+      def links
+        attrs['links'] || []
+      end
+
+      def metric_link
+        links.find { |link| link['rel'] == 'metric' }
+      end
+
       def delete
         remote.delete_application_plan_pricingrule plan.id, metric_id, id
+      end
+
+      private
+
+      # Used by CRD::PricingRule
+      # Returns the backend hosting the metric
+      def backend_from_metric
+        backend_id = Helper.backend_metric_link_parser(metric_link['href'] || '')
+        return if backend_id.nil?
+
+        Backend.new(id: backend_id.to_i, remote: remote)
       end
     end
   end

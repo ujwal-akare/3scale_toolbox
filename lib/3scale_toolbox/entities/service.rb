@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Service
+      include CRD::ProductSerializer
+
       VALID_PARAMS = %w[
         name backend_version deployment_option description
         system_name end_user_registration_required
@@ -101,6 +103,26 @@ module ThreeScaleToolbox
         @attrs ||= fetch_attrs
       end
 
+      def system_name
+        attrs['system_name']
+      end
+
+      def name
+        attrs['name']
+      end
+
+      def description
+        attrs['description']
+      end
+
+      def deployment_option
+        attrs['deployment_option']
+      end
+
+      def backend_version
+        attrs['backend_version']
+      end
+
       def update_proxy(proxy)
         new_proxy_attrs = remote.update_proxy id, proxy
 
@@ -120,12 +142,14 @@ module ThreeScaleToolbox
         proxy_attrs
       end
 
+      def cached_proxy
+        @cached_proxy ||= proxy
+      end
+
       # @api public
       # @return [List]
       def metrics
-        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |metric_attrs, method|
-          metric_attrs.fetch('id') == method.id
-        end
+        metric_attr_list = metrics_and_methods.select { |metric_attrs| metric_attrs['parent_id'].nil? }
 
         metric_attr_list.map do |metric_attrs|
           Metric.new(id: metric_attrs.fetch('id'), service: self, attrs: metric_attrs)
@@ -154,15 +178,6 @@ module ThreeScaleToolbox
                      service: self,
                      attrs: method_attrs)
         end
-      end
-
-      def metrics_and_methods
-        m_m = remote.list_metrics id
-        if m_m.respond_to?(:has_key?) && (errors = m_m['errors'])
-          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
-        end
-
-        m_m
       end
 
       def plans
@@ -208,7 +223,12 @@ module ThreeScaleToolbox
       end
 
       def policies
-        remote.show_policies id
+        policy_chain = remote.show_policies id
+        if policy_chain.respond_to?(:has_key?) && (errors = policy_chain['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service policies not read', errors)
+        end
+
+        policy_chain
       end
 
       def update_policies(params)
@@ -222,8 +242,12 @@ module ThreeScaleToolbox
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service activedocs not read', errors)
         end
 
-        tenant_activedocs.select do |activedoc|
-          activedoc['service_id'] == id
+        service_activedocs = tenant_activedocs.select do |activedoc_attrs|
+          activedoc_attrs['service_id'] == id
+        end
+
+        service_activedocs.map do |activedoc_attrs|
+          Entities::ActiveDocs.new(id: activedoc_attrs.fetch('id'), remote: remote, attrs: activedoc_attrs)
         end
       end
 
@@ -235,6 +259,10 @@ module ThreeScaleToolbox
         end
 
         service_oidc
+      end
+
+      def cached_oidc
+        @cached_oidc ||= oidc
       end
 
       def update_oidc(oidc_settings)
@@ -318,6 +346,23 @@ module ThreeScaleToolbox
         proxy_attrs
       end
 
+      # Compute matrics mapping between products, including related backend metrics as well
+      def metrics_mapping(other)
+        mapping = (metrics + methods).product(other.metrics + other.methods).select do |m_a, m_b|
+          m_a.system_name == m_b.system_name
+        end.map { |m_a, m_b| [m_a.id, m_b.id] }.to_h
+
+        backend_pairs = backend_usage_list.map(&:backend).product(other.backend_usage_list.map(&:backend)).select do |b_a, b_b|
+          b_a.system_name == b_b.system_name
+        end
+
+        backend_pairs.each do |b_a, b_b|
+          mapping.merge!(b_a.metrics_mapping(b_b))
+        end
+
+        mapping
+      end
+
       def ==(other)
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end
@@ -348,6 +393,15 @@ module ThreeScaleToolbox
         end
 
         new_attrs
+      end
+
+      def metrics_and_methods
+        m_m = remote.list_metrics id
+        if m_m.respond_to?(:has_key?) && (errors = m_m['errors'])
+          raise ThreeScaleToolbox::ThreeScaleApiError.new('Service metrics not read', errors)
+        end
+
+        m_m
       end
     end
   end

@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class ApplicationPlan
+      include CRD::ApplicationPlanSerializer
+
       class << self
         def create(service:, plan_attrs:)
           plan = service.remote.create_application_plan service.id, create_plan_attrs(plan_attrs)
@@ -48,6 +50,18 @@ module ThreeScaleToolbox
 
       def system_name
         attrs['system_name']
+      end
+
+      def name
+        attrs['name']
+      end
+
+      def state
+        attrs['state']
+      end
+
+      def custom
+        attrs.fetch('custom', false)
       end
 
       def update(plan_attrs)
@@ -177,6 +191,22 @@ module ThreeScaleToolbox
 
       def published?
         attrs.fetch('state') == 'published'
+      end
+
+      def approval_required?
+        attrs.fetch('approval_required', true)
+      end
+
+      def trial_period_days
+        attrs.fetch('trial_period_days', 0)
+      end
+
+      def setup_fee
+        attrs.fetch('setup_fee', 0.0)
+      end
+
+      def cost_per_month
+        attrs.fetch('cost_per_month', 0.0)
       end
 
       private

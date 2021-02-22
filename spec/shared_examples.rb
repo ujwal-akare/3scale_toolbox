@@ -2,20 +2,20 @@ RSpec.shared_examples 'service copied' do
   include_context :copied_metrics
   include_context :copied_plans
 
-  def limit_match(limit_a, limit_b, metrics_mapping)
+  def limit_match(limit_a, limit_b)
     limit_a.period == limit_b.period && limit_a.value == limit_b.value && metrics_mapping.fetch(limit_a.metric_id) == limit_b.metric_id
   end
 
-  def limit_mapping(limits_a, limits_b, metrics_mapping)
+  def limit_mapping(limits_a, limits_b)
     limits_a.map do |limit_a|
       found_limit = limits_b.find do |limit_b|
-        limit_match(limit_a, limit_b, metrics_mapping)
+        limit_match(limit_a, limit_b)
       end
       [limit_a, found_limit]
     end.to_h
   end
 
-  def mapping_rule_match(src, target, metrics_mapping)
+  def mapping_rule_match(src, target)
     src.pattern == target.pattern &&
       src.http_method == target.http_method &&
       src.delta == target.delta &&
@@ -54,6 +54,8 @@ RSpec.shared_examples 'service copied' do
 
     # service plans
     expect(source_plans.size).to be > 0
+    expect(target_plans.size).to be > 0
+
     source_plans.each do |source_plan|
       copied_plan = plan_mapping.fetch(source_plan.id)
       expect(
@@ -71,7 +73,7 @@ RSpec.shared_examples 'service copied' do
       expect(source_limits.size).to be > 0
       copied_plan = plan_mapping.fetch(source_plan.id)
       target_plan = ThreeScaleToolbox::Entities::ApplicationPlan.new(id: copied_plan.id, service: target_service_new)
-      limit_map = limit_mapping(source_limits, target_plan.limits, metrics_mapping)
+      limit_map = limit_mapping(source_limits, target_plan.limits)
       # Check all mapped values are not nil
       expect(limit_map.size).to be > 0
       expect(limit_map.values).not_to include(nil)
@@ -84,7 +86,7 @@ RSpec.shared_examples 'service copied' do
     expect(source_mapping_rules.size).to be > 0
     source_mapping_rules.each do |source_mapping_rule|
       copied_mapping_rule = target_mapping_rules.find do |target_mapping_rule|
-        mapping_rule_match(source_mapping_rule, target_mapping_rule, metrics_mapping)
+        mapping_rule_match(source_mapping_rule, target_mapping_rule)
       end
       expect(
         copied_mapping_rule.attrs.select { |k, _| mapping_rule_keys.include?(k) }
@@ -93,7 +95,7 @@ RSpec.shared_examples 'service copied' do
     # service proxy policies
     source_policies = source_service.policies
     target_policies = target_service_new.policies
-    expect(source_policies.size).to be > 3
+    expect(source_policies.size).to be > 0
     expect(target_policies).to match_array(source_policies)
 
     # service pricing rules
@@ -120,7 +122,6 @@ RSpec.shared_examples 'service copied' do
     source_activedocs = source_service.activedocs
     target_activedocs = target_service_new.activedocs
     activedocs_keys = %w[name]
-    expect(source_activedocs.size).to be > 0
-    expect(source_activedocs).to be_subset_of(target_activedocs).comparing_keys(activedocs_keys)
+    expect(source_activedocs.map(&:attrs)).to be_subset_of(target_activedocs.map(&:attrs)).comparing_keys(activedocs_keys)
   end
 end

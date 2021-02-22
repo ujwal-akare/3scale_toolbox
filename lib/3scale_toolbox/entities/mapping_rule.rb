@@ -1,14 +1,19 @@
 module ThreeScaleToolbox
   module Entities
     class MappingRule
+      include CRD::MappingRuleSerializer
+
       VALID_PARAMS = %w[metric_id pattern http_method delta position last].freeze
       public_constant :VALID_PARAMS
 
       class << self
         def create(service:, attrs:)
-          mapping_rule = service.remote.create_mapping_rule(service.id, Helper.filter_params(VALID_PARAMS, attrs))
+          mapping_rule = service.remote.create_mapping_rule(
+            service.id,
+            Helper.filter_params(VALID_PARAMS, attrs)
+          )
           if (errors = mapping_rule['errors'])
-            raise ThreeScaleToolbox::ThreeScaleApiError.new('Servicemapping rule has not been created',
+            raise ThreeScaleToolbox::ThreeScaleApiError.new('mapping rule has not been created',
                                                             errors)
           end
 
@@ -20,7 +25,7 @@ module ThreeScaleToolbox
 
       def initialize(id:, service:, attrs: nil)
         @id = id.to_i
-        @service = service 
+        @service = service
         @remote = service.remote
         @attrs = attrs
       end
@@ -29,24 +34,31 @@ module ThreeScaleToolbox
         @attrs ||= mapping_rule_attrs
       end
 
-      def metric_id
-        attrs['metric_id']
+      def http_method
+        attrs['http_method']
       end
 
       def pattern
         attrs['pattern']
       end
 
-      def http_method
-        attrs['http_method']
-      end
-
       def delta
         attrs['delta']
       end
 
+      def last
+        attrs['last']
+      end
+
+      def metric_id
+        attrs['metric_id']
+      end
+
       def update(mr_attrs)
-        new_attrs = remote.update_mapping_rule(service.id, id, Helper.filter_params(VALID_PARAMS, mr_attrs))
+        new_attrs = remote.update_mapping_rule(
+          service.id, id,
+          Helper.filter_params(VALID_PARAMS, mr_attrs)
+        )
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Service mapping rule has not been updated', errors)
         end

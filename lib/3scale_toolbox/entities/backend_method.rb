@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class BackendMethod
+      include CRD::BackendMethodSerializer
+
       VALID_PARAMS = %w[friendly_name system_name description].freeze
       public_constant :VALID_PARAMS
 
@@ -42,11 +44,15 @@ module ThreeScaleToolbox
       end
 
       def system_name
-        @attrs['system_name']
+        attrs['system_name']
       end
 
       def friendly_name
-        @attrs['friendly_name']
+        attrs['friendly_name']
+      end
+
+      def description
+        attrs['description']
       end
 
       def update(m_attrs)

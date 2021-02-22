@@ -98,6 +98,7 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
 
     context '#attrs' do
       context 'when initialized with empty attrs' do
+        let(:metric_attrs) { nil }
         let(:remote_attrs) { { 'id' => id, 'system_name' => 'some_system_name' } }
 
         before :example do
@@ -250,6 +251,28 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
           expect { subject.update(metric_attrs) }.to raise_error(ThreeScaleToolbox::ThreeScaleApiError,
                                                                  /Metric has not been updated/)
         end
+      end
+    end
+
+    context '#to_cr' do
+      let(:metric_attrs) do
+        {
+          'system_name' => 'metric_1774', 'friendly_name' => 'some_friendly_name',
+          'description' => 'some descr', 'unit' => '1'
+        }
+      end
+      subject {  described_class.new(id: id, service: service, attrs: metric_attrs).to_cr }
+
+      it 'expected friendlyName' do
+        expect(subject).to include('friendlyName' => 'some_friendly_name')
+      end
+
+      it 'expected description' do
+        expect(subject).to include('description' => 'some descr')
+      end
+
+      it 'expected unit' do
+        expect(subject).to include('unit' => '1')
       end
     end
   end

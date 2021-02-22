@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class BackendMappingRule
+      include CRD::BackendMappingRuleSerializer
+
       VALID_PARAMS = %w[metric_id pattern http_method delta position last].freeze
       public_constant :VALID_PARAMS
 
@@ -32,8 +34,24 @@ module ThreeScaleToolbox
         @attrs ||= mapping_rule_attrs
       end
 
+      def http_method
+        attrs['http_method']
+      end
+
+      def pattern
+        attrs['pattern']
+      end
+
+      def delta
+        attrs['delta']
+      end
+
+      def last
+        attrs['last']
+      end
+
       def metric_id
-        @attrs['metric_id']
+        attrs['metric_id']
       end
 
       def pattern

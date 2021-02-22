@@ -7,16 +7,17 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CreateO
   let(:target_ref) { 'target_backend_01' }
   let(:source_attrs) { { 'id' => 1, 'system_name': source_ref } }
   let(:target_attrs) { { 'id' => 2, 'system_name': target_ref } }
-  let(:context)  do
+  let(:task_context)  do
     {
       option_target_system_name: target_ref,
       source_backend_ref: source_ref,
       source_remote: source_remote,
-      target_remote: target_remote
+      target_remote: target_remote,
+      logger: Logger.new('/dev/null')
     }
   end
   let(:backend_class) { class_double(ThreeScaleToolbox::Entities::Backend).as_stubbed_const }
-  subject { described_class.new(context) }
+  subject { described_class.new(task_context) }
 
   context '#run' do
     before :each do
@@ -24,6 +25,8 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CreateO
       allow(target_backend).to receive(:id).and_return(2)
       allow(source_backend).to receive(:attrs).and_return(source_attrs)
       allow(target_backend).to receive(:attrs).and_return(target_attrs)
+      allow(source_backend).to receive(:system_name).and_return(source_ref)
+      allow(target_backend).to receive(:system_name).and_return(target_ref)
       expect(backend_class).to receive(:find)
         .with(remote: source_remote, ref: source_ref)
         .and_return(source_backend)

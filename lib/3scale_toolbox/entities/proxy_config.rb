@@ -52,7 +52,6 @@ module ThreeScaleToolbox
         end
         proxy_cfg
       end
-
     end
   end
 end

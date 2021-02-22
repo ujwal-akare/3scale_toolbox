@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Limit
+      include CRD::Limit
+
       class << self
         def create(plan:, metric_id:, attrs:)
           resp_attrs = plan.remote.create_application_plan_limit plan.id, metric_id, attrs
@@ -30,6 +32,14 @@ module ThreeScaleToolbox
         attrs['value']
       end
 
+      def links
+        attrs['links'] || []
+      end
+
+      def metric_link
+        links.find { |link| link['rel'] == 'metric' }
+      end
+
       def update(new_limit_attrs)
         new_attrs = remote.update_application_plan_limit(plan.id, metric_id, id, new_limit_attrs)
         if (errors = new_attrs['errors'])
@@ -44,6 +54,17 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_application_plan_limit plan.id, metric_id, id
+      end
+
+      private
+
+      # Used by CRD::Limit
+      # Returns the backend hosting the metric
+      def backend_from_metric
+        backend_id = Helper.backend_metric_link_parser(metric_link['href'] || '')
+        return if backend_id.nil?
+
+        Backend.new(id: backend_id.to_i, remote: remote)
       end
     end
   end

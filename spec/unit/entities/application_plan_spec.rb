@@ -7,6 +7,8 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
   before :example do
     allow(metric_0).to receive(:id).and_return(0)
     allow(metric_1).to receive(:id).and_return(1)
+    allow(metric_0).to receive(:system_name).and_return('metric_0')
+    allow(metric_1).to receive(:system_name).and_return('metric_1')
     allow(service).to receive(:remote).and_return(remote)
   end
 
@@ -126,7 +128,9 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
     let(:initial_plan_attrs) do
       {
         'id' => id, 'state' => initial_state,
-        'system_name' => 'system_name01', 'name' => 'some name'
+        'system_name' => 'system_name01', 'name' => 'some name',
+        'approval_required' => false, 'trial_period_days' => 5,
+        'setup_fee' => 1.5, 'cost_per_month' => 4.5
       }
     end
 
@@ -437,6 +441,57 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
           apps = subject.applications
           expect(apps.map(&:id)).to include(3)
         end
+      end
+    end
+
+    context '#to_cr' do
+      let(:pr_0_attrs) { { 'id' => 1, 'metric_id' => metric_0.id, 'min' => 1, 'max' => 10 } }
+      let(:pricing_rules) { [pr_0_attrs] }
+      let(:metrics) { [metric_0, metric_1] }
+      let(:limit_0_attrs) { { 'id' => 1, 'metric_id' => metric_1.id, 'period' => 'year', 'value' => 100 } }
+      let(:limits) { [limit_0_attrs] }
+
+      before :example do
+        expect(remote).to receive(:list_pricingrules_per_application_plan).with(id).and_return(pricing_rules)
+        expect(remote).to receive(:list_application_plan_limits).with(id).and_return(limits)
+        allow(service).to receive(:metrics).and_return(metrics)
+        allow(service).to receive(:methods).and_return([])
+      end
+
+      it 'name included' do
+        expect(subject.to_cr).to include('name' => 'some name')
+      end
+
+      it 'appsRequireApproval included' do
+        expect(subject.to_cr).to include('appsRequireApproval' => false)
+      end
+
+      it 'trialPeriod included' do
+        expect(subject.to_cr).to include('trialPeriod' => 5)
+      end
+
+      it 'setupFee included' do
+        expect(subject.to_cr).to include('setupFee' => 1.5)
+      end
+
+      it 'custom included' do
+        expect(subject.to_cr).to include('custom' => false)
+      end
+
+      it 'state included' do
+        expect(subject.to_cr).to include('state' => 'published')
+      end
+
+      it 'costMonth included' do
+        expect(subject.to_cr).to include('costMonth' => 4.5)
+      end
+
+      it 'pricingRules included' do
+        expect(subject.to_cr.has_key? 'pricingRules').to be_truthy
+      end
+
+      it 'limits included' do
+        expect(subject.to_cr.has_key? 'limits').to be_truthy
       end
     end
   end

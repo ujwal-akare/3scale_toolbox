@@ -6,8 +6,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
     let(:metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
     let(:metric_0_attrs) { { 'system_name' => 'metric_0', 'name' => 'metric_0' } }
     let(:metric_1) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
 
-    subject { described_class.new(source: source, target: target) }
+    subject { described_class.new(task_context) }
 
     before :each do
       allow(source).to receive(:metrics).and_return(source_metrics)
@@ -23,7 +24,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
       let(:target_metrics) { [metric_0] }
 
       it 'does not call create_metric method' do
-        expect { subject.call }.to output(/created 0 metrics/).to_stdout
+        subject.call
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_metrics_created')
+        expect(task_context.dig(:report, 'missing_metrics_created')).to eq(0)
       end
     end
 
@@ -33,7 +37,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
 
       it 'it calls create_metric method' do
         expect(metric_class).to receive(:create).with(service: target, attrs: hash_including(metric_0_attrs))
-        expect { subject.call }.to output(/created 1 metrics/).to_stdout
+
+        subject.call
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_metrics_created')
+        expect(task_context.dig(:report, 'missing_metrics_created')).to eq(1)
       end
     end
   end

@@ -45,6 +45,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
         'id' => rule_id,
         'pattern' => '/pets',
         'delta' => 1,
+        'last' => true,
         'metric_id' => metric_id,
         'http_method' => 'GET'
       }
@@ -132,6 +133,49 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMappingRule do
 
       it 'remote call done' do
         is_expected.to be_truthy
+      end
+    end
+
+    context '#to_cr' do
+      let(:metric_01) { instance_double(ThreeScaleToolbox::Entities::BackendMetric, 'metric_01') }
+
+      subject { mapping_rule.to_cr }
+
+      before :each do
+        allow(metric_01).to receive(:id).and_return(metric_id)
+        allow(metric_01).to receive(:system_name).and_return('metric_01')
+        allow(backend).to receive(:system_name).and_return('backend01')
+        allow(backend).to receive(:methods).and_return([])
+        allow(backend).to receive(:metrics).and_return([metric_01])
+      end
+
+      it 'expected httpMethod' do
+        expect(subject).to include('httpMethod' => 'GET')
+      end
+
+      it 'expected pattern' do
+        expect(subject).to include('pattern' => '/pets')
+      end
+
+      it 'expected metricMethodRef' do
+        expect(subject).to include('metricMethodRef' => 'metric_01')
+      end
+
+      it 'expected increment' do
+        expect(subject).to include('increment' => 1)
+      end
+
+      it 'expected last' do
+        expect(subject).to include('last' => true)
+      end
+
+      context 'metric ref not found' do
+        before :each do
+          allow(backend).to receive(:metrics).and_return([])
+        end
+        it 'error raised' do
+          expect { subject }.to raise_error(ThreeScaleToolbox::Error, /metric id #{metric_id}/)
+        end
       end
     end
   end

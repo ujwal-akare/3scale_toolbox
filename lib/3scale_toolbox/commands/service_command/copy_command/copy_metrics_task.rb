@@ -6,10 +6,11 @@ module ThreeScaleToolbox
           include Task
 
           def call
-            puts "original service has #{source.metrics.size} metrics"
-            puts "target service has #{target.metrics.size} metrics"
+            logger.info "original service has #{source.metrics.size} metrics"
+            logger.info "target service has #{target.metrics.size} metrics"
             missing_metrics.each(&method(:create_metric))
-            puts "created #{missing_metrics.size} metrics on the target service"
+            logger.info "created #{missing_metrics.size} metrics on the target service"
+            report['missing_metrics_created'] = missing_metrics.size
           end
 
           private

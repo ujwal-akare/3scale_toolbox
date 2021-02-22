@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Backend
+      include CRD::BackendSerializer
+
       VALID_PARAMS = %w[name description system_name private_endpoint].freeze
       public_constant :VALID_PARAMS
 
@@ -79,10 +81,20 @@ module ThreeScaleToolbox
         attrs['system_name']
       end
 
+      def description
+        attrs['description']
+      end
+
+      def name
+        attrs['name']
+      end
+
+      def private_endpoint
+        attrs['private_endpoint']
+      end
+
       def metrics
-        metric_attr_list = ThreeScaleToolbox::Helper.array_difference(metrics_and_methods, methods) do |item, method|
-          method.id == item.fetch('id', nil)
-        end
+        metric_attr_list = metrics_and_methods.select { |metric_attrs| metric_attrs['parent_id'].nil? }
 
         metric_attr_list.map do |metric_attrs|
           BackendMetric.new(id: metric_attrs.fetch('id'), backend: self, attrs: metric_attrs)
@@ -107,9 +119,7 @@ module ThreeScaleToolbox
         end
 
         method_attr_list.map do |method_attrs|
-          BackendMethod.new(id: method_attrs.fetch('id'),
-                            backend: self,
-                            attrs: method_attrs)
+          BackendMethod.new(id: method_attrs.fetch('id'), backend: self, attrs: method_attrs)
         end
       end
 
@@ -138,6 +148,13 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_backend id
+      end
+
+      # Compute matrics mapping
+      def metrics_mapping(other)
+        (metrics + methods).product(other.metrics + other.methods).select do |m_a, m_b|
+          m_a.system_name == m_b.system_name
+        end.map { |m_a, m_b| [m_a.id, m_b.id] }.to_h
       end
 
       def ==(other)

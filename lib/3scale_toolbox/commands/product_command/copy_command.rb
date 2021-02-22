@@ -22,8 +22,8 @@ module ThreeScaleToolbox
             \nproduct methods&metrics: Only missing metrics&methods will be created.
             \nproduct mapping rules: Only missing mapping rules will be created.
             \nproduct application plans & pricing rules & limits: Only missing application plans & pricing rules & limits will be created.
-            \nproduct application usage rules 
-            \nproduct policies 
+            \nproduct application usage rules
+            \nproduct policies
             \nproduct backends: Only missing backends will be created.
             \nproduct activedocs: Only missing activedocs will be created.
             HEREDOC
@@ -37,7 +37,7 @@ module ThreeScaleToolbox
           end
         end
 
-        def run
+        def self.workflow(context)
           tasks = []
           tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CreateOrUpdateTargetServiceTask.new(context)
           tasks << CopyCommand::DeleteExistingTargetBackendUsagesTask.new(context)
@@ -56,6 +56,10 @@ module ThreeScaleToolbox
 
           # This should be the last step
           ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::BumpProxyVersionTask.new(service: context[:target]).call
+        end
+
+        def run
+          self.class.workflow(context)
         end
 
         private

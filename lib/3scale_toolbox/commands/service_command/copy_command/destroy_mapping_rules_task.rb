@@ -12,7 +12,7 @@ module ThreeScaleToolbox
           def call
             return unless delete_mapping_rules
 
-            puts 'destroying all mapping rules'
+            logger.info 'destroying all mapping rules'
             target.mapping_rules.each(&:delete)
           end
 
@@ -23,7 +23,13 @@ module ThreeScaleToolbox
           end
 
           def target
-            context[:target]
+            context.fetch(:target)
+          end
+
+          def logger
+            context[:logger] ||= Logger.new($stdout).tap do |logger|
+              logger.formatter = proc { |severity, datetime, progname, msg| "#{msg}\n" }
+            end
           end
         end
       end

@@ -8,7 +8,8 @@ module ThreeScaleToolbox
           # entrypoint
           def run
             missing_metrics.each(&method(:create_metric))
-            puts "created #{missing_metrics.size} missing metrics"
+            logger.info "created #{missing_metrics.size} missing metrics"
+            report['missing_metrics_created'] = missing_metrics.size
           end
 
           private

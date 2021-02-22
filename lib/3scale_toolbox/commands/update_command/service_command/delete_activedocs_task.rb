@@ -11,9 +11,7 @@ module ThreeScaleToolbox
 
           def call
             puts 'deleting all target service ActiveDocs'
-            target.activedocs.each do |activedoc|
-              target.remote.delete_activedocs(activedoc['id'])
-            end
+            target.activedocs.each(&:delete)
           end
 
           def target

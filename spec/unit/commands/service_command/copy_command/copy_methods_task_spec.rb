@@ -6,8 +6,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
     let(:method_0) { instance_double(ThreeScaleToolbox::Entities::Method) }
     let(:method_1) { instance_double(ThreeScaleToolbox::Entities::Method) }
     let(:hits_metric) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+    let(:task_context) { { source: source, target: target, logger: Logger.new('/dev/null') } }
 
-    subject { described_class.new(source: source, target: target) }
+    subject { described_class.new(task_context) }
 
     before :each do
       allow(source).to receive(:methods).and_return(source_methods)
@@ -26,7 +27,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
       let(:target_methods) { [method_0] }
 
       it 'does not call create_method method' do
-        expect { subject.call }.to output(/created 0 missing methods/).to_stdout
+        subject.call
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_methods_created')
+        expect(task_context.dig(:report, 'missing_methods_created')).to eq(0)
       end
     end
 
@@ -38,7 +42,10 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
         # original method has been filtered
         expect(method_class).to receive(:create).with(service: target,
                                                       attrs: hash_including('system_name' => method_0.system_name))
-        expect { subject.call }.to output(/created 1 missing methods/).to_stdout
+        subject.call
+        expect(task_context).to include(:report)
+        expect(task_context.fetch(:report)).to include('missing_methods_created')
+        expect(task_context.dig(:report, 'missing_methods_created')).to eq(1)
       end
     end
   end

@@ -1,6 +1,8 @@
 module ThreeScaleToolbox
   module Entities
     class Metric
+      include CRD::MetricSerializer
+
       class << self
         def create(service:, attrs:)
           metric = service.remote.create_metric service.id, attrs
@@ -38,6 +40,18 @@ module ThreeScaleToolbox
 
       def system_name
         attrs['system_name']
+      end
+
+      def friendly_name
+        attrs['friendly_name']
+      end
+
+      def unit
+        attrs['unit']
+      end
+
+      def description
+        attrs['description']
       end
 
       def disable
