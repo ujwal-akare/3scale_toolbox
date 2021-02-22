@@ -4,6 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.18.0]
+
+### Added
+- 3scale product import and export commands [#286](https://github.com/3scale/3scale_toolbox/pull/286)
+- 3scale proxy-config deploy command [#281](https://github.com/3scale/3scale_toolbox/pull/281)
+- Added optional argument to openapi import command to allow setting oidc issuer type [#279](https://github.com/3scale/3scale_toolbox/pull/279)
+- Product policy chain import and export commands [#270](https://github.com/3scale/3scale_toolbox/pull/270)
+- Support for Ruby 2.7 [#260](https://github.com/3scale/3scale_toolbox/pull/260)
+
+### Fixed
+- Fix product copy command when the backend number exceeds one page size [#278](https://github.com/3scale/3scale_toolbox/pull/278)
+
 ## [0.17.1]
 
 ### Fixed
@@ -240,7 +252,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.17.1...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.0
 [0.17.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.17.1
 [0.17.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.17.0
 [0.16.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.16.0
