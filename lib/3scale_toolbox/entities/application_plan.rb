@@ -1,7 +1,7 @@
 module ThreeScaleToolbox
   module Entities
     class ApplicationPlan
-      include CRD::ApplicationPlan
+      include CRD::ApplicationPlanSerializer
 
       class << self
         def create(service:, plan_attrs:)

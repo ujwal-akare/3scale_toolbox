@@ -1,6 +1,6 @@
 module ThreeScaleToolbox
   module CRD
-    module ApplicationPlan
+    module ApplicationPlanSerializer
       def to_cr
         {
           'name' => name,
