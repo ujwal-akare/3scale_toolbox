@@ -25,6 +25,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethod
                                                 .and_return(method_1)
         expect(method_0).to receive(:id).and_return(0)
         expect(method_1).to receive(:id).and_return(1)
+        expect(service).to receive(:methods).and_return([])
       end
 
       it 'methods created' do
@@ -36,7 +37,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethod
 
     context 'when methods exist' do
       before :example do
-        expect(service).to receive(:methods).and_return([method_0_attrs, method_1_attrs])
+        expect(service).to receive(:methods).and_return([method_0, method_1])
+        allow(method_0).to receive(:system_name).and_return(method_0_attrs['system_name'])
+        allow(method_1).to receive(:system_name).and_return(method_1_attrs['system_name'])
+        allow(method_0).to receive(:attrs).and_return(method_0_attrs)
+        allow(method_1).to receive(:attrs).and_return(method_1_attrs)
         expect(method_class).to receive(:new).with(id: 0, service: service)
                                              .and_return(method_0)
         expect(method_class).to receive(:new).with(id: 1, service: service)
