@@ -28,7 +28,7 @@ module ThreeScaleToolbox
                 target_remote: remote,
                 source_remote: crd_remote,
                 source_service_ref: product.system_name,
-                logger: Logger.new('/dev/null')
+                logger: Logger.new(File::NULL)
             }
 
             Commands::ProductCommand::CopySubcommand.workflow(context)
