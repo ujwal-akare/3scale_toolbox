@@ -16,7 +16,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
       allow(target).to receive(:methods).and_return(target_methods)
       allow(target).to receive(:hits).and_return(hits_metric)
       allow(method_0).to receive(:system_name).and_return('method_0')
-      allow(method_0).to receive(:attrs).and_return('system_name' => 'method_0', 'friendly_name' => 'method_0')
+      allow(method_0).to receive(:description).and_return('some descr')
+      allow(method_0).to receive(:attrs).and_return('system_name' => method_0.system_name, 'description' => method_0.description, 'friendly_name' => 'method_0')
       allow(method_1).to receive(:system_name).and_return('method_1')
       allow(hits_metric).to receive(:id).and_return('1')
     end
@@ -40,8 +41,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::CopyMet
 
       it 'it calls create_method method' do
         # original method has been filtered
-        expect(method_class).to receive(:create).with(service: target,
-                                                      attrs: hash_including('system_name' => method_0.system_name))
+        expect(method_class).to receive(:create).with(service: target, attrs: hash_including('system_name' => method_0.system_name, 'description' => method_0.description))
         subject.call
         expect(task_context).to include(:report)
         expect(task_context.fetch(:report)).to include('missing_methods_created')

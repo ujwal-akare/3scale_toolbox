@@ -16,10 +16,8 @@ module ThreeScaleToolbox
           private
 
           def create_method(method)
-            Entities::Method.create(
-              service: target,
-              attrs: ThreeScaleToolbox::Helper.filter_params(%w[friendly_name system_name], method.attrs)
-            )
+            new_method = method.attrs.reject { |key, _| %w[id links].include? key }
+            Entities::Method.create(service: target, attrs: new_method)
           rescue ThreeScaleToolbox::ThreeScaleApiError => e
             raise e unless ThreeScaleToolbox::Helper.system_name_already_taken_error?(e.apierrors)
 
