@@ -129,6 +129,21 @@ jobs:
           command: |
             docker run --rm -t quay.io/redhat/3scale-toolbox:master 3scale help
 
+  push-rubygems:
+    docker:
+      - image: circleci/ruby:2.6.3-stretch-node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Setup Rubygems
+          command: bash .circleci/setup-rubygems.sh
+      - run:
+          name: Publish to Rubygems
+          command: |
+            gem build 3scale_toolbox.gemspec -o "3scale_toolbox-$(git describe --tags).gem"
+            gem push "3scale_toolbox-$(git describe --tags).gem"
+
 workflows:
   version: 2
   basic_tests:
@@ -138,6 +153,18 @@ workflows:
       - ruby-270-unittest
       - license_check
       - help_test
+      - push-rubygems:
+          requires:
+            - ruby-255-unittest
+            - ruby-262-unittest
+            - ruby-270-unittest
+            - license_check
+            - help_test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
 
   integration:
     jobs:
