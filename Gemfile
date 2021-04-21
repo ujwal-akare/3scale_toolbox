@@ -9,3 +9,7 @@ group :development do
   # rubyzip is a transitive depencency from license_finder with vulnerability on < 1.3.0
   gem 'rubyzip', '>= 1.3.0'
 end
+
+group :test do
+  gem 'codecov', require: false
+end
