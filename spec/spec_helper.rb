@@ -17,6 +17,15 @@ require 'tmpdir'
 require 'pathname'
 require 'dotenv'
 Dotenv.load
+
+# Codecov
+require 'simplecov'
+SimpleCov.start
+if ENV['CI'] == 'true'
+  require 'codecov'
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+end
+
 require 'webmock/rspec'
 WebMock.disable_net_connect!
 require '3scale_toolbox'
