@@ -54,8 +54,9 @@ module ThreeScaleToolbox
             Helper.hash_deep_dup(resource).tap do |activedocs|
               # public production base URL
               # the basePath field is updated to a new value only when overriden by optional param
-              api_spec.set_server_url(activedocs,
-                                      URI.join(service.proxy.fetch('endpoint'), public_base_path))
+              unless service.proxy['endpoint'].nil?
+                api_spec.set_server_url(activedocs, URI.join(service.proxy.fetch('endpoint'), public_base_path))
+              end
               # security definitions
               # just valid for oauth2 when oidc_issuer_endpoint is supplied
               if !api_spec.security.nil? && api_spec.security[:type] == 'oauth2' && !oidc_issuer_endpoint.nil?
