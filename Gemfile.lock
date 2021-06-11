@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    3scale_toolbox (0.18.2)
+    3scale_toolbox (0.18.3)
       3scale-api (~> 1.4)
       cri (~> 2.15)
       json-schema (~> 2.8)
@@ -11,7 +11,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     3scale-api (1.4.0)
-    activesupport (6.1.3.1)
+    activesupport (6.1.3.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -23,7 +23,7 @@ GEM
     codecov (0.5.1)
       simplecov (>= 0.15, < 0.22)
     coderay (1.1.3)
-    concurrent-ruby (1.1.8)
+    concurrent-ruby (1.1.9)
     crack (0.4.5)
       rexml
     cri (2.15.11)
@@ -46,14 +46,14 @@ GEM
       with_env (= 1.1.0)
       xml-simple
     method_source (1.0.0)
-    mini_portile2 (2.5.1)
+    mini_portile2 (2.5.3)
     minitest (5.14.4)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     mustermann-contrib (1.1.1)
       hansi (~> 0.2.0)
       mustermann (= 1.1.1)
-    nokogiri (1.11.5)
+    nokogiri (1.11.7)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     oas_parser (0.25.4)
