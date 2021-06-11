@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.18.3]
+
+### Added
+- Enable ppc64le arch on 3scale_toolbox [#303](https://github.com/3scale/3scale_toolbox/pull/303)
+
+### Fixed
+- Fix openapi import for self managed services when production url is not passed [#304](https://github.com/3scale/3scale_toolbox/pull/304)
+
 ## [0.18.2]
 
 ### Fixed
@@ -263,7 +271,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.18.2...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.18.3...HEAD
+[0.18.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.3
 [0.18.2]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.2
 [0.18.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.1
 [0.18.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.0
