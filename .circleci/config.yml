@@ -55,17 +55,6 @@ commands:
           docker_layer_caching: true
 
 jobs:
-  ruby-255-unittest:
-    docker:
-      - image: circleci/ruby:2.5.5
-        environment:
-          BUNDLER_VERSION: 2.1.4
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - setup-bundler
-      - unittests
-
   ruby-262-unittest:
     docker:
       - image: circleci/ruby:2.6.2
@@ -159,9 +148,6 @@ workflows:
   version: 2
   basic_tests:
     jobs:
-      - ruby-255-unittest:
-          filters:
-            <<: *tag-trigger
       - ruby-262-unittest:
           filters:
             <<: *tag-trigger
@@ -176,7 +162,6 @@ workflows:
             <<: *tag-trigger
       - push-rubygems:
           requires:
-            - ruby-255-unittest
             - ruby-262-unittest
             - ruby-270-unittest
             - license_check
