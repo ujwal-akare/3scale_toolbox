@@ -53,6 +53,10 @@ module ThreeScaleToolbox
             context[:report] ||= {}
           end
 
+          def delete_mapping_rules
+            context.fetch(:delete_mapping_rules, false)
+          end
+
           private
 
           def find_source_backend

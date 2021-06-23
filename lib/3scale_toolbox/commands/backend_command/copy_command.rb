@@ -2,6 +2,7 @@ require '3scale_toolbox/commands/backend_command/copy_command/task'
 require '3scale_toolbox/commands/backend_command/copy_command/create_or_update_target_backend_task'
 require '3scale_toolbox/commands/backend_command/copy_command/copy_metrics_task'
 require '3scale_toolbox/commands/backend_command/copy_command/copy_methods_task'
+require '3scale_toolbox/commands/backend_command/copy_command/delete_mapping_rules_task'
 require '3scale_toolbox/commands/backend_command/copy_command/copy_mapping_rules_task'
 
 module ThreeScaleToolbox
@@ -41,6 +42,7 @@ module ThreeScaleToolbox
           # First metrics as methods need 'hits' metric in target backend
           tasks << CopyCommand::CopyMetricsTask.new(context)
           tasks << CopyCommand::CopyMethodsTask.new(context)
+          tasks << CopyCommand::DeleteMappingRulesTask.new(context)
           tasks << CopyCommand::CopyMappingRulesTask.new(context)
           tasks.each(&:call)
         end
@@ -56,6 +58,7 @@ module ThreeScaleToolbox
             source_remote: threescale_client(fetch_required_option(:source)),
             target_remote: threescale_client(fetch_required_option(:destination)),
             source_backend_ref: arguments[:source_backend],
+            delete_mapping_rules: true,
             option_target_system_name: options[:'target-system-name']
           }
         end

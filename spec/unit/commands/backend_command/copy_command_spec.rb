@@ -34,6 +34,7 @@ RSpec.describe ThreeScaleToolbox::Commands::BackendCommand::CopySubcommand do
         ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CreateOrUpdateTargetBackendTask,
         ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMetricsTask,
         ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMethodsTask,
+        ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::DeleteMappingRulesTask,
         ThreeScaleToolbox::Commands::BackendCommand::CopyCommand::CopyMappingRulesTask
       ].each do |task_class|
         task = instance_double(task_class.to_s)

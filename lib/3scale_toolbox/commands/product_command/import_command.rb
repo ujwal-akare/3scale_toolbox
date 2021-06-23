@@ -28,6 +28,7 @@ module ThreeScaleToolbox
                 target_remote: remote,
                 source_remote: crd_remote,
                 source_service_ref: product.system_name,
+                delete_mapping_rules: true,
                 logger: Logger.new(File::NULL)
             }
 

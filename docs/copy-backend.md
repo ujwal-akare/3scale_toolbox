@@ -11,7 +11,8 @@ Components of the backend being copied:
 * methods
 * mapping rules
 
-If a backend with the selected `system-name` is found, it will be updated. Only missing metrics, methods and mapping rules will be created.
+If a backend with the selected `system-name` is found, it will be updated. Only missing metrics, methods will be created.
+Mapping rules will be replaced, deleting existing old mapping rules.
 
 3scale instances can be either a [URL](docs/remotes.md#remote-urls) or the name of a [remote](docs/remotes.md).
 

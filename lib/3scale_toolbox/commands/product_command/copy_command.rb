@@ -73,6 +73,7 @@ module ThreeScaleToolbox
             source_remote: threescale_client(fetch_required_option(:source)),
             target_remote: threescale_client(fetch_required_option(:destination)),
             source_service_ref: arguments[:source_product],
+            delete_mapping_rules: true,
             option_target_system_name: options[:'target-system-name']
           }
         end
