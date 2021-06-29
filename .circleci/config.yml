@@ -21,7 +21,7 @@ commands:
             sudo gem uninstall bundler
             sudo rm /usr/local/bin/bundle || true
             sudo rm /usr/local/bin/bundler || true
-            sudo gem install bundler
+            sudo gem install bundler --version 2.2.21
 
   install_dependencies:
     steps:
@@ -58,8 +58,6 @@ jobs:
   ruby-262-unittest:
     docker:
       - image: circleci/ruby:2.6.2
-        environment:
-          BUNDLER_VERSION: 2.1.4
     working_directory: ~/repo
     steps:
       - checkout
@@ -72,13 +70,12 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - setup-bundler
       - unittests
 
   license_check:
     docker:
-      - image: circleci/ruby:2.5.5
-        environment:
-          BUNDLER_VERSION: 2.1.4
+      - image: circleci/ruby:2.6.2
     working_directory: ~/repo
     steps:
       - checkout
@@ -91,9 +88,7 @@ jobs:
 
   help_test:
     docker:
-      - image: circleci/ruby:2.5.5
-        environment:
-          BUNDLER_VERSION: 2.1.4
+      - image: circleci/ruby:2.6.2
     working_directory: ~/repo
     steps:
       - checkout
@@ -106,9 +101,7 @@ jobs:
 
   integration_tests:
     docker:
-      - image: circleci/ruby:2.5.5
-        environment:
-          BUNDLER_VERSION: 2.1.4
+      - image: circleci/ruby:2.6.2
     working_directory: ~/repo
     steps:
       - checkout
