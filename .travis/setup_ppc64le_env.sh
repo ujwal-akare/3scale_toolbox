@@ -2,4 +2,4 @@
 
 set -ev
 
-sudo apt-get update
+gem install bundler --version 2.2.21
