@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi8/ruby-27
+FROM registry.access.redhat.com/ubi8/ruby-27
 MAINTAINER Eguzki Astiz Lezaun <eastizle@redhat.com>
 
 USER root
