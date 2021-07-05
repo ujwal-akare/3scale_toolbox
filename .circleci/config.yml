@@ -6,10 +6,10 @@ tag-trigger: &tag-trigger
   tags:
     only: /^v.*/
 
-only-master-filter: &only-master-filter
+only-main-filter: &only-main-filter
   filters:
     branches:
-      only: master
+      only: main
 
 commands:
   setup-bundler:
@@ -120,7 +120,7 @@ jobs:
       - run:
           name: Docker container help test
           command: |
-            docker run --rm -t quay.io/redhat/3scale-toolbox:master 3scale help
+            docker run --rm -t quay.io/redhat/3scale-toolbox:main 3scale help
 
   push-rubygems:
     docker:
@@ -177,7 +177,7 @@ workflows:
     triggers:
       - schedule:
           cron: "0 0 * * *"
-          <<: *only-master-filter
+          <<: *only-main-filter
     jobs:
       - integration_tests:
           context: autotestaccount
