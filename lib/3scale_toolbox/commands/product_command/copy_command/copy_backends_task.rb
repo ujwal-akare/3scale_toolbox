@@ -27,6 +27,7 @@ module ThreeScaleToolbox
             # First metrics as methods need 'hits' metric in target backend
             tasks << Commands::BackendCommand::CopyCommand::CopyMetricsTask.new(backend_context)
             tasks << Commands::BackendCommand::CopyCommand::CopyMethodsTask.new(backend_context)
+            tasks << Commands::BackendCommand::CopyCommand::DeleteMappingRulesTask.new(backend_context)
             tasks << Commands::BackendCommand::CopyCommand::CopyMappingRulesTask.new(backend_context)
             tasks.each(&:call)
 
@@ -72,12 +73,17 @@ module ThreeScaleToolbox
             context.fetch(:logger)
           end
 
+          def delete_mapping_rules
+            context.fetch(:delete_mapping_rules, false)
+          end
+
           def create_backend_context(source_backend)
             {
               source_remote: source_remote,
               target_remote: target_remote,
               source_backend: source_backend,
               source_backend_ref: source_backend.id,
+              delete_mapping_rules: delete_mapping_rules,
               logger: logger
             }
           end

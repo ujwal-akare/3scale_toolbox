@@ -5,11 +5,11 @@ Target product will be searched by the source product system name.
 System name can be overridden with `--target-system-name` option.
 If a product with the selected `system-name` is not found, it will be created.
 
-Components of the backend being copied:
+Components of the product being copied:
 * product configuration
 * product settings: Staging/Production Public Base URL only copied for self-managed deployments.
 * product methods&metrics: Only missing metrics&methods will be created.
-* product mapping rules: Only missing mapping rules will be created.
+* product mapping rules: mapping rules will be replaced. Existing mapping rules will be removed.
 * product application plans & pricing rules & limits: Only missing application plans & pricing rules & limits will be created.
 * product application usage rules
 * product policies
