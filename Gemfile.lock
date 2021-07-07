@@ -46,12 +46,16 @@ GEM
       with_env (= 1.1.0)
       xml-simple
     method_source (1.0.0)
+    mini_portile2 (2.5.3)
     minitest (5.14.4)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     mustermann-contrib (1.1.1)
       hansi (~> 0.2.0)
       mustermann (= 1.1.1)
+    nokogiri (1.11.7)
+      mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
     nokogiri (1.11.7-x86_64-linux)
       racc (~> 1.4)
     oas_parser (0.25.4)
@@ -105,6 +109,7 @@ GEM
     zeitwerk (2.4.2)
 
 PLATFORMS
+  powerpc64le-linux
   x86_64-linux
 
 DEPENDENCIES
