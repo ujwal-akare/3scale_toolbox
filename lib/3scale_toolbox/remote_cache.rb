@@ -140,8 +140,8 @@ module ThreeScaleToolbox
     # Generic methods
     ###
 
-    def method_missing(name, *args)
-      subject.public_send(name, *args)
+    def method_missing(name, *args, **kwargs)
+      subject.public_send(name, *args, **kwargs)
     end
 
     def respond_to_missing?(method_name, include_private = false)
