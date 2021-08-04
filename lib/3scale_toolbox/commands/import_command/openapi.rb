@@ -108,6 +108,8 @@ module ThreeScaleToolbox
           end
 
           def openapi_parser
+            raise ThreeScaleToolbox::Error, 'only JSON/YAML format is supported' unless openapi_resource.is_a?(Hash)
+
             if openapi_resource.key?('openapi')
               ThreeScaleToolbox::OpenAPI::OAS3.build(openapi_path, openapi_resource, validate: validate)
             else
