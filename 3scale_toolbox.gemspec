@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.name          = '3scale_toolbox'
   spec.version       = ThreeScaleToolbox::VERSION
   spec.licenses      = ['MIT']
-  spec.authors       = ['Michal Cichra', 'Eguzki Astiz Lezaun']
-  spec.email         = ['michal@3scale.net', 'eastizle@redhat.com']
+  spec.authors       = ['Miguel Soriano', 'Eguzki Astiz Lezaun']
+  spec.email         = ['msoriano@redhat.com', 'eastizle@redhat.com']
 
   spec.summary       = %q{3scale Toolbox.}
   spec.description   = %q{3scale tools to manage your API from the terminal.}
