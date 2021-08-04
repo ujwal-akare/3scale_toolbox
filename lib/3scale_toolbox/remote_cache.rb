@@ -140,8 +140,15 @@ module ThreeScaleToolbox
     # Generic methods
     ###
 
-    def method_missing(name, *args)
-      subject.public_send(name, *args)
+    def method_missing(name, *args, **kwargs)
+      # Only needed to keep ruby 2.6 support
+      # For ruby >= 2.7 it is enough with
+      # subject.public_send(name, *args, **kwargs) 
+      if kwargs.empty?
+        subject.public_send(name, *args)
+      else
+        subject.public_send(name, *args, **kwargs)
+      end
     end
 
     def respond_to_missing?(method_name, include_private = false)
