@@ -57,4 +57,26 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
       end
     end
   end
+
+  context 'invalid html openapi content' do
+    let(:oas_content) do
+      <<~EOF
+        <!DOCTYPE html>
+        <html>
+          <body>
+            <h1>My First Heading</h1>
+            <p>My first paragraph.</p>
+          </body>
+        </html>
+      EOF
+    end
+    let(:oas_resource) { tmp_dir.join('invalid.yaml').tap { |conf| conf.write(oas_content) } }
+
+    context '#run' do
+      it 'raises error' do
+        expect { subject.run }.to raise_error(ThreeScaleToolbox::Error,
+                                              /only JSON\/YAML format is supported/)
+      end
+    end
+  end
 end
