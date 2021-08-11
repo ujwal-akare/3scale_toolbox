@@ -218,5 +218,5 @@ Install, uninstall and update plugins using tools like [RubyGems](https://guides
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/3scale/3scale_toolbox.
+If you are interested in contributing to 3scale Toolbox, please refer to instructions available [here](docs/contributing.md)
 
