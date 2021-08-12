@@ -62,7 +62,7 @@ module ThreeScaleToolbox
         end
 
         def generic_find(remote, criteria)
-          account = remote.find_account(criteria)
+          account = remote.find_account(**criteria)
           if (errors = account['errors'])
             raise ThreeScaleToolbox::ThreeScaleApiError.new(
               'Account find returned errors', errors
