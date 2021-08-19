@@ -4,6 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.19.0]
+
+### Added
+- Deprecate Ruby 2.5 [#307](https://github.com/3scale/3scale_toolbox/pull/307)
+
+### Changed
+- Docker image based on ubi8/ruby-27 [#309](https://github.com/3scale/3scale_toolbox/pull/309)
+- \[**Breaking**\] Mapping rules will be replaced instead of adding missing ones [#308](https://github.com/3scale/3scale_toolbox/pull/308)
+
+### Fixed
+- Detect OAS format error [#318](https://github.com/3scale/3scale_toolbox/pull/318)
+
 ## [0.18.3]
 
 ### Added
@@ -271,7 +283,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.18.3...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.0
 [0.18.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.3
 [0.18.2]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.2
 [0.18.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.18.1
