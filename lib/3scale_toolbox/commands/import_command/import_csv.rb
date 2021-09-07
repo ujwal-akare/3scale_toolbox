@@ -104,14 +104,14 @@ module ThreeScaleToolbox
 
               # create a mapping rule
               if (metric_id = metric['id'] || method['id'])
-                mapping_rule = client.create_mapping_rule(service['id'], {
-                                                            metric_id:          metric_id,
-                                                            pattern:            item['endpoint_path'],
-                                                            http_method:        item['endpoint_http_method'],
-                                                            metric_system_name: item['endpoint_system_name'],
-                                                            auth_app_key:       auth_app_key_according_service(service),
-                                                            delta:              1
-                                                          })
+                mapping_rule = client.create_mapping_rule(service['id'],{
+                                                          metric_id:          metric_id,
+                                                          pattern:            item['endpoint_path'],
+                                                          http_method:        item['endpoint_http_method'],
+                                                          metric_system_name: item['endpoint_system_name'],
+                                                          auth_app_key:       auth_app_key_according_service(service),
+                                                          delta:              1
+                })
 
                 if mapping_rule['errors'].nil?
                   stats[:mapping_rules] += 1
