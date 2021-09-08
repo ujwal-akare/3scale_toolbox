@@ -140,15 +140,14 @@ module ThreeScaleToolbox
     # Generic methods
     ###
 
-    def method_missing(name, *args, **kwargs)
-      # Only needed to keep ruby 2.6 support
-      # For ruby >= 2.7 it is enough with
-      # subject.public_send(name, *args, **kwargs) 
-      if kwargs.empty?
-        subject.public_send(name, *args)
-      else
-        subject.public_send(name, *args, **kwargs)
-      end
+    def method_missing(name, *args)
+      # Correct delegation https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html
+      @subject.public_send(name, *args)
+    end
+    ruby2_keywords :method_missing if respond_to?(:ruby2_keywords, true)
+
+    def public_send(name, *args)
+      method_missing(name, *args)
     end
 
     def respond_to_missing?(method_name, include_private = false)
