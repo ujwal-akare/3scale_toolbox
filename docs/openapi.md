@@ -1,36 +1,225 @@
 ## Import API definition to 3scale from OpenAPI definition
 
-Features:
+To create a new service or to update an existing service, you can import the OpenAPI definition from a local file or a URL.
 
-* OpenAPI __2.0__ specification (f.k.a. __swagger__)
-* OpenAPI __3.0.2__ specification
-  * Limitations:
-    * Only first `server.url` element in `servers` list parsed as private url. As OpenAPI `basePath` property, `server.url` element's path component will be used.
-    * Toolbox will not parse servers in path item or operation objects.
-    * Supported security schemes: apiKey, oauth2 (any flow type).
-    * Multiple flows in security scheme object not supported.
-* Update existing product or create a new one. Product's `system_name` can be passed as option parameter and defaults to *info.title* field from openapi spec.
-* Create methods in the 'Definition' section. Method names are taken from `operation.operationId` field.
-* Create ActiveDocs.
-* Set product integration settings based on openapi spec.
-  * Mapping Rules
-    * All existing *mapping rules* are deleted before importing new API definition. Methods not deleted if exist before running the command.
-    * Create mapping rules and show them under `API > Integration`.
-    * Applied strict matching on mapping rule patterns. Prefix matching can be applied with command flat `--prefix-matching`.
-  * Authentication settings
-    * Just one top level security requirement supported. Operation level security requirements not supported.
-    * Supported security schemes: apiKey, oauth2 (any flow type).
-  * Policies
-    * When there is no security requirement spec, the product is considered as an "Open API". `default_credentials` policy will be added (also called as `anonymous_policy`). `default_credentials` policy will be configured with userkey provided in optional parameter `--default-credentials-userkey`.
-    * RH-SSO/Keycloak role check policy set for oauth2 security requirements.
-    * URL rewriting policy set when public and private base paths do not match.
-  * Deployment mode
-    * When `--production-public-base-url` or `--staging-public-base-url` (or both) option params are provided, implicitly the customer is asking for "APIcast self-managed" deployment mode. Otherwise, default deployment mode will be set, that is, "APIcast 3scale managed".
-* OpenAPI Specification JSON Schema validation (3.0.2 and 2.0). Can be skipped with command flag `--skip-openapi-validation`.
-* OpenAPI definition resource can be provided by one of the following channels:
-  * *Filename* in the available path.
-  * *URL* format (supported schemes are `http` and `https`). Toolbox will try to download from a given address.
-  * Read from *stdin* standard input stream.
+
+The import openapi command has the following format:
+
+```
+3scale import openapi [opts] -d <destination> <OAS>
+```
+
+The OpenAPI <OAS> can be one of the following:
+* filename in path
+* URI
+* `stdin`
+
+#### OpenAPI definition from filename in path
+
+Allowed formats are `json` and `yaml`. The format is automatically detected from filename __extension__.
+
+```shell
+$ 3scale import openapi -d <destination> /path/to/your/spec/file.[json|yaml|yml]
+```
+
+#### OpenAPI definition from URI
+
+Allowed formats are `json` and `yaml`. The format is automatically detected from URL's path __extension__.
+
+```shell
+$ 3scale import openapi -d <destination> http[s]://domain/resource/path.[json|yaml|yml]
+```
+
+#### OpenAPI definition from stdin
+
+Command line parameter for the openapi resource is `-`.
+
+Allowed formats are `json` and `yaml`. The format is automatically detected internally with parsers.
+
+```shell
+$ tool_to_read_openapi_from_source | 3scale import openapi -d <destination> -
+```
+
+### Supported OpenAPI specs
+
+* [OpenAPI __2.0__ specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (f.k.a. __swagger__)
+* [OpenAPI __3.0.2__ specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md) with some limitations:
+  * Only first `server.url` element in `servers` list parsed as private url. As OpenAPI `basePath` property, `server.url` element's path component will be used.
+  * Toolbox will not parse servers in path item or operation objects.
+  * Supported security schemes: apiKey, oauth2 (any flow type).
+  * Multiple flows in security scheme object not supported.
+
+### OpenAPI import rules
+
+#### Product name
+
+OpenAPI import command can be used to create a new product or to update an existing product.
+The default product name for the import is specified by the `info.title` in the OpenAPI definition.
+However, you can override this product name using this `--target_system_name=<NEW NAME>` command option.
+
+#### Private Base URL
+
+Private base URL is read from OpenAPI `servers[0].url` field.
+You can override this using this `--override-private-base-url=<value>` command option.
+
+#### 3scale Methods
+
+Each OpenAPI defined operation will translate in one 3scale method at product level.
+The method name is read from the [operationId](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#operationObject) field of the operation object.
+
+#### 3scale Mapping Rules
+
+Each OpenAPI defined operation will translate in one 3scale mapping rule at product level.
+Previously existing mapping rules will be replaced by those imported from the OpenAPI.
+
+OpenAPI [paths](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#pathsObject) object
+provides mapping rules *Verb* and *Pattern*.
+Methods will be associated accordingly to the [operationId](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#operationObject)
+
+*Delta* value is hardcoded to `1`.
+
+By default, *Strict matching* policy is being configured. Matching policy can be switched to **Prefix matching** with the `--prefix-matching` command option.
+
+#### Authentication
+
+Just one top level security requirement supported.
+Operation level security requirements not supported.
+
+Supported security schemes: `apiKey`, `oauth2` (any flow type).
+
+For the `apiKey` security scheme type:
+* *credentials location* will be read from the OpenAPI [in](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#security-scheme-object) field of the security scheme object.
+* *Auth user key* will be read from the OpenAPI [name](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#security-scheme-object) field of the security scheme object.
+
+Partial example of OpenAPI (3.0.2) with `apiKey` security requirement
+
+```yaml
+---
+openapi: "3.0.2"
+security:
+  - petstore_api_key: []
+components:
+  securitySchemes:
+    petstore_api_key:
+      type: apiKey
+      name: api_key
+      in: header
+```
+
+For the `oauth2` security scheme type:
+* *credentials location* is hardcoded to `headers`.
+* *OpenID Connect Issuer Type* defaults to `rest` and can be overriden using this `--oidc-issuer-type=<value>` command option.
+* *OpenID Connect Issuer* is not read from OpenAPI. Since 3scale requires that the issuer URL must include a *client secret*, the issue must be set using this `--oidc-issuer-endpoint=<value>` command option.
+* *OIDC AUTHORIZATION FLOW* is read from the [flows](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#security-scheme-object) field of the security scheme object.
+
+Partial example of OpenAPI (3.0.2) with `oauth2` security requirement
+
+```yaml
+---
+openapi: "3.0.2"
+security:
+    - petstore_oauth:
+      - write:pets
+      - read:pets
+  components:
+    securitySchemes:
+      petstore_oauth:
+        type: oauth2
+        flows:
+          clientCredentials:
+            tokenUrl: http://example.org/api/oauth/dialog
+            scopes:
+              write:pets: modify pets in your account
+              read:pets: read your pets
+```
+
+When OpenAPI does not specify any security requirements:
+* The product is considered as an "Open API"
+* `default_credentials` 3scale policy will be added (also called as `anonymous_policy`)
+* The command option `--default-credentials-userkey` is required and the command will fail if not provided.
+
+#### ActiveDocs
+
+A 3scale ActiveDoc will be created (or updated if previously existed).
+The activedoc object will be associated to the 3scale product being imported out of the OpenAPI.
+
+#### 3scale Policies
+
+* When there is no security requirement spec, `default_credentials` 3scale policy will be added (also called as `anonymous_policy`).
+* RH-SSO/Keycloak role check policy set for `oauth2` security requirements.
+* URL rewriting policy set when public and private base paths (not URLS) do not match. Public and private base paths matches by default, but both of them can be overriden using `--override-public-basepath` and `--override-private-basepath=<value>` command options.
+
+#### 3scale Deployment Mode
+
+By default, the configured 3scale deployment mode will be `APIcast 3scale managed`.
+However, when `--production-public-base-url` or `--staging-public-base-url` (or both) command options are found,
+the toolbox will configure the product with `APIcast self-managed` deployment mode.
+
+### Minimum required OAS doc
+
+In [OAS 3.0.2](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#oasDocument), the minimum **valid** OpenAPI document just contains `info` and `paths` fields.
+
+For instance:
+
+```yaml
+---
+openapi: "3.0.2"
+info:
+  title: "some title"
+  description: "some description"
+  version: "1.0.0"
+paths:
+  /pet:
+    get:
+      operationId: "getPet"
+      responses:
+        405:
+          description: "invalid input"
+```
+
+However, with this OpenAPI document, there is critical 3scale configuration lacking and must be provided to the toolbox for a working 3scale configuration:
+* `Private Base URL` passing `--override-private-base-url=<value>` command option
+* Since the document does not contain any security requirement, the toolbox expects some default user key as credentials passing `--default-credentials-userkey <USER-KEY>` command option.
+
+```shell
+3scale import openapi -d <remote> --default-credentials-userkey=<user-key> --override-private-base-url=<value> <oas>
+```
+
+To avoid extra command line options, the minimum valid OpenAPI document should include the `servers[0].url` field and basic security requirements for `apiKey`. For instance:
+
+```yaml
+---
+openapi: "3.0.2"
+info:
+  title: "some title"
+  description: "some description"
+  version: "1.0.0"
+servers:
+  - url: https://petstore.swagger.io/v1
+paths:
+  /pet:
+    get:
+      operationId: "getPet"
+      responses:
+        405:
+          description: "invalid input"
+security:
+  - petstore_api_key: []
+components:
+  securitySchemes:
+    petstore_api_key:
+      type: apiKey
+      name: user_key
+      in: query
+```
+
+With this OpenAPI document, the toolbox does not need extra command options to have a working 3scale product.
+
+```shell
+3scale import openapi -d <remote> <oas>
+```
+
+*Note*: 3scale stil requires creating the application key, but this is out of scope of this toolbox commnad.
 
 ### Usage
 
@@ -81,28 +270,3 @@ OPTIONS
     -t --target_system_name=<value>               Target system name
 ```
 
-### OpenAPI definition from filename in path
-
-Allowed formats are `json` and `yaml`. The format is automatically detected from filename __extension__.
-
-```shell
-$ 3scale import openapi -d <destination> /path/to/your/spec/file.[json|yaml|yml]
-```
-
-### OpenAPI definition from URI
-
-Allowed formats are `json` and `yaml`. The format is automatically detected from URL's path __extension__.
-
-```shell
-$ 3scale import openapi -d <destination> http[s]://domain/resource/path.[json|yaml|yml]
-```
-
-### OpenAPI definition from stdin
-
-Command line parameter for the openapi resource is `-`.
-
-Allowed formats are `json` and `yaml`. The format is automatically detected internally with parsers.
-
-```shell
-$ tool_to_read_openapi_from_source | 3scale import openapi -d <destination> -
-```
