@@ -2,19 +2,43 @@
 
 To create a new service or to update an existing service, you can import the OpenAPI definition from a local file or a URL.
 
-
-The import openapi command has the following format:
+The `import openapi` command has the following format:
 
 ```
 3scale import openapi [opts] -d <destination> <OAS>
 ```
 
-The OpenAPI <OAS> can be one of the following:
+### Table of contents
+
+* [Import API definition to 3scale from OpenAPI definition](#import-api-definition-to-3scale-from-openapi-definition)
+   * [Table of contents](#table-of-contents)
+   * [OpenAPI document sources](#openapi-document-sources)
+      * [filename in path](#filename-in-path)
+      * [URL](#url)
+      * [Standard input stream stdin](#standard-input-stream-stdin)
+   * [Supported OpenAPI spec version and limitations](#supported-openapi-spec-version-and-limitations)
+   * [OpenAPI import rules](#openapi-import-rules)
+      * [Idempotent](#idempotent)
+      * [Product name](#product-name)
+      * [Private Base URL](#private-base-url)
+      * [3scale Methods](#3scale-methods)
+      * [3scale Mapping Rules](#3scale-mapping-rules)
+      * [Authentication](#authentication)
+      * [ActiveDocs](#activedocs)
+      * [3scale Policies](#3scale-policies)
+      * [3scale Deployment Mode](#3scale-deployment-mode)
+   * [Minimum required OAS doc](#minimum-required-oas-doc)
+   * [Usage](#usage)
+
+### OpenAPI document sources
+
+The OpenAPI document `<OAS>` can be read from different sources:
+
 * filename in path
-* URI
+* URL
 * `stdin`
 
-#### OpenAPI definition from filename in path
+#### filename in path
 
 Allowed formats are `json` and `yaml`. The format is automatically detected from filename __extension__.
 
@@ -22,7 +46,7 @@ Allowed formats are `json` and `yaml`. The format is automatically detected from
 $ 3scale import openapi -d <destination> /path/to/your/spec/file.[json|yaml|yml]
 ```
 
-#### OpenAPI definition from URI
+#### URL
 
 Allowed formats are `json` and `yaml`. The format is automatically detected from URL's path __extension__.
 
@@ -30,26 +54,30 @@ Allowed formats are `json` and `yaml`. The format is automatically detected from
 $ 3scale import openapi -d <destination> http[s]://domain/resource/path.[json|yaml|yml]
 ```
 
-#### OpenAPI definition from stdin
+#### Standard input stream `stdin`
 
 Command line parameter for the openapi resource is `-`.
 
-Allowed formats are `json` and `yaml`. The format is automatically detected internally with parsers.
+Supported OAS document formats are `json` and `yaml`. The format is automatically detected internally by the parser.
 
 ```shell
 $ tool_to_read_openapi_from_source | 3scale import openapi -d <destination> -
 ```
 
-### Supported OpenAPI specs
+### Supported OpenAPI spec version and limitations
 
 * [OpenAPI __2.0__ specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (f.k.a. __swagger__)
 * [OpenAPI __3.0.2__ specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md) with some limitations:
-  * Only first `server.url` element in `servers` list parsed as private url. As OpenAPI `basePath` property, `server.url` element's path component will be used.
-  * Toolbox will not parse servers in path item or operation objects.
+  * Only first `servers[0].url` element in `servers` list parsed as *private base url*. As OpenAPI specification`basePath` property, `servers[0].url` URL's base path component will be used.
+  * Toolbox will *not* parse servers in path item or operation objects.
   * Supported security schemes: apiKey, oauth2 (any flow type).
   * Multiple flows in security scheme object not supported.
 
 ### OpenAPI import rules
+
+#### Idempotent
+
+The command was designed to be idempotent. It can be executed multiple times without changing the result. If the command fails for some unexpected temporary issue, like a network outage, it is safe to re-run as many times as necessary. It is designed to be run from CI/CD system expecting to be run multiple times with the same parameters. 
 
 #### Product name
 
@@ -72,18 +100,16 @@ The method name is read from the [operationId](https://github.com/OAI/OpenAPI-Sp
 Each OpenAPI defined operation will translate in one 3scale mapping rule at product level.
 Previously existing mapping rules will be replaced by those imported from the OpenAPI.
 
-OpenAPI [paths](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#pathsObject) object
-provides mapping rules *Verb* and *Pattern*.
-Methods will be associated accordingly to the [operationId](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#operationObject)
+OpenAPI [paths](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#pathsObject) object provides mapping rules *Verb* and *Pattern* properties. 3scale methods will be associated accordingly to the [operationId](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#operationObject)
 
-*Delta* value is hardcoded to `1`.
+*Delta* value is hard-coded to `1`.
 
 By default, *Strict matching* policy is being configured. Matching policy can be switched to **Prefix matching** with the `--prefix-matching` command option.
 
 #### Authentication
 
 Just one top level security requirement supported.
-Operation level security requirements not supported.
+Operation level security requirements are not supported.
 
 Supported security schemes: `apiKey`, `oauth2` (any flow type).
 
@@ -107,8 +133,8 @@ components:
 ```
 
 For the `oauth2` security scheme type:
-* *credentials location* is hardcoded to `headers`.
-* *OpenID Connect Issuer Type* defaults to `rest` and can be overriden using this `--oidc-issuer-type=<value>` command option.
+* *credentials location* is hard-coded to `headers`.
+* *OpenID Connect Issuer Type* defaults to `rest` and can be overridden using this `--oidc-issuer-type=<value>` command option.
 * *OpenID Connect Issuer* is not read from OpenAPI. Since 3scale requires that the issuer URL must include a *client secret*, the issue must be set using this `--oidc-issuer-endpoint=<value>` command option.
 * *OIDC AUTHORIZATION FLOW* is read from the [flows](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#security-scheme-object) field of the security scheme object.
 
@@ -147,7 +173,7 @@ The activedoc object will be associated to the 3scale product being imported out
 
 * When there is no security requirement spec, `default_credentials` 3scale policy will be added (also called as `anonymous_policy`).
 * RH-SSO/Keycloak role check policy set for `oauth2` security requirements.
-* URL rewriting policy set when public and private base paths (not URLS) do not match. Public and private base paths matches by default, but both of them can be overriden using `--override-public-basepath` and `--override-private-basepath=<value>` command options.
+* *URL rewriting* policy set when public and private base paths (not URLs) do not match. Public and private base paths matches by default, but any or both of them can be overridden using `--override-public-basepath` and `--override-private-basepath=<value>` command options.
 
 #### 3scale Deployment Mode
 
@@ -219,7 +245,7 @@ With this OpenAPI document, the toolbox does not need extra command options to h
 3scale import openapi -d <remote> <oas>
 ```
 
-*Note*: 3scale stil requires creating the application key, but this is out of scope of this toolbox commnad.
+*Note*: 3scale still requires creating the application key, but this is out of scope of this toolbox command.
 
 ### Usage
 
@@ -269,4 +295,3 @@ OPTIONS
        --staging-public-base-url=<value>          Custom public staging URL
     -t --target_system_name=<value>               Target system name
 ```
-
