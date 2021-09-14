@@ -4,6 +4,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
   end
   let(:service) { instance_double(ThreeScaleToolbox::Entities::Service, 'service') }
   let(:default_credentials_userkey) { '12345' }
+  let(:another_credentials_userkey) { '89999' }
   let(:override_private_basepath) { nil }
   let(:override_public_basepath) { nil }
   let(:available_policies) do
@@ -61,13 +62,13 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
         end
       end
 
-      context 'anonymous policy already in chain' do
+      context 'same anonymous policy already in chain' do
         let(:available_policies) do
           [
             {
               'name' => 'default_credentials',
               'version' => 'builtin',
-              'configuration' => { 'auth_type' => 'user_key', 'user_key': default_credentials_userkey },
+              'configuration' => { 'auth_type' => 'user_key', 'user_key' => default_credentials_userkey },
               'enabled' => true
             }
           ]
@@ -76,6 +77,44 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
         it 'policy chain not updated' do
           # doubles are strict by default.
           # if service double receives `update_policies` call, test will fail
+          subject
+        end
+      end
+
+      context 'diff anonymous policy already in chain' do
+        let(:openapi_context) do
+          {
+            target: service,
+            api_spec: api_spec,
+            default_credentials_userkey: another_credentials_userkey,
+            override_private_basepath: override_private_basepath,
+            override_public_basepath: override_public_basepath
+          }
+        end
+        let(:available_policies) do
+          [
+            {
+              'name' => 'default_credentials',
+              'version' => 'builtin',
+              'configuration' => { 'auth_type' => 'user_key', 'user_key' => default_credentials_userkey },
+              'enabled' => true
+            }
+          ]
+        end
+
+        let(:expected_anonymous_policy_settings) do
+          {
+            name: 'default_credentials',
+            version: 'builtin',
+            configuration: { auth_type: 'user_key', user_key: another_credentials_userkey },
+            enabled: true
+          }
+        end
+
+        it 'policy chain updated' do
+          expect(service).to receive(:update_policies)
+            .with(hash_including('policies_config' => array_including(expected_anonymous_policy_settings)))
+            .and_return({})
           subject
         end
       end
@@ -88,6 +127,24 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
         # doubles are strict by default.
         # if service double receives `update_policies` call, test will fail
         subject
+      end
+
+      context 'anonymous policy available' do
+        let(:available_policies) do
+          [
+            {
+              'name' => 'default_credentials',
+              'version' => 'builtin',
+              'configuration' => { 'auth_type' => 'user_key', 'user_key' => default_credentials_userkey },
+              'enabled' => true
+            }
+          ]
+        end
+
+        it 'policy chain removes anonymous policy' do
+          expect(service).to receive(:update_policies).with(excluding_policies('default_credentials')).and_return({})
+          subject
+        end
       end
     end
 
