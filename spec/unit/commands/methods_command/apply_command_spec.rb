@@ -76,7 +76,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
             }
           end
 
-          it 'friendly_name overriden' do
+          it 'friendly_name overridden' do
             expect(method_class).to receive(:create).with(service: service,
                                                           attrs: create_attrs)
                                                     .and_return(method)

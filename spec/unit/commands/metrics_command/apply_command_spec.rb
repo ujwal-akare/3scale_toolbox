@@ -68,7 +68,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
             }
           end
 
-          it 'friendly_name overriden' do
+          it 'friendly_name overridden' do
             expect(metric_class).to receive(:create).with(service: service, attrs: create_attrs)
                                                     .and_return(metric)
             expect { subject.run }.to output(/Applied metric id: 1/).to_stdout
@@ -85,7 +85,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MetricsCommand::Apply::ApplySubcomma
             }
           end
 
-          it 'unit overriden' do
+          it 'unit overridden' do
             expect(metric_class).to receive(:create).with(service: service, attrs: create_attrs)
                                                     .and_return(metric)
             expect { subject.run }.to output(/Applied metric id: 1/).to_stdout

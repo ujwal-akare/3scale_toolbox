@@ -164,7 +164,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
         subject
       end
 
-      context 'private and public base path overriden' do
+      context 'private and public base path overridden' do
         let(:base_path) { '/v2' }
         let(:override_private_basepath) { '/v1' }
         let(:override_public_basepath) { '/v1' }
