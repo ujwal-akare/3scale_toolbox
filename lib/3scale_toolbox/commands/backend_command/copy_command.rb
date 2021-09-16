@@ -18,7 +18,7 @@ module ThreeScaleToolbox
             summary     'Copy backend'
             description <<-HEREDOC
             This command makes a copy of the referenced backend.
-            Target backend will be searched by source backend system name. System name can be overriden with `--target-system-name` option.
+            Target backend will be searched by the source backend system name. System name can be overridden with `--target-system-name` option.
             If a backend with the selected `system-name` is not found, it will be created.
             \n Components of the backend being copied:
             \nmetrics

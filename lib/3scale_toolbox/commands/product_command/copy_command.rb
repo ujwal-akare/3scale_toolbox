@@ -14,13 +14,13 @@ module ThreeScaleToolbox
             summary     'Copy product'
             description <<-HEREDOC
             This command makes a copy of the referenced product.
-            Target product will be searched by source product system name. System name can be overriden with `--target-system-name` option.
+            Target product will be searched by the source product system name. System name can be overridden with `--target-system-name` option.
             If a product with the selected `system_name` is not found, it will be created.
             \n Components of the product being copied:
             \nproduct configuration
             \nproduct settings
             \nproduct methods&metrics: Only missing metrics&methods will be created.
-            \nproduct mapping rules: Only missing mapping rules will be created.
+            \nproduct mapping rules: mapping rules will be replaced. Existing mapping rules will be removed.
             \nproduct application plans & pricing rules & limits: Only missing application plans & pricing rules & limits will be created.
             \nproduct application usage rules
             \nproduct policies

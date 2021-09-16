@@ -53,7 +53,7 @@ module ThreeScaleToolbox
             # Other processing steps can work with original openapi spec
             Helper.hash_deep_dup(resource).tap do |activedocs|
               # public production base URL
-              # the basePath field is updated to a new value only when overriden by optional param
+              # the basePath field is updated to a new value only when overridden by optional param
               unless service.proxy['endpoint'].nil?
                 api_spec.set_server_url(activedocs, URI.join(service.proxy.fetch('endpoint'), public_base_path))
               end
