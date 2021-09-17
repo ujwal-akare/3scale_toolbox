@@ -3,6 +3,8 @@ module ThreeScaleToolbox
     class Method
       include CRD::MethodSerializer
 
+      METHOD_BLACKLIST = %w[id links created_at updated_at].freeze
+
       class << self
         def create(service:, attrs:)
           method_attrs = service.remote.create_method service.id, service.hits.id, attrs
@@ -74,6 +76,15 @@ module ThreeScaleToolbox
         remote.delete_method service.id, hits_id, id
       end
 
+      # enriched_key returns a metric key that will be unique for all
+      # metrics/methods from products and backends
+      def enriched_key
+        "product.#{service.id}.#{id}"
+      end
+
+      def to_hash
+        attrs.reject { |key, _| METHOD_BLACKLIST.include? key }
+      end
 
       private
 

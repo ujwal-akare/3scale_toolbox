@@ -6,6 +6,8 @@ module ThreeScaleToolbox
       VALID_PARAMS = %w[friendly_name system_name unit description].freeze
       public_constant :VALID_PARAMS
 
+      METRIC_BLACKLIST = %w[id links created_at updated_at].freeze
+
       class << self
         def create(backend:, attrs:)
           metric = backend.remote.create_backend_metric(backend.id,
@@ -72,6 +74,20 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_backend_metric backend.id, id
+      end
+
+      # enriched_key returns a metric key that will be unique for all
+      # metrics from products and backends
+      def enriched_key
+        "backend.#{backend.id}.#{id}"
+      end
+
+      def to_hash
+        extra_attrs = {
+          'backend_system_name' => backend.system_name
+        }
+
+        attrs.merge(extra_attrs).reject { |key, _| METRIC_BLACKLIST.include? key }
       end
 
       private
