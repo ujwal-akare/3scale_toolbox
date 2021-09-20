@@ -2,7 +2,7 @@ module ThreeScaleToolbox
   module Commands
     module PlansCommand
       module Import
-        class ImportMetricLimitsStep
+        class ImportLimitsStep
           include Step
           ##
           # Writes Plan limits
@@ -26,9 +26,13 @@ module ThreeScaleToolbox
 
           def resource_limits_processed
             resource_limits.map do |limit|
-              metric = find_metric_by_system_name(limit.delete('metric_system_name'))
+              metric_system_name = limit.delete('metric_system_name')
+              backend_system_name = limit.delete('metric_backend_system_name')
+              metric = find_metric(metric_system_name, backend_system_name)
               # this ImportMetricLimitsStep step is assuming all metrics/methods have been created
               # in previous step, so finding metric should always succeed.
+              raise ThreeScaleToolbox::Error, "metric [#{metric_system_name}, #{backend_system_name}] not found" if metric.nil?
+
               limit.merge('metric_id' => metric.id)
             end
           end

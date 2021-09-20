@@ -39,7 +39,7 @@ module ThreeScaleToolbox
       end
 
       def metric_link
-        links.find { |link| link['rel'] == 'metric' }
+        links.find { |link| link['rel'] == 'metric' } || {}
       end
 
       def update(new_limit_attrs)

@@ -53,6 +53,22 @@ module ThreeScaleToolbox
             artifacts_resource['methods'] || []
           end
 
+          def resource_product_metrics
+            resource_metrics.reject{ |m| m.has_key? 'backend_system_name' }
+          end
+
+          def resource_product_methods
+            resource_methods.reject{ |mth| mth.has_key? 'backend_system_name' }
+          end
+
+          def resource_backend_metrics
+            resource_metrics.select{ |m| m.has_key? 'backend_system_name' }
+          end
+
+          def resource_backend_methods
+            resource_methods.select{ |mth| mth.has_key? 'backend_system_name' }
+          end
+
           def resource_limits
             artifacts_resource['limits'] || []
           end
@@ -82,8 +98,14 @@ module ThreeScaleToolbox
             service_features.find { |feature| feature['system_name'] == system_name }
           end
 
-          def find_metric_by_system_name(system_name)
-            service_metrics_and_methods.find { |metric| metric.system_name == system_name }
+          def find_metric(metric_system_name, backend_system_name)
+            metric_method_list = if backend_system_name.nil?
+                                   service_metrics_and_methods
+                                 else
+                                   backend = find_backend(backend_system_name)
+                                   backend.metrics + backend.methods
+                                 end
+            metric_method_list.find { |metric| metric.system_name == metric_system_name }
           end
 
           private
@@ -98,6 +120,13 @@ module ThreeScaleToolbox
           def find_plan
             Entities::ApplicationPlan.find(service: service, ref: plan_system_name).tap do |p|
               raise ThreeScaleToolbox::Error, "Application plan #{plan_system_name} does not exist" if p.nil?
+            end
+          end
+
+          def find_backend(backend_system_name)
+            Entities::Backend.find_by_system_name(remote: threescale_client,
+                                                  system_name: backend_system_name).tap do |backend|
+              raise ThreeScaleToolbox::Error, "Backend #{backend_system_name} does not exist" if backend.nil?
             end
           end
         end

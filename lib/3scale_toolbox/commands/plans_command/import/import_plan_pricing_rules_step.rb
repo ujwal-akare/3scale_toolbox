@@ -26,7 +26,13 @@ module ThreeScaleToolbox
 
           def resource_pr_processed
             resource_pricing_rules.map do |pr|
-              metric = find_metric_by_system_name(pr.delete('metric_system_name'))
+              metric_system_name = pr.delete('metric_system_name')
+              backend_system_name = pr.delete('metric_backend_system_name')
+              metric = find_metric(metric_system_name, backend_system_name)
+              # this ImportMetricLimitsStep step is assuming all metrics/methods have been created
+              # in previous step, so finding metric should always succeed.
+              raise ThreeScaleToolbox::Error, "metric [#{metric_system_name}, #{backend_system_name}] not found" if metric.nil?
+
               pr.merge('metric_id' => metric.id,
                        'cost_per_unit' => pr.fetch('cost_per_unit').to_f)
             end

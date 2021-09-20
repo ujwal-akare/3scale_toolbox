@@ -19,7 +19,7 @@ module ThreeScaleToolbox
           { 'systemName' => method.system_name }
         elsif (metric = plan.service.metrics.find { |m| m.id == metric_id })
           { 'systemName' => metric.system_name }
-        elsif (backend = backend_from_metric)
+        elsif (backend = backend_from_metric_link)
           if (backend_metric = backend.metrics.find { |m| m.id == metric_id })
             { 'systemName' => backend_metric.system_name, 'backend' => backend.system_name }
           elsif (backend_method = backend.methods.find { |m| m.id == metric_id })

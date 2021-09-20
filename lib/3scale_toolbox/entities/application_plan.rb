@@ -229,14 +229,14 @@ module ThreeScaleToolbox
 
       def uniq_metrics_to_hash
         limit_metrics = limits.flat_map do |limit|
-          # one of them should be nil
+          # one of them (or both) could be nil
           [
             limit.product_metric, limit.backend_metric
           ]
         end.compact
 
         pr_metrics = pricing_rules.flat_map do |pr|
-          # one of them should be nil
+          # one of them (or both) could be nil
           [
             pr.product_metric, pr.backend_metric
           ]
@@ -253,14 +253,14 @@ module ThreeScaleToolbox
 
       def uniq_methods_to_hash
         limit_methods = limits.flat_map do |limit|
-          # one of them should be nil
+          # one of them (or both) could be nil
           [
             limit.product_method, limit.backend_method
           ]
         end.compact
 
         pr_methods = pricing_rules.flat_map do |pr|
-          # one of them should be nil
+          # one of them (or both) could be nil
           [
             pr.product_method, pr.backend_method
           ]
