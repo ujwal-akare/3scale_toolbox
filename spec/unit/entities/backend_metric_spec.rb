@@ -6,6 +6,7 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMetric do
   before :each do
     allow(backend).to receive(:id).and_return(backend_id)
     allow(backend).to receive(:remote).and_return(remote)
+    allow(backend).to receive(:system_name).and_return('backend01')
   end
 
   context 'BackendMetric.create' do
@@ -234,6 +235,48 @@ RSpec.describe ThreeScaleToolbox::Entities::BackendMetric do
       it 'expected unit' do
         expect(subject).to include('unit' => '1')
       end
+    end
+
+    context '#to_hash' do
+      let(:attrs) do
+        {
+          'id' => backend_metric_id,
+          'friendly_name' => friendly_name,
+          'system_name' => "#{system_name}.#{backend_id}",
+          'description' => 'some descr',
+          'links' => [],
+          'created_at' => 'now',
+          'updated_at' => 'now'
+        }
+      end
+      subject { backend_metric.to_hash }
+
+      it 'expected number of attrs' do
+        # 3 valid from the source attrs and backend_system_name
+        expect(subject.length).to eq(4)
+      end
+
+      it 'expected friendly_name' do
+        expect(subject).to include('friendly_name' => friendly_name)
+      end
+
+      it 'expected description' do
+        expect(subject).to include('description' => 'some descr')
+      end
+
+      it 'expected system_name' do
+        expect(subject).to include('system_name' => system_name)
+      end
+
+      it 'expected backend_system_name' do
+        expect(subject).to include('backend_system_name' => backend.system_name)
+      end
+    end
+
+    context '#enriched_key' do
+      subject { backend_metric.enriched_key }
+
+      it { is_expected.to eq("backend.#{backend.id}.#{backend_metric_id}") }
     end
   end
 end
