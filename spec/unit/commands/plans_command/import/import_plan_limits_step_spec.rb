@@ -1,4 +1,4 @@
-RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportMetricLimitsStep do
+RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportLimitsStep do
   let(:threescale_client) { instance_double('ThreeScale::API::Client', 'threescale_client') }
   let(:service_system_name) { 'myservice' }
   let(:plan_system_name) { 'myplan' }
