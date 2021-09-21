@@ -1,8 +1,12 @@
 RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
-  let(:remote) { instance_double('ThreeScale::API::Client', 'remote') }
-  let(:service) { instance_double('ThreeScaleToolbox::Entities::Service') }
+  let(:remote) { instance_double(ThreeScale::API::Client, 'remote') }
+  let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
   let(:metric_0) { instance_double(ThreeScaleToolbox::Entities::Metric) }
   let(:metric_1) { instance_double(ThreeScaleToolbox::Entities::Metric) }
+  let(:metric_2) { instance_double(ThreeScaleToolbox::Entities::BackendMetric) }
+  let(:metric_3) { instance_double(ThreeScaleToolbox::Entities::BackendMetric) }
+  let(:method_0) { instance_double(ThreeScaleToolbox::Entities::Method) }
+  let(:method_1) { instance_double(ThreeScaleToolbox::Entities::BackendMethod) }
 
   before :example do
     allow(metric_0).to receive(:id).and_return(0)
@@ -492,6 +496,160 @@ RSpec.describe ThreeScaleToolbox::Entities::ApplicationPlan do
 
       it 'limits included' do
         expect(subject.to_cr.has_key? 'limits').to be_truthy
+      end
+    end
+
+    context '#to_hash' do
+      let(:limit_0) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_1) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:limit_2) { instance_double(ThreeScaleToolbox::Entities::Limit) }
+      let(:pr_0) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:pr_1) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:pr_2) { instance_double(ThreeScaleToolbox::Entities::PricingRule) }
+      let(:limits) { [limit_0, limit_1, limit_2] }
+      let(:prs) { [pr_0, pr_1, pr_2] }
+      let(:feature_0) do
+        { 'id' => 1, 'links' => [], 'created_at' => 'now', 'updated_at' => 'now', 'other' => 0 }
+      end
+      let(:features) { [feature_0] }
+      let(:plan_attrs) { { 'id' => 1, 'links' => [], 'created_at' => 'now', 'updated_at' => 'now', 'system_name' => 'some name' } }
+      let(:plan_hash) { subject.to_hash }
+
+      # limit 0 ->
+      #   * product metric_0
+      # limit 1 ->
+      #   * backend metric_2
+      # limit 2 ->
+      #   * product method_0
+      # pr 0 ->
+      #   * product metric_0
+      # pr 1 ->
+      #   * backend metric_3
+      # pr 2 ->
+      #   * backend method_1
+      before :example do
+        expect(subject).to receive(:attrs).and_return(plan_attrs)
+        allow(subject).to receive(:limits).and_return(limits)
+        allow(subject).to receive(:pricing_rules).and_return(prs)
+        allow(subject).to receive(:features).and_return(features)
+
+        # limit 0
+        allow(limit_0).to receive(:to_hash).and_return({})
+        allow(limit_0).to receive(:product_metric).and_return(metric_0)
+        allow(limit_0).to receive(:backend_metric).and_return(nil)
+        allow(limit_0).to receive(:product_method).and_return(nil)
+        allow(limit_0).to receive(:backend_method).and_return(nil)
+
+        # limit 1
+        allow(limit_1).to receive(:to_hash).and_return({})
+        allow(limit_1).to receive(:product_metric).and_return(nil)
+        allow(limit_1).to receive(:backend_metric).and_return(metric_2)
+        allow(limit_1).to receive(:product_method).and_return(nil)
+        allow(limit_1).to receive(:backend_method).and_return(nil)
+
+        # limit 2
+        allow(limit_2).to receive(:to_hash).and_return({})
+        allow(limit_2).to receive(:product_metric).and_return(nil)
+        allow(limit_2).to receive(:backend_metric).and_return(nil)
+        allow(limit_2).to receive(:product_method).and_return(method_0)
+        allow(limit_2).to receive(:backend_method).and_return(nil)
+
+        # pr 0
+        allow(pr_0).to receive(:to_hash).and_return({})
+        allow(pr_0).to receive(:product_metric).and_return(metric_0)
+        allow(pr_0).to receive(:backend_metric).and_return(nil)
+        allow(pr_0).to receive(:product_method).and_return(nil)
+        allow(pr_0).to receive(:backend_method).and_return(nil)
+
+        # pr 1
+        allow(pr_1).to receive(:to_hash).and_return({})
+        allow(pr_1).to receive(:product_metric).and_return(nil)
+        allow(pr_1).to receive(:backend_metric).and_return(metric_3)
+        allow(pr_1).to receive(:product_method).and_return(nil)
+        allow(pr_1).to receive(:backend_method).and_return(nil)
+
+        # pr 2
+        allow(pr_2).to receive(:to_hash).and_return({})
+        allow(pr_2).to receive(:product_metric).and_return(nil)
+        allow(pr_2).to receive(:backend_metric).and_return(nil)
+        allow(pr_2).to receive(:product_method).and_return(nil)
+        allow(pr_2).to receive(:backend_method).and_return(method_1)
+
+        # metric 0
+        allow(metric_0).to receive(:enriched_key).and_return('0')
+        allow(metric_0).to receive(:to_hash).and_return({id: 0})
+
+        # metric 2
+        allow(metric_2).to receive(:enriched_key).and_return('b2')
+        allow(metric_2).to receive(:to_hash).and_return({id: 2})
+
+        # metric 3
+        allow(metric_3).to receive(:enriched_key).and_return('b3')
+        allow(metric_3).to receive(:to_hash).and_return({id: 3})
+
+        # method 0
+        allow(method_0).to receive(:enriched_key).and_return('4')
+        allow(method_0).to receive(:to_hash).and_return({id: 4})
+
+        # method 1
+        allow(method_1).to receive(:enriched_key).and_return('b5')
+        allow(method_1).to receive(:to_hash).and_return({id: 5})
+      end
+
+      it 'plan blacklisted attrs are filtered' do
+        expect(plan_hash).to include('plan')
+        expect(plan_hash['plan'].length).to equal(1)
+        expect(plan_hash['plan']).to include('system_name')
+      end
+
+      it 'plan features blacklisted attrs are filtered' do
+        expect(plan_hash).to include('plan_features')
+        expect(plan_hash['plan_features'].length).to equal(1)
+        expect(plan_hash['plan_features'][0].length).to equal(1)
+        expect(plan_hash['plan_features'][0]).to include('other')
+      end
+
+      it 'pricing rules' do
+        expect(plan_hash).to include('pricingrules')
+        expect(plan_hash['pricingrules'].length).to equal(3)
+      end
+
+      it 'limits' do
+        expect(plan_hash).to include('limits')
+        expect(plan_hash['limits'].length).to equal(3)
+      end
+
+      it 'metrics' do
+        expect(plan_hash).to include('metrics')
+        expect(plan_hash['metrics'].length).to equal(3)
+        expect(plan_hash['metrics'].any? { |m| m[:id] == 0 }).to be_truthy
+        expect(plan_hash['metrics'].any? { |m| m[:id] == 2 }).to be_truthy
+        expect(plan_hash['metrics'].any? { |m| m[:id] == 3 }).to be_truthy
+      end
+
+      it 'methods' do
+        expect(plan_hash).to include('methods')
+        expect(plan_hash['methods'].length).to equal(2)
+        expect(plan_hash['methods'].any? { |m| m[:id] == 4 }).to be_truthy
+        expect(plan_hash['methods'].any? { |m| m[:id] == 5 }).to be_truthy
+      end
+
+      context 'empty plan' do
+        let(:limits) { [] }
+        let(:prs) { [] }
+        let(:features) { [] }
+        let(:plan_attrs) { { } }
+
+        it 'hash empty' do
+          expect(plan_hash).to eq({
+            'plan' => {},
+            'limits' => [],
+            'pricingrules' => [],
+            'plan_features' => [],
+            'metrics' => [],
+            'methods' => []
+          })
+        end
       end
     end
   end
