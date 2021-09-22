@@ -39,6 +39,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportBackendM
           .and_return(backend)
         allow(backend).to receive(:methods).and_return(backend_methods)
         allow(backend).to receive(:metrics).and_return(backend_metrics)
+        allow(backend).to receive(:system_name).and_return(backend_system_name)
       end
 
       context 'with one missing metric' do
