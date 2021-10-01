@@ -1,7 +1,10 @@
 module ThreeScaleToolbox
   class RemoteCache < BasicObject
 
-    attr_reader :metrics_cache, :methods_cache, :backend_metrics_cache, :backend_methods_cache, :subject
+    attr_reader :metrics_cache, :methods_cache,
+      :backend_metrics_cache, :backend_methods_cache,
+      :backends_cache,
+      :subject
 
     def initialize(subject)
       @subject = subject
@@ -13,6 +16,8 @@ module ThreeScaleToolbox
       @backend_metrics_cache = {}
       # Backend methods cache data
       @backend_methods_cache = {}
+      # Backends cache data
+      @backends_cache = {}
     end
 
     def list_metrics(service_id)
@@ -134,6 +139,42 @@ module ThreeScaleToolbox
           backend_methods_cache.delete(method_cache_key(backend_id, metric_id))
         end
       end
+    end
+
+    def list_backends(params = nil)
+      return backends_cache[params] if backends_cache.has_key? params
+
+      subject.list_backends(params).tap do |backends|
+        backends_cache[params] = backends unless backends.respond_to?(:has_key?) && !backends['errors'].nil?
+      end
+    end
+
+    def create_backend(attributes)
+      subject.create_backend(attributes).tap do |backend_attrs|
+        backends_cache.clear unless backend_attrs.respond_to?(:has_key?) && !backend_attrs['errors'].nil?
+      end
+    end
+
+    def update_backend(id, attributes)
+      subject.update_backend(id, attributes).tap do |backend_attrs|
+        backends_cache.clear unless backend_attrs.respond_to?(:has_key?) && !backend_attrs['errors'].nil?
+      end
+    end
+
+    def delete_backend(id)
+      subject.delete_backend(id).tap do |resp| 
+        backends_cache.clear unless resp.respond_to?(:has_key?) && !resp['errors'].nil?
+      end
+    end
+
+    def backend(id)
+      # if exist in the cache, return it.
+      # But if not, it is not populated because cache is paginated and page is unknown.
+      if (backend_attrs = backends_cache.values.reduce([], :concat).find { |attrs| attrs['id'] == id })
+        return backend_attrs
+      end
+
+      subject.backend(id)
     end
 
     ###

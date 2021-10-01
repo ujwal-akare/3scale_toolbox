@@ -4,6 +4,9 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
   let(:backend_id) { 7654 }
   let(:metrics) { [{'id' =>  1}, {'id' =>  2}] }
   let(:methods) { [{'id' =>  2}] }
+  let(:backends_1) { [{'id' =>  '1'}, {'id' =>  '2'}] }
+  let(:backends_2) { [{'id' =>  '3'}, {'id' =>  '4'}] }
+  let(:backends_3) { [{'id' =>  '1000'}] }
   let(:error_response) { {'errors' => {}} }
   subject { described_class.new(proxied_object) }
 
@@ -452,6 +455,165 @@ RSpec.describe ThreeScaleToolbox::RemoteCache do
     it 'metrics cache miss' do
       expect(proxied_object).to receive(:list_backend_metrics).and_return(metrics)
       expect(subject.list_backend_metrics(backend_id)).to eq(metrics)
+    end
+  end
+
+  context '#backend' do
+    let(:backends_1) { [{'id' =>  '1'}, {'id' =>  '2'}] }
+    let(:backends_2) { [{'id' =>  '3'}, {'id' =>  '4'}] }
+
+    before :example do
+      expect(proxied_object).to receive(:list_backends).with(hash_including(page: 1)).and_return(backends_1)
+      expect(proxied_object).to receive(:list_backends).with(hash_including(page: 2)).and_return(backends_2)
+      subject.list_backends(page: 1, per_page: 2)
+      subject.list_backends(page: 2, per_page: 2)
+    end
+
+    it 'backends cache hit' do
+      expect(proxied_object).not_to receive(:backend)
+      expect(subject.backend('1')).to include('id' => '1')
+    end
+
+    it 'backends cache miss' do
+      expect(proxied_object).to receive(:backend).exactly(3).with('1000').and_return('id' => '1000')
+      # miss
+      expect(subject.backend('1000')).to include('id' => '1000')
+      # backend(id) does not populate cache
+      # miss
+      expect(subject.backend('1000')).to include('id' => '1000')
+      # miss
+      expect(subject.backend('1000')).to include('id' => '1000')
+    end
+
+    it 'on error returns the error' do
+      expect(proxied_object).to receive(:backend).with('1000').and_return(error_response)
+      expect(subject.backend('1000')).to eq(error_response)
+    end
+  end
+
+  context '#list_backends' do
+    before :example do
+      expect(proxied_object).to receive(:list_backends).with(hash_including(page: 1)).and_return(backends_1)
+      expect(proxied_object).to receive(:list_backends).with(hash_including(page: 2)).and_return(backends_2)
+      subject.list_backends(page: 1, per_page: 2)
+      subject.list_backends(page: 2, per_page: 2)
+    end
+
+    it 'backends cache hit' do
+      expect(proxied_object).not_to receive(:list_backends)
+      expect(subject.list_backends(page: 1, per_page: 2)).to eq(backends_1)
+    end
+
+    it 'backends cache miss' do
+      expect(proxied_object).to receive(:list_backends).with(page: 3, per_page: 2).and_return(backends_3)
+      # miss
+      expect(subject.list_backends(page: 3, per_page: 2)).to eq(backends_3)
+      # hit
+      expect(subject.list_backends(page: 3, per_page: 2)).to eq(backends_3)
+      # hit
+      expect(subject.list_backends(page: 3, per_page: 2)).to eq(backends_3)
+    end
+
+    it 'on error returns the error' do
+      expect(proxied_object).to receive(:list_backends).with(page: 3, per_page: 2).and_return(error_response)
+      expect(subject.list_backends(page: 3, per_page: 2)).to eq(error_response)
+    end
+  end
+
+  context '#create_backend' do
+    let(:create_attrs) { { 'a' => 1 } }
+
+    it 'proxied object called' do
+      expect(proxied_object).to receive(:create_backend).with(create_attrs).and_return({'id' => 1})
+      expect(subject.create_backend(create_attrs)).to eq({'id' => 1})
+    end
+
+    it 'clears cache' do
+      expect(proxied_object).to receive(:create_backend).with(create_attrs).and_return({'id' => 1})
+      expect(proxied_object).to receive(:list_backends).twice.with(hash_including(page: 1)).and_return(backends_1)
+      # cache warming up
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+      # hit
+      subject.list_backends(page: 1, per_page: 2)
+      subject.create_backend(create_attrs)
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+    end
+
+    it 'cache not cleared on error' do
+      expect(proxied_object).to receive(:create_backend).with(create_attrs).and_return(error_response)
+      expect(proxied_object).to receive(:list_backends).once.with(hash_including(page: 1)).and_return(backends_1)
+      # cache warming up
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+      subject.create_backend(create_attrs)
+      # hit
+      subject.list_backends(page: 1, per_page: 2)
+    end
+  end
+
+  context '#update_backend' do
+    let(:update_attrs) { { 'a' => 1 } }
+
+    it 'proxied object called' do
+      expect(proxied_object).to receive(:update_backend).with(backend_id, update_attrs).and_return({'id' => backend_id})
+      expect(subject.update_backend(backend_id, update_attrs)).to eq({'id' => backend_id})
+    end
+
+    it 'clears cache' do
+      expect(proxied_object).to receive(:update_backend).with(backend_id, update_attrs).and_return({'id' => backend_id})
+      expect(proxied_object).to receive(:list_backends).twice.with(hash_including(page: 1)).and_return(backends_1)
+      # cache warming up
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+      # hit
+      subject.list_backends(page: 1, per_page: 2)
+      subject.update_backend(backend_id, update_attrs)
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+    end
+
+    it 'cache not cleared on error' do
+      expect(proxied_object).to receive(:update_backend).with(backend_id, update_attrs).and_return(error_response)
+      expect(proxied_object).to receive(:list_backends).once.with(hash_including(page: 1)).and_return(backends_1)
+      # cache warming up
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+      subject.update_backend(backend_id, update_attrs)
+      # hit
+      subject.list_backends(page: 1, per_page: 2)
+    end
+  end
+
+  context '#delete_backend' do
+    it 'proxied object called' do
+      expect(proxied_object).to receive(:delete_backend).with(backend_id).and_return({})
+      expect(subject.delete_backend(backend_id)).to be_truthy
+    end
+
+    it 'clears cache' do
+      expect(proxied_object).to receive(:delete_backend).with(backend_id).and_return({})
+      expect(proxied_object).to receive(:list_backends).twice.with(hash_including(page: 1)).and_return(backends_1)
+      # cache warming up
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+      # hit
+      subject.list_backends(page: 1, per_page: 2)
+      subject.delete_backend(backend_id)
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+    end
+
+    it 'cache not cleared on error' do
+      expect(proxied_object).to receive(:delete_backend).with(backend_id).and_return(error_response)
+      expect(proxied_object).to receive(:list_backends).once.with(hash_including(page: 1)).and_return(backends_1)
+      # cache warming up
+      # miss
+      subject.list_backends(page: 1, per_page: 2)
+      subject.delete_backend(backend_id)
+      # hit
+      subject.list_backends(page: 1, per_page: 2)
     end
   end
 end
