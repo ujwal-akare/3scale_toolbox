@@ -15,7 +15,7 @@ module ThreeScaleToolbox
             # do not update in-place, otherwise changes will not be detected
             policies_settings = source_policies_settings.dup
 
-            add_anonymous_access_policy(policies_settings)
+            reconcile_anonymous_access_policy(policies_settings)
             add_rh_sso_keycloak_role_check_policy(policies_settings)
             add_url_rewritting_policy(policies_settings)
 
@@ -31,15 +31,28 @@ module ThreeScaleToolbox
 
           private
 
-          def add_anonymous_access_policy(policies)
-            # only on 'open api' security req
-            return unless api_spec.security.nil?
+          def reconcile_anonymous_access_policy(policies)
+            idx = policies.find_index { |p| p['name'] == 'default_credentials' }
 
-            return if policies.any? { |policy| policy['name'] == 'default_credentials' }
-
-            # Anonymous policy should be before apicast policy
-            # hence, adding as a first element
-            policies.insert(0, anonymous_policy)
+            if api_spec.security.nil?
+              # only on 'open api' security req
+              # Update anonymous policy if exists
+              #
+              if idx.nil?
+                # Anonymous policy should be before apicast policy
+                # hence, adding as a first element
+                policies.insert(0, anonymous_policy)
+              else
+                # only update if different
+                if policies[idx].dig('configuration', 'user_key') != anonymous_policy.dig(:configuration, :user_key)
+                  policies[idx] = anonymous_policy
+                end
+              end
+            else
+              unless idx.nil?
+                policies.slice!(idx)
+              end
+            end
           end
 
           def anonymous_policy
