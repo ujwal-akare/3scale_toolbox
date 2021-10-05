@@ -22,6 +22,101 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
     allow(backend_usage_02).to receive(:backend).and_return(backend_02)
   end
 
+  context 'valid artifact' do
+    let(:artifacts_resource) do
+      {
+        'limits' => [
+          {
+            'period' => 'eternity', 'value' => 123,
+            'metric_system_name' => 'hits',
+          },
+          {
+            # backend metric
+            'period' => 'eternity', 'value' => 123,
+            'metric_system_name' => 'hits',
+            'metric_backend_system_name' => 'backend_01',
+          },
+          {
+            # product method
+            'period' => 'eternity', 'value' => 123,
+            'metric_system_name' => 'method01',
+          },
+          {
+            # backend method
+            'period' => 'eternity', 'value' => 123,
+            'metric_system_name' => 'backendmethod01',
+            'metric_backend_system_name' => 'backend_01',
+          }
+        ],
+        'pricingrules' => [
+          {
+            'cost_per_unit' => '0.0', 'min' => 1, 'max' => 12,
+            'metric_system_name' => 'other',
+          },
+          {
+            # product method
+            'cost_per_unit' => '0.0', 'min' => 1, 'max' => 12,
+            'metric_system_name' => 'method01',
+          },
+          {
+            # backend method
+            'cost_per_unit' => '0.0', 'min' => 1, 'max' => 12,
+            'metric_system_name' => 'backendmethod01',
+            'metric_backend_system_name' => 'backend_01',
+          },
+          {
+            # backend metric
+            'cost_per_unit' => '0.0', 'min' => 1, 'max' => 12,
+            'metric_system_name' => 'hits',
+            'metric_backend_system_name' => 'backend_01'
+          }
+        ],
+        'metrics' => [
+          {
+            'system_name' => 'hits',
+            'friendly_name' => 'Hits',
+            'description' => 'Number of API hits',
+            'unit' => 'hit'
+          },
+          {
+            'system_name' => 'other',
+            'friendly_name' => 'Other',
+            'description' => 'Number of API other',
+            'unit' => '1'
+          },
+          {
+            # backend metric
+            'system_name' => 'hits',
+            'friendly_name' => 'Hits',
+            'description' => 'Number of API hits',
+            'unit' => 'hit',
+            'backend_system_name' => 'backend_01'
+          }
+        ],
+        'methods' => [
+          {
+            'system_name' => 'method01',
+            'friendly_name' => 'method01',
+            'description' => 'Number of API other',
+            'unit' => '1'
+          },
+          {
+            # backend method
+            'system_name' => 'backendmethod01',
+            'friendly_name' => 'backend other',
+            'description' => 'Number of API other',
+            'unit' => '1',
+            'backend_system_name' => 'backend_01'
+          }
+        ]
+      }
+    end
+
+    it do
+      expect { subject }.not_to raise_error
+    end
+  end
+
   context 'duplicated system_name in product metrics' do
     let(:artifacts_resource) do
       {
@@ -61,19 +156,16 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
             'system_name' => 'method01',
             'friendly_name' => 'Method 01',
             'description' => 'Method 01',
-            'parent_id' => '12345'
           },
           {
             'system_name' => 'method01',
             'friendly_name' => 'Method 01',
             'description' => 'Method 01',
-            'parent_id' => '12345'
           },
           {
             'system_name' => 'other',
             'friendly_name' => 'Other',
             'description' => 'Number of API other',
-            'parent_id' => '12345'
           }
         ]
       }
@@ -100,7 +192,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
             'system_name' => 'hits',
             'friendly_name' => 'Hits',
             'description' => 'Number of API hits',
-            'parent_id' => '12345'
           }
         ]
       }
@@ -153,21 +244,18 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
             'system_name' => 'method01',
             'friendly_name' => 'Method 01',
             'description' => 'Method 01',
-            'parent_id' => '12345',
             'backend_system_name' => 'backend_01'
           },
           {
             'system_name' => 'method01',
             'friendly_name' => 'Method 01',
             'description' => 'Method 01',
-            'parent_id' => '12345',
             'backend_system_name' => 'backend_01'
           },
           {
             'system_name' => 'other',
             'friendly_name' => 'Other',
             'description' => 'Number of API other',
-            'parent_id' => '12345',
             'backend_system_name' => 'backend_01'
           }
         ]
@@ -196,7 +284,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
             'system_name' => 'hits',
             'friendly_name' => 'Hits',
             'description' => 'Number of API hits',
-            'parent_id' => '12345',
             'backend_system_name' => 'backend_01'
           }
         ]
@@ -225,7 +312,6 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
             'system_name' => 'hits',
             'friendly_name' => 'Hits',
             'description' => 'Number of API hits',
-            'parent_id' => '12345',
             'backend_system_name' => 'backend_02'
           }
         ]
@@ -262,7 +348,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
       {
         'limits' => [
           {
-            'period' => 'eternity', 'value' => 123, 'plan_id' => 2357356305347,
+            'period' => 'eternity', 'value' => 123,
             'metric_system_name' => 'unknown_metric',
             'metric_backend_system_name' => 'backend_01'
           }
@@ -287,7 +373,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ValidatePlanSt
       {
         'limits' => [
           {
-            'period' => 'eternity', 'value' => 123, 'plan_id' => 2357356305347,
+            'period' => 'eternity', 'value' => 123,
             'metric_system_name' => 'unknown_metric',
           }
         ],
