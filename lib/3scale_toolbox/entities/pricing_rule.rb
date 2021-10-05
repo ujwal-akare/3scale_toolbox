@@ -3,7 +3,7 @@ module ThreeScaleToolbox
     class PricingRule
       include CRD::PricingRuleSerializer
 
-      PRICINGRULES_BLACKLIST = %w[id metric_id links created_at updated_at].freeze
+      PRICINGRULES_BLACKLIST = %w[id metric_id plan_id links created_at updated_at].freeze
 
       class << self
         def create(plan:, metric_id:, attrs:)

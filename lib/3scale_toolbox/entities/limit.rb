@@ -3,7 +3,7 @@ module ThreeScaleToolbox
     class Limit
       include CRD::Limit
 
-      LIMITS_BLACKLIST = %w[id metric_id links created_at updated_at].freeze
+      LIMITS_BLACKLIST = %w[id metric_id plan_id links created_at updated_at].freeze
 
       class << self
         def create(plan:, metric_id:, attrs:)

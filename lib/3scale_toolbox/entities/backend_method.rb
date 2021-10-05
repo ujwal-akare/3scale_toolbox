@@ -6,7 +6,7 @@ module ThreeScaleToolbox
       VALID_PARAMS = %w[friendly_name system_name description].freeze
       public_constant :VALID_PARAMS
 
-      METHOD_BLACKLIST = %w[id links created_at updated_at].freeze
+      METHOD_BLACKLIST = %w[id links created_at updated_at parent_id].freeze
 
       class << self
         def create(backend:, attrs:)

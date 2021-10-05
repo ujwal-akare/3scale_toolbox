@@ -3,7 +3,7 @@ module ThreeScaleToolbox
     class Method
       include CRD::MethodSerializer
 
-      METHOD_BLACKLIST = %w[id links created_at updated_at].freeze
+      METHOD_BLACKLIST = %w[id links created_at updated_at parent_id].freeze
 
       class << self
         def create(service:, attrs:)
