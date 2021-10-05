@@ -28,7 +28,12 @@ module ThreeScaleToolbox
             resource_pricing_rules.map do |pr|
               metric_system_name = pr.delete('metric_system_name')
               backend_system_name = pr.delete('metric_backend_system_name')
-              metric = find_metric(metric_system_name, backend_system_name)
+              metric_owner = if backend_system_name.nil?
+                               service
+                             else
+                               find_backend(backend_system_name)
+                             end
+              metric = metric_owner.find_metric_or_method(metric_system_name)
               # this ImportMetricLimitsStep step is assuming all metrics/methods have been created
               # in previous step, so finding metric should always succeed.
               raise ThreeScaleToolbox::Error, "metric [#{metric_system_name}, #{backend_system_name}] not found" if metric.nil?

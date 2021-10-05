@@ -81,10 +81,6 @@ module ThreeScaleToolbox
             artifacts_resource['plan_features'] || []
           end
 
-          def service_metrics_and_methods
-            service.metrics + service.methods
-          end
-
           def service_features
             context[:service_features] ||= service.features
           end
@@ -96,16 +92,6 @@ module ThreeScaleToolbox
 
           def find_feature_by_system_name(system_name)
             service_features.find { |feature| feature['system_name'] == system_name }
-          end
-
-          def find_metric(metric_system_name, backend_system_name)
-            metric_method_list = if backend_system_name.nil?
-                                   service_metrics_and_methods
-                                 else
-                                   backend = find_backend(backend_system_name)
-                                   backend.metrics + backend.methods
-                                 end
-            metric_method_list.find { |metric| metric.system_name == metric_system_name }
           end
 
           private

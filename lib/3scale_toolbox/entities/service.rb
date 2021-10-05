@@ -367,6 +367,10 @@ module ThreeScaleToolbox
         remote.http_client.endpoint == other.remote.http_client.endpoint && id == other.id
       end
 
+      def find_metric_or_method(system_name)
+        (metrics + methods).find { |m| m.system_name == system_name }
+      end
+
       private
 
       def fetch_attrs

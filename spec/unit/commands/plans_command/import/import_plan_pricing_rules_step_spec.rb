@@ -75,6 +75,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
       end
       let(:resource_pricingrules) { [resource_pricingrule] }
 
+      before :example do
+        allow(service).to receive(:find_metric_or_method).with('hits').and_return(hits_metric)
+      end
+
       it 'created' do
         expected_pr_attrs = resource_pricingrule.reject { |k, _v| k == 'metric_system_name' }
         expect(plan).to receive(:create_pricing_rule).with(hits_metric_id, hash_including(expected_pr_attrs))
@@ -98,8 +102,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
 
       before :example do
         expect(backend_class).to receive(:find_by_system_name).and_return(backend)
-        allow(backend).to receive(:metrics).and_return(backend_metrics)
-        allow(backend).to receive(:methods).and_return(backend_methods)
+        allow(backend).to receive(:find_metric_or_method).with('hits').and_return(backend_hits_metric)
         allow(backend_hits_metric).to receive(:system_name).and_return('hits')
         allow(backend_hits_metric).to receive(:id).and_return(999)
       end
@@ -120,6 +123,10 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::ImportPricingR
         }
       end
       let(:resource_pricingrules) { [resource_pricingrule] }
+
+      before :example do
+        allow(service).to receive(:find_metric_or_method).with('other').and_return(nil)
+      end
 
       it 'raised error' do
         expect { subject.call }.to raise_error(ThreeScaleToolbox::Error, /metric \[other, \] not found/)

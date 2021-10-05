@@ -1053,5 +1053,24 @@ RSpec.describe ThreeScaleToolbox::Entities::Service do
         end
       end
     end
+
+    context '#find_metric_or_method' do
+        before :example do
+          allow(remote).to receive(:list_metrics).with(id).and_return(metrics + methods)
+          allow(remote).to receive(:list_methods).with(id, 1).and_return(methods)
+        end
+
+        it 'existing metric is returned' do
+          expect(subject.find_metric_or_method('metric_10').id).to eq(10)
+        end
+
+        it 'existing method is returned' do
+          expect(subject.find_metric_or_method('method_101').id).to eq(101)
+        end
+
+        it 'non existing metric returns nil' do
+          expect(subject.find_metric_or_method('unknown')).to be_nil
+        end
+    end
   end
 end
