@@ -50,7 +50,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'endpoint updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(endpoint: 'example.com')).and_return({})
-        expect { subject }.to output.to_stdout
+        subject
       end
     end
 
@@ -60,7 +60,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'sandbox_endpoint updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(sandbox_endpoint: 'example.com')).and_return({})
-        expect { subject }.to output.to_stdout
+        subject
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'api_backend updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(api_backend: 'https://example.com')).and_return({})
-        expect { subject }.to output.to_stdout
+        subject
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'hostname_rewrite updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(hostname_rewrite: backend_api_host_header)).and_return({})
-        expect { subject }.to output.to_stdout
+        subject
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'secret_token updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(secret_token: backend_api_secret_token)).and_return({})
-        expect { subject }.to output.to_stdout
+        subject
       end
     end
 
@@ -100,7 +100,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       it 'api_backend updated' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(api_backend: override_private_base_url)).and_return({})
-        expect { subject }.to output.to_stdout
+        subject
       end
     end
 

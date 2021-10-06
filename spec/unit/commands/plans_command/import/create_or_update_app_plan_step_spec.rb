@@ -55,7 +55,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::CreateOrUpdate
         expect(plan_class).to receive(:create).with(hash_including(service: service,
                                                                    plan_attrs: expected_plan_attrs))
                                               .and_return(plan)
-        expect { subject.call }.to output.to_stdout
+        subject.call
       end
     end
 
@@ -79,7 +79,7 @@ RSpec.describe ThreeScaleToolbox::Commands::PlansCommand::Import::CreateOrUpdate
         let(:plan_update_response) { { 'id' => 'some error' } }
 
         it do
-          expect { subject.call }.to output.to_stdout
+          subject.call
         end
       end
     end

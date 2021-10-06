@@ -19,7 +19,6 @@ RSpec.describe 'OpenAPI prefix matching test' do
   end
 
   it 'Mapping rules patterns set with prefix matching' do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
 
     # mapping rules are created

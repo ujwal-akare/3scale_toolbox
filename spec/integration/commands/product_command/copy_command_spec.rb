@@ -41,7 +41,6 @@ RSpec.describe 'Product copy' do
     end
 
     it 'copied' do
-      expect { subject }.to output.to_stdout
       expect(subject).to eq(0)
 
       # only copy of backend usage is verified
