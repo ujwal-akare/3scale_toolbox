@@ -3,6 +3,8 @@ module ThreeScaleToolbox
     class Metric
       include CRD::MetricSerializer
 
+      METRIC_BLACKLIST = %w[id links created_at updated_at].freeze
+
       class << self
         def create(service:, attrs:)
           metric = service.remote.create_metric service.id, attrs
@@ -90,6 +92,16 @@ module ThreeScaleToolbox
 
       def delete
         remote.delete_metric service.id, id
+      end
+
+      # enriched_key returns a metric key that will be unique for all
+      # metrics from products and backends
+      def enriched_key
+        "product.#{service.id}.#{id}"
+      end
+
+      def to_hash
+        attrs.reject { |key, _| METRIC_BLACKLIST.include? key }
       end
 
       private

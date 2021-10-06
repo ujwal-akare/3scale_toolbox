@@ -53,6 +53,22 @@ module ThreeScaleToolbox
             artifacts_resource['methods'] || []
           end
 
+          def resource_product_metrics
+            resource_metrics.reject{ |m| m.has_key? 'backend_system_name' }
+          end
+
+          def resource_product_methods
+            resource_methods.reject{ |mth| mth.has_key? 'backend_system_name' }
+          end
+
+          def resource_backend_metrics
+            resource_metrics.select{ |m| m.has_key? 'backend_system_name' }
+          end
+
+          def resource_backend_methods
+            resource_methods.select{ |mth| mth.has_key? 'backend_system_name' }
+          end
+
           def resource_limits
             artifacts_resource['limits'] || []
           end
@@ -63,10 +79,6 @@ module ThreeScaleToolbox
 
           def resource_features
             artifacts_resource['plan_features'] || []
-          end
-
-          def service_metrics_and_methods
-            service.metrics + service.methods
           end
 
           def service_features
@@ -82,10 +94,6 @@ module ThreeScaleToolbox
             service_features.find { |feature| feature['system_name'] == system_name }
           end
 
-          def find_metric_by_system_name(system_name)
-            service_metrics_and_methods.find { |metric| metric.system_name == system_name }
-          end
-
           private
 
           def find_service
@@ -98,6 +106,13 @@ module ThreeScaleToolbox
           def find_plan
             Entities::ApplicationPlan.find(service: service, ref: plan_system_name).tap do |p|
               raise ThreeScaleToolbox::Error, "Application plan #{plan_system_name} does not exist" if p.nil?
+            end
+          end
+
+          def find_backend(backend_system_name)
+            Entities::Backend.find_by_system_name(remote: threescale_client,
+                                                  system_name: backend_system_name).tap do |backend|
+              raise ThreeScaleToolbox::Error, "Backend #{backend_system_name} does not exist" if backend.nil?
             end
           end
         end

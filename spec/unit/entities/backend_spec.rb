@@ -204,6 +204,19 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
   context 'instance method' do
     let(:backend_id) { 99 }
     let(:backend) { described_class.new(id: backend_id, remote: remote, attrs: attrs) }
+    let(:metrics) do
+      [
+        { 'id' => 10, 'system_name' => 'metric_10' },
+        hits_metric,
+        { 'id' => 20, 'system_name' => 'metric_20' }
+      ]
+    end
+    let(:methods) do
+      [
+        { 'id' => 101, 'system_name' => 'method_101', 'parent_id' => 1 },
+        { 'id' => 201, 'system_name' => 'method_201', 'parent_id' => 1 }
+      ]
+    end
     let(:attrs) do
       {
         'id' => backend_id, 'name' => 'some name', 'system_name' => 'backend99',
@@ -234,19 +247,6 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
     end
 
     context '#metrics' do
-      let(:metrics) do
-        [
-          { 'id' => 10, 'system_name' => 'metric_10' },
-          hits_metric,
-          { 'id' => 20, 'system_name' => 'metric_20' }
-        ]
-      end
-      let(:methods) do
-        [
-          { 'id' => 101, 'system_name' => 'method_101', 'parent_id' => 1 },
-          { 'id' => 201, 'system_name' => 'method_201', 'parent_id' => 1 }
-        ]
-      end
       subject { backend.metrics }
       before :each do
         allow(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
@@ -511,6 +511,27 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
       it 'methods included' do
         expect(subject.fetch('spec').has_key? 'methods').to be_truthy
         expect(subject.fetch('spec').fetch('methods').keys).to match_array(methods.map { |m|  m.fetch('system_name') })
+      end
+    end
+
+    context '#find_metric_or_method' do
+      subject { backend }
+
+      before :example do
+        allow(remote).to receive(:list_backend_metrics).with(backend_id).and_return(metrics + methods)
+        allow(remote).to receive(:list_backend_methods).with(backend_id, 1).and_return(methods)
+      end
+
+      it 'existing metric is returned' do
+        expect(subject.find_metric_or_method('metric_10').id).to eq(10)
+      end
+
+      it 'existing method is returned' do
+        expect(subject.find_metric_or_method('method_101').id).to eq(101)
+      end
+
+      it 'non existing metric returns nil' do
+        expect(subject.find_metric_or_method('unknown')).to be_nil
       end
     end
   end

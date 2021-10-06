@@ -1,9 +1,11 @@
 require '3scale_toolbox/commands/plans_command/import/step'
+require '3scale_toolbox/commands/plans_command/import/validate_plan_step'
 require '3scale_toolbox/commands/plans_command/import/create_or_update_app_plan_step'
 require '3scale_toolbox/commands/plans_command/import/import_plan_features_step'
 require '3scale_toolbox/commands/plans_command/import/import_plan_metrics_step'
 require '3scale_toolbox/commands/plans_command/import/import_plan_limits_step'
 require '3scale_toolbox/commands/plans_command/import/import_plan_pricing_rules_step'
+require '3scale_toolbox/commands/plans_command/import/import_backend_metrics_step'
 
 module ThreeScaleToolbox
   module Commands
@@ -31,9 +33,11 @@ module ThreeScaleToolbox
 
           def run
             tasks = []
+            tasks << ValidatePlanStep.new(context)
             tasks << CreateOrUpdateAppPlanStep.new(context)
             tasks << ImportMetricsStep.new(context)
-            tasks << ImportMetricLimitsStep.new(context)
+            tasks << ImportBackendMetricsStep.new(context)
+            tasks << ImportLimitsStep.new(context)
             tasks << ImportPricingRulesStep.new(context)
             tasks << ImportPlanFeaturesStep.new(context)
 

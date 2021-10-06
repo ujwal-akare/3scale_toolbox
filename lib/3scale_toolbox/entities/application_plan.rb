@@ -3,6 +3,9 @@ module ThreeScaleToolbox
     class ApplicationPlan
       include CRD::ApplicationPlanSerializer
 
+      APP_PLANS_BLACKLIST = %w[id links default custom created_at updated_at].freeze
+      PLAN_FEATURE_BLACKLIST = %w[id links created_at updated_at].freeze
+
       class << self
         def create(service:, plan_attrs:)
           plan = service.remote.create_application_plan service.id, create_plan_attrs(plan_attrs)
@@ -209,7 +212,68 @@ module ThreeScaleToolbox
         attrs.fetch('cost_per_month', 0.0)
       end
 
+      def to_hash
+        {
+          'plan' => attrs.reject { |key, _| APP_PLANS_BLACKLIST.include? key },
+          'limits' => limits.map(&:to_hash),
+          'pricingrules' => pricing_rules.map(&:to_hash),
+          'plan_features' => features.map do |feature|
+              feature.reject { |key, _| PLAN_FEATURE_BLACKLIST.include? key }
+          end,
+          'metrics' => uniq_metrics_to_hash,
+          'methods' => uniq_methods_to_hash,
+        }
+      end
+
       private
+
+      def uniq_metrics_to_hash
+        limit_metrics = limits.flat_map do |limit|
+          # one of them (or both) could be nil
+          [
+            limit.product_metric, limit.backend_metric
+          ]
+        end.compact
+
+        pr_metrics = pricing_rules.flat_map do |pr|
+          # one of them (or both) could be nil
+          [
+            pr.product_metric, pr.backend_metric
+          ]
+        end.compact
+
+        # multiple limits can reference the same metric
+        # multiple pricing rules can reference the same metric
+        uniq_metrics = limit_metrics.concat(pr_metrics).each_with_object({}) do |metric, acc|
+          acc[metric.enriched_key] = metric
+        end.values
+
+        uniq_metrics.map { |metric| metric.to_hash }
+      end
+
+      def uniq_methods_to_hash
+        limit_methods = limits.flat_map do |limit|
+          # one of them (or both) could be nil
+          [
+            limit.product_method, limit.backend_method
+          ]
+        end.compact
+
+        pr_methods = pricing_rules.flat_map do |pr|
+          # one of them (or both) could be nil
+          [
+            pr.product_method, pr.backend_method
+          ]
+        end.compact
+
+        # multiple limits can reference the same method
+        # multiple pricing rules can reference the same method
+        uniq_methods = limit_methods.concat(pr_methods).each_with_object({}) do |method, acc|
+          acc[method.enriched_key] = method
+        end.values
+
+        uniq_methods.map { |method| method.to_hash }
+      end
 
       def read_plan_attrs
         raise ThreeScaleToolbox::InvalidIdError if id.zero?

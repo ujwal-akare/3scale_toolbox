@@ -275,5 +275,45 @@ RSpec.describe ThreeScaleToolbox::Entities::Metric do
         expect(subject).to include('unit' => '1')
       end
     end
+
+    context '#to_hash' do
+      let(:friendly_name) { 'some_friendly_name' }
+      let(:system_name) { 'some_system_name' }
+      let(:attrs) do
+        {
+          'id' => id,
+          'friendly_name' => friendly_name,
+          'system_name' => system_name,
+          'description' => 'some descr',
+          'links' => [],
+          'created_at' => 'now',
+          'updated_at' => 'now'
+        }
+      end
+      subject {  described_class.new(id: id, service: service, attrs: attrs).to_hash }
+
+      it 'expected number of attrs' do
+        # 3 valid from the source attrs
+        expect(subject.length).to eq(3)
+      end
+
+      it 'expected friendly_name' do
+        expect(subject).to include('friendly_name' => friendly_name)
+      end
+
+      it 'expected description' do
+        expect(subject).to include('description' => 'some descr')
+      end
+
+      it 'expected system_name' do
+        expect(subject).to include('system_name' => system_name)
+      end
+    end
+
+    context '#enriched_key' do
+      subject {  described_class.new(id: id, service: service, attrs: metric_attrs).enriched_key }
+
+      it { is_expected.to eq("product.#{service.id}.#{id}") }
+    end
   end
 end
