@@ -110,6 +110,7 @@ GEM
 
 PLATFORMS
   powerpc64le-linux
+  s390x-linux
   x86_64-linux
 
 DEPENDENCIES

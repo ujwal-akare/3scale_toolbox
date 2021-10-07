@@ -1,13 +1,15 @@
 language: ruby
 dist: bionic
-arch: ppc64le
+arch:
+- ppc64le
+- s390x
 os: linux
 
 before_install:
-  - .travis/setup_${TRAVIS_CPU_ARCH}_env.sh
+  - .travis/setup_${TRAVIS_OS_NAME}_env.sh
 
 install:
-  - .travis/install_${TRAVIS_CPU_ARCH}_env.sh
+  - .travis/install_${TRAVIS_OS_NAME}_env.sh
 
 script:
-  - .travis/build_${TRAVIS_CPU_ARCH}.sh
+  - .travis/build_${TRAVIS_OS_NAME}.sh
