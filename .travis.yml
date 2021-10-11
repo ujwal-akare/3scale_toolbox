@@ -12,4 +12,4 @@ install:
   - .travis/install_${TRAVIS_OS_NAME}_env.sh
 
 script:
-  - .travis/build_${TRAVIS_OS_NAME}.sh
+  - .travis/run_${TRAVIS_OS_NAME}_tests.sh
