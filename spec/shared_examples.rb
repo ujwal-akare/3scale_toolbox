@@ -23,7 +23,6 @@ RSpec.shared_examples 'service copied' do
   end
 
   it do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
 
     # target_service has stale data after updating service

@@ -12,7 +12,6 @@ RSpec.describe 'OpenAPI import OIDC service' do
   let(:credentials_location) { 'headers' }
 
   it 'oidc settings are updated' do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
     expect(service_settings).not_to be_nil
     expect(service_settings).to include('backend_version' => backend_version)

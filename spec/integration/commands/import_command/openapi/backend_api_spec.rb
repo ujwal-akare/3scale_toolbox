@@ -12,7 +12,6 @@ RSpec.describe 'OpenAPI import backend api related parameters test' do
   end
 
   it 'expected backend api configuration options are set' do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
 
     expect(service_proxy).to include(

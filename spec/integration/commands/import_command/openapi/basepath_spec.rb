@@ -35,7 +35,6 @@ RSpec.describe 'OpenAPI import basepath diff' do
   end
 
   it 'request url is rewritten' do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
     expect(response.class).to be(Net::HTTPOK)
     expect(JSON.parse(response.body)).to include('path' => '/private/pet/findByStatus')

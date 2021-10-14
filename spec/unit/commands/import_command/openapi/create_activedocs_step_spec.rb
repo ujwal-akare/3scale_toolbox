@@ -130,7 +130,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
 
       it 'then updates activedocs with expected id' do
         expect(threescale_client).to receive(:update_activedocs).with(2, anything).and_return({})
-        expect { subject.call }.to output.to_stdout
+        subject.call
       end
     end
 

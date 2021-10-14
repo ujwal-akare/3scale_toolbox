@@ -32,7 +32,6 @@ RSpec.describe 'OpenAPI import basic test' do
   let(:mapping_rule_keys) { %w[pattern http_method delta] }
 
   it 'expected elements are imported' do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
 
     # methods are created

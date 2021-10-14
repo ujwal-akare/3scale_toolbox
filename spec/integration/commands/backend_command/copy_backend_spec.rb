@@ -28,7 +28,6 @@ RSpec.describe 'Backend copy' do
   end
 
   it do
-    expect { subject }.to output.to_stdout
     expect(subject).to eq(0)
 
     target_backend = ThreeScaleToolbox::Entities::Backend.find_by_system_name(

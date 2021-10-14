@@ -61,7 +61,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
 
         it 'service settings include deployment option' do
           expect(service).to receive(:update).with(hash_including('deployment_option' => 'self_managed'))
-          expect { subject }.to output.to_stdout
+          subject
         end
       end
 
@@ -78,7 +78,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
 
         it 'service settings include deployment option' do
           expect(service).to receive(:update).with(hash_including('deployment_option' => 'self_managed'))
-          expect { subject }.to output.to_stdout
+          subject
         end
       end
     end
