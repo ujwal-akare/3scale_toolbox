@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    3scale_toolbox (0.19.2)
+    3scale_toolbox (0.19.3)
       3scale-api (~> 1.4)
       cri (~> 2.15)
       json-schema (~> 2.8)
@@ -71,7 +71,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.6)
-    racc (1.5.2)
+    racc (1.6.0)
     rake (13.0.3)
     rexml (3.2.5)
     rspec (3.10.0)
@@ -106,7 +106,7 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     with_env (1.1.0)
     xml-simple (1.1.8)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   powerpc64le-linux
