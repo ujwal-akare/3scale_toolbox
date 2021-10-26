@@ -4,6 +4,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.19.3]
+
+### Added
+- Add s390x to TravisCI [#338](https://github.com/3scale/3scale_toolbox/pull/338)
+
+### Fixed
+- Import OAS: reconciliate anonymous policy [#328](https://github.com/3scale/3scale_toolbox/pull/328)
+- Add backends to remote cache [#333](https://github.com/3scale/3scale_toolbox/pull/333)
+- Plan import/export: support product/backends model [#331](https://github.com/3scale/3scale_toolbox/pull/331)
+- Enable testing logs [#337](https://github.com/3scale/3scale_toolbox/pull/337)
+
 ## [0.19.2]
 
 ### Fixed
@@ -293,7 +304,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.19.2...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.19.3...HEAD
+[0.19.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.3
 [0.19.2]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.2
 [0.19.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.1
 [0.19.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.0
