@@ -1,4 +1,5 @@
 require '3scale_toolbox/cli/error_handler'
+require '3scale_toolbox/cli/null_printer'
 require '3scale_toolbox/cli/json_printer'
 require '3scale_toolbox/cli/yaml_printer'
 require '3scale_toolbox/cli/custom_table_printer'

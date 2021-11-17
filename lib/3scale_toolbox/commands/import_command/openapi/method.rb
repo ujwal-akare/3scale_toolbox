@@ -12,7 +12,7 @@ module ThreeScaleToolbox
           end
 
           def friendly_name
-            operation[:operationId] || operation_id
+            operation[:operation_id] || operation_id
           end
 
           def system_name

@@ -9,6 +9,18 @@ module ThreeScaleToolbox
             @context = context
           end
 
+          def report
+            context[:report] ||= {}
+          end
+
+          def backend
+            context[:backend_target]
+          end
+
+          def backend=(backend_obj)
+            context[:backend_target] = backend_obj
+          end
+
           # Can be nil on initialization time and not nil afterwards
           # method to fetch from context required
           def service
@@ -41,7 +53,7 @@ module ThreeScaleToolbox
                 public_base_path: public_base_path,
                 path: op[:path],
                 verb: op[:verb],
-                operationId: op[:operation_id],
+                operation_id: op[:operation_id],
                 description: op[:description],
                 prefix_matching: prefix_matching,
               )
@@ -101,6 +113,12 @@ module ThreeScaleToolbox
             context[:prefix_matching]
           end
 
+          def host
+            return if api_spec.host.nil?
+
+            "#{api_spec.scheme || 'https'}://#{api_spec.host}"
+          end
+
           def base_path
             api_spec.base_path || '/'
           end
@@ -111,6 +129,10 @@ module ThreeScaleToolbox
 
           def private_base_path
             override_private_basepath || base_path
+          end
+
+          def logger
+            context[:logger]
           end
         end
       end

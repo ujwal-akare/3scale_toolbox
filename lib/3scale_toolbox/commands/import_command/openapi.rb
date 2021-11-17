@@ -3,13 +3,18 @@ require '3scale_toolbox/commands/import_command/openapi/mapping_rule'
 require '3scale_toolbox/commands/import_command/openapi/operation'
 require '3scale_toolbox/commands/import_command/openapi/step'
 require '3scale_toolbox/commands/import_command/openapi/create_method_step'
+require '3scale_toolbox/commands/import_command/openapi/create_backend_method_step'
 require '3scale_toolbox/commands/import_command/openapi/create_mapping_rule_step'
+require '3scale_toolbox/commands/import_command/openapi/create_backend_mapping_rule_step'
+require '3scale_toolbox/commands/import_command/openapi/create_backend_step'
 require '3scale_toolbox/commands/import_command/openapi/create_service_step'
 require '3scale_toolbox/commands/import_command/openapi/create_activedocs_step'
 require '3scale_toolbox/commands/import_command/openapi/update_service_proxy_step'
 require '3scale_toolbox/commands/import_command/openapi/update_service_oidc_conf_step'
 require '3scale_toolbox/commands/import_command/openapi/update_policies_step'
 require '3scale_toolbox/commands/import_command/issuer_type_transformer'
+require '3scale_toolbox/commands/import_command/import_product_step'
+require '3scale_toolbox/commands/import_command/import_backend_step'
 
 module ThreeScaleToolbox
   module Commands
@@ -31,7 +36,8 @@ module ThreeScaleToolbox
               flag    nil, 'activedocs-hidden', 'Create ActiveDocs in hidden state'
               flag    nil, 'skip-openapi-validation', 'Skip OpenAPI schema validation'
               flag    nil, 'prefix-matching', 'Use prefix matching instead of strict matching on mapping rules derived from openapi operations'
-              option  nil, 'oidc-issuer-type', 'OIDC Issuer Type (rest, keycloak)', argument: :required, transform: IssuerTypeTransformer.new            
+              flag    nil, 'backend', 'Create backend API from OAS'
+              option  nil, 'oidc-issuer-type', 'OIDC Issuer Type (rest, keycloak)', argument: :required, transform: IssuerTypeTransformer.new
               option  nil, 'oidc-issuer-endpoint', 'OIDC Issuer Endpoint', argument: :required
               option  nil, 'default-credentials-userkey', 'Default credentials policy userkey', argument: :required
               option  nil, 'override-private-basepath', 'Override the basepath for the private URLs', argument: :required
@@ -41,6 +47,7 @@ module ThreeScaleToolbox
               option  nil, 'override-private-base-url', 'Custom private base URL', argument: :required
               option nil, 'backend-api-secret-token', 'Custom secret token sent by the API gateway to the backend API',argument: :required
               option nil, 'backend-api-host-header', 'Custom host header sent by the API gateway to the backend API', argument: :required
+              ThreeScaleToolbox::CLI.output_flag(self)
               param   :openapi_resource
 
               runner OpenAPISubcommand
@@ -48,22 +55,13 @@ module ThreeScaleToolbox
           end
 
           def run
-            tasks = []
-            tasks << CreateServiceStep.new(context)
-            # other tasks might read proxy settings (CreateActiveDocsStep does)
-            tasks << UpdateServiceProxyStep.new(context)
-            tasks << CreateMethodsStep.new(context)
-            tasks << ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::DestroyMappingRulesTask.new(context)
-            tasks << CreateMappingRulesStep.new(context)
-            tasks << CreateActiveDocsStep.new(context)
-            tasks << UpdateServiceOidcConfStep.new(context)
-            tasks << UpdatePoliciesStep.new(context)
+            if backend?
+              ImportBackendStep.new(context).call
+            else
+              ImportProductStep.new(context).call
+            end
 
-            # run tasks
-            tasks.each(&:call)
-
-            # This should be the last step
-            ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::BumpProxyVersionTask.new(service: context[:target]).call
+            printer.print_record context.fetch(:report)
           end
 
           private
@@ -92,6 +90,7 @@ module ThreeScaleToolbox
               backend_api_host_header: options[:'backend-api-host-header'],
               prefix_matching: options[:'prefix-matching'],
               delete_mapping_rules: true,
+              logger: logger,
             }
           end
 
@@ -101,6 +100,10 @@ module ThreeScaleToolbox
 
           def openapi_path
             arguments[:openapi_resource]
+          end
+
+          def backend?
+            options[:backend]
           end
 
           def validate
@@ -117,6 +120,29 @@ module ThreeScaleToolbox
             end
           rescue JSON::Schema::ValidationError => e
             raise ThreeScaleToolbox::Error, "OpenAPI schema validation failed: #{e.message}"
+          end
+
+          def printer
+            # if product import AND output not specified -> logger
+            # if product import AND output specified -> specified printer
+            # if backend import AND output not specified -> json printer
+            # if backend import AND output specified -> specified printer
+            default_printer = if backend?
+                                CLI::JsonPrinter.new
+                              else
+                                CLI::NullPrinter.new
+                              end
+            options.fetch(:output, default_printer)
+          end
+
+          def logger
+            if options[:output].nil?
+              Logger.new($stdout).tap do |logger|
+                logger.formatter = proc { |severity, datetime, progname, msg| "#{msg}\n" }
+              end
+            else
+              Logger.new(File::NULL)
+            end
           end
         end
       end

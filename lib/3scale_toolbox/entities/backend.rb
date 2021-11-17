@@ -6,6 +6,9 @@ module ThreeScaleToolbox
       VALID_PARAMS = %w[name description system_name private_endpoint].freeze
       public_constant :VALID_PARAMS
 
+      VALID_UPDATE_PARAMS = %w[name description private_endpoint].freeze
+      public_constant :VALID_PARAMS
+
       class << self
         def create(remote:, attrs:)
           b_attrs = remote.create_backend Helper.filter_params(VALID_PARAMS, attrs)
@@ -135,7 +138,16 @@ module ThreeScaleToolbox
       end
 
       def update(b_attrs)
-        new_attrs = remote.update_backend id, Helper.filter_params(VALID_PARAMS, b_attrs)
+        valid_b_attrs = Helper.filter_params(VALID_UPDATE_PARAMS, b_attrs)
+
+        # Only update different attrs
+        update_attrs = valid_b_attrs.keys.each_with_object({}) do |key, target|
+          target[key] = valid_b_attrs.fetch(key) unless attrs[key].nil? || attrs.fetch(key) == valid_b_attrs.fetch(key)
+        end
+
+        return attrs if update_attrs.empty?
+
+        new_attrs = remote.update_backend id, update_attrs
         if (errors = new_attrs['errors'])
           raise ThreeScaleToolbox::ThreeScaleApiError.new('Backend not updated', errors)
         end
