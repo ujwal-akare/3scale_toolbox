@@ -5,8 +5,7 @@ module ThreeScaleToolbox
         include ThreeScaleToolbox::Command
 
         FIELDS = %w[
-          id name state system_name end_user_registration_required
-          backend_version deployment_option support_email description
+          id name state system_name backend_version deployment_option support_email description
           created_at updated_at
         ]
 
