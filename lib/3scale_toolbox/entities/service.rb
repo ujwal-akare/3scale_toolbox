@@ -5,8 +5,7 @@ module ThreeScaleToolbox
 
       VALID_PARAMS = %w[
         name backend_version deployment_option description
-        system_name end_user_registration_required
-        support_email tech_support_email admin_support_email
+        system_name support_email tech_support_email admin_support_email
       ].freeze
       public_constant :VALID_PARAMS
 
