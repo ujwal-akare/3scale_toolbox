@@ -17,6 +17,7 @@ module ThreeScaleToolbox
           end
           flag :k, :insecure, 'Proceed and operate even for server connections otherwise considered insecure'
           flag nil, :verbose, 'Verbose mode'
+          flag nil, :'disable-keep-alive', 'Disable keep alive HTTP connection mode'
           flag :h, :help, 'show help for this command' do |_, cmd|
             puts cmd.help
             exit 0
