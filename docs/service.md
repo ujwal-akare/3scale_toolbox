@@ -39,17 +39,6 @@ OPTIONS
                                           service
        --support-email=<value>            Specify the support email of the
                                           service
-
-OPTIONS FOR SERVICE
-    -c --config-file=<value>              3scale toolbox configuration file
-                                          (default:
-                                          $HOME/.3scalerc.yaml)
-    -h --help                             show help for this command
-    -k --insecure                         Proceed and operate even for server
-                                          connections otherwise considered
-                                          insecure
-    -v --version                          Prints the version of this command
-       --verbose                          Verbose mode
 ```
 
 ### Apply
@@ -83,17 +72,6 @@ OPTIONS
     -o --output=<value>                   Output format. One of: json|yaml
        --support-email=<value>            Specify the support email of the
                                           service
-
-OPTIONS FOR SERVICE
-    -c --config-file=<value>              3scale toolbox configuration file
-                                          (default:
-                                          $HOME/.3scalerc.yaml)
-    -h --help                             show help for this command
-    -k --insecure                         Proceed and operate even for server
-                                          connections otherwise considered
-                                          insecure
-    -v --version                          Prints the version of this command
-       --verbose                          Verbose mode
 ```
 
 ### List
@@ -110,15 +88,6 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR SERVICE
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Show
@@ -135,15 +104,6 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR SERVICE
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 
@@ -159,13 +119,4 @@ USAGE
 
 DESCRIPTION
     Delete a service
-
-OPTIONS FOR SERVICE
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
