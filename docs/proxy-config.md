@@ -21,15 +21,6 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR PROXY-CONFIG
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Show
@@ -50,16 +41,6 @@ OPTIONS
                                      If not specified it gets the latest
                                      version (default: latest)
     -o --output=<value>              Output format. One of: json|yaml
-
-OPTIONS FOR PROXY-CONFIG
-    -c --config-file=<value>         3scale toolbox configuration file
-                                     (default: $HOME/.3scalerc.yaml)
-    -h --help                        show help for this command
-    -k --insecure                    Proceed and operate even for server
-                                     connections otherwise considered
-                                     insecure
-    -v --version                     Prints the version of this command
-       --verbose                     Verbose mode
 ```
 
 ### Promote
@@ -73,15 +54,6 @@ USAGE
 
 DESCRIPTION
     Promote latest staging Proxy Configuration to the production environment
-
-OPTIONS FOR PROXY-CONFIG
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Export

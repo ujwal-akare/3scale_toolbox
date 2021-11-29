@@ -32,15 +32,6 @@ OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
     -t --system-name=<value>      Metric system name
        --unit=<value>             Metric unit. Default hit
-
-OPTIONS FOR METRIC
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Apply
@@ -73,15 +64,6 @@ OPTIONS
     -n --name=<value>             Metric name
     -o --output=<value>           Output format. One of: json|yaml
        --unit=<value>             Metric unit. Default hit
-
-OPTIONS FOR METRIC
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### List
@@ -98,15 +80,6 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR METRIC
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Delete
@@ -121,13 +94,4 @@ USAGE
 
 DESCRIPTION
     Delete metric
-
-OPTIONS FOR METRIC
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```

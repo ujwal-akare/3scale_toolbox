@@ -42,17 +42,6 @@ OPTIONS
                                        ActiveDocs
        --skip-swagger-validations      Specify it to skip validation of the
                                        Swagger specification
-
-OPTIONS FOR ACTIVEDOCS
-    -c --config-file=<value>           3scale toolbox configuration file
-                                       (default:
-                                       $HOME/.3scalerc.yaml)
-    -h --help                          show help for this command
-    -k --insecure                      Proceed and operate even for server
-                                       connections otherwise considered
-                                       insecure
-    -v --version                       Prints the version of this command
-       --verbose                       Verbose mode
 ```
 
 
@@ -102,17 +91,6 @@ OPTIONS
                                                ActiveDocs
        --skip-swagger-validations=<value>      Skip validation of the Swagger
                                                specification. true or false
-
-OPTIONS FOR ACTIVEDOCS
-    -c --config-file=<value>           3scale toolbox configuration file
-                                       (default:
-                                       $HOME/.3scalerc.yaml)
-    -h --help                          show help for this command
-    -k --insecure                      Proceed and operate even for server
-                                       connections otherwise considered
-                                       insecure
-    -v --version                       Prints the version of this command
-       --verbose                       Verbose mode
 ```
 
 ### List
@@ -130,15 +108,6 @@ DESCRIPTION
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
     -s --service-ref=<value>      Filter the ActiveDocs by Service reference
-
-OPTIONS FOR ACTIVEDOCS
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Delete
@@ -153,13 +122,4 @@ USAGE
 
 DESCRIPTION
     Remove an ActiveDocs
-
-OPTIONS FOR ACTIVEDOCS
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```

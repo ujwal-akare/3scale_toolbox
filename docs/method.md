@@ -31,15 +31,6 @@ OPTIONS
                                   plans
     -o --output=<value>           Output format. One of: json|yaml
     -t --system-name=<value>      Method system name
-
-OPTIONS FOR METHOD
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Apply
@@ -71,15 +62,6 @@ OPTIONS
                                   plans
     -n --name=<value>             Method name
     -o --output=<value>           Output format. One of: json|yam
-
-OPTIONS FOR METHOD
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                   $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### List
@@ -96,15 +78,6 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR METHOD
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Delete
@@ -119,13 +92,4 @@ USAGE
 
 DESCRIPTION
     Delete method
-
-OPTIONS FOR METHOD
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```

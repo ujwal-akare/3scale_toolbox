@@ -35,15 +35,6 @@ DESCRIPTION
 
 OPTIONS
     -f --file=<value>             Write to file instead of stdout
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Import Application Plan Usage
@@ -62,16 +53,6 @@ DESCRIPTION
 OPTIONS
     -f --file=<value>                  Read from file or url instead of stdin
     -p --plan=<value>                  Override application plan reference
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>           3scale toolbox configuration file
-                                       (default: $HOME/.3scalerc.yaml)
-    -h --help                          show help for this command
-    -k --insecure                      Proceed and operate even for server
-                                       connections otherwise considered
-                                       insecure
-    -v --version                       Prints the version of this command
-       --verbose                       Verbose mode
 ```
 
 ### Export application plan 'basic' to a file

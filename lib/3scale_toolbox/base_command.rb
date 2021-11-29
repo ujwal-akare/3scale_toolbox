@@ -46,7 +46,7 @@ module ThreeScaleToolbox
     # Input param can be endpoint url or remote name
     #
     def threescale_client(str)
-      ThreeScaleClientFactory.get(remotes, str, verify_ssl, verbose)
+      ThreeScaleClientFactory.get(remotes, str, verify_ssl, verbose, keep_alive)
     end
 
     def verify_ssl
@@ -56,6 +56,10 @@ module ThreeScaleToolbox
 
     def verbose
       options[:verbose]
+    end
+
+    def keep_alive
+      !options[:'disable-keep-alive']
     end
 
     def exit_with_message(message)

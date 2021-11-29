@@ -19,13 +19,4 @@ USAGE
 
 DESCRIPTION
     Copy policy registry
-
-OPTIONS FOR POLICY-REGISTRY
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```

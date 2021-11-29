@@ -82,6 +82,7 @@ COMMANDS
     import               import super command
     method               method super command
     metric               metric super command
+    policies             policies super command
     policy-registry      policy-registry super command
     product              product super command
     proxy-config         proxy-config super command
@@ -92,6 +93,7 @@ COMMANDS
 OPTIONS
     -c --config-file=<value>      3scale toolbox configuration file (default:
                                   $HOME/.3scalerc.yaml)
+       --disable-keep-alive       Disable keep alive HTTP connection mode
     -h --help                     show help for this command
     -k --insecure                 Proceed and operate even for server
                                   connections otherwise considered insecure

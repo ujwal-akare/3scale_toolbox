@@ -5,7 +5,13 @@ RSpec.describe ThreeScaleToolbox::ThreeScaleClientFactory do
   let(:endpoint) { 'https://example.com' }
   let(:authentication) { '123456789' }
   let(:verify_ssl) { true }
-  let(:api_info) { { endpoint: endpoint, provider_key: authentication, verify_ssl: verify_ssl } }
+  let(:keep_alive) { false }
+  let(:api_info) do
+    {
+      endpoint: endpoint, provider_key: authentication,
+      verify_ssl: verify_ssl, keep_alive: keep_alive,
+    }
+  end
   let(:remote_info) { { endpoint: endpoint, authentication: authentication } }
   let(:client) { instance_double('ThreeScale::API::Client', 'client') }
   let(:remote_cache_client) { instance_double('ThreeScaleToolbox::RemoteCache') }
@@ -15,7 +21,7 @@ RSpec.describe ThreeScaleToolbox::ThreeScaleClientFactory do
     u.user = authentication
     u.to_s
   end
-  subject { described_class.get(remotes, remote_str, verify_ssl, verbose) }
+  subject { described_class.get(remotes, remote_str, verify_ssl, verbose, keep_alive) }
 
   context '#call' do
     context 'verbose mode off' do
@@ -54,6 +60,19 @@ RSpec.describe ThreeScaleToolbox::ThreeScaleClientFactory do
         expect(proxy_logger).to receive(:new).with(client).and_return(proxied_client)
         expect(remote_cache).to receive(:new).with(proxied_client).and_return(remote_cache_client)
         expect(subject).to eq(remote_cache_client)
+      end
+    end
+
+    context 'enable keep alive' do
+      let(:keep_alive) { true }
+
+      before :each do
+        expect(remote_cache).to receive(:new).with(client).and_return(remote_cache_client)
+      end
+
+      it '' do
+        expect(threescale_api).to receive(:new).with(hash_including(keep_alive: true)).and_return(client)
+        subject
       end
     end
   end

@@ -40,17 +40,6 @@ OPTIONS
        --setup-fee=<value>              Setup fee
     -t --system-name=<value>            Application plan system name
        --trial-period-days=<value>      Trial period days
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>            3scale toolbox configuration file
-                                        (default:
-                                        $HOME/.3scalerc.yaml)
-    -h --help                           show help for this command
-    -k --insecure                       Proceed and operate even for server
-                                        connections otherwise considered
-                                        insecure
-    -v --version                        Prints the version of this command
-       --verbose                        Verbose mode
 ```
 
 ### Apply
@@ -91,17 +80,6 @@ OPTIONS
     -p --publish                        Publish application plan
        --setup-fee=<value>              Setup fee
        --trial-period-days=<value>      Trial period days
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>            3scale toolbox configuration file
-                                        (default:
-                                        $HOME/.3scalerc.yaml)
-    -h --help                           show help for this command
-    -k --insecure                       Proceed and operate even for server
-                                        connections otherwise considered
-                                        insecure
-    -v --version                        Prints the version of this command
-       --verbose                        Verbose mode
 ```
 
 ### List
@@ -119,15 +97,6 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Delete
@@ -142,15 +111,6 @@ USAGE
 
 DESCRIPTION
     Delete application plan
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
 
 ### Show
@@ -169,13 +129,4 @@ DESCRIPTION
 
 OPTIONS
     -o --output=<value>           Output format. One of: json|yaml
-
-OPTIONS FOR APPLICATION-PLAN
-    -c --config-file=<value>      3scale toolbox configuration file (default:
-                                  $HOME/.3scalerc.yaml)
-    -h --help                     show help for this command
-    -k --insecure                 Proceed and operate even for server
-                                  connections otherwise considered insecure
-    -v --version                  Prints the version of this command
-       --verbose                  Verbose mode
 ```
