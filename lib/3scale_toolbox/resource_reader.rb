@@ -21,6 +21,8 @@ module ThreeScaleToolbox
         method(:read_stdin)
       when /\A#{URI::DEFAULT_PARSER.make_regexp}\z/
         method(:read_url)
+      when StringIO
+        method(:read_stringio)
       else
         method(:read_file)
       end.call(resource)
@@ -40,6 +42,10 @@ module ThreeScaleToolbox
 
     def read_url(resource)
       Net::HTTP.get(URI.parse(resource))
+    end
+
+    def read_stringio(resource)
+      resource.string
     end
   end
 end

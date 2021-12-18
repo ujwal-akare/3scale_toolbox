@@ -114,5 +114,10 @@ RSpec.describe ThreeScaleToolbox::ResourceReader do
 
       it_behaves_like 'content is read'
     end
+
+    context 'from stringio' do
+      let(:resource) { StringIO.new content }
+      it_behaves_like 'content is read'
+    end
   end
 end
