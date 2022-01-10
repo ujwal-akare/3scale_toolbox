@@ -136,6 +136,21 @@ jobs:
           command: |
             gem build 3scale_toolbox.gemspec -o "3scale_toolbox-$(git describe --tags).gem"
             gem push "3scale_toolbox-$(git describe --tags).gem"
+  image-build:
+    docker:
+      - image: docker:stable
+    working_directory: /app
+    steps:
+      - setup-docker
+      - checkout
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build -t app .
+      - run:
+          name: Run container smoke tests
+          command: |
+            docker run --rm -t app 3scale help
 
 workflows:
   version: 2
@@ -151,6 +166,9 @@ workflows:
           filters:
             <<: *tag-trigger
       - help_test:
+          filters:
+            <<: *tag-trigger
+      - image-build:
           filters:
             <<: *tag-trigger
       - push-rubygems:
