@@ -119,7 +119,9 @@ jobs:
       - setup-docker
       - run:
           name: Docker container help test
+          shell: /bin/bash
           command: |
+            docker rmi quay.io/redhat/3scale-toolbox:main || true
             docker run --rm -t quay.io/redhat/3scale-toolbox:main 3scale help
 
   push-rubygems:
