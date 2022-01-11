@@ -15,10 +15,12 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
     instance_double(ThreeScaleToolbox::OpenAPI::OAS3, 'api_spec')
   end
   let(:service) { instance_double(ThreeScaleToolbox::Entities::Service, 'service') }
+  let(:logger) { Logger.new(File::NULL) }
   let(:openapi_context) do
     {
       target: service,
-      api_spec: api_spec
+      api_spec: api_spec,
+      logger: logger,
     }
   end
 

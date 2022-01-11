@@ -10,6 +10,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
   let(:oidc_issuer_endpoint) { 'https://client_id:secret@sso.example.com/oidc' }
   let(:cleaned_issuer) { 'https://sso.example.com/oidc' }
   let(:new_public_base_path) { '/v2' }
+  let(:logger) { Logger.new(File::NULL) }
 
   let(:openapi_context) do
     {
@@ -20,7 +21,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActive
       activedocs_published: published,
       skip_openapi_validation: skip_openapi_validation,
       override_public_basepath: new_public_base_path,
-      oidc_issuer_endpoint: oidc_issuer_endpoint
+      oidc_issuer_endpoint: oidc_issuer_endpoint,
+      logger: logger,
     }
   end
   let(:title) { 'Some Title' }

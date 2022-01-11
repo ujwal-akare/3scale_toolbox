@@ -13,6 +13,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
   let(:oidc_issuer_type) { nil }
   let(:backend_api_secret_token) { nil }
   let(:backend_api_host_header) { nil }
+  let(:logger) { Logger.new(File::NULL) }
 
   let(:openapi_context) do
     {
@@ -25,6 +26,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
       override_private_base_url: override_private_base_url,
       backend_api_secret_token: backend_api_secret_token,
       backend_api_host_header: backend_api_host_header,
+      logger: logger,
     }
   end
 
@@ -171,7 +173,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServic
     context 'correct oidc issuer type set' do
       let(:security) { { id: 'oidc', type: 'oauth2', flow: :implicit_flow_enabled } }
       let(:oidc_issuer_type) {'rest'}
-      
+
       it 'updates proxy with correct oidc type' do
         expect(service).to receive(:update_proxy)
           .with(hash_including(

@@ -50,7 +50,7 @@ RSpec.describe 'openapi command step'  do
       expect(subject[0].operation[:public_base_path]).to eq('/v1')
       expect(subject[0].operation[:path]).to eq('/mypath')
       expect(subject[0].operation[:verb]).to eq('delete')
-      expect(subject[0].operation[:operationId]).to eq('someOp')
+      expect(subject[0].operation[:operation_id]).to eq('someOp')
       expect(subject[0].operation[:description]).to eq('someDescr')
       expect(subject[0].operation[:prefix_matching]).to eq(false)
     end

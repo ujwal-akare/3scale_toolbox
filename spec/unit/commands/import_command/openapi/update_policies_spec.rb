@@ -7,6 +7,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
   let(:another_credentials_userkey) { '89999' }
   let(:override_private_basepath) { nil }
   let(:override_public_basepath) { nil }
+  let(:logger) { Logger.new(File::NULL) }
   let(:available_policies) do
     [
       {
@@ -23,7 +24,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
       api_spec: api_spec,
       default_credentials_userkey: default_credentials_userkey,
       override_private_basepath: override_private_basepath,
-      override_public_basepath: override_public_basepath
+      override_public_basepath: override_public_basepath,
+      logger: logger,
     }
   end
   let(:security) { nil }
@@ -88,7 +90,8 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePolici
             api_spec: api_spec,
             default_credentials_userkey: another_credentials_userkey,
             override_private_basepath: override_private_basepath,
-            override_public_basepath: override_public_basepath
+            override_public_basepath: override_public_basepath,
+            logger: logger,
           }
         end
         let(:available_policies) do
