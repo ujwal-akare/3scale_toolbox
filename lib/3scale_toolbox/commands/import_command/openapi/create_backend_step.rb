@@ -48,10 +48,6 @@ module ThreeScaleToolbox
             target_system_name || title.downcase.gsub(/[^\w]/, '_')
           end
 
-          def private_endpoint
-            override_private_base_url || host
-          end
-
           def title
             api_spec.title
           end

@@ -20,7 +20,9 @@ module ThreeScaleToolbox
           private
 
           def verify_params
-            # TODO only backend params
+            if private_endpoint.nil?
+              raise ThreeScaleToolbox::Error, "private endpoint not specified"
+            end
           end
         end
       end

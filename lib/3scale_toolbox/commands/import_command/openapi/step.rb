@@ -113,6 +113,10 @@ module ThreeScaleToolbox
             context[:prefix_matching]
           end
 
+          def private_endpoint
+            override_private_base_url || host
+          end
+
           def host
             return if api_spec.host.nil?
 
