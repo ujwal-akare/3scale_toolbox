@@ -12,9 +12,9 @@ require '3scale_toolbox/commands/import_command/openapi/create_activedocs_step'
 require '3scale_toolbox/commands/import_command/openapi/update_service_proxy_step'
 require '3scale_toolbox/commands/import_command/openapi/update_service_oidc_conf_step'
 require '3scale_toolbox/commands/import_command/openapi/update_policies_step'
+require '3scale_toolbox/commands/import_command/openapi/import_product_step'
+require '3scale_toolbox/commands/import_command/openapi/import_backend_step'
 require '3scale_toolbox/commands/import_command/issuer_type_transformer'
-require '3scale_toolbox/commands/import_command/import_product_step'
-require '3scale_toolbox/commands/import_command/import_backend_step'
 
 module ThreeScaleToolbox
   module Commands
@@ -123,7 +123,7 @@ module ThreeScaleToolbox
           end
 
           def printer
-            # if product import AND output not specified -> logger
+            # if product import AND output not specified -> null printer
             # if product import AND output specified -> specified printer
             # if backend import AND output not specified -> json printer
             # if backend import AND output specified -> specified printer

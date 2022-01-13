@@ -2,40 +2,54 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::OpenAPISubco
   include_context :temp_dir
   include_context :resources
 
+  let(:import_backend_step_class) { class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ImportBackendStep).as_stubbed_const }
+  let(:import_product_step_class) { class_double(ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::ImportProductStep).as_stubbed_const }
+  let(:json_printer_class) { class_double(ThreeScaleToolbox::CLI::JsonPrinter).as_stubbed_const }
+  let(:import_backend_step) { instance_double(import_backend_step_class) }
+  let(:import_product_step) { instance_double(import_product_step_class) }
   let(:arguments) { { 'openapi_resource': oas_resource } }
   let(:options) { { 'destination': 'https://destination_key@destination.example.com' } }
   subject { described_class.new(options, arguments, nil) }
 
+  before :each do
+    allow(import_backend_step).to receive(:call)
+    allow(import_product_step).to receive(:call)
+    # disable printer for testing
+    allow(json_printer_class).to receive(:new).and_return(ThreeScaleToolbox::CLI::NullPrinter.new)
+  end
+
   context 'valid openapi content' do
     let(:oas_resource) { File.join(resources_path, 'valid_swagger.yaml') }
 
-    context '#run' do
-      before :each do
-        expect(subject).to receive(:threescale_client)
+    before :each do
+      expect(import_product_step_class).to receive(:new) do |context|
+        context[:report] = {}
+        import_product_step
       end
+      expect(subject).to receive(:threescale_client)
+    end
 
-      it 'all required tasks are run' do
-        # Task stubs
-        [
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServiceStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceProxyStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMethodsStep,
-          ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::DestroyMappingRulesTask,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateMappingRulesStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateActiveDocsStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdateServiceOidcConfStep,
-          ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::UpdatePoliciesStep,
-          ThreeScaleToolbox::Commands::ServiceCommand::CopyCommand::BumpProxyVersionTask,
-        ].each do |task_class|
-          task = instance_double(task_class.to_s)
-          task_class_obj = class_double(task_class).as_stubbed_const
-          expect(task_class_obj).to receive(:new).and_return(task)
-          expect(task).to receive(:call)
-        end
+    it 'does not fail' do
+      # Run
+      subject.run
+    end
+  end
 
-        # Run
-        subject.run
+  context 'backend import param' do
+    let(:oas_resource) { File.join(resources_path, 'valid_swagger.yaml') }
+    let(:options) { { backend: true, 'destination': 'https://destination_key@destination.example.com' } }
+
+    before :each do
+      expect(import_backend_step_class).to receive(:new) do |context|
+        context[:report] = {}
+        import_backend_step
       end
+      expect(subject).to receive(:threescale_client)
+    end
+
+    it 'then backend import called' do
+      # Run
+      subject.run
     end
   end
 
