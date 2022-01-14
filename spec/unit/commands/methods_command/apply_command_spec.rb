@@ -19,7 +19,7 @@ RSpec.describe ThreeScaleToolbox::Commands::MethodsCommand::Apply::ApplySubcomma
 
   before :example do
     allow(hits).to receive(:id).and_return(hits_id)
-    allow(service).to receive(:hits).and_return(hits)
+    allow(service).to receive(:hits).and_return(hits) unless service.nil?
     allow(method).to receive(:attrs).and_return(method_attrs)
   end
 
