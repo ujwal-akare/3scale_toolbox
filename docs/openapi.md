@@ -1,6 +1,6 @@
 ## Import API definition to 3scale from OpenAPI definition
 
-To create a new service or to update an existing service, you can import the OpenAPI definition from a local file or a URL.
+To create a new 3scale product or 3scale backend, you can import the OpenAPI definition from a local file or a URL.
 
 The `import openapi` command has the following format:
 
@@ -17,6 +17,7 @@ The `import openapi` command has the following format:
       * [URL](#url)
       * [Standard input stream stdin](#standard-input-stream-stdin)
    * [Supported OpenAPI spec version and limitations](#supported-openapi-spec-version-and-limitations)
+   * [Importing 3scale Backend from OpenAPI](#importing-3scale-backend)
    * [OpenAPI import rules](#openapi-import-rules)
       * [Idempotent](#idempotent)
       * [Product name](#product-name)
@@ -73,11 +74,46 @@ $ tool_to_read_openapi_from_source | 3scale import openapi -d <destination> -
   * Supported security schemes: apiKey, oauth2 (any flow type).
   * Multiple flows in security scheme object not supported.
 
+### Importing 3scale Backend
+
+The OpenAPI import command can be used to target a 3scale backend.
+The command line option `--backend` enables this feature.
+The OAS itself won't be stored in 3scale but a 3scale backend, private base URL,
+mapping rules and methods will be created.
+
+Some existing command options don't make sense when creating a backend.
+Valid options are listed here:
+
+```shell
+$ 3scale import openapi -d <remote> --backend <OAS>
+OPTIONS
+       --backend                                  Create backend API from OAS
+    -d --destination=<value>                      3scale target instance.
+                                                  Format:
+                                                  "http[s]://<authentication>@3scale_domain"
+    -o --output=<value>                           Output format. One of:
+                                                  json|yaml
+       --override-private-base-url=<value>        Custom private base URL
+                                                  the private URLs
+       --prefix-matching                          Use prefix matching instead
+                                                  of strict matching on
+                                                  mapping rules derived from
+                                                  openapi operations
+       --skip-openapi-validation                  Skip OpenAPI schema
+                                                  validation
+    -t --target_system_name=<value>               Target system name
+```
+
+The backend's private endpoint is read from the OpenAPI `servers[0].url` field.
+You can override this using this `--override-private-base-url=<value>` command option.
+When the OpenAPI doc does not contain `servers[0].url` and private base url is not provided,
+the command will fail.
+
 ### OpenAPI import rules
 
 #### Idempotent
 
-The command was designed to be idempotent. It can be executed multiple times without changing the result. If the command fails for some unexpected temporary issue, like a network outage, it is safe to re-run as many times as necessary. It is designed to be run from CI/CD system expecting to be run multiple times with the same parameters. 
+The command was designed to be idempotent. It can be executed multiple times without changing the result. If the command fails for some unexpected temporary issue, like a network outage, it is safe to re-run as many times as necessary. It is designed to be run from CI/CD system expecting to be run multiple times with the same parameters.
 
 #### Product name
 
@@ -265,6 +301,7 @@ DESCRIPTION
 OPTIONS
        --activedocs-hidden                        Create ActiveDocs in hidden
                                                   state
+       --backend                                  Create backend API from OAS
        --backend-api-host-header=<value>          Custom host header sent by
                                                   the API gateway to the
                                                   backend API
@@ -276,6 +313,8 @@ OPTIONS
                                                   "http[s]://<authentication>@3scale_domain"
        --default-credentials-userkey=<value>      Default credentials policy
                                                   userkey
+    -o --output=<value>                           Output format. One of:
+                                                  json|yaml
        --oidc-issuer-endpoint=<value>             OIDC Issuer Endpoint
        --oidc-issuer-type=<value>                 OIDC Issuer Type (rest,
                                                   keycloak)
