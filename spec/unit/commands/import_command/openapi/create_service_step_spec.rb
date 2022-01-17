@@ -9,12 +9,14 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
   let(:title) { 'Some Title' }
   let(:description) { 'Some Description' }
   let(:system_name) { 'some_system_name' }
+  let(:logger) { Logger.new(File::NULL) }
   let(:openapi_context) do
     {
       target: service,
       api_spec: api_spec,
       threescale_client: threescale_client,
       target_system_name: system_name,
+      logger: logger,
     }
   end
   let(:expected_settings) do
@@ -30,6 +32,9 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
     subject { described_class.new(openapi_context).call }
 
     before :example do
+      allow(service).to receive(:system_name).and_return(system_name)
+      allow(service).to receive(:name).and_return(title)
+      allow(service).to receive(:id).and_return(service_id)
       allow(api_spec).to receive(:title).and_return(title)
       allow(api_spec).to receive(:description).and_return(description)
       allow(api_spec).to receive(:service_backend_version).and_return('oidc')
@@ -40,12 +45,11 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
         expect(service_class).to receive(:find_by_system_name)
           .with(remote: threescale_client, system_name: openapi_context[:target_system_name])
           .and_return(service)
-        expect(service).to receive(:id).and_return(service_id)
       end
 
       it 'service is updated' do
         expect(service).to receive(:update).with(expected_settings)
-        expect { subject }.to output(/Updated service id: #{service_id}/).to_stdout
+        subject
       end
 
       context 'and production_public_base_url is in context' do
@@ -56,6 +60,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
             threescale_client: threescale_client,
             target_system_name: system_name,
             production_public_base_url: 'http://api.example.com',
+            logger: logger,
           }
         end
 
@@ -73,6 +78,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
             threescale_client: threescale_client,
             target_system_name: system_name,
             staging_public_base_url: 'http://api.example.com',
+            logger: logger,
           }
         end
 
@@ -94,7 +100,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ImportCommand::OpenAPI::CreateServic
         expect(service_class).to receive(:create).with(hash_including(service_params: expected_settings))
                                                  .and_return(service)
         expect(service).to receive(:id).and_return(service_id)
-        expect { subject }.to output(/Created service id: #{service_id}/).to_stdout
+        subject
       end
     end
   end

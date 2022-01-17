@@ -10,12 +10,12 @@ RSpec.describe 'OpenAPI Method' do
   end
 
   context '#method' do
-    let(:operationId) { 'Some Operation ID' }
-    let(:operation) { { operationId: operationId } }
+    let(:operation_id) { 'Some Operation ID' }
+    let(:operation) { { operation_id: operation_id } }
     subject { OpenAPIMethodClass.new(operation).method }
 
     it 'contains "friendly_name"' do
-      is_expected.to include('friendly_name' => operationId)
+      is_expected.to include('friendly_name' => operation_id)
     end
 
     it 'contains "system_name"' do

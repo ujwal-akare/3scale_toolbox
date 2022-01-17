@@ -395,6 +395,14 @@ RSpec.describe ThreeScaleToolbox::Entities::Backend do
           expect(backend.attrs).to include(expected_attrs)
         end
       end
+
+      context 'when new attrs are not different' do
+        let(:new_attrs) { { 'name' => backend.attrs.fetch('name') } }
+
+        it 'old attrs returned' do
+          is_expected.to eq(backend.attrs)
+        end
+      end
     end
 
     context '#delete' do

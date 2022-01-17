@@ -22,7 +22,7 @@ module ThreeScaleToolbox
               raise ThreeScaleToolbox::Error, "Service proxy has not been updated. #{errors}"
             end
 
-            puts 'Service proxy updated'
+            logger.info 'Service proxy updated'
           end
 
           private
@@ -31,12 +31,14 @@ module ThreeScaleToolbox
             return if production_public_base_url.nil?
 
             settings[:endpoint] = production_public_base_url
+            report['endpoint'] = production_public_base_url
           end
 
           def add_sandbox_endpoint_settings(settings)
             return if staging_public_base_url.nil?
 
             settings[:sandbox_endpoint] = staging_public_base_url
+            report['sandbox_endpoint'] = staging_public_base_url
           end
 
           def add_api_backend_settings(settings)
@@ -74,13 +76,7 @@ module ThreeScaleToolbox
           end
 
           def private_base_url
-            override_private_base_url || private_base_url_from_openapi
-          end
-
-          def private_base_url_from_openapi
-            return if api_spec.host.nil?
-
-            "#{api_spec.scheme || 'https'}://#{api_spec.host}"
+            override_private_base_url || host
           end
         end
       end

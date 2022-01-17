@@ -26,7 +26,7 @@ module ThreeScaleToolbox
               raise ThreeScaleToolbox::Error, "Service policies have not been updated. #{errors}"
             end
 
-            puts 'Service policies updated'
+            logger.info 'Service policies updated'
           end
 
           private

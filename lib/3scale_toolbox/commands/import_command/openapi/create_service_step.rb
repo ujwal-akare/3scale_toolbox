@@ -16,11 +16,16 @@ module ThreeScaleToolbox
               # Create service and update context
               self.service = Entities::Service.create(remote: threescale_client,
                                                       service_params: service_settings)
-              puts "Created service id: #{service.id}, name: #{service_name}"
+              logger.info "Created service id: #{service.id}, name: #{service_name}"
             else
               service.update(service_settings)
-              puts "Updated service id: #{service.id}, name: #{service_name}"
+              logger.info "Updated service id: #{service.id}, name: #{service_name}"
             end
+
+            report['id'] = service.id
+            report['system_name'] = service.system_name
+            report['name'] = service.name
+            report['backend_version'] = api_spec.service_backend_version
           end
 
           private

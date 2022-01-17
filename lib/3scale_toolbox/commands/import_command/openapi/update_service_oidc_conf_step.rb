@@ -20,7 +20,7 @@ module ThreeScaleToolbox
               raise ThreeScaleToolbox::Error, "Service oidc has not been updated. #{errors}"
             end
 
-            puts 'Service oidc updated'
+            logger.info 'Service oidc updated'
           end
 
           private

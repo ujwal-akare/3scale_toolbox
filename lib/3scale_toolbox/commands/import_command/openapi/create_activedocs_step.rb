@@ -23,7 +23,7 @@ module ThreeScaleToolbox
                 unless ThreeScaleToolbox::Helper.system_name_already_taken_error? errors
 
               # if activedocs system_name exists, ignore error, update activedocs
-              puts 'Activedocs exists, update!'
+              logger.info 'Activedocs exists, update!'
               update_res = threescale_client.update_activedocs(find_activedocs_id, active_doc)
               raise ThreeScaleToolbox::Error, "ActiveDocs has not been updated. #{update_res['errors']}" unless update_res['errors'].nil?
             end
