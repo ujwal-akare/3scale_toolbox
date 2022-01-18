@@ -53,7 +53,7 @@ module ThreeScaleToolbox
         end
 
         def policies
-          @policies ||= load_resource(options[:file] || options[:url] || '-')
+          @policies ||= load_resource(options[:file] || options[:url] || '-', verify_ssl)
         end
       end
     end

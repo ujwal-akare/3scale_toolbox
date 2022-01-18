@@ -106,7 +106,7 @@ module ThreeScaleToolbox
         end
 
         def artifacts_resource
-          @artifacts_resource ||= load_resource(options[:file] || '-')
+          @artifacts_resource ||= load_resource(options[:file] || '-', verify_ssl)
         end
 
         def report

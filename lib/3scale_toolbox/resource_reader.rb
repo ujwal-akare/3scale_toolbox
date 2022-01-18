@@ -4,9 +4,9 @@ module ThreeScaleToolbox
     # Load resource from different types of sources.
     # Supported types are: file, URL, stdin
     # Loaded content is returned
-    def load_resource(resource)
+    def load_resource(resource, verify_ssl)
       # Json format is parsed as well
-      YAML.safe_load(read_content(resource))
+      YAML.safe_load(read_content(resource, verify_ssl))
     rescue Psych::SyntaxError => e
       raise ThreeScaleToolbox::Error, "JSON/YAML validation failed: #{e.message}"
     end
@@ -15,17 +15,17 @@ module ThreeScaleToolbox
     # Reads resources from different types of sources.
     # Supported types are: file, URL, stdin
     # Resource raw content is returned
-    def read_content(resource)
+    def read_content(resource, verify_ssl)
       case resource
       when '-'
-        method(:read_stdin)
+        read_stdin(resource)
       when /\A#{URI::DEFAULT_PARSER.make_regexp}\z/
-        method(:read_url)
+        read_url(resource, verify_ssl)
       when StringIO
-        method(:read_stringio)
+        read_stringio(resource)
       else
-        method(:read_file)
-      end.call(resource)
+        read_file(resource)
+      end
     end
 
     # Detect format from file extension
@@ -40,8 +40,17 @@ module ThreeScaleToolbox
       STDIN.read
     end
 
-    def read_url(resource)
-      Net::HTTP.get(URI.parse(resource))
+    def read_url(resource, verify_ssl)
+      endpoint = URI.parse(resource)
+      http_client = Net::HTTP.new(endpoint.host, endpoint.port)
+      http_client.use_ssl = endpoint.is_a?(URI::HTTPS)
+      http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE unless verify_ssl
+
+      response = http_client.get(endpoint)
+      case response
+      when Net::HTTPSuccess then response.body
+      else raise ThreeScaleToolbox::Error, "could not download resource: #{response.body}"
+      end
     end
 
     def read_stringio(resource)

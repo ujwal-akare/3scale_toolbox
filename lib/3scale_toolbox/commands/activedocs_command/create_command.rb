@@ -52,20 +52,19 @@ module ThreeScaleToolbox
           end
 
           def activedocs_json_spec
-            activedoc_spec = arguments[:activedocs_spec]
-            activedoc_spec_content = load_resource(arguments[:activedocs_spec])
+            activedoc_spec_content = load_resource(arguments[:activedocs_spec], verify_ssl)
             JSON.pretty_generate(activedoc_spec_content)
           end
 
           def activedocs_attrs
             {
-              "service_id" => options[:'service-id'],
-              "published" => options[:'published'],
-              "skip_swagger_validations" => options[:'skip-swagger-validations'],
-              "description" => options[:'description'],
-              "system_name" => options[:'system-name'],
-              "name" => activedocs_name,
-              "body" => activedocs_json_spec,
+              'service_id' => options[:'service-id'],
+              'published' => options[:'published'],
+              'skip_swagger_validations' => options[:'skip-swagger-validations'],
+              'description' => options[:'description'],
+              'system_name' => options[:'system-name'],
+              'name' => activedocs_name,
+              'body' => activedocs_json_spec,
             }.compact
           end
 
