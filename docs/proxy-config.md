@@ -84,7 +84,7 @@ OPTIONS
 ### Deploy
 
 *This command has been deprecated.*
-*[Check out the new proxy deploy command](proxy#deploy)*
+*[Check out the new proxy deploy command](proxy.md#deploy)*
 
 ```shell
 NAME
