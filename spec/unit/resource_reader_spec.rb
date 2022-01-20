@@ -1,5 +1,5 @@
 RSpec.shared_examples 'content is read' do
-  let(:result) { subject.read_content(resource) }
+  let(:result) { subject.read_content(resource, verify_ssl) }
 
   it 'does not return nil' do
     expect(result).not_to be_nil
@@ -12,6 +12,7 @@ end
 
 RSpec.describe ThreeScaleToolbox::ResourceReader do
   include_context :temp_dir
+  let(:verify_ssl) { true }
 
   subject do
     Class.new { include ThreeScaleToolbox::ResourceReader }.new
@@ -19,7 +20,7 @@ RSpec.describe ThreeScaleToolbox::ResourceReader do
 
   context '#load_resource' do
     let(:resource) { tmp_dir.join('file.ext').tap { |conf| conf.write(content) } }
-    let(:result) { subject.load_resource(resource) }
+    let(:result) { subject.load_resource(resource, verify_ssl) }
 
     context 'valid json' do
       let(:content) { '{ "some_key": "some value" }' }
@@ -89,20 +90,37 @@ RSpec.describe ThreeScaleToolbox::ResourceReader do
       let(:resource) { tmp_dir }
 
       it 'error is raised' do
-        expect { subject.read_content(resource) }.to raise_error(ThreeScaleToolbox::Error,
-                                                                 /File not found/)
+        expect { subject.read_content(resource, verify_ssl) }.to raise_error(ThreeScaleToolbox::Error,
+                                                                             /File not found/)
       end
     end
 
     context 'from URL' do
       let(:resource) { 'https://example.com/petstore.yaml' }
+      let(:net_class_stub) { class_double(Net::HTTP).as_stubbed_const }
+      let(:net_client) { instance_double(Net::HTTP) }
+      let(:net_response) { instance_double(Net::HTTPSuccess) }
 
-      before :each do
-        net_class_stub = class_double(Net::HTTP).as_stubbed_const
-        expect(net_class_stub).to receive(:get).and_return(content)
+      context 'on HTTP success' do
+        before :each do
+          stub_request(:get, 'https://example.com/petstore.yaml').
+            to_return(status: 200, body: content, headers: {})
+        end
+
+        it_behaves_like 'content is read'
       end
 
-      it_behaves_like 'content is read'
+      context 'on HTTP error' do
+        before :each do
+          stub_request(:get, 'https://example.com/petstore.yaml').
+            to_return(status: 500, body: 'unexpected error', headers: {})
+        end
+
+        it 'error is raised' do
+          expect { subject.read_content(resource, verify_ssl) }.to raise_error(ThreeScaleToolbox::Error,
+                                                                               /could not download resource/)
+        end
+      end
     end
 
     context 'from stdin' do

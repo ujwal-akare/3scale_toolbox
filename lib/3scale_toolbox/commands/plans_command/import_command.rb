@@ -53,7 +53,7 @@ module ThreeScaleToolbox
 
           def create_context
             {
-              artifacts_resource: load_resource(options[:file] || '-'),
+              artifacts_resource: load_resource(options[:file] || '-', verify_ssl),
               threescale_client: threescale_client(arguments[:remote]),
               service_system_name: arguments[:service_system_name],
               plan_system_name: options[:plan],

@@ -108,7 +108,7 @@ module ThreeScaleToolbox
 
           def read_activedocs_json_spec
             activedoc_spec = option_openapi_spec
-            activedoc_spec_content = load_resource(activedoc_spec)
+            activedoc_spec_content = load_resource(activedoc_spec, verify_ssl)
             JSON.pretty_generate(activedoc_spec_content)
           end
 

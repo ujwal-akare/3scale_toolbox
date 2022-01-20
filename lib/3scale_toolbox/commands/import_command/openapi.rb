@@ -95,7 +95,7 @@ module ThreeScaleToolbox
           end
 
           def openapi_resource
-            @openapi_resource ||= load_resource(openapi_path)
+            @openapi_resource ||= load_resource(openapi_path, verify_ssl)
           end
 
           def openapi_path
