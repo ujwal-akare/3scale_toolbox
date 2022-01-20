@@ -1,10 +1,12 @@
 ## Proxy Configuration
 
+Commands to manage the proxy configuration for a given environment (staging/production). 
+
 * [List Proxy Configurations](#list)
 * [Show Proxy Configuration](#show)
 * [Promote Proxy Configuration](#promote)
 * [Export Proxy Configuration](#export)
-* [Deploy Proxy Configuration](#deploy)
+* ~[Deploy Proxy Configuration](#deploy)~(**deprecated**)
 
 ### List
 
@@ -80,6 +82,9 @@ OPTIONS
 ```
 
 ### Deploy
+
+*This command has been deprecated.*
+*[Check out the new proxy deploy command](proxy.md#deploy)*
 
 ```shell
 NAME

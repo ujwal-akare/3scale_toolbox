@@ -1,28 +1,27 @@
 module ThreeScaleToolbox
   module Commands
-    module ProxyConfigCommand
-      class DeploySubcommand < Cri::CommandRunner
+    module ProxyCommand
+      class ShowSubcommand < Cri::CommandRunner
         include ThreeScaleToolbox::Command
 
         def self.command
           Cri::Command.define do
-            name        'deploy'
-            usage       'deploy <remote> <service>'
-            summary     '[DEPRECATED] Promotes the APIcast configuration to the Staging Environment'
-            description '[DEPRECATED] Promotes the APIcast configuration to the Staging Environment (Production Environment in case of Service Mesh).'
+            name        'show'
+            usage       'show <remote> <service>'
+            summary     'Fetch (undeployed) APIcast configuration'
+            description 'Fetch (undeployed) APIcast configuration'
 
             param :remote
             param :service_ref
 
             ThreeScaleToolbox::CLI.output_flag(self)
 
-            runner DeploySubcommand
+            runner ShowSubcommand
           end
         end
 
         def run
-          warn "\e[1m\e[31mThis command has been deprecated. Use '3scale proxy deploy' instead\e[0m"
-          printer.print_record service.proxy_deploy
+          printer.print_record service.proxy
         end
 
         private

@@ -23,7 +23,8 @@
    * Create, Apply, List, Delete [Method](docs/method.md)
    * Create, Apply, List, Show, Delete [Service](docs/service.md)
    * Create, Apply, List, Delete [ActiveDocs](docs/activedocs.md)
-   * List, Show, Promote, Export, Deploy [Proxy Configuration](docs/proxy-config.md)
+   * Show, Update, Deploy [APIcast proxy settings](docs/proxy.md)
+   * List, Show, Promote, Export [Staging/Production Proxy Configuration](docs/proxy-config.md)
    * [Copy Policy Registry](docs/copy-policy-registry.md)
    * Create, Apply, List, Show, Delete, Suspend, Resume [Applications](docs/applications.md)
    * [Export/Import Product Policy Chain](docs/export-import-policy-chain.md)
@@ -86,6 +87,7 @@ COMMANDS
     policies             policies super command
     policy-registry      policy-registry super command
     product              product super command
+    proxy                proxy super command
     proxy-config         proxy-config super command
     remote               remotes super command
     service              services super command

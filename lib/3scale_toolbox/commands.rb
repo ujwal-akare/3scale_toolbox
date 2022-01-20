@@ -1,4 +1,5 @@
 require '3scale_toolbox/commands/3scale_command'
+require '3scale_toolbox/commands/proxy_command'
 require '3scale_toolbox/commands/help_command'
 require '3scale_toolbox/commands/import_command'
 require '3scale_toolbox/commands/update_command'
@@ -37,6 +38,7 @@ module ThreeScaleToolbox
       ThreeScaleToolbox::Commands::BackendCommand,
       ThreeScaleToolbox::Commands::ProductCommand,
       ThreeScaleToolbox::Commands::PoliciesCommand,
+      ThreeScaleToolbox::Commands::ProxyCommand,
     ].freeze
   end
 end
