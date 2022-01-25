@@ -91,7 +91,6 @@ COMMANDS
     proxy-config         proxy-config super command
     remote               remotes super command
     service              services super command
-    update               [DEPRECATED] update super command
 
 OPTIONS
     -c --config-file=<value>      3scale toolbox configuration file (default:
@@ -178,7 +177,6 @@ Then register the core command in `lib/3scale_toolbox/commands.rb`
 +++ b/lib/3scale_toolbox/commands.rb
 @@ -4,6 +4,7 @@ require '3scale_toolbox/commands/copy_command'
  require '3scale_toolbox/commands/import_command'
- require '3scale_toolbox/commands/update_command'
  require '3scale_toolbox/commands/remote_command'
 +require '3scale_toolbox/commands/service_list_command'
 
@@ -187,7 +185,6 @@ Then register the core command in `lib/3scale_toolbox/commands.rb`
 @@ -12,7 +13,8 @@ module ThreeScaleToolbox
        ThreeScaleToolbox::Commands::CopyCommand,
        ThreeScaleToolbox::Commands::ImportCommand,
-       ThreeScaleToolbox::Commands::UpdateCommand,
 -      ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand
 +      ThreeScaleToolbox::Commands::RemoteCommand::RemoteCommand,
 +      ThreeScaleToolbox::Commands::ServiceListCommand

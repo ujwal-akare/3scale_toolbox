@@ -65,7 +65,9 @@ RSpec.shared_context :real_api3scale_client do
   let(:http_client) do
     ThreeScale::API::HttpClient.new(endpoint: endpoint,
                                     provider_key: provider_key,
-                                    verify_ssl: verify_ssl)
+                                    verify_ssl: verify_ssl,
+                                    keep_alive: true,
+                                   )
   end
 
   let(:api3scale_client) { ThreeScale::API::Client.new(http_client) }
@@ -88,23 +90,6 @@ RSpec.shared_context :real_copy_cleanup do
     backend_usage_list.each(&:delete)
     backend_usage_list.map(&:backend).each(&:delete)
     source_service.delete
-
-    #backend_usage_list = begin
-    #                       source_service.backend_usage_list
-    #                     rescue ThreeScale::API::HttpClient::NotFoundError
-    #                       []
-    #                     end
-    #backend_usage_list.map(&:backend).each do |backend|
-    #  Helpers.wait do
-    #    begin
-    #      backend.delete
-    #    rescue ThreeScale::API::HttpClient::NotFoundError
-    #      true
-    #    rescue ThreeScale::API::HttpClient::ForbiddenError
-    #      false
-    #    end
-    #  end
-    #end
 
     # delete target activedocs
     target_service.activedocs.each do |activedoc|
