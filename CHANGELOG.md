@@ -4,6 +4,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.20.0]
+
+### Added
+-  `3scale proxy` set of commands [#347](https://github.com/3scale/3scale_toolbox/pull/347)
+-  Support stringio object as format of ResourceReader [#343](https://github.com/3scale/3scale_toolbox/pull/343)
+-  Import 3scale Backend from OpenAPI spec [#340](https://github.com/3scale/3scale_toolbox/pull/340)
+
+### Fixed
+-  `verify_ssl` option on resource reader by URL [#348](https://github.com/3scale/3scale_toolbox/pull/348)
+-  Reuse TCP connection against 3sscale API endpoints [#342](https://github.com/3scale/3scale_toolbox/pull/342)
+-  Remove `end_user_registration_required` field from service commands [#341](https://github.com/3scale/3scale_toolbox/pull/341)
+
+### Changed
+- \[**Breaking**\] Remove deprecated `3scale update service` command [#349](https://github.com/3scale/3scale_toolbox/pull/349)
+
 ## [0.19.3]
 
 ### Added
@@ -304,7 +319,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `3scale copy service` command to copy a service
   including its metrics, methods, application plans and their usage limits
 
-[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.19.3...HEAD
+[Unreleased]: https://github.com/3scale/3scale_toolbox/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.20.0
 [0.19.3]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.3
 [0.19.2]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.2
 [0.19.1]: https://github.com/3scale/3scale_toolbox/releases/tag/v0.19.1
