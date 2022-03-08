@@ -27,14 +27,13 @@ Added remotes are stored in configuration file and can be used in any command wh
 
 The 3scale toolbox accesses 3scale instances using a `HTTP[S]` URL.
 Tokens are used for authentication and authorization purposes.
-3scale API supports the following token types:
-* `access_token` (preferred)
-* `provider_key`
+It is encouraged to use 3scale account personal `Access Tokens`
+and the use of the tenant `Provider Key` is discouraged.
 
 The following syntax is used:
 
 ```
-http[s]://<provider_key>|<access_token>@<3scale-instance-domain>
+http[s]://<access_token>@<3scale-instance-domain>
 ```
 
 ## Commands
