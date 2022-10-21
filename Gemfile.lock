@@ -54,7 +54,7 @@ GEM
     mustermann-contrib (1.1.1)
       hansi (~> 0.2.0)
       mustermann (= 1.1.1)
-    nokogiri (1.13.6)
+    nokogiri (1.13.9)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     oas_parser (0.25.4)
