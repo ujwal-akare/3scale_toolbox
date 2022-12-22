@@ -102,8 +102,8 @@ module ThreeScaleToolbox
             {
               'name' => option_name,
               'description' => description,
-              'user_key' => application_ref,
-              'application_id' => application_ref,
+              'user_key' => user_key,
+              'application_id' => application_id,
               'application_key' => option_app_key,
               'redirect_url' => option_redirect_url,
             }.compact
@@ -118,6 +118,14 @@ module ThreeScaleToolbox
               'user_key' => option_user_key,
               'redirect_url' => option_redirect_url,
             }.compact
+          end
+
+          def user_key
+            application_ref if service.backend_version == '1'
+          end
+
+          def application_id
+            application_ref if service.backend_version == '2' || service.backend_version == 'oidc'
           end
 
           def account

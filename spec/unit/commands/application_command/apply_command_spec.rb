@@ -4,6 +4,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
   let(:options) { {} }
   let(:service_class) { class_double(ThreeScaleToolbox::Entities::Service).as_stubbed_const }
   let(:service_id) { 100 }
+  let(:backend_version) { '1' }
   let(:account_id) { 200 }
   let(:service) { instance_double(ThreeScaleToolbox::Entities::Service) }
   let(:account_class) { class_double(ThreeScaleToolbox::Entities::Account).as_stubbed_const }
@@ -19,6 +20,7 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
 
   before :example do
     allow(service).to receive(:id).and_return(service_id)
+    allow(service).to receive(:backend_version).and_return(backend_version)
     allow(account).to receive(:id).and_return(account_id)
     allow(application).to receive(:attrs).and_return(app_attrs)
   end
@@ -319,14 +321,18 @@ RSpec.describe ThreeScaleToolbox::Commands::ApplicationCommand::Apply::ApplySubc
           expect { subject.run }.to output(/Applied application id: 1/).to_stdout
         end
 
-        it 'application_id set to application param' do
-          expect(application_class).to receive(:create)
-            .with(
-              remote: remote, account_id: account_id,
-              plan_id: 'planId', app_attrs: hash_including('application_id' => app_ref)
-            )
-            .and_return(application)
-          expect { subject.run }.to output(/Applied application id: 1/).to_stdout
+        context 'app_id&app_key type service' do
+          let(:backend_version) { '2' }
+
+          it 'application_id set to application param' do
+            expect(application_class).to receive(:create)
+              .with(
+                remote: remote, account_id: account_id,
+                plan_id: 'planId', app_attrs: hash_including('application_id' => app_ref)
+              )
+              .and_return(application)
+            expect { subject.run }.to output(/Applied application id: 1/).to_stdout
+          end
         end
 
         it 'description is included' do

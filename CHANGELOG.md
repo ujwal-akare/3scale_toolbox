@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+-  Apply application command: only set app key type depending on backend_version [#361](https://github.com/3scale/3scale_toolbox/pull/361)
+
+### Changed
+- Upgrade internal dependencies [#351](https://github.com/3scale/3scale_toolbox/pull/351) [#353](https://github.com/3scale/3scale_toolbox/pull/353) [#354](https://github.com/3scale/3scale_toolbox/pull/354) [#359](https://github.com/3scale/3scale_toolbox/pull/359) [#360](https://github.com/3scale/3scale_toolbox/pull/360)
+
 ## [0.20.0]
 
 ### Added
